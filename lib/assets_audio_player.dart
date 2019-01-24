@@ -93,7 +93,7 @@ class AssetsAudioPlayer {
   /// 
   static ValueObservable<bool> get finished => _plugin.finished;
 
-  /// Retrieve directly the current song position
+  /// Retrieve directly the current song position (in seconds)
   ///     final Duration position = AssetsAudioPlayer.currentPosition.value;
   /// 
   ///     return StreamBuilder(
@@ -149,6 +149,11 @@ class AssetsAudioPlayer {
     _plugin.pause();
   }
 
+  /// Change the current position of the song
+  /// Tells the player to go to a specific position of the current song
+  /// 
+  ///     AssetsAudioPlayer.seek(Duration(minutes: 1, seconds: 34));
+  /// 
   static void seek(Duration to) {
     _plugin.seek(to);
   }
@@ -161,23 +166,33 @@ class AssetsAudioPlayer {
   }
 }
 
+/// The real AssetsAudioPlayer plugin (non-static)
 class AssetsAudioPlayerPlugin {
+  /// The channel between the native and Dart
   final MethodChannel _channel = const MethodChannel('assets_audio_player');
 
+  /// Then mediaplayer playing state (mutable)
   final BehaviorSubject<bool> _isPlaying =
       BehaviorSubject<bool>(seedValue: false);
+    /// Then mediaplayer playing state (immutable)
   ValueObservable<bool> get isPlaying => _isPlaying.stream;
 
+  /// Then mediaplayer playing audio (mutable)
   final BehaviorSubject<PlayingAudio> _current =
       BehaviorSubject<PlayingAudio>();
+  /// Then mediaplayer playing audio (immutable)
   ValueObservable<PlayingAudio> get current => _current.stream;
 
+  /// Called when the playing song finished (mutable)
   final BehaviorSubject<bool> _finished =
       BehaviorSubject<bool>(seedValue: false);
+  /// Called when the playing song finished (immutable)
   ValueObservable<bool> get finished => _isPlaying.stream;
 
+  /// Then current playing song position (in seconds) (mutable)
   final BehaviorSubject<Duration> _currentPosition =
       BehaviorSubject<Duration>(seedValue: const Duration());
+  /// Then current playing song position (in seconds) (immutable)
   Stream<Duration> get currentPosition => _currentPosition.stream;
 
   /*
@@ -187,8 +202,11 @@ class AssetsAudioPlayerPlugin {
       final PublishSubject<bool> _prev = PublishSubject<bool>();
       Stream<bool> get prev => _prev.stream;
     */
+
+  /// Stores opened AssetsAudio to use it on the `_current` BehaviorSubject (in `PlayingAudio`)
   AssetsAudio _lastOpenedAssetsAudio;
 
+  /// Call it to dispose stream
   void dispose() {
     _currentPosition.close();
     _isPlaying.close();
@@ -198,6 +216,7 @@ class AssetsAudioPlayerPlugin {
     _current.close();
   }
 
+  /// Private constructor
   AssetsAudioPlayerPlugin._() {
     _channel.setMethodCallHandler((MethodCall call) async {
       //print("received call ${call.method} with arguments ${call.arguments}");
@@ -209,7 +228,7 @@ class AssetsAudioPlayerPlugin {
           _finished.value = call.arguments;
           break;
         case 'player.current':
-          final totalDuration = toDuration(call.arguments["totalDuration"]);
+          final totalDuration = _toDuration(call.arguments["totalDuration"]);
 
           _current.value = PlayingAudio(
             assetAudio: _lastOpenedAssetsAudio,
@@ -241,7 +260,8 @@ class AssetsAudioPlayerPlugin {
     });
   }
 
-  Duration toDuration(num value) {
+  /// Converts a number to duration
+  Duration _toDuration(num value) {
     if (value is int) {
       return Duration(seconds: value);
     } else if (value is double) {
@@ -251,6 +271,7 @@ class AssetsAudioPlayerPlugin {
     }
   }
 
+  /// Open an AssetsAudio
   void open(AssetsAudio assetAudio) async {
     String assetName = assetAudio.asset;
     if (assetName.startsWith("/")) {
@@ -274,6 +295,7 @@ class AssetsAudioPlayerPlugin {
     _lastOpenedAssetsAudio = assetAudio;
   }
 
+  /// Toggle the media player playing state
   void playOrPause() async {
     final bool playing = _isPlaying.value;
     if (playing) {
@@ -283,18 +305,22 @@ class AssetsAudioPlayerPlugin {
     }
   }
 
+  /// Toggle the media player playing state, set to play
   void play() {
     _channel.invokeMethod('play');
   }
 
+  /// Toggle the media player playing state, set to pause
   void pause() {
     _channel.invokeMethod('pause');
   }
 
+  /// Tells the media player to go to a specific position
   void seek(Duration to) {
     _channel.invokeMethod('seek', to.inSeconds.round());
   }
 
+  /// Stops and release the current mediaplayer 
   void stop() {
     _channel.invokeMethod('stop');
   }
