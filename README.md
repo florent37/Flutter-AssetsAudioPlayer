@@ -1,6 +1,8 @@
 # assets_audio_player
 
-Play music/audio stored in assets files directly from Flutter
+Play music/audio stored in assets files directly from Flutter. 
+
+No needed to copy songs to a media cache, with assets_audio_player you can open them directly from the assets. 
 
 1. Create an audio directory in your assets (not necessary named "audios")
 2. Declare it inside your pubspec.yaml
