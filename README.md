@@ -80,7 +80,7 @@ final bool playing = AssetsAudioPlayer.isPlaying.value;
 
 //will follow the AssetsAudioPlayer playing state
 return StreamBuilder(
-    stream: AssetsAudioPlayer.currentPosition,
+    stream: AssetsAudioPlayer.isPlaying,
     builder: (context, asyncSnapshot) {
         final bool isPlaying = asyncSnapshot.data;
         return Text(isPlaying ? "Pause" : "Play");  

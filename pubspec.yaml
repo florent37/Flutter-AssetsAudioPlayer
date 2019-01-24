@@ -1,6 +1,6 @@
 name: assets_audio_player
 description: Play audio file from assets
-version: 0.0.1
+version: 0.0.2
 author: Florent Champigny <champigny.florent@gmail.com>
 homepage: https://github.com/florent37/Flutter-AssetsAudioPlayer
 
