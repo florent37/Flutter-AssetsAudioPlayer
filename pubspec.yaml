@@ -1,5 +1,5 @@
 name: assets_audio_player
-description: A new flutter plugin project.
+description: Play audio file from assets
 version: 0.0.1
 author: Florent Champigny
 homepage: https://github.com/florent37/Flutter-AssetsAudioPlayer
