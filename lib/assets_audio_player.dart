@@ -72,20 +72,22 @@ class AssetsAudioPlayer {
           BehaviorSubject<Duration>(seedValue: const Duration());
       Stream<Duration> get currentPosition => _currentPosition.stream;
     
+    /*
       final PublishSubject<bool> _next = PublishSubject<bool>();
       Stream<bool> get next => _next.stream;
     
       final PublishSubject<bool> _prev = PublishSubject<bool>();
       Stream<bool> get prev => _prev.stream;
-    
+    */
       AssetsAudio _lastOpenedAssetsAudio;
     
       void dispose() {
         _currentPosition.close();
         _isPlaying.close();
-        _next.close();
-        _prev.close();
+        //_next.close();
+        //_prev.close();
         _finished.close();
+        _current.close();
       }
     
       AssetsAudioPlayerPlugin._() {
@@ -106,12 +108,14 @@ class AssetsAudioPlayer {
                 duration: totalDuration,
               );
               break;
+              /*
             case 'player.next':
               _next.add(true);
               break;
             case 'player.prev':
               _prev.add(true);
               break;
+              */
             case 'player.position':
               if (call.arguments is int) {
                 _currentPosition.value = Duration(seconds: call.arguments);

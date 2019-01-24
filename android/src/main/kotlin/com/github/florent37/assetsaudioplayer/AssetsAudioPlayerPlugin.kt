@@ -14,6 +14,8 @@ internal val METHOD_POSITION = "player.position"
 internal val METHOD_FINISHED = "player.finished"
 internal val METHOD_IS_PLAYING = "player.isPlaying"
 internal val METHOD_CURRENT = "player.current"
+internal val METHOD_NEXT = "player.next"
+internal val METHOD_PREV = "player.prev"
 
 class AssetsAudioPlayerPlugin(private val context: Context, private val channel: MethodChannel) :
     MethodCallHandler {
