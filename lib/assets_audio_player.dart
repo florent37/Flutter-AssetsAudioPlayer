@@ -6,16 +6,16 @@ import 'package:rxdart/subjects.dart';
 
 /// An audio asset, represented by an asset name and a folder
 /// This class is used by AssetsAudioPlayer to open a song
-/// 
+///
 /// ### Example
 ///
 ///     AssetsAudioPlayer.open(AssetsAudio(
 ///       asset: "song1.mp3",
 ///       folder: "assets/audios/",
 ///     )
-/// 
+///
 /// Don't forget to declare the audio folder in your `pubspec.yaml`
-/// 
+///
 ///     flutter:
 ///       assets:
 ///         - assets/audios/
@@ -29,22 +29,23 @@ class AssetsAudio {
 
 /// Represents the current played audio asset
 /// When the player opened a song, it will ping AssetsAudioPlayer.current with a `AssetsAudio`
-/// 
+///
 /// ### Example
 ///     final assetAudio = AssetsAudio(
 ///       asset: "song1.mp3",
 ///       folder: "assets/audios/",
 ///     )
-/// 
+///
 ///     AssetsAudioPlayer.current.listen((PlayingAudio current){
 ///         //ex: retrieve the current song's total duration
 ///     });
-/// 
+///
 ///     AssetsAudioPlayer.open(assetAudio);
 ///
 class PlayingAudio {
   ///the opened asset
   final AssetsAudio assetAudio;
+
   ///the current song's total duration
   final Duration duration;
 
@@ -54,13 +55,12 @@ class PlayingAudio {
 /// The static AssetsAudioPlayer, representing the native Audio Media Player
 /// From flutter, you will call this class directly
 class AssetsAudioPlayer {
-
   /// The real AssetsAudioPlayer plugin, which has no static methods
   static AssetsAudioPlayerPlugin _plugin = AssetsAudioPlayerPlugin._();
 
   /// The current playing audio, filled with the total song duration
   /// Exposes a PlayingAudio
-  /// 
+  ///
   /// Retrieve directly the current played asset
   ///     final PlayingAudio playing = AssetsAudioPlayer.current.value;
   ///
@@ -69,38 +69,38 @@ class AssetsAudioPlayer {
   ///         final asset = playingAudio.assetAudio;
   ///         final songDuration = playingAudio.duration;
   ///     })
-  /// 
+  ///
   static ValueObservable<PlayingAudio> get current => _plugin.current;
 
   /// Boolean observable representing the current mediaplayer playing state
-  /// 
+  ///
   /// retrieve directly the current player state
   ///     final bool playing = AssetsAudioPlayer.isPlaying.value;
-  /// 
+  ///
   /// will follow the AssetsAudioPlayer playing state
   ///     return StreamBuilder(
   ///         stream: AssetsAudioPlayer.currentPosition,
   ///         builder: (context, asyncSnapshot) {
   ///             final bool isPlaying = asyncSnapshot.data;
-  ///             return Text(isPlaying ? "Pause" : "Play");  
+  ///             return Text(isPlaying ? "Pause" : "Play");
   ///         }),
   static ValueObservable<bool> get isPlaying => _plugin.isPlaying;
 
   /// Called when the current song has finished to play
   ///     AssetsAudioPlayer.finished.listen((finished){
-  ///    
+  ///
   ///        })
-  /// 
+  ///
   static ValueObservable<bool> get finished => _plugin.finished;
 
   /// Retrieve directly the current song position (in seconds)
   ///     final Duration position = AssetsAudioPlayer.currentPosition.value;
-  /// 
+  ///
   ///     return StreamBuilder(
   ///         stream: AssetsAudioPlayer.currentPosition,
   ///         builder: (context, asyncSnapshot) {
   ///             final Duration duration = asyncSnapshot.data;
-  ///             return Text(duration.toString());  
+  ///             return Text(duration.toString());
   ///         }),
   static ValueObservable<Duration> get currentPosition =>
       _plugin.currentPosition;
@@ -114,13 +114,13 @@ class AssetsAudioPlayer {
   ///       asset: "song1.mp3",
   ///       folder: "assets/audios/",
   ///     )
-  /// 
+  ///
   /// Don't forget to declare the audio folder in your `pubspec.yaml`
-  /// 
+  ///
   ///     flutter:
   ///       assets:
   ///         - assets/audios/
-  /// 
+  ///
   static void open(AssetsAudio assetAudio) {
     _plugin.open(assetAudio);
   }
@@ -128,39 +128,39 @@ class AssetsAudioPlayer {
   /// Toggle the current playing state
   /// If the media player is playing, then pauses it
   /// If the media player has been paused, then play it
-  /// 
+  ///
   ///     AssetsAudioPlayer.playOfPause();
-  /// 
+  ///
   static void playOrPause() async {
     _plugin.playOrPause();
   }
 
   /// Tells the media player to play the current song
   ///     AssetsAudioPlayer.play();
-  /// 
+  ///
   static void play() {
     _plugin.play();
   }
 
   /// Tells the media player to play the current song
   ///     AssetsAudioPlayer.pause();
-  /// 
+  ///
   static void pause() {
     _plugin.pause();
   }
 
   /// Change the current position of the song
   /// Tells the player to go to a specific position of the current song
-  /// 
+  ///
   ///     AssetsAudioPlayer.seek(Duration(minutes: 1, seconds: 34));
-  /// 
+  ///
   static void seek(Duration to) {
     _plugin.seek(to);
   }
 
   /// Tells the media player to stop the current song, then release the MediaPlayer
   ///     AssetsAudioPlayer.stop();
-  /// 
+  ///
   static void stop() {
     _plugin.stop();
   }
@@ -174,24 +174,28 @@ class AssetsAudioPlayerPlugin {
   /// Then mediaplayer playing state (mutable)
   final BehaviorSubject<bool> _isPlaying =
       BehaviorSubject<bool>(seedValue: false);
-    /// Then mediaplayer playing state (immutable)
+
+  /// Then mediaplayer playing state (immutable)
   ValueObservable<bool> get isPlaying => _isPlaying.stream;
 
   /// Then mediaplayer playing audio (mutable)
   final BehaviorSubject<PlayingAudio> _current =
       BehaviorSubject<PlayingAudio>();
+
   /// Then mediaplayer playing audio (immutable)
   ValueObservable<PlayingAudio> get current => _current.stream;
 
   /// Called when the playing song finished (mutable)
   final BehaviorSubject<bool> _finished =
       BehaviorSubject<bool>(seedValue: false);
+
   /// Called when the playing song finished (immutable)
   ValueObservable<bool> get finished => _isPlaying.stream;
 
   /// Then current playing song position (in seconds) (mutable)
   final BehaviorSubject<Duration> _currentPosition =
       BehaviorSubject<Duration>(seedValue: const Duration());
+
   /// Then current playing song position (in seconds) (immutable)
   Stream<Duration> get currentPosition => _currentPosition.stream;
 
@@ -320,7 +324,7 @@ class AssetsAudioPlayerPlugin {
     _channel.invokeMethod('seek', to.inSeconds.round());
   }
 
-  /// Stops and release the current mediaplayer 
+  /// Stops and release the current mediaplayer
   void stop() {
     _channel.invokeMethod('stop');
   }
