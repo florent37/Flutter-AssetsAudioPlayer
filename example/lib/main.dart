@@ -11,16 +11,19 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  
   final assets = <String>[
     "song1.mp3",
     "song2.mp3",
     "song3.mp3",
   ];
+  final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
+
   var _currentAssetPosition = -1;
 
   void _open(int assetIndex) {
     _currentAssetPosition = assetIndex % assets.length;
-    AssetsAudioPlayer.open(
+    _assetsAudioPlayer.open(
       AssetsAudio(
         asset: assets[_currentAssetPosition],
         folder: "assets/audios/",
@@ -29,7 +32,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _playPause() {
-    AssetsAudioPlayer.playOrPause();
+    _assetsAudioPlayer.playOrPause();
   }
 
   void _next() {
@@ -44,7 +47,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    AssetsAudioPlayer.stop();
+    _assetsAudioPlayer.stop();
     super.dispose();
   }
 
@@ -63,7 +66,7 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               Expanded(
                 child: StreamBuilder(
-                  stream: AssetsAudioPlayer.current,
+                  stream: _assetsAudioPlayer.current,
                   initialData: const PlayingAudio(),
                   builder: (BuildContext context,
                       AsyncSnapshot<PlayingAudio> snapshot) {
@@ -90,7 +93,7 @@ class _MyAppState extends State<MyApp> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   StreamBuilder(
-                    stream: AssetsAudioPlayer.currentPosition,
+                    stream: _assetsAudioPlayer.currentPosition,
                     initialData: const Duration(),
                     builder: (BuildContext context,
                         AsyncSnapshot<Duration> snapshot) {
@@ -100,7 +103,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                   Text(" - "),
                   StreamBuilder(
-                    stream: AssetsAudioPlayer.current,
+                    stream: _assetsAudioPlayer.current,
                     builder: (BuildContext context,
                         AsyncSnapshot<PlayingAudio> snapshot) {
                       Duration duration = Duration();
@@ -121,7 +124,7 @@ class _MyAppState extends State<MyApp> {
                     icon: Icon(AssetAudioPlayerIcons.to_start),
                   ),
                   StreamBuilder(
-                    stream: AssetsAudioPlayer.isPlaying,
+                    stream: _assetsAudioPlayer.isPlaying,
                     initialData: false,
                     builder:
                         (BuildContext context, AsyncSnapshot<bool> snapshot) {
