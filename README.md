@@ -1,5 +1,8 @@
 # assets_audio_player
 
+[![pub package](https://img.shields.io/pub/v/anim.svg)](
+https://pub.dartlang.org/packages/anim)
+
 Play music/audio stored in assets files directly from Flutter. 
 
 No needed to copy songs to a media cache, with assets_audio_player you can open them directly from the assets. 
