@@ -4,12 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 
-
 /// The AssetsAudioPlayer, playing audios from assets/
 /// Example :
-/// 
+///
 ///     AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
-/// 
+///
 ///     _assetsAudioPlayer.open(AssetsAudio(
 ///       asset: "song1.mp3",
 ///       folder: "assets/audios/",
@@ -20,7 +19,7 @@ import 'package:rxdart/subjects.dart';
 ///     flutter:
 ///       assets:
 ///         - assets/audios/
-/// 
+///
 class AssetsAudioPlayer {
   /// The channel between the native and Dart
   final MethodChannel _channel = const MethodChannel('assets_audio_player');
@@ -166,7 +165,7 @@ class AssetsAudioPlayer {
   /// ### Example
   ///
   ///     AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
-  /// 
+  ///
   ///     _assetsAudioPlayer.open(AssetsAudio(
   ///       asset: "song1.mp3",
   ///       folder: "assets/audios/",
@@ -234,7 +233,7 @@ class AssetsAudioPlayer {
   /// Tells the player to go to a specific position of the current song
   ///
   ///     _assetsAudioPlayer.seek(Duration(minutes: 1, seconds: 34));
-  /// 
+  ///
   void seek(Duration to) {
     _channel.invokeMethod('seek', to.inSeconds.round());
   }
@@ -246,7 +245,6 @@ class AssetsAudioPlayer {
     _channel.invokeMethod('stop');
   }
 }
-
 
 /// An audio asset, represented by an asset name and a folder
 /// This class is used by AssetsAudioPlayer to open a song

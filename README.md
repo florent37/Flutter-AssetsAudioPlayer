@@ -16,24 +16,26 @@ flutter:
 ## Getting Started
 
 ```Dart
-AssetsAudioPlayer.open(AssetsAudio(
+final assetsAudioPlayer = AssetsAudioPlayer();
+
+assetsAudioPlayer.open(AssetsAudio(
     asset: "song1.mp3",
     folder: "assets/audios/",
 ));
 ```
 
 ```Dart
-AssetsAudioPlayer.playOrPause();
-AssetsAudioPlayer.play();
-AssetsAudioPlayer.pause();
+assetsAudioPlayer.playOrPause();
+assetsAudioPlayer.play();
+assetsAudioPlayer.pause();
 ```
 
 ```Dart
-AssetsAudioPlayer.seek(Duration to);
+assetsAudioPlayer.seek(Duration to);
 ```
 
 ```Dart
-AssetsAudioPlayer.stop();
+assetsAudioPlayer.stop();
 ```
 
 ## Listeners
@@ -44,13 +46,13 @@ Using RxDart, AssetsAudioPlayer exposes some listeners as ValueObservable (Obser
 ### Current song
 ```Dart
 //The current playing audio, filled with the total song duration
-AssetsAudioPlayer.current //ValueObservable<PlayingAudio>
+assetsAudioPlayer.current //ValueObservable<PlayingAudio>
 
 //Retrieve directly the current played asset
-final PlayingAudio playing = AssetsAudioPlayer.current.value;
+final PlayingAudio playing = assetsAudioPlayer.current.value;
 
 //Listen to the current playing song
-AssetsAudioPlayer.current.listen((playingAudio){
+assetsAudioPlayer.current.listen((playingAudio){
     final asset = playingAudio.assetAudio;
     final songDuration = playingAudio.duration;
 })
@@ -59,13 +61,13 @@ AssetsAudioPlayer.current.listen((playingAudio){
 ### Current position (in seconds)
 
 ```Dart
-AssetsAudioPlayer.currentPosition //ValueObservable<Duration>
+assetsAudioPlayer.currentPosition //ValueObservable<Duration>
 
 //retrieve directly the current song position
-final Duration position = AssetsAudioPlayer.currentPosition.value;
+final Duration position = assetsAudioPlayer.currentPosition.value;
 
 return StreamBuilder(
-    stream: AssetsAudioPlayer.currentPosition,
+    stream: assetsAudioPlayer.currentPosition,
     builder: (context, asyncSnapshot) {
         final Duration duration = asyncSnapshot.data;
         return Text(duration.toString());  
@@ -75,14 +77,14 @@ return StreamBuilder(
 ### IsPlaying
 boolean observable representing the current mediaplayer playing state
 ```Dart
-AssetsAudioPlayer.isPlaying // ValueObservable<bool>
+assetsAudioPlayer.isPlaying // ValueObservable<bool>
 
 //retrieve directly the current player state
-final bool playing = AssetsAudioPlayer.isPlaying.value;
+final bool playing = assetsAudioPlayer.isPlaying.value;
 
 //will follow the AssetsAudioPlayer playing state
 return StreamBuilder(
-    stream: AssetsAudioPlayer.isPlaying,
+    stream: assetsAudioPlayer.isPlaying,
     builder: (context, asyncSnapshot) {
         final bool isPlaying = asyncSnapshot.data;
         return Text(isPlaying ? "Pause" : "Play");  
@@ -94,9 +96,9 @@ return StreamBuilder(
 Called when the current song has finished to play
 
 ```Dart
-AssetsAudioPlayer.finished //ValueObservable<bool>
+assetsAudioPlayer.finished //ValueObservable<bool>
 
-AssetsAudioPlayer.finished.listen((finished){
+assetsAudioPlayer.finished.listen((finished){
     
 })
 ```
