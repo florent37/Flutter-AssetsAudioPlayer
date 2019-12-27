@@ -10,8 +10,8 @@ import 'package:rxdart/subjects.dart';
 ///     AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
 ///
 ///     _assetsAudioPlayer.open(AssetsAudio(
-///       asset: "song1.mp3",
-///       folder: "assets/audios/",
+///       asset: "",
+///       folder: ,
 ///     )
 ///
 /// Don't forget to declare the audio folder in your `pubspec.yaml`
@@ -25,8 +25,7 @@ class AssetsAudioPlayer {
   final MethodChannel _channel = const MethodChannel('assets_audio_player');
 
   /// Then mediaplayer playing state (mutable)
-  final BehaviorSubject<bool> _isPlaying =
-      BehaviorSubject<bool>(seedValue: false);
+  final BehaviorSubject<bool> _isPlaying = BehaviorSubject<bool>.seeded(false);
 
   /// Boolean observable representing the current mediaplayer playing state
   ///
@@ -40,7 +39,7 @@ class AssetsAudioPlayer {
   ///             final bool isPlaying = asyncSnapshot.data;
   ///             return Text(isPlaying ? "Pause" : "Play");
   ///         }),
-  ValueObservable<bool> get isPlaying => _isPlaying.stream;
+  ValueStream<bool> get isPlaying => _isPlaying.stream;
 
   /// Then mediaplayer playing audio (mutable)
   final BehaviorSubject<PlayingAudio> _current =
@@ -58,22 +57,21 @@ class AssetsAudioPlayer {
   ///         final songDuration = playingAudio.duration;
   ///     })
   ///
-  ValueObservable<PlayingAudio> get current => _current.stream;
+  ValueStream<PlayingAudio> get current => _current.stream;
 
   /// Called when the playing song finished (mutable)
-  final BehaviorSubject<bool> _finished =
-      BehaviorSubject<bool>(seedValue: false);
+  final BehaviorSubject<bool> _finished = BehaviorSubject<bool>.seeded(false);
 
   /// Called when the current song has finished to play
   ///     _assetsAudioPlayer.finished.listen((finished){
   ///
   ///     })
   ///
-  ValueObservable<bool> get finished => _isPlaying.stream;
+  ValueStream<bool> get finished => _isPlaying.stream;
 
   /// Then current playing song position (in seconds) (mutable)
   final BehaviorSubject<Duration> _currentPosition =
-      BehaviorSubject<Duration>(seedValue: const Duration());
+      BehaviorSubject<Duration>.seeded(const Duration());
 
   /// Retrieve directly the current song position (in seconds)
   ///     final Duration position = _assetsAudioPlayer.currentPosition.value;
@@ -94,8 +92,8 @@ class AssetsAudioPlayer {
       Stream<bool> get prev => _prev.stream;
     */
 
-  /// Stores opened AssetsAudio to use it on the `_current` BehaviorSubject (in `PlayingAudio`)
-  AssetsAudio _lastOpenedAssetsAudio;
+  /// Stores opened asset audio path to use it on the `_current` BehaviorSubject (in `PlayingAudio`)
+  String _lastOpenedAssetsAudioPath;
 
   /// Call it to dispose stream
   void dispose() {
@@ -121,7 +119,7 @@ class AssetsAudioPlayer {
           final totalDuration = _toDuration(call.arguments["totalDuration"]);
 
           _current.value = PlayingAudio(
-            assetAudio: _lastOpenedAssetsAudio,
+            assetAudioPath: _lastOpenedAssetsAudioPath,
             duration: totalDuration,
           );
           break;
@@ -166,10 +164,7 @@ class AssetsAudioPlayer {
   ///
   ///     AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
   ///
-  ///     _assetsAudioPlayer.open(AssetsAudio(
-  ///       asset: "song1.mp3",
-  ///       folder: "assets/audios/",
-  ///     )
+  ///     _assetsAudioPlayer.open("assets/audios/song1.mp3")
   ///
   /// Don't forget to declare the audio folder in your `pubspec.yaml`
   ///
@@ -177,27 +172,14 @@ class AssetsAudioPlayer {
   ///       assets:
   ///         - assets/audios/
   ///
-  void open(AssetsAudio assetAudio) async {
-    String assetName = assetAudio.asset;
-    if (assetName.startsWith("/")) {
-      assetName = assetName.substring(1);
-    }
-    String folder = assetAudio.folder;
-    if (folder.endsWith("/")) {
-      folder = folder.substring(0, folder.length - 1);
-    }
-    if (folder.startsWith("/")) {
-      folder = folder.substring(1);
-    }
-
+  void open(String assetAudioPath) async {
     try {
-      _channel.invokeMethod(
-          'open', <String, dynamic>{'file': assetName, 'folder': folder});
+      _channel.invokeMethod('open', assetAudioPath);
     } catch (e) {
       print(e);
     }
 
-    _lastOpenedAssetsAudio = assetAudio;
+    _lastOpenedAssetsAudioPath = assetAudioPath;
   }
 
   /// Toggle the current playing state
@@ -246,29 +228,6 @@ class AssetsAudioPlayer {
   }
 }
 
-/// An audio asset, represented by an asset name and a folder
-/// This class is used by AssetsAudioPlayer to open a song
-///
-/// ### Example
-///
-///     _assetsAudioPlayer.open(AssetsAudio(
-///       asset: "song1.mp3",
-///       folder: "assets/audios/",
-///     )
-///
-/// Don't forget to declare the audio folder in your `pubspec.yaml`
-///
-///     flutter:
-///       assets:
-///         - assets/audios/
-///
-class AssetsAudio {
-  final String asset;
-  final String folder;
-
-  const AssetsAudio({this.asset, this.folder});
-}
-
 /// Represents the current played audio asset
 /// When the player opened a song, it will ping AssetsAudioPlayer.current with a `AssetsAudio`
 ///
@@ -286,10 +245,10 @@ class AssetsAudio {
 ///
 class PlayingAudio {
   ///the opened asset
-  final AssetsAudio assetAudio;
+  final String assetAudioPath;
 
   ///the current song's total duration
   final Duration duration;
 
-  const PlayingAudio({this.assetAudio = const AssetsAudio(), this.duration});
+  const PlayingAudio({this.assetAudioPath = "", this.duration = Duration.zero});
 }
