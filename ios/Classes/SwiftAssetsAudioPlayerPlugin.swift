@@ -97,10 +97,12 @@ class Music : NSObject, AVAudioPlayerDelegate {
         self.channel.invokeMethod(Music.METHOD_FINISHED, arguments: true)
     }
     
-    func open(assetPath: String, result: FlutterResult){
-        let assetKey = registrar.lookupKey(forAsset: assetPath)
-        guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
-            log("resource not found \(assetKey)")
+    func open(asset: String, folder: String, result: FlutterResult){
+        //let assetKey = registrar.lookupKey(forAsset: assetPath)
+        //guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
+        //    log("resource not found \(assetKey)")
+        guard let url = Bundle.main.url(forResource: asset, withExtension: "", subdirectory: "Frameworks/App.framework/flutter_assets/"+folder) else {
+            log("resource not found "+asset)
             result("");
             return
         }
