@@ -99,7 +99,7 @@ class Music : NSObject, AVAudioPlayerDelegate {
     }
     
     func open(asset: String, folder: String, result: FlutterResult){
-        guard let url = Bundle.main.url(forResource: asset, withExtension: "", subdirectory: "flutter_assets/"+folder) else {
+        guard let url = Bundle.main.url(forResource: asset, withExtension: "", subdirectory: "Frameworks/App.framework/flutter_assets/"+folder) else {
             log("resource not found "+asset)
             result("");
             return
