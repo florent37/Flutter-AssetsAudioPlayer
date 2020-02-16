@@ -4,7 +4,7 @@ import AVFoundation
 
 public class SwiftAssetsAudioPlayerPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let music = Music(messenger: registrar.messenger())
+    let music = Music(messenger: registrar.messenger(), registrar: registrar)
     music.start()
   }
 
@@ -21,8 +21,10 @@ class Music : NSObject, AVAudioPlayerDelegate {
     static let METHOD_CURRENT = "player.current"
 
     let channel: FlutterMethodChannel
-    init(messenger: FlutterBinaryMessenger) {
+    let registrar: FlutterPluginRegistrar
+    init(messenger: FlutterBinaryMessenger, registrar: FlutterPluginRegistrar) {
         self.channel = FlutterMethodChannel(name: "assets_audio_player", binaryMessenger: messenger);
+        self.registrar = registrar
     }
     
     func log(_ message: String){
@@ -49,14 +51,11 @@ class Music : NSObject, AVAudioPlayerDelegate {
             }
             break;
             case "open" :
-                if let args = call.arguments as? Dictionary<String, Any> {
-                    let file = args["file"] as! String
-                    let folder = args["folder"] as! String
-                    
-                    self.open(asset: file, folder: folder, result: result);
+                if let assetPath = call.arguments as? String {
+                    self.open(assetPath: assetPath, result: result);
                 } else {
                     result(FlutterError(code: "WRONG_FORMAT",
-                                        message: "The specified argument must be an Map.",
+                                        message: "The specified argument must be a string",
                                         details: nil))
                 }
                 break;
@@ -99,13 +98,17 @@ class Music : NSObject, AVAudioPlayerDelegate {
     }
     
     func open(asset: String, folder: String, result: FlutterResult){
+        //let assetKey = registrar.lookupKey(forAsset: assetPath)
+        //guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
+        //    log("resource not found \(assetKey)")
         guard let url = Bundle.main.url(forResource: asset, withExtension: "", subdirectory: "Frameworks/App.framework/flutter_assets/"+folder) else {
             log("resource not found "+asset)
             result("");
             return
         }
         
-        log("url: "+url.absoluteString)
+        let url = URL(fileURLWithPath: path)
+//        log("url: "+url.absoluteString)
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: .mixWithOthers)
             try AVAudioSession.sharedInstance().setActive(true)

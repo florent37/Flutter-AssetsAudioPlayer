@@ -11,11 +11,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  
   final assets = <String>[
-    "song1.mp3",
-    "song2.mp3",
-    "song3.mp3",
+    "assets/audios/song1.mp3",
+    "assets/audios/song2.mp3",
+    "assets/audios/song3.mp3",
   ];
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
 
@@ -23,12 +22,7 @@ class _MyAppState extends State<MyApp> {
 
   void _open(int assetIndex) {
     _currentAssetPosition = assetIndex % assets.length;
-    _assetsAudioPlayer.open(
-      AssetsAudio(
-        asset: assets[_currentAssetPosition],
-        folder: "assets/audios/",
-      ),
-    );
+    _assetsAudioPlayer.open(assets[_currentAssetPosition]);
   }
 
   void _playPause() {
@@ -74,10 +68,10 @@ class _MyAppState extends State<MyApp> {
                     return ListView.builder(
                       itemBuilder: (context, position) {
                         return ListTile(
-                            title: Text(assets[position],
+                            title: Text(assets[position].split("/").last,
                                 style: TextStyle(
                                     color: assets[position] ==
-                                            currentAudio.assetAudio.asset
+                                            currentAudio.assetAudioPath
                                         ? Colors.blue
                                         : Colors.black)),
                             onTap: () {
