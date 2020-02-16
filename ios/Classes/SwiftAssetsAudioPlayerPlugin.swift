@@ -108,7 +108,14 @@ class Music : NSObject, AVAudioPlayerDelegate {
         let url = URL(fileURLWithPath: path)
 //        log("url: "+url.absoluteString)
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: .mixWithOthers)
+            
+            /* set session category and mode with options */
+            if #available(iOS 10.0, *) {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, mode: AVAudioSessionModeDefault, options: [])
+            } else {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: .mixWithOthers)
+            }
+            
             try AVAudioSession.sharedInstance().setActive(true)
             
             /* The following line is required for the player to work on iOS 11. Change the file type accordingly */
