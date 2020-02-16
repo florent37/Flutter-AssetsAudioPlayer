@@ -52,7 +52,7 @@ class Music : NSObject, AVAudioPlayerDelegate {
             break;
             case "open" :
                 if let assetPath = call.arguments as? String {
-                    self.open(assetPath: assetPath, result: result);
+                     self.open(assetPath: assetPath, result: result);
                 } else {
                     result(FlutterError(code: "WRONG_FORMAT",
                                         message: "The specified argument must be a string",
@@ -97,14 +97,12 @@ class Music : NSObject, AVAudioPlayerDelegate {
         self.channel.invokeMethod(Music.METHOD_FINISHED, arguments: true)
     }
     
-    func open(asset: String, folder: String, result: FlutterResult){
-        //let assetKey = registrar.lookupKey(forAsset: assetPath)
-        //guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
-        //    log("resource not found \(assetKey)")
-        guard let url = Bundle.main.url(forResource: asset, withExtension: "", subdirectory: "Frameworks/App.framework/flutter_assets/"+folder) else {
-            log("resource not found "+asset)
-            result("");
-            return
+   func open(assetPath: String, result: FlutterResult){
+        let assetKey = registrar.lookupKey(forAsset: assetPath)
+        guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
+             log("resource not found \(assetKey)")
+             result("");
+             return
         }
         
         let url = URL(fileURLWithPath: path)

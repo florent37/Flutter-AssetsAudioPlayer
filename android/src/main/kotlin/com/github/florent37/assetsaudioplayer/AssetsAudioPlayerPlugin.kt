@@ -18,7 +18,7 @@ internal val METHOD_NEXT = "player.next"
 internal val METHOD_PREV = "player.prev"
 
 class AssetsAudioPlayerPlugin(private val context: Context, private val channel: MethodChannel) :
-    MethodCallHandler {
+        MethodCallHandler {
     companion object {
         @JvmStatic
         fun registerWith(registrar: Registrar) {
@@ -81,10 +81,14 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
                 result.success(null)
             }
             "open" -> if (call.arguments != null) {
+                if (call.arguments !is String) {
+                    if (call.arguments !is Int) {
+                        result.error("WRONG_FORMAT", "The specified argument must be an String.", null)
+                    }
+                }
                 open(
-                    call.argument("file"),
-                    call.argument("folder"),
-                    result
+                        call.arguments() as String,
+                        result
                 )
             }
             else -> result.notImplemented()
@@ -106,7 +110,7 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
         mediaPlayer = null
     }
 
-    private fun open(asset: String?, folder: String?, result: MethodChannel.Result) {
+    private fun open(assetAudioPath: String?, result: MethodChannel.Result) {
         stop()
 
         var totalDurationSeconds = 0L
@@ -116,14 +120,14 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
         try {
             val mmr = MediaMetadataRetriever()
 
-            val afd = context.assets.openFd("flutter_assets/$folder/$asset")
+            val afd = context.assets.openFd("flutter_assets/$assetAudioPath")
             mediaPlayer?.setDataSource(afd.fileDescriptor, afd.startOffset, afd.declaredLength)
 
             mmr.setDataSource(afd.fileDescriptor, afd.startOffset, afd.declaredLength)
 
             //retrieve duration in seconds
             val duration =
-                mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
+                    mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
             totalDurationSeconds = (duration / 1000)
 
             mmr.release()
