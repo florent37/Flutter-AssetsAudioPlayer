@@ -21,10 +21,9 @@ flutter:
 ```Dart
 final assetsAudioPlayer = AssetsAudioPlayer();
 
-assetsAudioPlayer.open(AssetsAudio(
-    asset: "song1.mp3",
-    folder: "assets/audios/",
-));
+assetsAudioPlayer.open(
+    "assets/audios/song1.mp3",
+);
 ```
 
 ```Dart
