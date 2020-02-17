@@ -95,10 +95,26 @@ class AssetsAudioPlayer {
   /// Stores opened asset audio path to use it on the `_current` BehaviorSubject (in `PlayingAudio`)
   String _lastOpenedAssetsAudioPath;
 
+
+
   final BehaviorSubject<bool> _loop = BehaviorSubject<bool>.seeded(false);
+
+  /// Called when the looping state changes
+  ///     _assetsAudioPlayer.isLooping.listen((looping){
+  ///
+  ///     })
+  ///
   ValueStream<bool> get isLooping => _loop.stream;
+
+  /// returns the looping state : true -> looping, false -> not looping
   bool get loop => _loop.value;
+
+  /// assign the looping state : true -> looping, false -> not looping
   void set loop(value) { _loop.value = value; }
+
+  /// toggle the looping state
+  /// if it was looping -> stops this
+  /// if it was'nt looping -> now it is
   void toggleLoop(){
     loop = !loop;
   }
