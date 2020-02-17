@@ -1,3 +1,7 @@
+## 1.2.1
+
+* Added looping setter/getter
+
 ## 1.2.0
 
 * Upgraded RxDart to 0.23.1

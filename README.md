@@ -112,6 +112,20 @@ assetsAudioPlayer.finished.listen((finished){
 })
 ```
 
+### Looping
+
+```Dart
+final bool isLooping = assetsAudioPlayer.loop; //true / false
+
+assetsAudioPlayer.loop = true; //set loop as true
+
+assetsAudioPlayer.isLooping.listen((loop){
+    //listen to loop
+})
+
+assetsAudioPlayer.toggleLoop(); //toggle the value of looping
+```
+
 # Flutter
 
 For help getting started with Flutter, view our 
