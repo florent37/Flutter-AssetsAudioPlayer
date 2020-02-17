@@ -60,7 +60,8 @@ class AssetsAudioPlayer {
   ValueStream<bool> get isPlaying => _isPlaying.stream;
 
   /// Then mediaplayer playing audio (mutable)
-  final BehaviorSubject<PlayingAudio> _current = BehaviorSubject<PlayingAudio>();
+  final BehaviorSubject<PlayingAudio> _current =
+      BehaviorSubject<PlayingAudio>();
 
   /// The current playing audio, filled with the total song duration
   /// Exposes a PlayingAudio
@@ -78,7 +79,8 @@ class AssetsAudioPlayer {
 
   /// The current playing playlist audio, filled with the total song duration
   /// works the same as @current stream
-  final BehaviorSubject<PlaylistPlayingAudio> _playlistCurrent = BehaviorSubject<PlaylistPlayingAudio>();
+  final BehaviorSubject<PlaylistPlayingAudio> _playlistCurrent =
+      BehaviorSubject<PlaylistPlayingAudio>();
 
   /// The current playlist song
   /// Stream contains null if it has no playlist
@@ -99,14 +101,17 @@ class AssetsAudioPlayer {
   /// _assetsAudioPlayer.playlistAudioFinished.listen((audio){
   ///      the $audio has finished to play, moving to next audio
   /// })
-  final PublishSubject<PlaylistPlayingAudio> _playlistAudioFinished = PublishSubject<PlaylistPlayingAudio>();
+  final PublishSubject<PlaylistPlayingAudio> _playlistAudioFinished =
+      PublishSubject<PlaylistPlayingAudio>();
 
   /// Called when the current playlist song has finished
   /// Using a playlist, the `finished` stram will be called only if the complete playlist finished
-  Stream<PlaylistPlayingAudio> get playlistAudioFinished => _playlistAudioFinished.stream;
+  Stream<PlaylistPlayingAudio> get playlistAudioFinished =>
+      _playlistAudioFinished.stream;
 
   /// Then current playing song position (in seconds) (mutable)
-  final BehaviorSubject<Duration> _currentPosition = BehaviorSubject<Duration>.seeded(const Duration());
+  final BehaviorSubject<Duration> _currentPosition =
+      BehaviorSubject<Duration>.seeded(const Duration());
 
   /// Retrieve directly the current song position (in seconds)
   ///     final Duration position = _assetsAudioPlayer.currentPosition.value;
@@ -173,7 +178,11 @@ class AssetsAudioPlayer {
           );
           _current.value = playingAudio;
           if (_playlist != null) {
-            _playlistCurrent.value = PlaylistPlayingAudio(playingAudio: playingAudio, index: _playlist.playlistIndex, hasNext: _playlist.hasNext(), playlist: _playlist.playlist);
+            _playlistCurrent.value = PlaylistPlayingAudio(
+                playingAudio: playingAudio,
+                index: _playlist.playlistIndex,
+                hasNext: _playlist.hasNext(),
+                playlist: _playlist.playlist);
           }
           break;
         /*
@@ -317,7 +326,9 @@ class AssetsAudioPlayer {
   }
 
   void openPlaylist(Playlist playlist) async {
-    if (playlist != null && playlist.assetAudioPaths != null && playlist.assetAudioPaths.length > 0) {
+    if (playlist != null &&
+        playlist.assetAudioPaths != null &&
+        playlist.assetAudioPaths.length > 0) {
       this._playlist = _CurrentPlaylist(playlist: playlist);
       _playlist.moveTo(playlist.startIndex);
       _open(_playlist.currentAudioPath(), resetPlaylist: false);
@@ -371,6 +382,16 @@ class AssetsAudioPlayer {
   void stop() {
     _channel.invokeMethod('stop');
   }
+
+  /// TODO ShufflePlaylist
+  //void shufflePlaylist() {
+  //  TODO()
+  //}
+
+  /// TODO Playlist Loop / Loop 1
+  //void playlistLoop(PlaylistLoop /* enum */ mode) {
+  //  TODO()
+  //}
 }
 
 /// Represents the current played audio asset
@@ -412,7 +433,8 @@ class ReadingPlaylist {
   final List<String> assetAudioPaths;
   final int currentIndex;
 
-  const ReadingPlaylist({@required this.assetAudioPaths, this.currentIndex = 0});
+  const ReadingPlaylist(
+      {@required this.assetAudioPaths, this.currentIndex = 0});
 }
 
 class _CurrentPlaylist {
@@ -478,5 +500,9 @@ class PlaylistPlayingAudio {
   /// the parent playlist
   final Playlist playlist;
 
-  PlaylistPlayingAudio({@required this.playingAudio, @required this.index, @required this.hasNext, @required this.playlist});
+  PlaylistPlayingAudio(
+      {@required this.playingAudio,
+      @required this.index,
+      @required this.hasNext,
+      @required this.playlist});
 }
