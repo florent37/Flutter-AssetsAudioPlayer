@@ -29,13 +29,21 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _next() {
-    _currentAssetPosition++;
-    _open(_currentAssetPosition);
+    if(_assetsAudioPlayer.playlist != null){
+      _assetsAudioPlayer.playlistNext();
+    } else {
+      _currentAssetPosition++;
+      _open(_currentAssetPosition);
+    }
   }
 
   void _prev() {
-    _currentAssetPosition--;
-    _open(_currentAssetPosition);
+    if(_assetsAudioPlayer.playlist != null){
+      _assetsAudioPlayer.playlistPrevious();
+    } else {
+      _currentAssetPosition--;
+      _open(_currentAssetPosition);
+    }
   }
 
   @override
@@ -57,6 +65,14 @@ class _MyAppState extends State<MyApp> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              RaisedButton(
+                onPressed: (){
+                  _assetsAudioPlayer.openPlaylist(Playlist(
+                    assetAudioPaths: this.assets
+                  ));
+                },
+                child: Text("Playlist test"),
+              ),
               Expanded(
                 child: StreamBuilder(
                   stream: _assetsAudioPlayer.current,
