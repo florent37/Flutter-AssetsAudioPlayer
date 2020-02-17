@@ -67,7 +67,7 @@ class AssetsAudioPlayer {
   ///
   ///     })
   ///
-  ValueStream<bool> get finished => _isPlaying.stream;
+  ValueStream<bool> get finished => _finished.stream;
 
   /// Then current playing song position (in seconds) (mutable)
   final BehaviorSubject<Duration> _currentPosition =
