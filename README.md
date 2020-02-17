@@ -40,6 +40,22 @@ assetsAudioPlayer.seek(Duration to);
 assetsAudioPlayer.stop();
 ```
 
+# Playlist
+```Dart
+assetsAudioPlayer.openPlaylist(
+  Playlist(
+    assetAudioPaths: [
+      "assets/audios/song1.mp3",
+      "assets/audios/song2.mp3"
+    ]
+  )
+);
+
+assetsAudioPlayer.playlistNext();
+assetsAudioPlayer.playlistPrev();
+assetsAudioPlayer.playlistPlayAtIndex(1);
+```
+
 ## Listeners
 
 All listeners exposes Streams 
