@@ -95,6 +95,14 @@ class AssetsAudioPlayer {
   /// Stores opened asset audio path to use it on the `_current` BehaviorSubject (in `PlayingAudio`)
   String _lastOpenedAssetsAudioPath;
 
+  final BehaviorSubject<bool> _loop = BehaviorSubject<bool>.seeded(false);
+  ValueStream<bool> get isLooping => _loop.stream;
+  bool get loop => _loop.value;
+  void set loop(value) { _loop.value = value; }
+  void toggleLoop(){
+    loop = !loop;
+  }
+
   /// Call it to dispose stream
   void dispose() {
     _currentPosition.close();
@@ -113,7 +121,7 @@ class AssetsAudioPlayer {
           print("log: " + call.arguments);
           break;
         case 'player.finished':
-          _finished.value = call.arguments;
+          _onfinished(call.arguments);
           break;
         case 'player.current':
           final totalDuration = _toDuration(call.arguments["totalDuration"]);
@@ -146,6 +154,15 @@ class AssetsAudioPlayer {
           print('[ERROR] Channel method ${call.method} not implemented.');
       }
     });
+  }
+
+  void _onfinished(bool isFinished) {
+    _finished.value = isFinished;
+    if(loop){
+      if(_lastOpenedAssetsAudioPath != null) {
+        open(_lastOpenedAssetsAudioPath);
+      }
+    }
   }
 
   /// Converts a number to duration
@@ -226,6 +243,7 @@ class AssetsAudioPlayer {
   void stop() {
     _channel.invokeMethod('stop');
   }
+
 }
 
 /// Represents the current played audio asset
@@ -233,8 +251,7 @@ class AssetsAudioPlayer {
 ///
 /// ### Example
 ///     final assetAudio = AssetsAudio(
-///       asset: "song1.mp3",
-///       folder: "assets/audios/",
+///       assets/audios/song1.mp3,
 ///     )
 ///
 ///     _assetsAudioPlayer.current.listen((PlayingAudio current){

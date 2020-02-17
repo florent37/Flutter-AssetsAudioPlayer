@@ -1,7 +1,6 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:assets_audio_player_example/asset_audio_player_icons.dart';
 import 'package:flutter/material.dart';
-
-import 'package:assets_audio_player/assets_audio_player.dart';
 
 void main() => runApp(MyApp());
 
@@ -62,18 +61,14 @@ class _MyAppState extends State<MyApp> {
                 child: StreamBuilder(
                   stream: _assetsAudioPlayer.current,
                   initialData: const PlayingAudio(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<PlayingAudio> snapshot) {
+                  builder: (BuildContext context, AsyncSnapshot<PlayingAudio> snapshot) {
                     final PlayingAudio currentAudio = snapshot.data;
                     return ListView.builder(
                       itemBuilder: (context, position) {
                         return ListTile(
-                            title: Text(assets[position].split("/").last,
-                                style: TextStyle(
-                                    color: assets[position] ==
-                                            currentAudio.assetAudioPath
-                                        ? Colors.blue
-                                        : Colors.black)),
+                            title: Text(assets[position]
+                                .split("/")
+                                .last, style: TextStyle(color: assets[position] == currentAudio.assetAudioPath ? Colors.blue : Colors.black)),
                             onTap: () {
                               _open(position);
                             });
@@ -85,12 +80,36 @@ class _MyAppState extends State<MyApp> {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  StreamBuilder(
+                    stream: _assetsAudioPlayer.isLooping,
+                    initialData: false,
+                    builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                      return RaisedButton(
+                        child: Text(snapshot.data ? "Looping" : "Not looping"),
+                        onPressed: () {
+                          _assetsAudioPlayer.toggleLoop();
+                        },
+                      );
+                    },
+                  ),
+                  SizedBox(width: 20),
+                  RaisedButton(
+                    child: Text("Seek to 2:00"),
+                    onPressed: () {
+                      _assetsAudioPlayer.seek(Duration(minutes: 2));
+                    },
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   StreamBuilder(
                     stream: _assetsAudioPlayer.currentPosition,
                     initialData: const Duration(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<Duration> snapshot) {
+                    builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
                       Duration duration = snapshot.data;
                       return Text(durationToString(duration));
                     },
@@ -98,8 +117,7 @@ class _MyAppState extends State<MyApp> {
                   Text(" - "),
                   StreamBuilder(
                     stream: _assetsAudioPlayer.current,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<PlayingAudio> snapshot) {
+                    builder: (BuildContext context, AsyncSnapshot<PlayingAudio> snapshot) {
                       Duration duration = Duration();
                       if (snapshot.hasData) {
                         duration = snapshot.data.duration;
@@ -112,7 +130,7 @@ class _MyAppState extends State<MyApp> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
+                children: [
                   IconButton(
                     onPressed: _prev,
                     icon: Icon(AssetAudioPlayerIcons.to_start),
@@ -120,13 +138,10 @@ class _MyAppState extends State<MyApp> {
                   StreamBuilder(
                     stream: _assetsAudioPlayer.isPlaying,
                     initialData: false,
-                    builder:
-                        (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                       return IconButton(
                         onPressed: _playPause,
-                        icon: Icon(snapshot.data
-                            ? AssetAudioPlayerIcons.pause
-                            : AssetAudioPlayerIcons.play),
+                        icon: Icon(snapshot.data ? AssetAudioPlayerIcons.pause : AssetAudioPlayerIcons.play),
                       );
                     },
                   ),
@@ -150,9 +165,7 @@ String durationToString(Duration duration) {
     return "0$n";
   }
 
-  String twoDigitMinutes =
-      twoDigits(duration.inMinutes.remainder(Duration.minutesPerHour));
-  String twoDigitSeconds =
-      twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute));
+  String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(Duration.minutesPerHour));
+  String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute));
   return "$twoDigitMinutes:$twoDigitSeconds";
 }
