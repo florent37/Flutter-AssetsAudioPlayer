@@ -60,6 +60,13 @@ assetsAudioPlayer.current.listen((playingAudio){
 })
 ```
 
+### Current song duration
+
+```Dart
+//Listen to the current playing song
+final duration = assetsAudioPlayer.current.value.duration;
+```
+
 ### Current position (in seconds)
 
 ```Dart
