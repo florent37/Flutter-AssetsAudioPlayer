@@ -1,7 +1,7 @@
 # assets_audio_player
 
 [![pub package](https://img.shields.io/pub/v/anim.svg)](
-https://pub.dartlang.org/packages/anim)
+https://pub.dartlang.org/packages/assets_audio_player)
 
 Play music/audio stored in assets files directly from Flutter. 
 
