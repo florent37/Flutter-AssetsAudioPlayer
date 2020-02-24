@@ -2,12 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d5cc0afc-4a49-4e83-9f21-5ed30c8d112e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/assets_audio_player/ios/Classes/AssetsAudioPlayer.swift" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ios/Classes/AssetsAudioPlayer.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/assets_audio_player/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/assets_audio_player/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/assets_audio_player/lib/assets_audio_player.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/assets_audio_player/lib/assets_audio_player.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/assets_audio_player.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/assets_audio_player.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/playing.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/playing.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/assets_audio_player/ios/Classes/AssetsAudioPlayerPlugin.m" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/assets_audio_player/ios/Classes/AssetsAudioPlayerPlugin.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/assets_audio_player/ios/Classes/SwiftAssetsAudioPlayerPlugin.swift" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/AssetsAudioPlayerPlugin.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/AssetsAudioPlayerPlugin.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Classes/SwiftAssetsAudioPlayerPlugin.swift" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.dart_tool/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
@@ -29,29 +31,29 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="Nexus_S_API_28" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ios/Classes/AssetsAudioPlayerPlugin.m">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" selection-start-line="8" selection-end-line="8" />
+            <state relative-caret-position="15">
+              <caret line="1" column="57" selection-start-line="1" selection-start-column="57" selection-end-line="1" selection-end-column="57" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ios/Classes/SwiftAssetsAudioPlayerPlugin.swift">
+        <entry file="file://$PROJECT_DIR$/example/build/ios/Debug-iphonesimulator/assets_audio_player/assets_audio_player.framework/_CodeSignature/CodeResources">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2520">
-              <caret line="168" column="15" selection-start-line="168" selection-start-column="9" selection-end-line="168" selection-end-column="15" />
+            <state relative-caret-position="255">
+              <caret line="17" column="15" selection-start-line="17" selection-start-column="15" selection-end-line="17" selection-end-column="15" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/assets_audio_player.dart">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="272">
-              <caret line="92" column="36" lean-forward="true" selection-start-line="92" selection-start-column="36" selection-end-line="92" selection-end-column="36" />
+              <caret line="92" column="36" selection-start-line="92" selection-start-column="36" selection-end-line="92" selection-end-column="36" />
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
               </folding>
@@ -114,11 +116,6 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/android/gradle.properties">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -153,9 +150,9 @@
       <find>_playlistAudioFinished</find>
       <find>PlayingAudio(</find>
       <find>_current</find>
-      <find>assets_audio_player-Swift.h</find>
       <find>_current.v</find>
       <find>finished.</find>
+      <find>assets_audio_player-Swift.h</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -175,8 +172,8 @@
         <option value="$PROJECT_DIR$/lib/playable.dart" />
         <option value="$PROJECT_DIR$/example/lib/main.dart" />
         <option value="$PROJECT_DIR$/lib/playing.dart" />
-        <option value="$PROJECT_DIR$/ios/Classes/AssetsAudioPlayerPlugin.m" />
         <option value="$PROJECT_DIR$/lib/assets_audio_player.dart" />
+        <option value="$PROJECT_DIR$/ios/Classes/AssetsAudioPlayerPlugin.m" />
       </list>
     </option>
   </component>
@@ -217,12 +214,6 @@
               <item name="Flutter-AssetsAudioPlayer" type="b2602c69:ProjectViewProjectNode" />
               <item name="Flutter-AssetsAudioPlayer" type="462c0819:PsiDirectoryNode" />
               <item name="ios" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Flutter-AssetsAudioPlayer" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Flutter-AssetsAudioPlayer" type="462c0819:PsiDirectoryNode" />
-              <item name="ios" type="462c0819:PsiDirectoryNode" />
-              <item name="Assets" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Flutter-AssetsAudioPlayer" type="b2602c69:ProjectViewProjectNode" />
@@ -288,7 +279,7 @@
     <frame x="35" y="23" width="1645" height="1027" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4918919" visible="true" weight="0.28134748" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4918919" visible="true" weight="0.28134748" />
       <window_info id="Capture Tool" order="1" />
       <window_info id="Resources Explorer" order="2" />
       <window_info id="Structure" order="3" sideWeight="0.5081081" side_tool="true" weight="0.28134748" />
@@ -298,10 +289,10 @@
       <window_info anchor="bottom" id="Find" />
       <window_info anchor="bottom" id="Dart Analysis" order="0" sideWeight="0.4996881" weight="0.32894737" />
       <window_info anchor="bottom" id="TODO" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4978166" visible="true" weight="0.39144737" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4978166" weight="0.39144737" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49906427" weight="0.32894737" />
-      <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.4984404" weight="0.32894737" />
-      <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.5021834" side_tool="true" visible="true" weight="0.39144737" />
+      <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.4978166" visible="true" weight="0.32894737" />
+      <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.5021834" side_tool="true" visible="true" weight="0.32894737" />
       <window_info anchor="bottom" id="Version Control" order="6" weight="0.32974002" />
       <window_info anchor="bottom" id="Messages" order="7" weight="0.32894737" />
       <window_info anchor="right" id="Theme Preview" order="0" />
@@ -486,10 +477,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/lib/assets_audio_player.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="92" column="36" selection-start-line="92" selection-start-column="36" selection-end-line="92" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ios/assets_audio_player.podspec">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="20" selection-start-line="20" selection-end-line="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ios/Classes/SwiftAssetsAudioPlayerPlugin.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="4" selection-start-line="16" selection-start-column="4" selection-end-line="16" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/build/ios/Debug-iphonesimulator/assets_audio_player/assets_audio_player.framework/_CodeSignature/CodeResources">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="15" selection-start-line="17" selection-start-column="15" selection-end-line="17" selection-end-column="15" />
         </state>
       </provider>
     </entry>
@@ -498,25 +513,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ios/Classes/AssetsAudioPlayerPlugin.m">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ios/Classes/SwiftAssetsAudioPlayerPlugin.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2520">
-          <caret line="168" column="15" selection-start-line="168" selection-start-column="9" selection-end-line="168" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/assets_audio_player.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="92" column="36" lean-forward="true" selection-start-line="92" selection-start-column="36" selection-end-line="92" selection-end-column="36" />
-          <folding>
-            <element signature="e#0#20#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="15">
+          <caret line="1" column="57" selection-start-line="1" selection-start-column="57" selection-end-line="1" selection-end-column="57" />
         </state>
       </provider>
     </entry>
