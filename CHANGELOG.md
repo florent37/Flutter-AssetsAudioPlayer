@@ -1,5 +1,9 @@
 ## 1.2.3
 
+* Added playlist
+
+## 1.2.3
+
 * Added playlist (beta)
 
 ## 1.2.1

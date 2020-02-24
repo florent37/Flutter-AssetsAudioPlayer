@@ -83,7 +83,8 @@ class AssetsAudioPlayer {
   ValueStream<Playing> get current => _current.stream;
 
   /// Called when the the complete playlist finished to play (mutable)
-  final BehaviorSubject<bool> _playlistFinished = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _playlistFinished =
+      BehaviorSubject<bool>.seeded(false);
 
   /// Called when the complete playlist has finished to play
   ///     _assetsAudioPlayer.finished.listen((finished){
@@ -104,7 +105,8 @@ class AssetsAudioPlayer {
   Stream<Playing> get playlistAudioFinished => _playlistAudioFinished.stream;
 
   /// Then current playing song position (in seconds) (mutable)
-  final BehaviorSubject<Duration> _currentPosition = BehaviorSubject<Duration>.seeded(const Duration());
+  final BehaviorSubject<Duration> _currentPosition =
+      BehaviorSubject<Duration>.seeded(const Duration());
 
   /// Retrieve directly the current song position (in seconds)
   ///     final Duration position = _assetsAudioPlayer.currentPosition.value;
@@ -177,9 +179,8 @@ class AssetsAudioPlayer {
               index: _playlist.playlistIndex,
               hasNext: _playlist.hasNext(),
               playlist: ReadingPlaylist(
-                audios: _playlist.playlist.audios,
-                currentIndex: _playlist.playlistIndex
-              ),
+                  audios: _playlist.playlist.audios,
+                  currentIndex: _playlist.playlistIndex),
             );
           }
           break;
@@ -225,7 +226,7 @@ class AssetsAudioPlayer {
       if (_playlist.hasNext()) {
         _playlistAudioFinished.add(Playing(
           audio: this._current.value.audio,
-          index:  this._current.value.index,
+          index: this._current.value.index,
           hasNext: true,
           playlist: this._current.value.playlist,
         ));
@@ -237,7 +238,7 @@ class AssetsAudioPlayer {
         //last element
         _playlistAudioFinished.add(Playing(
           audio: this._current.value.audio,
-          index:  this._current.value.index,
+          index: this._current.value.index,
           hasNext: false,
           playlist: this._current.value.playlist,
         ));
@@ -276,7 +277,7 @@ class AssetsAudioPlayer {
 
   //private method, used in open(playlist) and open(path)
   void _open(String assetAudioPath) async {
-    if(assetAudioPath != null) {
+    if (assetAudioPath != null) {
       try {
         _channel.invokeMethod('open', assetAudioPath);
       } catch (e) {
@@ -307,7 +308,9 @@ class AssetsAudioPlayer {
   ///         - assets/audios/
   ///
   void open(Playable playable) async {
-    if (playable is Playlist && playable.audios != null && playable.audios.length > 0) {
+    if (playable is Playlist &&
+        playable.audios != null &&
+        playable.audios.length > 0) {
       _openPlaylist(playable);
     } else if (playable is Audio) {
       _openPlaylist(Playlist(audios: [playable]));
@@ -362,7 +365,6 @@ class AssetsAudioPlayer {
     _channel.invokeMethod('stop');
   }
 
-
 //void shufflePlaylist() {
 //  TODO()
 //}
@@ -379,7 +381,7 @@ class _CurrentPlaylist {
   int playlistIndex = 0;
 
   int selectNext() {
-    if(hasNext()) {
+    if (hasNext()) {
       playlistIndex += 1;
     }
     return playlistIndex;
@@ -396,7 +398,7 @@ class _CurrentPlaylist {
 
   //nullable
   String audioPath({int at}) {
-    if(at < playlist.audios.length) {
+    if (at < playlist.audios.length) {
       return playlist.audios[at]?.path;
     } else {
       return null;
