@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d5cc0afc-4a49-4e83-9f21-5ed30c8d112e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/assets_audio_player/lib/assets_audio_player.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/assets_audio_player/lib/assets_audio_player.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/assets_audio_player.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/assets_audio_player.dart" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.dart_tool/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
@@ -38,8 +36,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/CHANGELOG.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" column="16" selection-start-line="2" selection-start-column="16" selection-end-line="2" selection-end-column="16" />
+            <state>
+              <caret column="8" selection-start-column="8" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -280,7 +278,7 @@
     <frame x="35" y="23" width="1645" height="1027" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4918919" visible="true" weight="0.28134748" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4918919" visible="true" weight="0.28134748" />
       <window_info id="Capture Tool" order="1" />
       <window_info id="Resources Explorer" order="2" />
       <window_info id="Structure" order="3" sideWeight="0.5081081" side_tool="true" weight="0.28134748" />
@@ -292,7 +290,7 @@
       <window_info anchor="bottom" id="TODO" order="1" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49719277" weight="0.39144737" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4984404" weight="0.32894737" />
-      <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.4978166" visible="true" weight="0.32894737" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="4" sideWeight="0.4978166" visible="true" weight="0.32894737" />
       <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.50155956" side_tool="true" weight="0.32894737" />
       <window_info anchor="bottom" id="Version Control" order="6" weight="0.32894737" />
       <window_info anchor="bottom" id="Messages" order="7" weight="0.32894737" />
@@ -514,8 +512,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/CHANGELOG.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="16" selection-start-line="2" selection-start-column="16" selection-end-line="2" selection-end-column="16" />
+        <state>
+          <caret column="8" selection-start-column="8" selection-end-column="8" />
         </state>
       </provider>
     </entry>
