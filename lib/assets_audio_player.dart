@@ -82,15 +82,15 @@ class AssetsAudioPlayer {
   ///
   ValueStream<Playing> get current => _current.stream;
 
-  /// Called when the playing song (or the complete playlist if playing a playlist) finished (mutable)
-  final BehaviorSubject<bool> _finished = BehaviorSubject<bool>.seeded(false);
+  /// Called when the the complete playlist finished to play (mutable)
+  final BehaviorSubject<bool> _playlistFinished = BehaviorSubject<bool>.seeded(false);
 
-  /// Called when the current song (or the complete playlist) has finished to play
+  /// Called when the complete playlist has finished to play
   ///     _assetsAudioPlayer.finished.listen((finished){
   ///
   ///     })
   ///
-  ValueStream<bool> get finished => _finished.stream;
+  ValueStream<bool> get playlistFinished => _playlistFinished.stream;
 
   /// Called when the current playlist song has finished (mutable)
   /// Using a playlist, the `finished` stram will be called only if the complete playlist finished
@@ -147,7 +147,7 @@ class AssetsAudioPlayer {
 
     _currentPosition.close();
     _isPlaying.close();
-    _finished.close();
+    _playlistFinished.close();
     _current.close();
     _playlistAudioFinished.close();
     _loop.close();
@@ -223,28 +223,24 @@ class AssetsAudioPlayer {
   bool next({bool stopIfLast = false}) {
     if (_playlist != null) {
       if (_playlist.hasNext()) {
-        /*
-        _playlistAudioFinished.add(PlaylistPlayingAudio(
-          playingAudio: this.current.value,
-          index: _playlist.playlistIndex,
+        _playlistAudioFinished.add(Playing(
+          audio: this._current.value.audio,
+          index:  this._current.value.index,
           hasNext: true,
-          playlist: _playlist.playlist,
+          playlist: this._current.value.playlist,
         ));
-         */
         _playlist.selectNext();
         _open(_playlist.currentAudioPath());
 
         return true;
       } else if (loop) {
         //last element
-        /*
-        _playlistAudioFinished.add(PlaylistPlayingAudio(
-          playingAudio: this.current.value,
-          index: _playlist.playlistIndex,
+        _playlistAudioFinished.add(Playing(
+          audio: this._current.value.audio,
+          index:  this._current.value.index,
           hasNext: false,
-          playlist: _playlist.playlist,
+          playlist: this._current.value.playlist,
         ));
-         */
 
         _playlist.returnToFirst();
         _open(_playlist.currentAudioPath());
@@ -261,9 +257,9 @@ class AssetsAudioPlayer {
   void _onfinished(bool isFinished) {
     bool nextDone = next(stopIfLast: false);
     if (nextDone) {
-      _finished.value = false; //continue playing the playlist
+      _playlistFinished.value = false; //continue playing the playlist
     } else {
-      _finished.value = true; // no next elements -> finished
+      _playlistFinished.value = true; // no next elements -> finished
     }
   }
 
@@ -412,7 +408,7 @@ class _CurrentPlaylist {
   }
 
   bool hasNext() {
-    return playlistIndex + 1 <= playlist.numberOfItems;
+    return playlistIndex + 1 < playlist.numberOfItems;
   }
 
   _CurrentPlaylist({@required this.playlist});

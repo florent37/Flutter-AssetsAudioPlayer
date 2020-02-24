@@ -28,6 +28,27 @@ class PlayingAudio {
     this.assetAudioPath = "",
     this.duration = Duration.zero,
   });
+
+  @override
+  String toString() {
+    return 'PlayingAudio{assetAudioPath: $assetAudioPath, duration: $duration}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is PlayingAudio &&
+              runtimeType == other.runtimeType &&
+              assetAudioPath == other.assetAudioPath &&
+              duration == other.duration;
+
+  @override
+  int get hashCode =>
+      assetAudioPath.hashCode ^
+      duration.hashCode;
+
+
+
 }
 
 @immutable
@@ -36,6 +57,28 @@ class ReadingPlaylist {
   final int currentIndex;
 
   const ReadingPlaylist({@required this.audios, this.currentIndex = 0});
+
+  @override
+  String toString() {
+    return 'ReadingPlaylist{audios: $audios, currentIndex: $currentIndex}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is ReadingPlaylist &&
+              runtimeType == other.runtimeType &&
+              audios == other.audios &&
+              currentIndex == other.currentIndex;
+
+  @override
+  int get hashCode =>
+      audios.hashCode ^
+      currentIndex.hashCode;
+
+
+
+
 }
 
 @immutable
@@ -58,4 +101,30 @@ class Playing { //TODO rename
     @required this.hasNext,
     @required this.playlist,
   });
+
+  @override
+  String toString() {
+    return 'Playing{audio: $audio, index: $index, hasNext: $hasNext, playlist: $playlist}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Playing &&
+              runtimeType == other.runtimeType &&
+              audio == other.audio &&
+              index == other.index &&
+              hasNext == other.hasNext &&
+              playlist == other.playlist;
+
+  @override
+  int get hashCode =>
+      audio.hashCode ^
+      index.hashCode ^
+      hasNext.hashCode ^
+      playlist.hashCode;
+
+
+
+
 }

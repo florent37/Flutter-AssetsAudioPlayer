@@ -19,6 +19,20 @@ class _MyAppState extends State<MyApp> {
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
 
   @override
+  void initState() {
+    _assetsAudioPlayer.playlistFinished.listen((data){
+      print("finished : $data");
+    });
+    _assetsAudioPlayer.playlistAudioFinished.listen((data){
+      print("playlistAudioFinished : $data");
+    });
+    _assetsAudioPlayer.current.listen((data){
+      print("current : $data");
+    });
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _assetsAudioPlayer.dispose();
     super.dispose();
