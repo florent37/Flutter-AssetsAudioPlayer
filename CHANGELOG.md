@@ -1,3 +1,7 @@
+## 1.2.5
+
+* Compatible with Swift 5
+
 ## 1.2.4
 
 * Added playlist
