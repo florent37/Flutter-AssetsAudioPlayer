@@ -1,3 +1,7 @@
+## 1.2.6
+
+* Added an "autoPlay" optional attribute to open methods
+
 ## 1.2.5
 
 * Compatible with Swift 5
