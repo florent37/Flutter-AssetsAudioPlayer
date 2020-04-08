@@ -12,6 +12,8 @@ export 'playing.dart';
 import 'playable.dart';
 export 'playable.dart';
 
+const  _DEFAULT_AUTO_START = true;
+
 /// The AssetsAudioPlayer, playing audios from assets/
 /// Example :
 ///
@@ -26,7 +28,6 @@ export 'playable.dart';
 ///     flutter:
 ///       assets:
 ///         - assets/audios/
-///
 class AssetsAudioPlayer {
   /// The channel between the native and Dart
   final MethodChannel _channel = const MethodChannel('assets_audio_player');
@@ -276,10 +277,13 @@ class AssetsAudioPlayer {
   }
 
   //private method, used in open(playlist) and open(path)
-  void _open(String assetAudioPath) async {
+  void _open(String assetAudioPath, {bool autoStart = _DEFAULT_AUTO_START}) async {
     if (assetAudioPath != null) {
       try {
-        _channel.invokeMethod('open', assetAudioPath);
+        _channel.invokeMethod('open', {
+          "path": assetAudioPath,
+          "autoStart" : autoStart
+        });
       } catch (e) {
         print(e);
       }
@@ -288,10 +292,10 @@ class AssetsAudioPlayer {
     }
   }
 
-  void _openPlaylist(Playlist playlist) async {
+  void _openPlaylist(Playlist playlist, {bool autoStart = _DEFAULT_AUTO_START}) async {
     this._playlist = _CurrentPlaylist(playlist: playlist);
     _playlist.moveTo(playlist.startIndex);
-    _open(_playlist.currentAudioPath());
+    _open(_playlist.currentAudioPath(), autoStart: autoStart);
   }
 
   /// Open a song from the asset
@@ -307,13 +311,13 @@ class AssetsAudioPlayer {
   ///       assets:
   ///         - assets/audios/
   ///
-  void open(Playable playable) async {
+  void open(Playable playable, {bool autoStart = _DEFAULT_AUTO_START}) async {
     if (playable is Playlist &&
         playable.audios != null &&
         playable.audios.length > 0) {
-      _openPlaylist(playable);
+      _openPlaylist(playable, autoStart: autoStart);
     } else if (playable is Audio) {
-      _openPlaylist(Playlist(audios: [playable]));
+      _openPlaylist(Playlist(audios: [playable]), autoStart: autoStart);
     } else {
       //do nothing
       //throw exception ?

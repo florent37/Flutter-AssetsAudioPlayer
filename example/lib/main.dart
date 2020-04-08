@@ -20,6 +20,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    _assetsAudioPlayer.open(Audio("assets/audios/song1.mp3"), autoStart: false);
     _assetsAudioPlayer.playlistFinished.listen((data){
       print("finished : $data");
     });

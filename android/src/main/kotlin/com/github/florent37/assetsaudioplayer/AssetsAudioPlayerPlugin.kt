@@ -73,21 +73,30 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
                 result.success(null)
             }
             "seek" -> if (call.arguments != null) {
-                if (call.arguments !is Int) {
+                val to = call.arguments as? Int ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an int.", null)
+                    return
                 }
-                val to = call.arguments as Int
+
                 seek(to)
                 result.success(null)
             }
             "open" -> if (call.arguments != null) {
-                if (call.arguments !is String) {
-                    if (call.arguments !is Int) {
-                        result.error("WRONG_FORMAT", "The specified argument must be an String.", null)
-                    }
+
+                val args = call.arguments() as? Map<*, *> ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any>.", null)
+                    return
                 }
+
+                val path = args["path"] as? String ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
+                    return
+                }
+                val autoStart = args["autoStart"] as? Boolean ?: true
+
                 open(
-                        call.arguments() as String,
+                        path,
+                        autoStart,
                         result
                 )
             }
@@ -103,6 +112,7 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
             channel.invokeMethod(METHOD_POSITION, 0)
 
             mediaPlayer?.stop()
+            mediaPlayer?.reset();
             mediaPlayer?.release()
             channel.invokeMethod(METHOD_IS_PLAYING, false)
             handler.removeCallbacks(updatePosition)
@@ -110,7 +120,7 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
         mediaPlayer = null
     }
 
-    private fun open(assetAudioPath: String?, result: MethodChannel.Result) {
+    private fun open(assetAudioPath: String?, autoStart: Boolean, result: MethodChannel.Result) {
         stop()
 
         var totalDurationSeconds = 0L
@@ -121,6 +131,7 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
             val mmr = MediaMetadataRetriever()
 
             val afd = context.assets.openFd("flutter_assets/$assetAudioPath")
+            mediaPlayer?.reset();
             mediaPlayer?.setDataSource(afd.fileDescriptor, afd.startOffset, afd.declaredLength)
 
             mmr.setDataSource(afd.fileDescriptor, afd.startOffset, afd.declaredLength)
@@ -142,7 +153,9 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
 
         try {
             mediaPlayer?.setOnPreparedListener {
-                play()
+                if(autoStart) {
+                    play()
+                }
             }
             mediaPlayer?.prepare()
         } catch (e: Exception) {

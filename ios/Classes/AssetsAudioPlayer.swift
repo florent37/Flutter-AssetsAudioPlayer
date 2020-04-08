@@ -51,13 +51,11 @@ class Music : NSObject, AVAudioPlayerDelegate {
             }
             break;
             case "open" :
-                if let assetPath = call.arguments as? String {
-                     self.open(assetPath: assetPath, result: result);
-                } else {
-                    result(FlutterError(code: "WRONG_FORMAT",
-                                        message: "The specified argument must be a string",
-                                        details: nil))
-                }
+                let args = call.arguments as! NSDictionary
+                let assetPath = args["path"] as! String
+                let autoStart = args["autoStart"] as! Bool
+                self.open(assetPath: assetPath, autoStart: autoStart, result: result);
+               
                 break;
                 
             default:
@@ -97,7 +95,7 @@ class Music : NSObject, AVAudioPlayerDelegate {
         self.channel.invokeMethod(Music.METHOD_FINISHED, arguments: true)
     }
     
-   func open(assetPath: String, result: FlutterResult){
+   func open(assetPath: String, autoStart: Bool, result: FlutterResult){
         let assetKey = registrar.lookupKey(forAsset: assetPath)
         guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
              log("resource not found \(assetKey)")
@@ -137,8 +135,10 @@ class Music : NSObject, AVAudioPlayerDelegate {
             self.playing = false
             
             self.player?.delegate = self
-            
-            play()
+
+            if(autoStart){
+                play()
+            }
             
             result(true);
             //log("play_ok");
