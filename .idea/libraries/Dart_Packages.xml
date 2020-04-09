@@ -65,6 +65,13 @@
             </list>
           </value>
         </entry>
+        <entry key="dart_web_audio">
+          <value>
+            <list>
+              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/dart_web_audio-0.1.2/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="flutter">
           <value>
             <list>
@@ -79,10 +86,24 @@
             </list>
           </value>
         </entry>
+        <entry key="flutter_web_plugins">
+          <value>
+            <list>
+              <option value="$USER_HOME$/flutter/flutter-sdk/packages/flutter_web_plugins/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="image">
           <value>
             <list>
               <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/image-2.1.12/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="js">
+          <value>
+            <list>
+              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/js-0.6.1+1/lib" />
             </list>
           </value>
         </entry>
@@ -217,7 +238,9 @@
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/convert-2.1.1/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/crypto-2.1.4/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-0.1.3/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/dart_web_audio-0.1.2/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/image-2.1.12/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/js-0.6.1+1/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/matcher-0.12.6/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/meta-1.1.8/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path-1.6.4/lib" />
@@ -237,6 +260,7 @@
       <root url="file://$USER_HOME$/flutter/flutter-sdk/bin/cache/pkg/sky_engine/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/packages/flutter/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/packages/flutter_test/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter-sdk/packages/flutter_web_plugins/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
