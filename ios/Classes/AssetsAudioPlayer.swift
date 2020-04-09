@@ -19,6 +19,7 @@ class Music : NSObject, AVAudioPlayerDelegate {
     static let METHOD_FINISHED = "player.finished"
     static let METHOD_IS_PLAYING = "player.isPlaying"
     static let METHOD_CURRENT = "player.current"
+    static let METHOD_VOLUME = "player.volume"
 
     let channel: FlutterMethodChannel
     let registrar: FlutterPluginRegistrar
@@ -46,7 +47,17 @@ class Music : NSObject, AVAudioPlayerDelegate {
                 result(true);
             } else {
                 result(FlutterError(code: "WRONG_FORMAT",
-                                    message: "The specified argument must be an Int.",
+                                    message: "The specified argument for seek must be an Int.",
+                                    details: nil))
+            }
+            break;
+            case "volume" : if(call.arguments is Double) {
+                let volume = call.arguments as! Double;
+                self.setVolume(volume: volume);
+                result(true);
+            } else {
+                result(FlutterError(code: "WRONG_FORMAT",
+                                    message: "The specified argument for volume must be an Double.",
                                     details: nil))
             }
             break;
@@ -164,6 +175,11 @@ class Music : NSObject, AVAudioPlayerDelegate {
     
     func seek(to: Int){
         self.player?.currentTime = Double(to)
+    }
+    
+    func setVolume(volume: Double){
+        self.player?.volume = Float(volume)
+        self.channel.invokeMethod(Music.METHOD_VOLUME, arguments: volume)
     }
     
     func stop(){

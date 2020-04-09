@@ -21,13 +21,13 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     _assetsAudioPlayer.open(Audio("assets/audios/song1.mp3"), autoStart: false);
-    _assetsAudioPlayer.playlistFinished.listen((data){
+    _assetsAudioPlayer.playlistFinished.listen((data) {
       print("finished : $data");
     });
-    _assetsAudioPlayer.playlistAudioFinished.listen((data){
+    _assetsAudioPlayer.playlistAudioFinished.listen((data) {
       print("playlistAudioFinished : $data");
     });
-    _assetsAudioPlayer.current.listen((data){
+    _assetsAudioPlayer.current.listen((data) {
       print("current : $data");
     });
     super.initState();
@@ -128,6 +128,29 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ],
               ),
+              StreamBuilder(
+                  stream: _assetsAudioPlayer.volume,
+                  initialData: AssetsAudioPlayer.DEFAULT_VOLUME,
+                  builder: (context, snapshot) {
+                    final double volume = snapshot.data;
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text("volume : ${((volume * 100).round()) / 100.0}"),
+                        Text(" - "),
+                        Expanded(
+                          child: Slider(
+                            min: AssetsAudioPlayer.MIN_VOLUME,
+                            max: AssetsAudioPlayer.MAX_VOLUME,
+                            value: volume,
+                            onChanged: (value) {
+                              _assetsAudioPlayer.setVolume(value);
+                            },
+                          ),
+                        )
+                      ],
+                    );
+                  }),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,

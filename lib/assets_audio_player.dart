@@ -12,7 +12,7 @@ export 'playing.dart';
 import 'playable.dart';
 export 'playable.dart';
 
-const  _DEFAULT_AUTO_START = true;
+const _DEFAULT_AUTO_START = true;
 
 /// The AssetsAudioPlayer, playing audios from assets/
 /// Example :
@@ -29,6 +29,11 @@ const  _DEFAULT_AUTO_START = true;
 ///       assets:
 ///         - assets/audios/
 class AssetsAudioPlayer {
+
+  static final double MIN_VOLUME = 0.0;
+  static final double MAX_VOLUME = 1.0;
+  static final double DEFAULT_VOLUME = MAX_VOLUME;
+
   /// The channel between the native and Dart
   final MethodChannel _channel = const MethodChannel('assets_audio_player');
 
@@ -120,6 +125,20 @@ class AssetsAudioPlayer {
   ///         }),
   Stream<Duration> get currentPosition => _currentPosition.stream;
 
+  /// The volume of the media Player (min: 0, max: 1)
+  final BehaviorSubject<double> _volume = BehaviorSubject<double>.seeded(1);
+
+  /// Streams the volume of the media Player (min: 0, max: 1)
+  ///     final double volume = _assetsAudioPlayer.volume.value;
+  ///
+  ///     return StreamBuilder(
+  ///         stream: _assetsAudioPlayer.volume,
+  ///         builder: (context, asyncSnapshot) {
+  ///             final double volume = asyncSnapshot.data;
+  ///             return Text("volume: ${volume.toString()});
+  ///         }),
+  ValueStream<double> get volume => _volume.stream;
+
   final BehaviorSubject<bool> _loop = BehaviorSubject<bool>.seeded(false);
 
   /// Called when the looping state changes
@@ -150,6 +169,7 @@ class AssetsAudioPlayer {
 
     _currentPosition.close();
     _isPlaying.close();
+    _volume.close();
     _playlistFinished.close();
     _current.close();
     _playlistAudioFinished.close();
@@ -195,6 +215,9 @@ class AssetsAudioPlayer {
           break;
         case 'player.isPlaying':
           _isPlaying.value = call.arguments;
+          break;
+        case 'player.volume':
+          _volume.value = call.arguments;
           break;
         default:
           print('[ERROR] Channel method ${call.method} not implemented.');
@@ -277,13 +300,12 @@ class AssetsAudioPlayer {
   }
 
   //private method, used in open(playlist) and open(path)
-  void _open(String assetAudioPath, {bool autoStart = _DEFAULT_AUTO_START}) async {
+  void _open(String assetAudioPath,
+      {bool autoStart = _DEFAULT_AUTO_START}) async {
     if (assetAudioPath != null) {
       try {
-        _channel.invokeMethod('open', {
-          "path": assetAudioPath,
-          "autoStart" : autoStart
-        });
+        _channel.invokeMethod(
+            'open', {"path": assetAudioPath, "autoStart": autoStart});
       } catch (e) {
         print(e);
       }
@@ -292,7 +314,8 @@ class AssetsAudioPlayer {
     }
   }
 
-  void _openPlaylist(Playlist playlist, {bool autoStart = _DEFAULT_AUTO_START}) async {
+  void _openPlaylist(Playlist playlist,
+      {bool autoStart = _DEFAULT_AUTO_START}) async {
     this._playlist = _CurrentPlaylist(playlist: playlist);
     _playlist.moveTo(playlist.startIndex);
     _open(_playlist.currentAudioPath(), autoStart: autoStart);
@@ -360,6 +383,17 @@ class AssetsAudioPlayer {
   ///
   void seek(Duration to) {
     _channel.invokeMethod('seek', to.inSeconds.round());
+  }
+
+  /// Change the current volume of the MediaPlayer
+  ///
+  ///     _assetsAudioPlayer.setVolume(0.4);
+  ///
+  /// MIN : 0
+  /// MAX : 1
+  ///
+  void setVolume(double volume) {
+    _channel.invokeMethod('volume', volume.clamp(MIN_VOLUME, MAX_VOLUME));
   }
 
   /// Tells the media player to stop the current song, then release the MediaPlayer

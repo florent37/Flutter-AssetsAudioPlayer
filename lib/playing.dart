@@ -37,18 +37,13 @@ class PlayingAudio {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is PlayingAudio &&
-              runtimeType == other.runtimeType &&
-              assetAudioPath == other.assetAudioPath &&
-              duration == other.duration;
+      other is PlayingAudio &&
+          runtimeType == other.runtimeType &&
+          assetAudioPath == other.assetAudioPath &&
+          duration == other.duration;
 
   @override
-  int get hashCode =>
-      assetAudioPath.hashCode ^
-      duration.hashCode;
-
-
-
+  int get hashCode => assetAudioPath.hashCode ^ duration.hashCode;
 }
 
 @immutable
@@ -66,23 +61,18 @@ class ReadingPlaylist {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is ReadingPlaylist &&
-              runtimeType == other.runtimeType &&
-              audios == other.audios &&
-              currentIndex == other.currentIndex;
+      other is ReadingPlaylist &&
+          runtimeType == other.runtimeType &&
+          audios == other.audios &&
+          currentIndex == other.currentIndex;
 
   @override
-  int get hashCode =>
-      audios.hashCode ^
-      currentIndex.hashCode;
-
-
-
-
+  int get hashCode => audios.hashCode ^ currentIndex.hashCode;
 }
 
 @immutable
-class Playing { //TODO rename
+class Playing {
+  //TODO rename
   ///the opened asset
   final PlayingAudio audio;
 
@@ -110,21 +100,14 @@ class Playing { //TODO rename
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Playing &&
-              runtimeType == other.runtimeType &&
-              audio == other.audio &&
-              index == other.index &&
-              hasNext == other.hasNext &&
-              playlist == other.playlist;
+      other is Playing &&
+          runtimeType == other.runtimeType &&
+          audio == other.audio &&
+          index == other.index &&
+          hasNext == other.hasNext &&
+          playlist == other.playlist;
 
   @override
   int get hashCode =>
-      audio.hashCode ^
-      index.hashCode ^
-      hasNext.hashCode ^
-      playlist.hashCode;
-
-
-
-
+      audio.hashCode ^ index.hashCode ^ hasNext.hashCode ^ playlist.hashCode;
 }

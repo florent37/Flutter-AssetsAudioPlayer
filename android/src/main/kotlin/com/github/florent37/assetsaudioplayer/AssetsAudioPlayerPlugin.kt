@@ -11,6 +11,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 
 
 internal val METHOD_POSITION = "player.position"
+internal val METHOD_VOLUME = "player.volume"
 internal val METHOD_FINISHED = "player.finished"
 internal val METHOD_IS_PLAYING = "player.isPlaying"
 internal val METHOD_CURRENT = "player.current"
@@ -70,6 +71,14 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
             }
             "stop" -> {
                 stop()
+                result.success(null)
+            }
+            "volume" -> {
+                val volume = call.arguments as? Double ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Double.", null)
+                    return
+                }
+                setVolume(volume)
                 result.success(null)
             }
             "seek" -> if (call.arguments != null) {
@@ -208,6 +217,13 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
         mediaPlayer?.apply {
             seekTo(seconds * 1000)
             channel.invokeMethod(METHOD_POSITION, currentPosition / 1000)
+        }
+    }
+
+    private fun setVolume(volume: Double) {
+        mediaPlayer?.let {
+            it.setVolume(volume.toFloat(), volume.toFloat());
+            channel.invokeMethod(METHOD_VOLUME, volume)
         }
     }
 }
