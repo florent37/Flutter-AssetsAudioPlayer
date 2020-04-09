@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   rxdart: ^0.23.1
+  uuid: ^2.0.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

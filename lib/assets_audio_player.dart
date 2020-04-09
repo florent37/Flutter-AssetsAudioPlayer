@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:uuid/uuid.dart';
 
 import 'playing.dart';
 export 'playing.dart';
@@ -13,6 +14,7 @@ import 'playable.dart';
 export 'playable.dart';
 
 const _DEFAULT_AUTO_START = true;
+const _DEFAULT_PLAYER = "DEFAULT_PLAYER";
 
 /// The AssetsAudioPlayer, playing audios from assets/
 /// Example :
@@ -29,18 +31,42 @@ const _DEFAULT_AUTO_START = true;
 ///       assets:
 ///         - assets/audios/
 class AssetsAudioPlayer {
-
   static final double MIN_VOLUME = 0.0;
   static final double MAX_VOLUME = 1.0;
   static final double DEFAULT_VOLUME = MAX_VOLUME;
 
+  static final uuid = Uuid();
+
   /// The channel between the native and Dart
-  final MethodChannel _channel = const MethodChannel('assets_audio_player');
+  final MethodChannel _sendChannel = const MethodChannel('assets_audio_player');
+  MethodChannel _recieveChannel;
 
   /// Stores opened asset audio path to use it on the `_current` BehaviorSubject (in `PlayingAudio`)
   String _lastOpenedAssetsAudioPath;
 
   _CurrentPlaylist _playlist;
+
+  final String id;
+
+  AssetsAudioPlayer._({this.id = _DEFAULT_PLAYER}) {
+    _init();
+  }
+
+  static final Map<String, AssetsAudioPlayer> _players = Map();
+
+  static AssetsAudioPlayer _getOrCreate({String id}){
+    if(_players.containsKey(id)){
+      return _players[id];
+    } else {
+      final player = AssetsAudioPlayer._(id: id);
+      _players[id] = player;
+      return player;
+    }
+  }
+
+  factory AssetsAudioPlayer.newPlayer() => _getOrCreate(id: uuid.v4());
+
+  factory AssetsAudioPlayer({String id = _DEFAULT_PLAYER}) => _getOrCreate(id: id);
 
   ReadingPlaylist get playlist {
     if (_playlist == null) {
@@ -174,10 +200,13 @@ class AssetsAudioPlayer {
     _current.close();
     _playlistAudioFinished.close();
     _loop.close();
+
+    _players.remove(this.id);
   }
 
-  AssetsAudioPlayer() {
-    _channel.setMethodCallHandler((MethodCall call) async {
+  _init() {
+    _recieveChannel = MethodChannel('assets_audio_player/$id');
+    _recieveChannel.setMethodCallHandler((MethodCall call) async {
       //print("received call ${call.method} with arguments ${call.arguments}");
       switch (call.method) {
         case 'log':
@@ -304,8 +333,11 @@ class AssetsAudioPlayer {
       {bool autoStart = _DEFAULT_AUTO_START}) async {
     if (assetAudioPath != null) {
       try {
-        _channel.invokeMethod(
-            'open', {"path": assetAudioPath, "autoStart": autoStart});
+        _sendChannel.invokeMethod('open', {
+          "id": this.id,
+          "path": assetAudioPath,
+          "autoStart": autoStart,
+        });
       } catch (e) {
         print(e);
       }
@@ -366,14 +398,18 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.play();
   ///
   void play() {
-    _channel.invokeMethod('play');
+    _sendChannel.invokeMethod('play', {
+      "id": this.id,
+    });
   }
 
   /// Tells the media player to play the current song
   ///     _assetsAudioPlayer.pause();
   ///
   void pause() {
-    _channel.invokeMethod('pause');
+    _sendChannel.invokeMethod('pause', {
+      "id": this.id,
+    });
   }
 
   /// Change the current position of the song
@@ -382,7 +418,10 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.seek(Duration(minutes: 1, seconds: 34));
   ///
   void seek(Duration to) {
-    _channel.invokeMethod('seek', to.inSeconds.round());
+    _sendChannel.invokeMethod('seek', {
+      "id": this.id,
+      "to": to.inSeconds.round(),
+    });
   }
 
   /// Change the current volume of the MediaPlayer
@@ -393,14 +432,19 @@ class AssetsAudioPlayer {
   /// MAX : 1
   ///
   void setVolume(double volume) {
-    _channel.invokeMethod('volume', volume.clamp(MIN_VOLUME, MAX_VOLUME));
+    _sendChannel.invokeMethod('volume', {
+      "id": this.id,
+      "volume": volume.clamp(MIN_VOLUME, MAX_VOLUME)
+    });
   }
 
   /// Tells the media player to stop the current song, then release the MediaPlayer
   ///     _assetsAudioPlayer.stop();
   ///
   void stop() {
-    _channel.invokeMethod('stop');
+    _sendChannel.invokeMethod('stop', {
+      "id": this.id
+    });
   }
 
 //void shufflePlaylist() {
