@@ -7,7 +7,7 @@ You like the package ? buy me a kofi :)
 
 <a href='https://ko-fi.com/A160LCC' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-Play music/audio stored in assets files directly from Flutter. 
+Play music/audio stored in assets files (simultaneously) directly from Flutter. 
 
 No needed to copy songs to a media cache, with assets_audio_player you can open them directly from the assets. 
 
@@ -42,6 +42,34 @@ assetsAudioPlayer.seek(Duration to);
 
 ```Dart
 assetsAudioPlayer.stop();
+```
+
+# Play in parallel / simultaneously
+
+You can create new AssetsAudioPlayer using AssetsAudioPlayer.newPlayer(), 
+which will play songs in a different native Media Player
+
+This will enable to play two songs simultaneously
+
+You can have as many player as you want !
+
+```dart
+///play 3 songs in parallel
+AssetsAudioPlayer.newPlayer().open(
+    Audio("assets/audios/song1.mp3")
+);
+AssetsAudioPlayer.newPlayer().open(
+    Audio("assets/audios/song2.mp3")
+);
+AssetsAudioPlayer.newPlayer().open(
+    Audio("assets/audios/song3.mp3")
+);
+```
+
+Each player has an unique generated `id`, you can retrieve or create them manually using 
+
+```dart
+final player = AssetsAudioPlayer(id: "MY_UNIQUE_ID")
 ```
 
 # Playlist

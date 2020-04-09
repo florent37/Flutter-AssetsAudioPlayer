@@ -1,3 +1,13 @@
+## 1.2.8
+
+* Added constructors 
+- AssetsAudioPlayer.newPlayer
+- AssetsAudioPlayer(id: "PLAYER_ID") 
+
+to create new players and play multiples songs in parallel
+
+the default constructor AssetsAudioPlayer() still works as usual
+
 ## 1.2.7
 
 * Added "volume" property (listen/set)
