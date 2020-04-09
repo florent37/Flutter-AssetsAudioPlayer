@@ -54,8 +54,8 @@ class AssetsAudioPlayer {
 
   static final Map<String, AssetsAudioPlayer> _players = Map();
 
-  static AssetsAudioPlayer _getOrCreate({String id}){
-    if(_players.containsKey(id)){
+  static AssetsAudioPlayer _getOrCreate({String id}) {
+    if (_players.containsKey(id)) {
       return _players[id];
     } else {
       final player = AssetsAudioPlayer._(id: id);
@@ -66,7 +66,8 @@ class AssetsAudioPlayer {
 
   factory AssetsAudioPlayer.newPlayer() => _getOrCreate(id: uuid.v4());
 
-  factory AssetsAudioPlayer({String id = _DEFAULT_PLAYER}) => _getOrCreate(id: id);
+  factory AssetsAudioPlayer({String id = _DEFAULT_PLAYER}) =>
+      _getOrCreate(id: id);
 
   ReadingPlaylist get playlist {
     if (_playlist == null) {
@@ -432,19 +433,15 @@ class AssetsAudioPlayer {
   /// MAX : 1
   ///
   void setVolume(double volume) {
-    _sendChannel.invokeMethod('volume', {
-      "id": this.id,
-      "volume": volume.clamp(MIN_VOLUME, MAX_VOLUME)
-    });
+    _sendChannel.invokeMethod('volume',
+        {"id": this.id, "volume": volume.clamp(MIN_VOLUME, MAX_VOLUME)});
   }
 
   /// Tells the media player to stop the current song, then release the MediaPlayer
   ///     _assetsAudioPlayer.stop();
   ///
   void stop() {
-    _sendChannel.invokeMethod('stop', {
-      "id": this.id
-    });
+    _sendChannel.invokeMethod('stop', {"id": this.id});
   }
 
 //void shufflePlaylist() {
