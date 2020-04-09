@@ -1,3 +1,7 @@
+## 1.2.7
+
+* Added "volume" property (listen/set)
+
 ## 1.2.6
 
 * Added an "autoPlay" optional attribute to open methods

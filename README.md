@@ -120,6 +120,24 @@ return StreamBuilder(
     }),
 ```
 
+### Volume
+
+Change the volume (between 0.0 & 1.0)
+```Dart
+assetsAudioPlayer.setVolume(0.5);
+```
+
+Listen the volume
+
+```dart
+return StreamBuilder(
+    stream: assetsAudioPlayer.volume,
+    builder: (context, asyncSnapshot) {
+        final double volume = asyncSnapshot.data;
+        return Text("volume : $volume");  
+    }),
+```
+
 ### Finished
 
 Called when the current song has finished to play
