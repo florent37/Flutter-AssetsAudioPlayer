@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.os.Handler
+import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -18,22 +19,13 @@ internal val METHOD_CURRENT = "player.current"
 internal val METHOD_NEXT = "player.next"
 internal val METHOD_PREV = "player.prev"
 
-class AssetsAudioPlayerPlugin(private val context: Context, private val channel: MethodChannel) :
-        MethodCallHandler {
-    companion object {
-        @JvmStatic
-        fun registerWith(registrar: Registrar) {
-            val channel = MethodChannel(registrar.messenger(), "assets_audio_player")
-            channel.setMethodCallHandler(AssetsAudioPlayerPlugin(registrar.context(), channel))
-        }
-    }
-
+class Player(private val context: Context, private val channel: MethodChannel) {
     // To handle position updates.
     private val handler = Handler()
 
     private var mediaPlayer: MediaPlayer? = null
 
-    private val isPlaying: Boolean
+    val isPlaying: Boolean
         get() = mediaPlayer != null && mediaPlayer!!.isPlaying
 
     private val updatePosition = object : Runnable {
@@ -56,80 +48,7 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
         }
     }
 
-    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-        when (call.method) {
-            "isPlaying" -> {
-                result.success(isPlaying)
-            }
-            "play" -> {
-                play()
-                result.success(null)
-            }
-            "pause" -> {
-                pause()
-                result.success(null)
-            }
-            "stop" -> {
-                stop()
-                result.success(null)
-            }
-            "volume" -> {
-                val volume = call.arguments as? Double ?: run {
-                    result.error("WRONG_FORMAT", "The specified argument must be an Double.", null)
-                    return
-                }
-                setVolume(volume)
-                result.success(null)
-            }
-            "seek" -> if (call.arguments != null) {
-                val to = call.arguments as? Int ?: run {
-                    result.error("WRONG_FORMAT", "The specified argument must be an int.", null)
-                    return
-                }
-
-                seek(to)
-                result.success(null)
-            }
-            "open" -> if (call.arguments != null) {
-
-                val args = call.arguments() as? Map<*, *> ?: run {
-                    result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any>.", null)
-                    return
-                }
-
-                val path = args["path"] as? String ?: run {
-                    result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
-                    return
-                }
-                val autoStart = args["autoStart"] as? Boolean ?: true
-
-                open(
-                        path,
-                        autoStart,
-                        result
-                )
-            }
-            else -> result.notImplemented()
-        }
-    }
-
-    private fun stop() {
-        mediaPlayer?.apply {
-            // Reset duration and position.
-            // handler.removeCallbacks(updatePosition);
-            // channel.invokeMethod("player.duration", 0);
-            channel.invokeMethod(METHOD_POSITION, 0)
-
-            mediaPlayer?.stop()
-            mediaPlayer?.reset();
-            mediaPlayer?.release()
-            channel.invokeMethod(METHOD_IS_PLAYING, false)
-            handler.removeCallbacks(updatePosition)
-        }
-        mediaPlayer = null
-    }
-
-    private fun open(assetAudioPath: String?, autoStart: Boolean, result: MethodChannel.Result) {
+    fun open(assetAudioPath: String?, autoStart: Boolean, result: MethodChannel.Result) {
         stop()
 
         var totalDurationSeconds = 0L
@@ -162,7 +81,7 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
 
         try {
             mediaPlayer?.setOnPreparedListener {
-                if(autoStart) {
+                if (autoStart) {
                     play()
                 }
             }
@@ -179,17 +98,36 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
 
         mediaPlayer?.setOnCompletionListener {
             channel.invokeMethod(METHOD_FINISHED, null)
-            channel.invokeMethod(METHOD_IS_PLAYING, false)
+            stop();
         }
 
-        channel.invokeMethod(METHOD_CURRENT, mapOf("totalDuration" to totalDurationSeconds))
+        channel.invokeMethod(METHOD_CURRENT, mapOf(
+                "totalDuration" to totalDurationSeconds)
+        )
 
 
         //will be done on play
         //result.success(null);
     }
 
-    private fun toggle() {
+    fun stop() {
+        mediaPlayer?.apply {
+            // Reset duration and position.
+            // handler.removeCallbacks(updatePosition);
+            // channel.invokeMethod("player.duration", 0);
+            channel.invokeMethod(METHOD_POSITION, 0)
+
+            mediaPlayer?.stop()
+            mediaPlayer?.reset();
+            mediaPlayer?.release()
+            channel.invokeMethod(METHOD_IS_PLAYING, false)
+            handler.removeCallbacks(updatePosition)
+        }
+        mediaPlayer = null
+    }
+
+
+    fun toggle() {
         if (isPlaying) {
             pause()
         } else {
@@ -197,7 +135,7 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
         }
     }
 
-    private fun play() {
+    fun play() {
         mediaPlayer?.apply {
             start()
             handler.post(updatePosition)
@@ -205,7 +143,7 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
         }
     }
 
-    private fun pause() {
+    fun pause() {
         mediaPlayer?.apply {
             pause()
             handler.removeCallbacks(updatePosition)
@@ -213,17 +151,155 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val channel:
         }
     }
 
-    private fun seek(seconds: Int) {
+    fun seek(seconds: Int) {
         mediaPlayer?.apply {
             seekTo(seconds * 1000)
             channel.invokeMethod(METHOD_POSITION, currentPosition / 1000)
         }
     }
 
-    private fun setVolume(volume: Double) {
+    fun setVolume(volume: Double) {
         mediaPlayer?.let {
             it.setVolume(volume.toFloat(), volume.toFloat());
             channel.invokeMethod(METHOD_VOLUME, volume)
+        }
+    }
+}
+
+class AssetsAudioPlayerPlugin(private val context: Context, private val messenger: BinaryMessenger, private val channel: MethodChannel) : MethodCallHandler {
+
+    companion object {
+        @JvmStatic
+        fun registerWith(registrar: Registrar) {
+            val channel = MethodChannel(registrar.messenger(), "assets_audio_player")
+            channel.setMethodCallHandler(AssetsAudioPlayerPlugin(registrar.context(), registrar.messenger(), channel))
+        }
+
+        private val players = mutableMapOf<String, Player>()
+    }
+
+    private fun getOrCreatePlayer(id: String): Player {
+        return players.getOrPut(id) {
+            Player(
+                    context = context,
+                    channel = MethodChannel(messenger, "assets_audio_player/$id")
+            )
+        }
+    }
+
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        when (call.method) {
+            "isPlaying" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    getOrCreatePlayer(id).let { player ->
+                        result.success(player.isPlaying)
+                    }
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
+            "play" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    getOrCreatePlayer(id).play()
+                    result.success(null)
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
+            "pause" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    getOrCreatePlayer(id).pause()
+                    result.success(null)
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
+            "stop" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    getOrCreatePlayer(id).stop()
+                    result.success(null)
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
+            "volume" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    val volume = args["volume"] as? Double ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument must be an Double.", null)
+                        return
+                    }
+                    getOrCreatePlayer(id).setVolume(volume)
+                    result.success(null)
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
+            "seek" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    val to = args["to"] as? Int ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument(to) must be an int.", null)
+                        return
+                    }
+                    getOrCreatePlayer(id).seek(to)
+                    result.success(null)
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
+            "open" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    val path = args["path"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
+                        return
+                    }
+                    val autoStart = args["autoStart"] as? Boolean ?: true
+
+                    getOrCreatePlayer(id).open(
+                            path,
+                            autoStart,
+                            result
+                    )
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
+            else -> result.notImplemented()
         }
     }
 }

@@ -58,6 +58,12 @@ class _MyAppState extends State<MyApp> {
                 },
                 child: Text("Playlist test"),
               ),
+              RaisedButton(
+                onPressed: () {
+                  AssetsAudioPlayer.newPlayer().open(Audio("assets/audios/cat.wav"));
+                },
+                child: Text("Small Song in parallel"),
+              ),
               Expanded(
                 child: StreamBuilder(
                     stream: _assetsAudioPlayer.current,

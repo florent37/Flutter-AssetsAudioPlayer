@@ -41,7 +41,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/collection-1.14.12/lib" />
-              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/collection-1.14.11/lib" />
             </list>
           </value>
         </entry>
@@ -185,6 +184,13 @@
             </list>
           </value>
         </entry>
+        <entry key="uuid">
+          <value>
+            <list>
+              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/uuid-2.0.4/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="vector_math">
           <value>
             <list>
@@ -207,7 +213,6 @@
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/async-2.4.1/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/boolean_selector-2.0.0/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/charcode-1.1.3/lib" />
-      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/collection-1.14.11/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/collection-1.14.12/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/convert-2.1.1/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/crypto-2.1.4/lib" />
@@ -226,6 +231,7 @@
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/term_glyph-1.1.0/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/test_api-0.2.15/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/typed_data-1.1.6/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/uuid-2.0.4/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/vector_math-2.0.8/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/xml-3.6.1/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/bin/cache/pkg/sky_engine/lib" />
