@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="d5cc0afc-4a49-4e83-9f21-5ed30c8d112e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/example/.flutter-plugins-dependencies" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/assets_audio_player_web.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/assets_audio_player_web.dart" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
