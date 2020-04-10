@@ -55,7 +55,7 @@ class _WebPlayer {
     __listenPosition = true;
     Future.doWhile(() {
       channel.invokeMethod(METHOD_POSITION, currentPosition);
-      return Future.delayed(Duration(milliseconds: 600)).then((value) {
+      return Future.delayed(Duration(milliseconds: 200)).then((value) {
         return __listenPosition;
       });
     });
@@ -66,16 +66,19 @@ class _WebPlayer {
   }
 
   void _start(double position) {
-    isPlaying = true;
     if (_currentBuffer == null) {
       return; // nothing to play yet
     }
     if (_currentNode == null) {
       _createNode();
     }
+
     _startingPoint = _audioContext.currentTime;
     _soughtPosition = position;
+
     _currentNode.start(_startingPoint, _soughtPosition);
+
+    isPlaying = true;
   }
 
   void play() {
@@ -89,6 +92,7 @@ class _WebPlayer {
 
   void stop() {
     _pausedAt = 0;
+    _soughtPosition = 0;
     channel.invokeMethod(METHOD_POSITION, 0);
     _cancel();
   }
@@ -110,8 +114,9 @@ class _WebPlayer {
     _currentBuffer = buffer;
     _createNode();
 
+    final duration = _currentNode.buffer.duration;
     channel.invokeMethod(METHOD_CURRENT, {
-      "totalDuration": 0 // TODO
+      "totalDuration": duration
     });
 
     if (autoStart) {
