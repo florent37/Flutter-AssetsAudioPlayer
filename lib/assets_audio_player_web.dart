@@ -105,6 +105,7 @@ class _WebPlayer {
   }
 
   void open({String path, bool autoStart}) async {
+
     final HttpRequest response = await HttpRequest.request(path, responseType: 'arraybuffer');
     final AudioBuffer buffer = await _audioContext.decodeAudioData(response.response);
 
@@ -179,6 +180,7 @@ class AssetsAudioPlayerPlugin {
   }
 
   Future<dynamic> handleMethodCall(MethodCall call) async {
+    print(call.method);
     switch (call.method) {
       case "isPlaying":
         final String id = call.arguments["id"];
