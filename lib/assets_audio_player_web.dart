@@ -137,7 +137,10 @@ class _WebPlayer {
   }
 
   void seek({double to}) {
-    //TODO
+    if(to != null) {
+      pause();
+      _start(to);
+    }
   }
 }
 
