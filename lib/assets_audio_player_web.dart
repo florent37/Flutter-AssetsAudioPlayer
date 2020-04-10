@@ -8,6 +8,12 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 final AudioContext _audioContext = AudioContext();
 
+// Web support is inspired from https://github.com/luanpotter/audioplayers/blob/master/lib/audioplayers_web.dart
+// thanks to https://github.com/luanpotter/ for his work <3
+
+// !!!! for now works only on debug web mode !!!!
+
+/// Web Player
 class _WebPlayer {
   final MethodChannel channel;
   String _currentUrl;
@@ -146,6 +152,7 @@ class _WebPlayer {
   }
 }
 
+/// Web plugin
 class AssetsAudioPlayerPlugin {
   final Map<String, _WebPlayer> _players = Map();
   final BinaryMessenger messenger;

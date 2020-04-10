@@ -1,3 +1,7 @@
+## 1.3.0 
+
+* Added web support, works only on debug mode
+
 ## 1.2.8
 
 * Added constructors 
