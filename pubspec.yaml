@@ -16,6 +16,10 @@ dependencies:
     sdk: flutter
   dart_web_audio: ^0.1.2
 
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 

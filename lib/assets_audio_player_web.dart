@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:html';
 
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:dart_web_audio/dart_web_audio.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
@@ -8,105 +9,127 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 final AudioContext _audioContext = AudioContext();
 
 class _WebPlayer {
-  static final _METHOD_VOLUME = "player.volume";
-
   final MethodChannel channel;
+  String _currentUrl;
 
   _WebPlayer({this.channel});
 
   //the time when the user clicked on play
-  double startingPoint;
-  double soughtPosition;
-  double pausedAt;
-  double currentVolume = 1.0;
-  String currentUrl;
+  double _startingPoint;
+  double _soughtPosition;
+  double _pausedAt;
+
+  double _currentVolume = 1.0;
+
+  get volume => _currentVolume;
+
+  set volume(double volume) {
+    _currentVolume = volume;
+    _gainNode?.gain?.value = volume;
+    channel.invokeListMethod(METHOD_VOLUME, volume);
+  }
+
   bool _isPlaying = false;
 
-  AudioBuffer currentBuffer;
-  AudioBufferSourceNode currentNode;
-  GainNode gainNode;
+  get isPlaying => _isPlaying;
 
-  double get currentPosition => _audioContext.currentTime - startingPoint;
-
-  void _setUrlAndBuffer(String url, AudioBuffer buffer) {
-    currentUrl = url;
-
-    stop();
-    currentBuffer = buffer;
-    _createNode();
-    if (_isPlaying) {
-      play();
+  set isPlaying(value) {
+    _isPlaying = value;
+    channel.invokeListMethod(METHOD_IS_PLAYING, value);
+    if(value){
+      _listenPosition();
+    } else {
+      _stopListenPosition();
     }
+  }
+
+  AudioBuffer _currentBuffer;
+  AudioBufferSourceNode _currentNode;
+  GainNode _gainNode;
+
+  double get currentPosition => _audioContext.currentTime - _startingPoint + _soughtPosition;
+
+  var __listenPosition = false;
+
+  void _listenPosition() async {
+    while (__listenPosition) {
+      try {
+        channel.invokeMethod(METHOD_POSITION, currentPosition);
+        await Future.delayed(Duration(milliseconds: 300));
+      } catch (t) {
+        print(t);
+      }
+    }
+  }
+
+  void _stopListenPosition() {
+    __listenPosition = false;
   }
 
   void _start(double position) {
-    _isPlaying = true;
-    if (currentBuffer == null) {
+    isPlaying = true;
+    if (_currentBuffer == null) {
       return; // nothing to play yet
     }
-    if (currentNode == null) {
+    if (_currentNode == null) {
       _createNode();
     }
-    startingPoint = _audioContext.currentTime;
-    soughtPosition = position;
-    currentNode.start(startingPoint, soughtPosition);
+    _startingPoint = _audioContext.currentTime;
+    _soughtPosition = position;
+    _currentNode.start(_startingPoint, _soughtPosition);
   }
 
   void play() {
-    _start(pausedAt ?? 0);
+    _start(_pausedAt ?? 0);
   }
 
   void pause() {
-    pausedAt = _audioContext.currentTime - startingPoint + soughtPosition;
+    _pausedAt = currentPosition;
     _cancel();
   }
 
   void stop() {
-    pausedAt = 0;
+    _pausedAt = 0;
     _cancel();
   }
 
   void _cancel() {
-    _isPlaying = false;
-    currentNode?.stop();
-    currentNode = null;
-  }
+    isPlaying = false;
+    channel.invokeMethod(METHOD_POSITION, 0);
 
-  //void seek({double to}) {
-  //  return Future.value(true);
-  //}
-
-  void setVolume({double volume}) {
-    gainNode?.gain?.value = volume;
-    channel.invokeMethod(_METHOD_VOLUME, volume);
+    _currentNode?.stop();
+    _currentNode = null;
   }
 
   void open({String path, bool autoStart}) async {
-    final AudioBuffer buffer = await loadAudio(path);
-    _setUrlAndBuffer(path, buffer);
-    _start(0);
-  }
-
-  Future<AudioBuffer> loadAudio(String url) async {
-    final HttpRequest response = await HttpRequest.request(url, responseType: 'arraybuffer');
+    final HttpRequest response = await HttpRequest.request(path, responseType: 'arraybuffer');
     final AudioBuffer buffer = await _audioContext.decodeAudioData(response.response);
-    return buffer;
+
+    _currentUrl = path;
+
+    stop();
+    _currentBuffer = buffer;
+    _createNode();
+
+    channel.invokeMethod(METHOD_CURRENT, {
+      "totalDuration": 0 // TODO
+    });
+
+    if (autoStart) {
+      play();
+    }
   }
 
   void _createNode() {
-    currentNode = _audioContext.createBufferSource();
-    currentNode.buffer = currentBuffer;
-    currentNode.loop = false;
+    _currentNode = _audioContext.createBufferSource();
+    _currentNode.buffer = _currentBuffer;
+    _currentNode.loop = false;
 
-    gainNode = _audioContext.createGain();
-    gainNode.gain.value = 1.0;
-    gainNode.connect(_audioContext.destination);
+    _gainNode = _audioContext.createGain();
+    _gainNode.gain.value = 1.0;
+    _gainNode.connect(_audioContext.destination);
 
-    currentNode.connect(gainNode);
-  }
-
-  Future<bool> isPlaying() {
-    return Future.value(_isPlaying);
+    _currentNode.connect(_gainNode);
   }
 
   void seek({double to}) {
@@ -151,8 +174,7 @@ class AssetsAudioPlayerPlugin {
     switch (call.method) {
       case "isPlaying":
         final String id = call.arguments["id"];
-        _getOrCreate(id).isPlaying();
-        return Future.value(true);
+        return Future.value(_getOrCreate(id).isPlaying());
         break;
       case "play":
         final String id = call.arguments["id"];
@@ -172,9 +194,7 @@ class AssetsAudioPlayerPlugin {
       case "volume":
         final String id = call.arguments["id"];
         final double volume = call.arguments["volume"];
-        _getOrCreate(id).setVolume(
-          volume: volume,
-        );
+        _getOrCreate(id).volume = volume;
         return Future.value(true);
         break;
       case "seek":

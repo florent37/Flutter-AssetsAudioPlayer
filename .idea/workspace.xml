@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d5cc0afc-4a49-4e83-9f21-5ed30c8d112e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/generated/i18n.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/res/values/strings_en.arb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/example/.flutter-plugins-dependencies" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/assets_audio_player_web.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/assets_audio_player_web.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/assets_audio_player.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/assets_audio_player.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/assets_audio_player_web.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/assets_audio_player_web.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -117,27 +117,27 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="Dart">
           <url>file://$PROJECT_DIR$/lib/assets_audio_player.dart</url>
-          <line>260</line>
+          <line>268</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="Dart">
           <url>file://$PROJECT_DIR$/lib/assets_audio_player.dart</url>
-          <line>252</line>
+          <line>260</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="Dart">
           <url>file://$PROJECT_DIR$/lib/assets_audio_player.dart</url>
-          <line>254</line>
+          <line>262</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="Dart">
           <url>file://$PROJECT_DIR$/lib/assets_audio_player.dart</url>
-          <line>249</line>
+          <line>257</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="Dart">
           <url>file://$PROJECT_DIR$/lib/assets_audio_player.dart</url>
-          <line>226</line>
+          <line>234</line>
           <option name="timeStamp" value="10" />
         </line-breakpoint>
       </breakpoints>
