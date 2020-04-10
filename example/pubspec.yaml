@@ -17,6 +17,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_web_compilers: '>=1.0.0 <2.0.0'
 
   assets_audio_player:
     path: ../
@@ -32,7 +33,10 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/audios/
+    - assets/audios/cat.wav
+    - assets/audios/song1.mp3
+    - assets/audios/song2.mp3
+    - assets/audios/song3.mp3
   fonts:
     - family:  AssetAudioPlayer
       fonts:

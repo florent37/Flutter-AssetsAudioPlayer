@@ -1,3 +1,3 @@
 cd example/
 flutter build web
-firebase deploy
+firebase deploy --debug

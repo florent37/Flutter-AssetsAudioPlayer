@@ -19,7 +19,6 @@
       <excludeFolder url="file://$MODULE_DIR$/example/ios/.symlinks/plugins/assets_audio_player/example/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/example/ios/.symlinks/plugins/assets_audio_player/example/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/example/ios/.symlinks/plugins/assets_audio_player/example/build" />
-      <excludeFolder url="file://$MODULE_DIR$/example/ios/Flutter/App.framework/flutter_assets/packages" />
       <excludeFolder url="file://$MODULE_DIR$/ios" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />

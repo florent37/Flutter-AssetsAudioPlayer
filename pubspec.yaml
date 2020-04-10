@@ -5,11 +5,12 @@ author: Florent Champigny <champigny.florent@gmail.com>
 homepage: https://github.com/florent37/Flutter-AssetsAudioPlayer
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
+  flutter: ">=1.10.0 <2.0.0"
 
 dependencies:
   flutter:
-    sdk: flutter
+      sdk: flutter
   rxdart: ^0.23.1
   uuid: ^2.0.4
   flutter_web_plugins:

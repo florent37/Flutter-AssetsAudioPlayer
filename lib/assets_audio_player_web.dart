@@ -109,6 +109,7 @@ class _WebPlayer {
     final AudioBuffer buffer = await _audioContext.decodeAudioData(response.response);
 
     _currentUrl = path;
+    print("$path");
 
     stop();
     _currentBuffer = buffer;
