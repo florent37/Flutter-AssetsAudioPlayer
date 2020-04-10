@@ -36,7 +36,7 @@ class _WebPlayer {
   set isPlaying(value) {
     _isPlaying = value;
     channel.invokeListMethod(METHOD_IS_PLAYING, value);
-    if(value){
+    if (value) {
       _listenPosition();
     } else {
       _stopListenPosition();
@@ -52,14 +52,13 @@ class _WebPlayer {
   var __listenPosition = false;
 
   void _listenPosition() async {
-    while (__listenPosition) {
-      try {
-        channel.invokeMethod(METHOD_POSITION, currentPosition);
-        await Future.delayed(Duration(milliseconds: 300));
-      } catch (t) {
-        print(t);
-      }
-    }
+    __listenPosition = true;
+    Future.doWhile(() {
+      channel.invokeMethod(METHOD_POSITION, currentPosition);
+      return Future.delayed(Duration(milliseconds: 600)).then((value) {
+        return __listenPosition;
+      });
+    });
   }
 
   void _stopListenPosition() {
@@ -90,12 +89,12 @@ class _WebPlayer {
 
   void stop() {
     _pausedAt = 0;
+    channel.invokeMethod(METHOD_POSITION, 0);
     _cancel();
   }
 
   void _cancel() {
     isPlaying = false;
-    channel.invokeMethod(METHOD_POSITION, 0);
 
     _currentNode?.stop();
     _currentNode = null;
