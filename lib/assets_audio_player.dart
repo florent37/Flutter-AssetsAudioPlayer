@@ -16,6 +16,14 @@ export 'playable.dart';
 const _DEFAULT_AUTO_START = true;
 const _DEFAULT_PLAYER = "DEFAULT_PLAYER";
 
+const METHOD_POSITION = "player.position";
+const METHOD_VOLUME = "player.volume";
+const METHOD_FINISHED = "player.finished";
+const METHOD_IS_PLAYING = "player.isPlaying";
+const METHOD_CURRENT = "player.current";
+//const _METHOD_NEXT = "player.next"
+//const _METHOD_PREV = "player.prev"
+
 /// The AssetsAudioPlayer, playing audios from assets/
 /// Example :
 ///
@@ -213,10 +221,10 @@ class AssetsAudioPlayer {
         case 'log':
           print("log: " + call.arguments);
           break;
-        case 'player.finished':
+        case METHOD_FINISHED:
           _onfinished(call.arguments);
           break;
-        case 'player.current':
+        case METHOD_CURRENT:
           final totalDuration = _toDuration(call.arguments["totalDuration"]);
 
           final playingAudio = PlayingAudio(
@@ -235,7 +243,7 @@ class AssetsAudioPlayer {
             );
           }
           break;
-        case 'player.position':
+        case METHOD_POSITION:
           if (call.arguments is int) {
             _currentPosition.value = Duration(seconds: call.arguments);
           } else if (call.arguments is double) {
@@ -243,10 +251,10 @@ class AssetsAudioPlayer {
             _currentPosition.value = Duration(seconds: value.round());
           }
           break;
-        case 'player.isPlaying':
+        case METHOD_IS_PLAYING:
           _isPlaying.value = call.arguments;
           break;
-        case 'player.volume':
+        case METHOD_VOLUME:
           _volume.value = call.arguments;
           break;
         default:
