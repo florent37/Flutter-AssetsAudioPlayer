@@ -168,12 +168,24 @@ return StreamBuilder(
 
 ### Finished
 
-Called when the current song has finished to play
+Called when the current song has finished to play, 
+
+it gives the Playing audio that just finished
 
 ```Dart
-assetsAudioPlayer.finished //ValueObservable<bool>
+assetsAudioPlayer.playlistAudioFinished //ValueObservable<Playing>
 
-assetsAudioPlayer.finished.listen((finished){
+assetsAudioPlayer.playlistAudioFinished.listen((Playing playing){
+    
+})
+```
+
+Called when the complete playlist has finished to play
+
+```Dart
+assetsAudioPlayer.playlistFinished //ValueObservable<bool>
+
+assetsAudioPlayer.playlistFinished.listen((finished){
     
 })
 ```

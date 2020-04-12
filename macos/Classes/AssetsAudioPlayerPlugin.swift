@@ -1,19 +1,15 @@
-import Cocoa
-import FlutterMacOS
+#if canImport(FlutterMacOS)
+    import Cocoa
+    import FlutterMacOS
+#endif
 
 public class AssetsAudioPlayerPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "assets_audio_player", binaryMessenger: registrar.messenger)
-    let instance = AssetsAudioPlayerPlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
+    let music = Music(messenger: registrar.messenger, registrar: registrar)
+    music.start()
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    switch call.method {
-    case "getPlatformVersion":
-      result("macOS " + ProcessInfo.processInfo.operatingSystemVersionString)
-    default:
-      result(FlutterMethodNotImplemented)
-    }
+
   }
 }

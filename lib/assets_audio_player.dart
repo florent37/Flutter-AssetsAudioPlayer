@@ -13,6 +13,8 @@ export 'playing.dart';
 import 'playable.dart';
 export 'playable.dart';
 
+import 'package:path_provider/path_provider.dart';
+
 const _DEFAULT_AUTO_START = true;
 const _DEFAULT_PLAYER = "DEFAULT_PLAYER";
 
@@ -340,6 +342,27 @@ class AssetsAudioPlayer {
   //private method, used in open(playlist) and open(path)
   void _open(String assetAudioPath,
       {bool autoStart = _DEFAULT_AUTO_START}) async {
+
+    final p = Uri(path: Uri.encodeFull(assetAudioPath)).path;
+    //final assets = rootBundle.load("test");
+    print("assets : ${p}");
+
+
+  final _tempDirectory = await getTemporaryDirectory();
+   print("_tempDirectory : ${_tempDirectory.path}");
+   final _appSupportDirectory = await getApplicationSupportDirectory();
+   print("_appSupportDirectory : ${_appSupportDirectory.path}");
+   final _appLibraryDirectory = await getLibraryDirectory();
+   print("_appLibraryDirectory : ${_appLibraryDirectory.path}");
+   final _appDocumentsDirector = await getApplicationDocumentsDirectory();
+   print("_appDocumentsDirector : ${_appDocumentsDirector.path}");
+   //final  _externalDocumentsDirectory = await getExternalStorageDirectory();
+   //print("_externalDocumentsDirectory : ${_externalDocumentsDirectory.path}");
+   final _externalCacheDirectories = await getExternalCacheDirectories();
+   print("_externalCacheDirectories : ${_externalCacheDirectories.toString()}");
+
+   //final directory = await getApplicationDocumentsDirectory();
+
     if (assetAudioPath != null) {
       try {
         _sendChannel.invokeMethod('open', {

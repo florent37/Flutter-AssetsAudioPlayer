@@ -247,6 +247,27 @@
             </list>
           </value>
         </entry>
+        <entry key="path_provider">
+          <value>
+            <list>
+              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.5/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="path_provider_macos">
+          <value>
+            <list>
+              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="path_provider_platform_interface">
+          <value>
+            <list>
+              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path_provider_platform_interface-1.0.1/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="pedantic">
           <value>
             <list>
@@ -258,6 +279,20 @@
           <value>
             <list>
               <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/petitparser-2.4.0/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="platform">
+          <value>
+            <list>
+              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/platform-2.2.1/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="plugin_platform_interface">
+          <value>
+            <list>
+              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/plugin_platform_interface-1.0.2/lib" />
             </list>
           </value>
         </entry>
@@ -443,8 +478,13 @@
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/node_io-1.0.1+2/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/package_config-1.9.3/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path-1.6.4/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.5/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path_provider_platform_interface-1.0.1/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/pedantic-1.9.0/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/petitparser-2.4.0/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/platform-2.2.1/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/plugin_platform_interface-1.0.2/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/pool-1.4.0/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/protobuf-1.0.1/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/pub_semver-1.4.4/lib" />

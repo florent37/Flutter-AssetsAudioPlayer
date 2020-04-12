@@ -53,7 +53,8 @@ class _WebPlayer {
   AudioBufferSourceNode _currentNode;
   GainNode _gainNode;
 
-  double get currentPosition => _audioContext.currentTime - _startingPoint + _soughtPosition;
+  double get currentPosition =>
+      _audioContext.currentTime - _startingPoint + _soughtPosition;
 
   var __listenPosition = false;
 
@@ -111,9 +112,10 @@ class _WebPlayer {
   }
 
   void open({String path, bool autoStart}) async {
-
-    final HttpRequest response = await HttpRequest.request(path, responseType: 'arraybuffer');
-    final AudioBuffer buffer = await _audioContext.decodeAudioData(response.response);
+    final HttpRequest response =
+        await HttpRequest.request(path, responseType: 'arraybuffer');
+    final AudioBuffer buffer =
+        await _audioContext.decodeAudioData(response.response);
 
     _currentUrl = path;
     print("$path");
@@ -123,9 +125,7 @@ class _WebPlayer {
     _createNode();
 
     final duration = _currentNode.buffer.duration;
-    channel.invokeMethod(METHOD_CURRENT, {
-      "totalDuration": duration
-    });
+    channel.invokeMethod(METHOD_CURRENT, {"totalDuration": duration});
 
     if (autoStart) {
       play();
@@ -145,7 +145,7 @@ class _WebPlayer {
   }
 
   void seek({double to}) {
-    if(to != null) {
+    if (to != null) {
       pause();
       _start(to);
     }
@@ -182,7 +182,8 @@ class AssetsAudioPlayerPlugin {
       registrar.messenger,
     );
 
-    final AssetsAudioPlayerPlugin instance = AssetsAudioPlayerPlugin(messenger: registrar.messenger);
+    final AssetsAudioPlayerPlugin instance =
+        AssetsAudioPlayerPlugin(messenger: registrar.messenger);
     channel.setMethodCallHandler(instance.handleMethodCall);
   }
 

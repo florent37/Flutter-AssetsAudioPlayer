@@ -16,6 +16,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   dart_web_audio: ^0.1.2
+  path_provider: ^1.6.5
 
 dev_dependencies:
   flutter_test:
@@ -37,8 +38,8 @@ flutter:
         pluginClass: AssetsAudioPlayerPlugin
       ios:
         pluginClass: AssetsAudioPlayerPlugin
-      #macos:
-      #  pluginClass: AssetsAudioPlayerPlugin
+      macos:
+        pluginClass: AssetsAudioPlayerPlugin
       web:
         pluginClass: AssetsAudioPlayerPlugin
         fileName: assets_audio_player_web.dart
