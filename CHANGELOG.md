@@ -1,4 +1,4 @@
-## 1.3.1+1
+## 1.3.1+2
 
 * Upgraded RxDart dependency
 * fixed lint issues

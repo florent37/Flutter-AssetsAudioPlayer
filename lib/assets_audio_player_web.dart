@@ -16,7 +16,7 @@ final AudioContext _audioContext = AudioContext();
 /// Web Player
 class _WebPlayer {
   final MethodChannel channel;
-  String _currentUrl;
+  //String _currentUrl;
 
   _WebPlayer({this.channel});
 
@@ -117,8 +117,8 @@ class _WebPlayer {
     final AudioBuffer buffer =
         await _audioContext.decodeAudioData(response.response);
 
-    _currentUrl = path;
-    print("$path");
+    //_currentUrl = path;
+    //print("$path");
 
     stop();
     _currentBuffer = buffer;

@@ -145,8 +145,8 @@ class _MyAppState extends State<MyApp> {
                         Text(" - "),
                         Expanded(
                           child: Slider(
-                            min: AssetsAudioPlayer.MIN_VOLUME,
-                            max: AssetsAudioPlayer.MAX_VOLUME,
+                            min: AssetsAudioPlayer.minVolume,
+                            max: AssetsAudioPlayer.maxVolume,
                             value: volume,
                             onChanged: (value) {
                               _assetsAudioPlayer.setVolume(value);

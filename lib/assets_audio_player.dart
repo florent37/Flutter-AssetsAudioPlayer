@@ -41,7 +41,7 @@ const METHOD_CURRENT = "player.current";
 class AssetsAudioPlayer {
   static final double minVolume = 0.0;
   static final double maxVolume = 1.0;
-  static final double defaultVolume = MAX_VOLUME;
+  static final double defaultVolume = maxVolume;
 
   static final uuid = Uuid();
 
@@ -442,7 +442,7 @@ class AssetsAudioPlayer {
   ///
   void setVolume(double volume) {
     _sendChannel.invokeMethod('volume',
-        {"id": this.id, "volume": volume.clamp(MIN_VOLUME, MAX_VOLUME)});
+        {"id": this.id, "volume": volume.clamp(minVolume, maxVolume)});
   }
 
   /// Tells the media player to stop the current song, then release the MediaPlayer
