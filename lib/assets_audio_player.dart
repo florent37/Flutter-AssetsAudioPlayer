@@ -340,7 +340,6 @@ class AssetsAudioPlayer {
   //private method, used in open(playlist) and open(path)
   void _open(String assetAudioPath,
       {bool autoStart = _DEFAULT_AUTO_START}) async {
-
     if (assetAudioPath != null) {
       try {
         _sendChannel.invokeMethod('open', {

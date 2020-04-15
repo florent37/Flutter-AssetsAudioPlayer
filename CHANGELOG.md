@@ -1,3 +1,7 @@
+## 1.3.1
+
+* Fixed build on iOS
+
 ## 1.3.0 
 
 * Added web support, works only on debug mode
