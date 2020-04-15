@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
 import AVFoundation
+import MediaPlayer
 
 public class SwiftAssetsAudioPlayerPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -11,6 +12,7 @@ public class SwiftAssetsAudioPlayerPlugin: NSObject, FlutterPlugin {
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
 
   }
+    
 }
 
 public class Player : NSObject, AVAudioPlayerDelegate {
@@ -42,6 +44,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 /* set session category and mode with options */
                 if #available(iOS 10.0, *) {
                     try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, mode: AVAudioSession.Mode.default, options: [])
+                    try AVAudioSession.sharedInstance().setActive(true)
                 } else {
                     try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
                 }
@@ -80,6 +83,15 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 let audioDurationSeconds = CMTimeGetSeconds(asset.duration)
                 
                 self.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": audioDurationSeconds])
+                
+                MPNowPlayingInfoCenter.default().nowPlayingInfo = [
+                            MPMediaItemPropertyTitle: "info.title",
+                            MPMediaItemPropertyArtist: "info.channelName",
+                            MPNowPlayingInfoPropertyElapsedPlaybackTime: 10,
+                            MPMediaItemPropertyPlaybackDuration: audioDurationSeconds,
+                            MPNowPlayingInfoPropertyPlaybackRate: player!.rate,
+                            //MPMediaItemPropertyArtwork: artwork
+                ]
                 
             } catch let error {
                 result(error);
@@ -154,7 +166,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     }
 }
 
-class Music : NSObject {
+class Music : NSObject, FlutterPlugin {
+    
     
     static let METHOD_POSITION = "player.position"
     static let METHOD_FINISHED = "player.finished"
@@ -163,6 +176,10 @@ class Music : NSObject {
     static let METHOD_VOLUME = "player.volume"
     
     var players = Dictionary<String, Player>()
+    
+    static func register(with registrar: FlutterPluginRegistrar) {
+        
+    }
     
     func getOrCreatePlayer(id: String) -> Player {
         if let player = players[id] {
@@ -185,7 +202,14 @@ class Music : NSObject {
         self.registrar = registrar
     }
     
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
+        application.beginReceivingRemoteControlEvents()
+        return true;
+    }
+    
     func start(){
+        self.registrar.addApplicationDelegate(self)
+
         channel.setMethodCallHandler({(call: FlutterMethodCall, result: FlutterResult) -> Void in
             //self.log(call.method + call.arguments.debugDescription)
             switch(call.method){
