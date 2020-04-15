@@ -170,13 +170,6 @@
             </list>
           </value>
         </entry>
-        <entry key="image">
-          <value>
-            <list>
-              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/image-2.1.12/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="js">
           <value>
             <list>
@@ -247,52 +240,10 @@
             </list>
           </value>
         </entry>
-        <entry key="path_provider">
-          <value>
-            <list>
-              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.5/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="path_provider_macos">
-          <value>
-            <list>
-              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="path_provider_platform_interface">
-          <value>
-            <list>
-              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path_provider_platform_interface-1.0.1/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="pedantic">
           <value>
             <list>
               <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/pedantic-1.9.0/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="petitparser">
-          <value>
-            <list>
-              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/petitparser-2.4.0/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="platform">
-          <value>
-            <list>
-              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/platform-2.2.1/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="plugin_platform_interface">
-          <value>
-            <list>
-              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/plugin_platform_interface-1.0.2/lib" />
             </list>
           </value>
         </entry>
@@ -429,13 +380,6 @@
             </list>
           </value>
         </entry>
-        <entry key="xml">
-          <value>
-            <list>
-              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/xml-3.6.1/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="yaml">
           <value>
             <list>
@@ -467,7 +411,6 @@
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/front_end-0.1.14/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/glob-1.2.0/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/graphs-0.2.0/lib" />
-      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/image-2.1.12/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/js-0.6.1+1/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/json_annotation-2.4.0/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/kernel-0.3.14/lib" />
@@ -478,13 +421,7 @@
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/node_io-1.0.1+2/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/package_config-1.9.3/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path-1.6.4/lib" />
-      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.5/lib" />
-      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4/lib" />
-      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/path_provider_platform_interface-1.0.1/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/pedantic-1.9.0/lib" />
-      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/petitparser-2.4.0/lib" />
-      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/platform-2.2.1/lib" />
-      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/plugin_platform_interface-1.0.2/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/pool-1.4.0/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/protobuf-1.0.1/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/pub_semver-1.4.4/lib" />
@@ -503,7 +440,6 @@
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/uuid-2.0.4/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/vector_math-2.0.8/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/watcher-0.9.7+14/lib" />
-      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/xml-3.6.1/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/yaml-2.2.0/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/bin/cache/pkg/sky_engine/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/packages/flutter/lib" />

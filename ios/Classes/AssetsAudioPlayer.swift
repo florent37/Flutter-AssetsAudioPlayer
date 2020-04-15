@@ -9,7 +9,7 @@ public class SwiftAssetsAudioPlayerPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-   
+
   }
 }
 
