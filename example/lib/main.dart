@@ -135,7 +135,7 @@ class _MyAppState extends State<MyApp> {
               ),
               StreamBuilder(
                   stream: _assetsAudioPlayer.volume,
-                  initialData: AssetsAudioPlayer.DEFAULT_VOLUME,
+                  initialData: AssetsAudioPlayer.defaultVolume,
                   builder: (context, snapshot) {
                     final double volume = snapshot.data;
                     return Row(
