@@ -1,3 +1,9 @@
+## 1.3.1+1
+
+* Upgraded RxDart dependency
+* fixed lint issues
+* lowerCamelCase AssetsAudioPlayer volumes consts 
+
 ## 1.3.1
 
 * Fixed build on iOS

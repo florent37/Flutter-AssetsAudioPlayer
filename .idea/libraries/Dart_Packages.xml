@@ -285,7 +285,7 @@
         <entry key="rxdart">
           <value>
             <list>
-              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/rxdart-0.23.1/lib" />
+              <option value="$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/rxdart-0.24.0/lib" />
             </list>
           </value>
         </entry>
@@ -427,7 +427,7 @@
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/pub_semver-1.4.4/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/pubspec_parse-0.1.5/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/quiver-2.1.3/lib" />
-      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/rxdart-0.23.1/lib" />
+      <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/rxdart-0.24.0/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/scratch_space-0.0.4+2/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/source_maps-0.10.9/lib" />
       <root url="file://$USER_HOME$/flutter/flutter-sdk/.pub-cache/hosted/pub.dartlang.org/source_span-1.7.0/lib" />

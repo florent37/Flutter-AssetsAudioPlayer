@@ -39,9 +39,9 @@ const METHOD_CURRENT = "player.current";
 ///       assets:
 ///         - assets/audios/
 class AssetsAudioPlayer {
-  static final double MIN_VOLUME = 0.0;
-  static final double MAX_VOLUME = 1.0;
-  static final double DEFAULT_VOLUME = MAX_VOLUME;
+  static final double minVolume = 0.0;
+  static final double maxVolume = 1.0;
+  static final double defaultVolume = MAX_VOLUME;
 
   static final uuid = Uuid();
 
