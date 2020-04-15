@@ -5,12 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5cc0afc-4a49-4e83-9f21-5ed30c8d112e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/assets_audio_player/lib/generated/i18n.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/assets_audio_player/lib/generated/i18n.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/assets_audio_player.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/assets_audio_player.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/assets_audio_player_web.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/assets_audio_player_web.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
