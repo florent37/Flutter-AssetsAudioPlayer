@@ -2,46 +2,32 @@ import 'dart:async';
 import 'dart:html';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:dart_web_audio/dart_web_audio.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_web_howl/howl.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-
-final AudioContext _audioContext = AudioContext();
-
-// Web support is inspired from https://github.com/luanpotter/audioplayers/blob/master/lib/audioplayers_web.dart
-// thanks to https://github.com/luanpotter/ for his work <3
-
-// !!!! for now works only on debug web mode !!!!
 
 /// Web Player
 class _WebPlayer {
   final MethodChannel channel;
-  //String _currentUrl;
 
   _WebPlayer({this.channel});
 
-  //the time when the user clicked on play
-  double _startingPoint;
-  double _soughtPosition;
-  double _pausedAt;
+  Howl _howl;
 
-  double _currentVolume = 1.0;
-
-  get volume => _currentVolume;
+  get volume => _howl?.volume ?? 1.0;
 
   set volume(double volume) {
-    _currentVolume = volume;
-    _gainNode?.gain?.value = volume;
-    channel.invokeListMethod(METHOD_VOLUME, volume);
+    _howl?.volume(volume);
+    channel.invokeMethod(METHOD_VOLUME, volume);
   }
 
   bool _isPlaying = false;
 
   get isPlaying => _isPlaying;
 
-  set isPlaying(value) {
+  set isPlaying(bool value) {
     _isPlaying = value;
-    channel.invokeListMethod(METHOD_IS_PLAYING, value);
+    channel.invokeMethod(METHOD_IS_PLAYING, value);
     if (value) {
       _listenPosition();
     } else {
@@ -49,19 +35,27 @@ class _WebPlayer {
     }
   }
 
-  AudioBuffer _currentBuffer;
-  AudioBufferSourceNode _currentNode;
-  GainNode _gainNode;
-
-  double get currentPosition =>
-      _audioContext.currentTime - _startingPoint + _soughtPosition;
+  double get currentPosition => _howl.seek();
 
   var __listenPosition = false;
+
+  double _duration = 0;
+  double _position = 0;
 
   void _listenPosition() async {
     __listenPosition = true;
     Future.doWhile(() {
-      channel.invokeMethod(METHOD_POSITION, currentPosition);
+
+      final duration = _howl.duration;
+      if(duration != _duration) {
+        _duration = duration;
+        channel.invokeMethod(METHOD_CURRENT, {"totalDuration": duration});
+      }
+
+      if(_position != currentPosition) {
+        _position = currentPosition;
+        channel.invokeMethod(METHOD_POSITION, currentPosition);
+      }
       return Future.delayed(Duration(milliseconds: 200)).then((value) {
         return __listenPosition;
       });
@@ -72,82 +66,49 @@ class _WebPlayer {
     __listenPosition = false;
   }
 
-  void _start(double position) {
-    if (_currentBuffer == null) {
-      return; // nothing to play yet
-    }
-    if (_currentNode == null) {
-      _createNode();
-    }
-
-    _startingPoint = _audioContext.currentTime;
-    _soughtPosition = position;
-
-    _currentNode.start(_startingPoint, _soughtPosition);
-
-    isPlaying = true;
-  }
-
   void play() {
-    _start(_pausedAt ?? 0);
+    if(_howl != null) {
+      isPlaying = true;
+      _howl.play();
+    }
   }
 
   void pause() {
-    _pausedAt = currentPosition;
-    _cancel();
+    if(_howl != null) {
+      isPlaying = false;
+      _howl.pause();
+    }
   }
 
   void stop() {
-    _pausedAt = 0;
-    _soughtPosition = 0;
-    channel.invokeMethod(METHOD_POSITION, 0);
-    _cancel();
-  }
-
-  void _cancel() {
-    isPlaying = false;
-
-    _currentNode?.stop();
-    _currentNode = null;
+    if(_howl != null) {
+      isPlaying = false;
+      _howl.stop();
+      channel.invokeMethod(METHOD_POSITION, 0);
+    }
   }
 
   void open({String path, bool autoStart}) async {
-    final HttpRequest response =
-        await HttpRequest.request(path, responseType: 'arraybuffer');
-    final AudioBuffer buffer =
-        await _audioContext.decodeAudioData(response.response);
-
-    //_currentUrl = path;
-    //print("$path");
-
     stop();
-    _currentBuffer = buffer;
-    _createNode();
 
-    final duration = _currentNode.buffer.duration;
-    channel.invokeMethod(METHOD_CURRENT, {"totalDuration": duration});
+    path = (window.location.href + "/" + path)
+        .replaceAll("//", "/")
+        .replaceAll("/#/", "/");
+
+    print("open: $path");
+
+    _howl = Howl(src: [path]);
 
     if (autoStart) {
       play();
     }
   }
 
-  void _createNode() {
-    _currentNode = _audioContext.createBufferSource();
-    _currentNode.buffer = _currentBuffer;
-    _currentNode.loop = false;
-
-    _gainNode = _audioContext.createGain();
-    _gainNode.gain.value = 1.0;
-    _gainNode.connect(_audioContext.destination);
-
-    _currentNode.connect(_gainNode);
-  }
-
   void seek({double to}) {
-    if (to != null) {
-      pause();
-      _start(to);
+    if(_howl != null) {
+      if (to != null) {
+        _howl?.seek(to);
+      }
     }
   }
 }
@@ -157,7 +118,9 @@ class AssetsAudioPlayerPlugin {
   final Map<String, _WebPlayer> _players = Map();
   final BinaryMessenger messenger;
 
-  AssetsAudioPlayerPlugin({this.messenger});
+  AssetsAudioPlayerPlugin({this.messenger}) {
+    initializeHowl();
+  }
 
   _WebPlayer _getOrCreate(String id) {
     if (_players.containsKey(id)) {

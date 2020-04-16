@@ -15,7 +15,7 @@ dependencies:
   uuid: ^2.0.4
   flutter_web_plugins:
     sdk: flutter
-  dart_web_audio: ^0.1.2
+  flutter_web_howl: ^0.0.4+2
 
 dev_dependencies:
   flutter_test:
