@@ -100,7 +100,7 @@ class _WebPlayer {
     return path;
   }
 
-  void open({String path, bool autoStart}) async {
+  void open({String path, double volume, bool autoStart}) async {
     stop();
 
     _howl = Howl(src: [findAssetPath(path)]);
@@ -108,6 +108,7 @@ class _WebPlayer {
     if (autoStart) {
       play();
     }
+    this.volume = volume;
   }
 
   void seek({double to}) {
@@ -195,9 +196,11 @@ class AssetsAudioPlayerPlugin {
       case "open":
         final String id = call.arguments["id"];
         final String path = call.arguments["path"];
+        final String volume = call.arguments["volum"];
         final bool autoStart = call.arguments["autoStart"] ?? true;
         return _getOrCreate(id).open(
           path: path,
+          volume: volume,
           autoStart: autoStart,
         );
         break;

@@ -27,7 +27,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         channel.invokeMethod("log", arguments: message)
     }
     
-    func open(assetPath: String, autoStart: Bool, result: FlutterResult){
+    func open(assetPath: String, autoStart: Bool, volume: Double, result: FlutterResult){
             let assetKey = registrar.lookupKey(forAsset: assetPath)
             guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
                  log("resource not found \(assetKey)")
@@ -71,6 +71,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 if(autoStart){
                     play()
                 }
+                self.setVolume(volume: volume)
                 
                 result(true);
                 //log("play_ok");
@@ -239,9 +240,10 @@ class Music : NSObject {
                 let args = call.arguments as! NSDictionary
                 let id = args["id"] as! String
                 let assetPath = args["path"] as! String
+                let volume = args["volume"] as! Double
                 let autoStart = args["autoStart"] as! Bool
                 self.getOrCreatePlayer(id: id)
-                    .open(assetPath: assetPath, autoStart: autoStart, result: result);
+                    .open(assetPath: assetPath, autoStart: autoStart, volume:volume, result: result);
             break;
                 
             default:
