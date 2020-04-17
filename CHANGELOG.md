@@ -1,3 +1,7 @@
+## 1.3.5
+
+* Volume does not reset anymore on looping audios
+
 ## 1.3.4
 
 * Fixed player on Android
