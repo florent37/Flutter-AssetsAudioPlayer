@@ -88,19 +88,23 @@ class _WebPlayer {
     }
   }
 
-  void open({String path, bool autoStart}) async {
-    stop();
+  String findAssetPath(String path){
+    //in web, assets are packaged in a /assets/ folder
+    //if you want "/asset/3" as described in pubspec
+    //it will be in /assets/asset/3
 
     /* for release mode, need to change the "url", remove the /#/ and add /asset before */
     if(path.startsWith("/")){
       path = path.replaceFirst("/", "");
     }
-
     path = (window.location.href.replaceAll("/#/", "") + "/assets/" + path);
+    return path;
+  }
 
-    print("open: $path");
+  void open({String path, bool autoStart}) async {
+    stop();
 
-    _howl = Howl(src: [path]);
+    _howl = Howl(src: [findAssetPath(path)]);
 
     if (autoStart) {
       play();
@@ -154,7 +158,7 @@ class AssetsAudioPlayerPlugin {
   }
 
   Future<dynamic> handleMethodCall(MethodCall call) async {
-    print(call.method);
+    //print(call.method);
     switch (call.method) {
       case "isPlaying":
         final String id = call.arguments["id"];
