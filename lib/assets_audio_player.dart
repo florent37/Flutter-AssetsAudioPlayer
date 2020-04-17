@@ -161,7 +161,7 @@ class AssetsAudioPlayer {
   Stream<Duration> get currentPosition => _currentPosition.stream;
 
   /// The volume of the media Player (min: 0, max: 1)
-  final BehaviorSubject<double> _volume = BehaviorSubject<double>.seeded(1);
+  final BehaviorSubject<double> _volume = BehaviorSubject<double>.seeded(defaultVolume);
 
   /// Streams the volume of the media Player (min: 0, max: 1)
   ///     final double volume = _assetsAudioPlayer.volume.value;
@@ -346,6 +346,7 @@ class AssetsAudioPlayer {
           "id": this.id,
           "path": assetAudioPath,
           "autoStart": autoStart,
+          "volume": this.volume.value ?? defaultVolume,
         });
       } catch (e) {
         print(e);

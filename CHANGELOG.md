@@ -1,3 +1,7 @@
+## 1.3.4
+
+* Fixed player on Android
+
 ## 1.3.3
 
 * Fixed build on Android & iOS

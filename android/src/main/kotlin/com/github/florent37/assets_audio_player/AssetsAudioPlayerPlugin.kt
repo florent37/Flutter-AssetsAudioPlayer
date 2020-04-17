@@ -48,7 +48,7 @@ class Player(private val context: Context, private val channel: MethodChannel) {
         }
     }
 
-    fun open(assetAudioPath: String?, autoStart: Boolean, result: MethodChannel.Result) {
+    fun open(assetAudioPath: String?, autoStart: Boolean, volume: Double, result: MethodChannel.Result) {
         stop()
 
         var totalDurationSeconds = 0L
@@ -84,6 +84,7 @@ class Player(private val context: Context, private val channel: MethodChannel) {
                 if (autoStart) {
                     play()
                 }
+                setVolume(volume)
             }
             mediaPlayer?.prepare()
         } catch (e: Exception) {
@@ -287,11 +288,16 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val messenge
                         result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
                         return
                     }
+                    val volume = args["volume"] as? Double ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
+                        return
+                    }
                     val autoStart = args["autoStart"] as? Boolean ?: true
 
                     getOrCreatePlayer(id).open(
                             path,
                             autoStart,
+                            volume,
                             result
                     )
                 } ?: run {
