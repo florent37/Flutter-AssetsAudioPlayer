@@ -196,7 +196,7 @@ class AssetsAudioPlayerPlugin {
       case "open":
         final String id = call.arguments["id"];
         final String path = call.arguments["path"];
-        final String volume = call.arguments["volum"];
+        final double volume = call.arguments["volume"];
         final bool autoStart = call.arguments["autoStart"] ?? true;
         return _getOrCreate(id).open(
           path: path,
