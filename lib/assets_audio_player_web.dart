@@ -45,14 +45,13 @@ class _WebPlayer {
   void _listenPosition() async {
     __listenPosition = true;
     Future.doWhile(() {
-
       final duration = _howl.duration;
-      if(duration != _duration) {
+      if (duration != _duration) {
         _duration = duration;
         channel.invokeMethod(METHOD_CURRENT, {"totalDuration": duration});
       }
 
-      if(_position != currentPosition) {
+      if (_position != currentPosition) {
         _position = currentPosition;
         channel.invokeMethod(METHOD_POSITION, currentPosition);
       }
@@ -67,34 +66,34 @@ class _WebPlayer {
   }
 
   void play() {
-    if(_howl != null) {
+    if (_howl != null) {
       isPlaying = true;
       _howl.play();
     }
   }
 
   void pause() {
-    if(_howl != null) {
+    if (_howl != null) {
       isPlaying = false;
       _howl.pause();
     }
   }
 
   void stop() {
-    if(_howl != null) {
+    if (_howl != null) {
       isPlaying = false;
       _howl.stop();
       channel.invokeMethod(METHOD_POSITION, 0);
     }
   }
 
-  String findAssetPath(String path){
+  String findAssetPath(String path) {
     //in web, assets are packaged in a /assets/ folder
     //if you want "/asset/3" as described in pubspec
     //it will be in /assets/asset/3
 
     /* for release mode, need to change the "url", remove the /#/ and add /asset before */
-    if(path.startsWith("/")){
+    if (path.startsWith("/")) {
       path = path.replaceFirst("/", "");
     }
     path = (window.location.href.replaceAll("/#/", "") + "/assets/" + path);
@@ -112,7 +111,7 @@ class _WebPlayer {
   }
 
   void seek({double to}) {
-    if(_howl != null) {
+    if (_howl != null) {
       if (to != null) {
         _howl?.seek(to);
       }

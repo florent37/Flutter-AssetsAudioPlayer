@@ -1,6 +1,6 @@
 name: assets_audio_player
 description: Play music/audio stored in assets files directly from Flutter. Compatible with Android, iOS and web
-version: 1.3.2
+version: 1.3.3
 author: Florent Champigny <champigny.florent@gmail.com>
 homepage: https://github.com/florent37/Flutter-AssetsAudioPlayer
 
@@ -15,7 +15,7 @@ dependencies:
   uuid: ^2.0.4
   flutter_web_plugins:
     sdk: flutter
-  flutter_web_howl: ^0.0.4+2
+  flutter_web_howl: ^1.0.0
 
 dev_dependencies:
   flutter_test:
