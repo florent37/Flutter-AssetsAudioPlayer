@@ -11,9 +11,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final audios = <Audio>[
-    Audio("assets/assets/audios/song1.mp3"),
-    Audio("assets/assets/audios/song2.mp3"),
-    Audio("assets/assets/audios/song3.mp3"),
+    Audio("assets/audios/song1.mp3"),
+    Audio("assets/audios/song2.mp3"),
+    Audio("assets/audios/song3.mp3"),
   ];
 
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();

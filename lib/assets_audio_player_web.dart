@@ -91,9 +91,12 @@ class _WebPlayer {
   void open({String path, bool autoStart}) async {
     stop();
 
-    path = (window.location.href + "/" + path)
-        .replaceAll("//", "/")
-        .replaceAll("/#/", "/");
+    /* for release mode, need to change the "url", remove the /#/ and add /asset before */
+    if(path.startsWith("/")){
+      path = path.replaceFirst("/", "");
+    }
+
+    path = (window.location.href.replaceAll("/#/", "") + "/assets/" + path);
 
     print("open: $path");
 
