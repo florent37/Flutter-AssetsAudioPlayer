@@ -1,3 +1,7 @@
+## 1.3.2
+
+- Rewritten the web support, using now https://github.com/florent37/flutter_web_howl
+
 ## 1.3.1+2
 
 * Upgraded RxDart dependency

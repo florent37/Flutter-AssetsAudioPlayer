@@ -204,6 +204,12 @@ assetsAudioPlayer.isLooping.listen((loop){
 assetsAudioPlayer.toggleLoop(); //toggle the value of looping
 ```
 
+# Web Support
+
+Web support is using [import_js_library](https://pub.dev/packages/import_js_library) to import the [Howler.js library](https://howlerjs.com/)
+
+The flutter wrapper of Howler has been exported in another package : https://github.com/florent37/flutter_web_howl
+
 # Flutter
 
 For help getting started with Flutter, view our 
