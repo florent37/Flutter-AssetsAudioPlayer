@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.florent37.assetsaudioplayerexample">
+    package="com.github.florent37.assets_audio_player_example">
 
     <!-- The INTERNET permission is required for development. Specifically,
          flutter needs it to communicate with the running application
