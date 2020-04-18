@@ -339,7 +339,8 @@ class AssetsAudioPlayer {
   }
 
   //private method, used in open(playlist) and open(path)
-  void _open(String assetAudioPath, {
+  void _open(
+    String assetAudioPath, {
     bool autoStart = _DEFAULT_AUTO_START,
     double forcedVolume,
   }) async {
@@ -359,13 +360,15 @@ class AssetsAudioPlayer {
     }
   }
 
-  void _openPlaylist(Playlist playlist, {
+  void _openPlaylist(
+    Playlist playlist, {
     bool autoStart = _DEFAULT_AUTO_START,
     double volume,
   }) async {
     this._playlist = _CurrentPlaylist(playlist: playlist);
     _playlist.moveTo(playlist.startIndex);
-    _open(_playlist.currentAudioPath(), autoStart: autoStart, forcedVolume: volume);
+    _open(_playlist.currentAudioPath(),
+        autoStart: autoStart, forcedVolume: volume);
   }
 
   /// Open a song from the asset
@@ -381,13 +384,15 @@ class AssetsAudioPlayer {
   ///       assets:
   ///         - assets/audios/
   ///
-  void open(Playable playable, {bool autoStart = _DEFAULT_AUTO_START, double volume}) async {
+  void open(Playable playable,
+      {bool autoStart = _DEFAULT_AUTO_START, double volume}) async {
     if (playable is Playlist &&
         playable.audios != null &&
         playable.audios.length > 0) {
       _openPlaylist(playable, autoStart: autoStart, volume: volume);
     } else if (playable is Audio) {
-      _openPlaylist(Playlist(audios: [playable]), autoStart: autoStart, volume: volume);
+      _openPlaylist(Playlist(audios: [playable]),
+          autoStart: autoStart, volume: volume);
     } else {
       //do nothing
       //throw exception ?

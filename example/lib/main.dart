@@ -77,7 +77,7 @@ class _MyAppState extends State<MyApp> {
                                     color: audios[position].path == playing?.audio?.assetAudioPath ? Colors.blue : Colors.black,
                                   )),
                               onTap: () {
-                                _assetsAudioPlayer.open(audios[position], volume: 0.2);
+                                _assetsAudioPlayer.open(audios[position] /*, volume: 0.2*/);
                               });
                         },
                         itemCount: audios.length,
