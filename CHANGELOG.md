@@ -1,6 +1,6 @@
-## 1.3.5+2
+## 1.3.6
 
-* Extracted web support to assets_audio_player_web
+* Extracted web support to assets_audio_player_web: 1.3.6
 
 ## 1.3.5+1
 
