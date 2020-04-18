@@ -1,3 +1,7 @@
+## 1.3.6+1
+
+* Added volume as optional parameter on open()
+
 ## 1.3.6
 
 * Extracted web support to assets_audio_player_web: 1.3.6
