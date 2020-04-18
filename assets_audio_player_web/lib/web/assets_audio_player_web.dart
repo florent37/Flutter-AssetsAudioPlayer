@@ -6,11 +6,11 @@ import 'package:flutter_web_howl/howl.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 /// Web plugin
-class AssetsAudioPlayerWeb {
+class AssetsAudioPlayerWebPlugin {
   final Map<String, WebPlayer> _players = Map();
   final BinaryMessenger messenger;
 
-  AssetsAudioPlayerWeb({this.messenger}) {
+  AssetsAudioPlayerWebPlugin({this.messenger}) {
     initializeHowl();
   }
 
@@ -37,7 +37,7 @@ class AssetsAudioPlayerWeb {
       registrar.messenger,
     );
 
-    final instance = AssetsAudioPlayerWeb(messenger: registrar.messenger);
+    final instance = AssetsAudioPlayerWebPlugin(messenger: registrar.messenger);
     channel.setMethodCallHandler(instance.handleMethodCall);
   }
 

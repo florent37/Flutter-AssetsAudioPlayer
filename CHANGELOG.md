@@ -1,3 +1,7 @@
+## 1.3.5+2
+
+* Extracted web support to assets_audio_player_web
+
 ## 1.3.5+1
 
 * Volume does not reset anymore on looping audios

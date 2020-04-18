@@ -8,11 +8,11 @@ import 'package:flutter_web_howl/howl.dart';
 class WebPlayer {
   final MethodChannel channel;
 
-  static final  methodPosition = "player.position";
-  static final  methodVolume = "player.volume";
-  static final  methodFinished = "player.finished";
-  static final  methodIsPlaying = "player.isPlaying";
-  static final  methodCurrent = "player.current";
+  static final methodPosition = "player.position";
+  static final methodVolume = "player.volume";
+  static final methodFinished = "player.finished";
+  static final methodIsPlaying = "player.isPlaying";
+  static final methodCurrent = "player.current";
 
   WebPlayer({this.channel});
 

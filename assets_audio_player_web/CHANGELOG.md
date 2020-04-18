@@ -1,3 +1,3 @@
-## 0.0.1
+## 1.3.6
 
-* TODO: Describe initial release.
+* Initial import, version web extracted from assets_audio_player: 1.3.6
