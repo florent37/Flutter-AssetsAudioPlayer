@@ -114,35 +114,6 @@ class _MyAppState extends State<MyApp> {
                   ],
                 ),
                 SizedBox(height: 20,),
-                StreamBuilder(
-                  stream: _assetsAudioPlayer.isLooping,
-                  initialData: false,
-                  builder: (context, snapshotLooping) {
-                    final bool isLooping = snapshotLooping.data;
-                    return StreamBuilder(
-                        stream: _assetsAudioPlayer.isPlaying,
-                        initialData: false,
-                        builder: (context, snapshotPlaying) {
-                          final isPlaying = snapshotPlaying.data;
-                          return PlayingControls(
-                            isLooping: isLooping,
-                            isPlaying: isPlaying,
-                            toggleLoop: (){
-                              _assetsAudioPlayer.toggleLoop();
-                            },
-                            onPlay: () {
-                              _assetsAudioPlayer.playOrPause();
-                            },
-                            onNext: () {
-                              _assetsAudioPlayer.next();
-                            },
-                            onPrevious: () {
-                              _assetsAudioPlayer.previous();
-                            },
-                          );
-                        });
-                  },
-                ),
                 SizedBox(height: 20,),
                 StreamBuilder(
                     stream: _assetsAudioPlayer.current,
@@ -152,21 +123,55 @@ class _MyAppState extends State<MyApp> {
                       }
                       final Playing playing = snapshot.data;
                       final Duration duration = playing.audio.duration;
-                      return StreamBuilder(
-                          stream: _assetsAudioPlayer.currentPosition,
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return SizedBox();
-                            }
-                            final Duration position = snapshot.data;
-                            return PositionSeekWidget(
-                              currentPosition: position,
-                              duration: duration,
-                              seekTo: (to) {
-                                _assetsAudioPlayer.seek(to);
-                              },
-                            );
-                          });
+                      return Column(
+                        children: <Widget>[
+                          StreamBuilder(
+                            stream: _assetsAudioPlayer.isLooping,
+                            initialData: false,
+                            builder: (context, snapshotLooping) {
+                              final bool isLooping = snapshotLooping.data;
+                              return StreamBuilder(
+                                  stream: _assetsAudioPlayer.isPlaying,
+                                  initialData: false,
+                                  builder: (context, snapshotPlaying) {
+                                    final isPlaying = snapshotPlaying.data;
+                                    return PlayingControls(
+                                      isLooping: isLooping,
+                                      isPlaying: isPlaying,
+                                      isPlaylist: playing.playlist.audios.length > 1,
+                                      toggleLoop: (){
+                                        _assetsAudioPlayer.toggleLoop();
+                                      },
+                                      onPlay: () {
+                                        _assetsAudioPlayer.playOrPause();
+                                      },
+                                      onNext: () {
+                                        _assetsAudioPlayer.next();
+                                      },
+                                      onPrevious: () {
+                                        _assetsAudioPlayer.previous();
+                                      },
+                                    );
+                                  });
+                            },
+                          ),
+                          StreamBuilder(
+                              stream: _assetsAudioPlayer.currentPosition,
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return SizedBox();
+                                }
+                                final Duration position = snapshot.data;
+                                return PositionSeekWidget(
+                                  currentPosition: position,
+                                  duration: duration,
+                                  seekTo: (to) {
+                                    _assetsAudioPlayer.seek(to);
+                                  },
+                                );
+                              }),
+                        ],
+                      );
                     }),
                 SizedBox(height: 20,),
                 Expanded(

@@ -6,6 +6,7 @@ import '../asset_audio_player_icons.dart';
 class PlayingControls extends StatelessWidget {
   final bool isPlaying;
   final bool isLooping;
+  final bool isPlaylist;
   final Function() onPrevious;
   final Function() onPlay;
   final Function() onNext;
@@ -13,6 +14,7 @@ class PlayingControls extends StatelessWidget {
 
   PlayingControls({
     @required this.isPlaying,
+    @required this.isPlaylist,
     @required this.isLooping,
     @required this.toggleLoop,
     @required this.onPrevious,
@@ -43,6 +45,7 @@ class PlayingControls extends StatelessWidget {
           width: 12,
         ),
         NeumorphicButton(
+          isEnabled: isPlaylist,
           boxShape: NeumorphicBoxShape.circle(),
           padding: EdgeInsets.all(18),
           onClick: this.onPrevious,
@@ -64,6 +67,7 @@ class PlayingControls extends StatelessWidget {
           width: 12,
         ),
         NeumorphicButton(
+          isEnabled: isPlaylist,
           boxShape: NeumorphicBoxShape.circle(),
           padding: EdgeInsets.all(18),
           child: Icon(AssetAudioPlayerIcons.to_end),
