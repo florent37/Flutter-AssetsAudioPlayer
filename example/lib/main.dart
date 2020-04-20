@@ -28,6 +28,7 @@ class _MyAppState extends State<MyApp> {
     MyAudio(name: "Astronomia", audio: Audio("assets/audios/astronomia.mp3"), imageUrl: "https://m.media-amazon.com/images/I/71Mpo3RQr6L._SS500_.jpg"),
     MyAudio(name: "Interstellar", audio: Audio("assets/audios/interstellar.mp3"), imageUrl: "https://i2.wp.com/www.parentgalactique.fr/wp-content/uploads/2014/11/interstellar.jpg"),
     MyAudio(name: "Counting Moews", audio: Audio("assets/audios/bongocat.mp3"), imageUrl: "http://img.youtube.com/vi/73afc3UOipk/maxresdefault.jpg"),
+    MyAudio(name: "Africa Cover (Peter Bence)", audio: Audio("assets/audios/africa.mp3"), imageUrl: "http://img.youtube.com/vi/_SywaUbg5wU/maxresdefault.jpg"),
   ];
 
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
