@@ -184,6 +184,8 @@ class AssetsAudioPlayer {
   ///
   ValueStream<bool> get isLooping => _loop.stream;
 
+  Duration _lastSeek;
+
   /// returns the looping state : true -> looping, false -> not looping
   bool get loop => _loop.value;
 
@@ -198,6 +200,7 @@ class AssetsAudioPlayer {
   void toggleLoop() {
     loop = !loop;
   }
+
 
   /// Call it to dispose stream
   void dispose() {
@@ -365,6 +368,7 @@ class AssetsAudioPlayer {
     bool autoStart = _DEFAULT_AUTO_START,
     double volume,
   }) async {
+    _lastSeek = null;
     this._playlist = _CurrentPlaylist(playlist: playlist);
     _playlist.moveTo(playlist.startIndex);
     _open(_playlist.currentAudioPath(),
@@ -438,10 +442,14 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.seek(Duration(minutes: 1, seconds: 34));
   ///
   void seek(Duration to) {
-    _sendChannel.invokeMethod('seek', {
-      "id": this.id,
-      "to": to.inSeconds.round(),
-    });
+    if(to != _lastSeek) {
+      _lastSeek = to;
+      print("to: $to");
+      _sendChannel.invokeMethod('seek', {
+        "id": this.id,
+        "to": to.inSeconds.round(),
+      });
+    }
   }
 
   /// Change the current volume of the MediaPlayer

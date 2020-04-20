@@ -22,6 +22,10 @@ class VolumeSelector extends StatelessWidget {
               min: AssetsAudioPlayer.minVolume,
               max: AssetsAudioPlayer.maxVolume,
               value: volume,
+              style: SliderStyle(
+                  variant: Colors.grey,
+                  accent: Colors.grey[500]
+              ),
               onChanged: (value) {
                 this.onChange(value);
               },

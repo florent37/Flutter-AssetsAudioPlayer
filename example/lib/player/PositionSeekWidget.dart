@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
-class PositionSeekWidget extends StatelessWidget {
+class PositionSeekWidget extends StatefulWidget {
   final Duration currentPosition;
   final Duration duration;
   final Function(Duration) seekTo;
@@ -12,7 +12,29 @@ class PositionSeekWidget extends StatelessWidget {
     @required this.seekTo,
   });
 
-  double get percent => duration.inMilliseconds == 0 ? 0 : currentPosition.inMilliseconds / duration.inMilliseconds;
+  @override
+  _PositionSeekWidgetState createState() => _PositionSeekWidgetState();
+}
+
+class _PositionSeekWidgetState extends State<PositionSeekWidget> {
+
+  Duration _visibleValue;
+  bool listenOnlyUserInterraction = false;
+  double get percent => widget.duration.inMilliseconds == 0 ? 0 : _visibleValue.inMilliseconds / widget.duration.inMilliseconds;
+
+  @override
+  void initState() {
+    super.initState();
+    _visibleValue = widget.currentPosition;
+  }
+
+  @override
+  void didUpdateWidget(PositionSeekWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if(!listenOnlyUserInterraction){
+      _visibleValue = widget.currentPosition;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,27 +45,39 @@ class PositionSeekWidget extends StatelessWidget {
         children: <Widget>[
           SizedBox(
             width: 40,
-            child: Text(durationToString(currentPosition)),
+            child: Text(durationToString(widget.currentPosition)),
           ),
           Expanded(
             child: NeumorphicSlider(
               min: 0,
-              max: duration.inMilliseconds.toDouble(),
-              value: percent * duration.inMilliseconds.toDouble(),
+              max: widget.duration.inMilliseconds.toDouble(),
+              value: percent * widget.duration.inMilliseconds.toDouble(),
               style: SliderStyle(
                   variant: Colors.grey,
                   accent: Colors.grey[500]
               ),
+              onChangeEnd: (newValue){
+                setState(() {
+                  listenOnlyUserInterraction = false;
+                  widget.seekTo(_visibleValue);
+                });
+              },
+              onChangeStart: (_){
+                setState(() {
+                  listenOnlyUserInterraction = true;
+                });
+              },
               onChanged: (newValue) {
-                final to = Duration(milliseconds: newValue.floor());
-                //print("to $to");
-                seekTo(to);
+                setState(() {
+                  final to = Duration(milliseconds: newValue.floor());
+                  _visibleValue = to;
+                });
               },
             ),
           ),
           SizedBox(
             width: 40,
-            child: Text(durationToString(duration)),
+            child: Text(durationToString(widget.duration)),
           ),
         ],
       ),
