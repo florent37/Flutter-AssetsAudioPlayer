@@ -111,3 +111,52 @@ class Playing {
   int get hashCode =>
       audio.hashCode ^ index.hashCode ^ hasNext.hashCode ^ playlist.hashCode;
 }
+
+@immutable
+class RaltimePlayingInfos {
+  final String playerId;
+
+  final Playing current;
+  final Duration duration;
+  final Duration currentPosition;
+  final double volume;
+  final bool isPlaying;
+  final bool isLooping;
+
+  RaltimePlayingInfos({
+    @required this.playerId,
+    @required this.current,
+    @required this.currentPosition,
+    @required this.volume,
+    @required this.isPlaying,
+    @required this.isLooping,
+  }) : this.duration = current.audio.duration;
+
+  double get playingPercent => this.duration.inMilliseconds == 0 ? 0 : this.currentPosition.inMilliseconds / this.duration.inMilliseconds;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is RaltimePlayingInfos &&
+              runtimeType == other.runtimeType &&
+              playerId == other.playerId &&
+              current == other.current &&
+              duration == other.duration &&
+              currentPosition == other.currentPosition &&
+              volume == other.volume &&
+              isPlaying == other.isPlaying &&
+              isLooping == other.isLooping;
+
+  @override
+  int get hashCode =>
+      playerId.hashCode ^
+      current.hashCode ^
+      duration.hashCode ^
+      currentPosition.hashCode ^
+      volume.hashCode ^
+      isPlaying.hashCode ^
+      isLooping.hashCode;
+
+
+
+}
