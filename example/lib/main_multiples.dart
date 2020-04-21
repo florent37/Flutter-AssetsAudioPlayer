@@ -1,4 +1,5 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:assets_audio_player_example/player/PlayingControlsSmall.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
@@ -116,36 +117,53 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                   boxShape: NeumorphicBoxShape.roundRect(borderRadius: BorderRadius.circular(8)),
                   child: Column(
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Neumorphic(
-                          boxShape: NeumorphicBoxShape.circle(),
-                          style: NeumorphicStyle(depth: 8, surfaceIntensity: 1, shape: NeumorphicShape.concave),
-                          child: Image.network(
-                            widget.myAudio.imageUrl,
-                            height: 50,
-                            width: 50,
-                            fit: BoxFit.cover,
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 3,
+                            child: Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Neumorphic(
+                                    boxShape: NeumorphicBoxShape.circle(),
+                                    style: NeumorphicStyle(depth: 8, surfaceIntensity: 1, shape: NeumorphicShape.concave),
+                                    child: Image.network(
+                                      widget.myAudio.imageUrl,
+                                      height: 50,
+                                      width: 50,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(this.widget.myAudio.name),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(this.widget.myAudio.name),
-                      ),
-                      PlayingControls(
-                        isLooping: isLooping,
-                        isPlaying: isPlaying,
-                        toggleLoop: () {
-                          _assetsAudioPlayer.toggleLoop();
-                        },
-                        onPlay: () {
-                          if (_assetsAudioPlayer.current.value == null) {
-                            _assetsAudioPlayer.open(widget.myAudio.audio, autoStart: true);
-                          } else {
-                            _assetsAudioPlayer.playOrPause();
-                          }
-                        },
+
+                          Expanded(
+                            flex: 2,
+                            child: PlayingControlsSmall(
+                              isLooping: isLooping,
+                              isPlaying: isPlaying,
+                              toggleLoop: () {
+                                _assetsAudioPlayer.toggleLoop();
+                              },
+                              onPlay: () {
+                                if (_assetsAudioPlayer.current.value == null) {
+                                  _assetsAudioPlayer.open(widget.myAudio.audio, autoStart: true);
+                                } else {
+                                  _assetsAudioPlayer.playOrPause();
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                       StreamBuilder(
                         stream: _assetsAudioPlayer.realtimePlayingInfos,
