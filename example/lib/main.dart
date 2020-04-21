@@ -26,6 +26,11 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final audios = <MyAudio>[
     MyAudio(
+        name: "Online",
+        audio: Audio.network("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3"),
+        imageUrl:
+            "https://lh3.googleusercontent.com/proxy/QRE6P1ClfokCYbQnediaKCx-RfCLJOgLufRc_K4RWI-9CzuHP3H4zwcOb0qEqva812I5jQVkggCTsi6bK7FBCBoiPYipcQ709hoWQ8T91LFizMYcjOPiUE5IbCCj"),
+    MyAudio(
         name: "Rock",
         audio: Audio("assets/audios/rock.mp3"),
         imageUrl:

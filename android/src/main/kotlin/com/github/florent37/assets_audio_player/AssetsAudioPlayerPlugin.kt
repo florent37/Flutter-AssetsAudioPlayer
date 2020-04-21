@@ -1,8 +1,8 @@
 package com.github.florent37.assets_audio_player
 
 import android.content.Context
-import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Handler
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
@@ -48,7 +48,7 @@ class Player(private val context: Context, private val channel: MethodChannel) {
         }
     }
 
-    fun open(assetAudioPath: String?, autoStart: Boolean, volume: Double, result: MethodChannel.Result) {
+    fun open(assetAudioPath: String?, audioType: String, autoStart: Boolean, volume: Double, result: MethodChannel.Result, context: Context) {
         stop()
 
         var totalDurationSeconds = 0L
@@ -56,22 +56,25 @@ class Player(private val context: Context, private val channel: MethodChannel) {
         this.mediaPlayer = MediaPlayer()
 
         try {
-            val mmr = MediaMetadataRetriever()
 
-            val afd = context.assets.openFd("flutter_assets/$assetAudioPath")
-            mediaPlayer?.reset();
-            mediaPlayer?.setDataSource(afd.fileDescriptor, afd.startOffset, afd.declaredLength)
+            if(audioType == "network"){
+                mediaPlayer?.reset();
+                mediaPlayer?.setDataSource(context, Uri.parse(assetAudioPath))
+            } else if(audioType == "file"){
+                mediaPlayer?.reset();
+                mediaPlayer?.setDataSource(context, Uri.parse(assetAudioPath))
+            } else { //asset
+                //val mmr = MediaMetadataRetriever()
 
-            mmr.setDataSource(afd.fileDescriptor, afd.startOffset, afd.declaredLength)
+                val afd = context.assets.openFd("flutter_assets/$assetAudioPath")
+                mediaPlayer?.reset();
+                mediaPlayer?.setDataSource(afd.fileDescriptor, afd.startOffset, afd.declaredLength)
 
-            //retrieve duration in seconds
-            val duration =
-                    mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
-            totalDurationSeconds = (duration / 1000)
+                //mmr.setDataSource(afd.fileDescriptor, afd.startOffset, afd.declaredLength)
+                //mmr.release()
 
-            mmr.release()
-
-            afd.close()
+                afd.close()
+            }
         } catch (e: Exception) {
             channel.invokeMethod(METHOD_POSITION, 0)
             e.printStackTrace()
@@ -81,6 +84,14 @@ class Player(private val context: Context, private val channel: MethodChannel) {
 
         try {
             mediaPlayer?.setOnPreparedListener {
+                //retrieve duration in seconds
+                val duration = mediaPlayer?.duration ?: 0
+                //        mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
+                totalDurationSeconds = (duration.toLong() / 1000)
+                channel.invokeMethod(METHOD_CURRENT, mapOf(
+                        "totalDuration" to totalDurationSeconds)
+                )
+
                 if (autoStart) {
                     play()
                 }
@@ -101,10 +112,6 @@ class Player(private val context: Context, private val channel: MethodChannel) {
             channel.invokeMethod(METHOD_FINISHED, null)
             stop();
         }
-
-        channel.invokeMethod(METHOD_CURRENT, mapOf(
-                "totalDuration" to totalDurationSeconds)
-        )
 
 
         //will be done on play
@@ -288,6 +295,10 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val messenge
                         result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
                         return
                     }
+                    val audioType = args["audioType"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `audioType`", null)
+                        return
+                    }
                     val volume = args["volume"] as? Double ?: run {
                         result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
                         return
@@ -296,9 +307,11 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val messenge
 
                     getOrCreatePlayer(id).open(
                             path,
+                            audioType,
                             autoStart,
                             volume,
-                            result
+                            result,
+                            context
                     )
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)

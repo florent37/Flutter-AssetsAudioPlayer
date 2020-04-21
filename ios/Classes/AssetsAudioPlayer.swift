@@ -27,15 +27,25 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         channel.invokeMethod("log", arguments: message)
     }
     
-    func open(assetPath: String, autoStart: Bool, volume: Double, result: FlutterResult){
+    func open(assetPath: String, audioType: String, autoStart: Bool, volume: Double, result: FlutterResult){
             let assetKey = registrar.lookupKey(forAsset: assetPath)
-            guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
-                 log("resource not found \(assetKey)")
-                 result("");
-                 return
+
+            var url : String = assetPath
+
+            if(audioType == "network"){
+                url = assetPath
+            } else if(audioType == "file"){
+                url = assetPath
+            }  else { //asset
+                guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
+                     log("resource not found \(assetKey)")
+                     result("");
+                     return
+                }
+
+                url = URL(fileURLWithPath: path)
             }
-            
-            let url = URL(fileURLWithPath: path)
+
     //        log("url: "+url.absoluteString)
             do {
                 
@@ -47,9 +57,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 }
                 
                 try AVAudioSession.sharedInstance().setActive(true)
-                
+
                 /* The following line is required for the player to work on iOS 11. Change the file type accordingly */
                 if #available(iOS 11.0, *) {
+
                     self.player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.mp3.rawValue)
                 } else {
                     /* iOS 10 and earlier require the following line: */
@@ -240,10 +251,17 @@ class Music : NSObject {
                 let args = call.arguments as! NSDictionary
                 let id = args["id"] as! String
                 let assetPath = args["path"] as! String
+                let audioType = args["audioType"] as! String
                 let volume = args["volume"] as! Double
                 let autoStart = args["autoStart"] as! Bool
                 self.getOrCreatePlayer(id: id)
-                    .open(assetPath: assetPath, autoStart: autoStart, volume:volume, result: result);
+                    .open(
+                        assetPath: assetPath,
+                        audioType: audioType,
+                        autoStart: autoStart,
+                        volume:volume,
+                        result: result
+                    );
             break;
                 
             default:
