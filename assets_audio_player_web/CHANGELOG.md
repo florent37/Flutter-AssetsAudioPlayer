@@ -1,3 +1,3 @@
-## 1.3.6
+## 1.3.7+1
 
-* Initial import, version web extracted from assets_audio_player: 1.3.6
+* Web Version extracted from assets_audio_player: 1.3.7+1

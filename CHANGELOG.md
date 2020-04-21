@@ -1,4 +1,4 @@
-## 1.3.67
+## 1.3.7+1
 
 * Added `RealtimePlayingInfos` stream
 
