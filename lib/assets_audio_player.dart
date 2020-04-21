@@ -184,6 +184,10 @@ class AssetsAudioPlayer {
   ///
   ValueStream<bool> get isLooping => _loop.stream;
 
+  final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos = BehaviorSubject<RealtimePlayingInfos>();
+  ValueStream<RealtimePlayingInfos> get realtimePlayingInfos => _realtimePlayingInfos.stream;
+
+
   Duration _lastSeek;
 
   /// returns the looping state : true -> looping, false -> not looping
@@ -213,6 +217,8 @@ class AssetsAudioPlayer {
     _current.close();
     _playlistAudioFinished.close();
     _loop.close();
+    _realtimePlayingInfos.close();
+    _realTimeSubscription?.cancel();
 
     _players.remove(this.id);
   }
@@ -264,6 +270,30 @@ class AssetsAudioPlayer {
         default:
           print('[ERROR] Channel method ${call.method} not implemented.');
       }
+    });
+  }
+
+  StreamSubscription _realTimeSubscription;
+  void _replaceRealtimeSubscription(){
+    _realTimeSubscription?.cancel();
+    _realTimeSubscription = null;
+    _realTimeSubscription = CombineLatestStream.list<dynamic>([
+      this.volume,
+      this.isPlaying,
+      this.isLooping,
+      this.current,
+      this.currentPosition,
+    ]).map((values) =>
+      RealtimePlayingInfos(
+        volume: values[0],
+        isPlaying: values[1],
+        isLooping: values[2],
+        current: values[3],
+        currentPosition: values[4],
+        playerId: this.id
+      )
+    ).listen((readingInfos) {
+      this._realtimePlayingInfos.value = readingInfos;
     });
   }
 
@@ -369,6 +399,7 @@ class AssetsAudioPlayer {
     double volume,
   }) async {
     _lastSeek = null;
+    _replaceRealtimeSubscription();
     this._playlist = _CurrentPlaylist(playlist: playlist);
     _playlist.moveTo(playlist.startIndex);
     _open(_playlist.currentAudioPath(),

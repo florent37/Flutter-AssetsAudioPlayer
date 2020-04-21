@@ -122,7 +122,6 @@ class _MyAppState extends State<MyApp> {
                         return SizedBox();
                       }
                       final Playing playing = snapshot.data;
-                      final Duration duration = playing.audio.duration;
                       return Column(
                         children: <Widget>[
                           StreamBuilder(
@@ -156,15 +155,16 @@ class _MyAppState extends State<MyApp> {
                             },
                           ),
                           StreamBuilder(
-                              stream: _assetsAudioPlayer.currentPosition,
+                              stream: _assetsAudioPlayer.realtimePlayingInfos,
                               builder: (context, snapshot) {
                                 if (!snapshot.hasData) {
                                   return SizedBox();
                                 }
-                                final Duration position = snapshot.data;
+                                final RealtimePlayingInfos infos = snapshot.data;
+                                print("infos: $infos");
                                 return PositionSeekWidget(
-                                  currentPosition: position,
-                                  duration: duration,
+                                  currentPosition: infos.currentPosition,
+                                  duration: infos.duration,
                                   seekTo: (to) {
                                     _assetsAudioPlayer.seek(to);
                                   },
