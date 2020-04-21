@@ -1,4 +1,4 @@
-# assets_audio_player
+# 🎧 assets_audio_player  🔊
 
 [![pub package](https://img.shields.io/pub/v/assets_audio_player.svg)](
 https://pub.dartlang.org/packages/assets_audio_player)
@@ -17,11 +17,18 @@ dependencies:
 [![sample1](./medias/sample1.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
 [![sample1](./medias/sample2.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
 
+<details>
+  <summary> 🌐 Web support</summary>
+  
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
   assets_audio_player_web: ^1.3.6
 ```
+
+</details>
+
+# 📁 Import assets files
 
 No needed to copy songs to a media cache, with assets_audio_player you can open them directly from the assets. 
 
@@ -34,7 +41,7 @@ flutter:
     - assets/audios/
 ```
 
-## Getting Started
+## 🛠️ Getting Started
 
 ```Dart
 final assetsAudioPlayer = AssetsAudioPlayer();
@@ -58,7 +65,7 @@ assetsAudioPlayer.seek(Duration to);
 assetsAudioPlayer.stop();
 ```
 
-# Play in parallel / simultaneously
+# ⛓ Play in parallel / simultaneously
 
 You can create new AssetsAudioPlayer using AssetsAudioPlayer.newPlayer(), 
 which will play songs in a different native Media Player
@@ -86,7 +93,7 @@ Each player has an unique generated `id`, you can retrieve or create them manual
 final player = AssetsAudioPlayer(id: "MY_UNIQUE_ID")
 ```
 
-# Playlist
+# 🗄️ Playlist
 ```Dart
 assetsAudioPlayer.open(
   Playlist(
@@ -102,12 +109,12 @@ assetsAudioPlayer.prev();
 assetsAudioPlayer.playAtIndex(1);
 ```
 
-## Listeners
+## 🎧 Listeners
 
 All listeners exposes Streams 
 Using RxDart, AssetsAudioPlayer exposes some listeners as ValueObservable (Observable that provides synchronous access to the last emitted item);
 
-### Current song
+### 🎵 Current song
 ```Dart
 //The current playing audio, filled with the total song duration
 assetsAudioPlayer.current //ValueObservable<PlayingAudio>
@@ -122,14 +129,14 @@ assetsAudioPlayer.current.listen((playingAudio){
 })
 ```
 
-### Current song duration
+### ⌛ Current song duration
 
 ```Dart
 //Listen to the current playing song
 final duration = assetsAudioPlayer.current.value.duration;
 ```
 
-### Current position (in seconds)
+### ⏳ Current position (in seconds)
 
 ```Dart
 assetsAudioPlayer.currentPosition //ValueObservable<Duration>
@@ -145,7 +152,7 @@ return StreamBuilder(
     }),
 ```
 
-### IsPlaying
+### ▶ IsPlaying
 boolean observable representing the current mediaplayer playing state
 ```Dart
 assetsAudioPlayer.isPlaying // ValueObservable<bool>
@@ -162,7 +169,7 @@ return StreamBuilder(
     }),
 ```
 
-### Volume
+### 🔊 Volume
 
 Change the volume (between 0.0 & 1.0)
 ```Dart
@@ -180,7 +187,7 @@ return StreamBuilder(
     }),
 ```
 
-### Finished
+### ✋ Finished
 
 Called when the current song has finished to play, 
 
@@ -204,7 +211,7 @@ assetsAudioPlayer.playlistFinished.listen((finished){
 })
 ```
 
-### Looping
+### 🔁 Looping
 
 ```Dart
 final bool isLooping = assetsAudioPlayer.loop; //true / false
@@ -218,18 +225,12 @@ assetsAudioPlayer.isLooping.listen((loop){
 assetsAudioPlayer.toggleLoop(); //toggle the value of looping
 ```
 
-# Web Support
+# 🌐 Web Support
 
 Web support is using [import_js_library](https://pub.dev/packages/import_js_library) to import the [Howler.js library](https://howlerjs.com/)
 
 The flutter wrapper of Howler has been exported in another package : https://github.com/florent37/flutter_web_howl
 
-# Flutter
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
-
-# Musics
+# 🎶 Musics
 
 All musics used in the samples came from https://www.freemusicarchive.org/
