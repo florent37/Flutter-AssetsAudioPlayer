@@ -64,14 +64,9 @@ class Player(private val context: Context, private val channel: MethodChannel) {
                 mediaPlayer?.reset();
                 mediaPlayer?.setDataSource(context, Uri.parse(assetAudioPath))
             } else { //asset
-                //val mmr = MediaMetadataRetriever()
-
                 val afd = context.assets.openFd("flutter_assets/$assetAudioPath")
                 mediaPlayer?.reset();
                 mediaPlayer?.setDataSource(afd.fileDescriptor, afd.startOffset, afd.declaredLength)
-
-                //mmr.setDataSource(afd.fileDescriptor, afd.startOffset, afd.declaredLength)
-                //mmr.release()
 
                 afd.close()
             }
