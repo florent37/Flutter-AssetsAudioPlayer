@@ -14,6 +14,9 @@ dependencies:
   assets_audio_player: ^1.3.6
 ```
 
+[![sample1](./medias/sample1.png)](https://github.com/Idean/https://pub.dartlang.org/packages/assets_audio_player)
+[![sample1](./medias/sample2.png)](https://github.com/Idean/https://pub.dartlang.org/packages/assets_audio_player)
+
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
