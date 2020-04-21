@@ -28,8 +28,7 @@ class _MyAppState extends State<MyApp> {
     MyAudio(
         name: "Online",
         audio: Audio.network("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3"),
-        imageUrl:
-            "https://lh3.googleusercontent.com/proxy/QRE6P1ClfokCYbQnediaKCx-RfCLJOgLufRc_K4RWI-9CzuHP3H4zwcOb0qEqva812I5jQVkggCTsi6bK7FBCBoiPYipcQ709hoWQ8T91LFizMYcjOPiUE5IbCCj"),
+        imageUrl: "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
     MyAudio(
         name: "Rock",
         audio: Audio("assets/audios/rock.mp3"),
@@ -52,8 +51,7 @@ class _MyAppState extends State<MyApp> {
     MyAudio(
         name: "Pop",
         audio: Audio("assets/audios/pop.mp3"),
-        imageUrl:
-            "https://lh3.googleusercontent.com/proxy/yiaIA8SYrF3hJ0qN86wTKbhvfHU4mLOId3mbP82xQ_hNpYSTGIbLHynjtf8OZ7_vr2j7lAgKQJiXjGkiETawIa4zmPaSf6g"),
+        imageUrl: "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
     MyAudio(
         name: "Instrumental",
         audio: Audio("assets/audios/instrumental.mp3"),
