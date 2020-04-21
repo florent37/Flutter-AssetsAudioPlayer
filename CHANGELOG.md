@@ -1,3 +1,7 @@
+## 1.3.67
+
+* Added `RealtimePlayingInfos` stream
+
 ## 1.3.6+1
 
 * Added volume as optional parameter on open()
