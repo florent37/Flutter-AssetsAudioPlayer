@@ -113,7 +113,7 @@ class Playing {
 }
 
 @immutable
-class RaltimePlayingInfos {
+class RealtimePlayingInfos {
   final String playerId;
 
   final Playing current;
@@ -123,7 +123,7 @@ class RaltimePlayingInfos {
   final bool isPlaying;
   final bool isLooping;
 
-  RaltimePlayingInfos({
+  RealtimePlayingInfos({
     @required this.playerId,
     @required this.current,
     @required this.currentPosition,
@@ -137,7 +137,7 @@ class RaltimePlayingInfos {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is RaltimePlayingInfos &&
+          other is RealtimePlayingInfos &&
               runtimeType == other.runtimeType &&
               playerId == other.playerId &&
               current == other.current &&
@@ -157,6 +157,10 @@ class RaltimePlayingInfos {
       isPlaying.hashCode ^
       isLooping.hashCode;
 
+  @override
+  String toString() {
+    return 'RealtimePlayingInfos{playerId: $playerId, current: $current, duration: $duration, currentPosition: $currentPosition, volume: $volume, isPlaying: $isPlaying, isLooping: $isLooping}';
+  }
 
 
 }

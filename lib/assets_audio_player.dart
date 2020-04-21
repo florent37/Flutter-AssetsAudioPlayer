@@ -184,8 +184,8 @@ class AssetsAudioPlayer {
   ///
   ValueStream<bool> get isLooping => _loop.stream;
 
-  final BehaviorSubject<RaltimePlayingInfos> _realtimePlayingInfos = BehaviorSubject<RaltimePlayingInfos>();
-  ValueStream<RaltimePlayingInfos> get realtimePlayingInfos => _realtimePlayingInfos.stream;
+  final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos = BehaviorSubject<RealtimePlayingInfos>();
+  ValueStream<RealtimePlayingInfos> get realtimePlayingInfos => _realtimePlayingInfos.stream;
 
 
   Duration _lastSeek;
@@ -217,6 +217,8 @@ class AssetsAudioPlayer {
     _current.close();
     _playlistAudioFinished.close();
     _loop.close();
+    _realtimePlayingInfos.close();
+    _realTimeSubscription?.cancel();
 
     _players.remove(this.id);
   }
@@ -282,7 +284,7 @@ class AssetsAudioPlayer {
       this.current,
       this.currentPosition,
     ]).map((values) =>
-      RaltimePlayingInfos(
+      RealtimePlayingInfos(
         volume: values[0],
         isPlaying: values[1],
         isLooping: values[2],
