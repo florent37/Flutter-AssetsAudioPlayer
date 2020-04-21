@@ -26,12 +26,34 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final audios = <MyAudio>[
-    MyAudio(name: "Rock", audio: Audio("assets/audios/rock.mp3"), imageUrl: "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
-    MyAudio(name: "Country", audio: Audio("assets/audios/country.mp3"), imageUrl: "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
-    MyAudio(name: "Electronic", audio: Audio("assets/audios/electronic.mp3"), imageUrl: "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
-    MyAudio(name: "HipHop", audio: Audio("assets/audios/hiphop.mp3"), imageUrl: "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg "),
-    MyAudio(name: "Pop", audio: Audio("assets/audios/pop.mp3"), imageUrl: "https://lh3.googleusercontent.com/proxy/yiaIA8SYrF3hJ0qN86wTKbhvfHU4mLOId3mbP82xQ_hNpYSTGIbLHynjtf8OZ7_vr2j7lAgKQJiXjGkiETawIa4zmPaSf6g"),
-    MyAudio(name: "Instrumental", audio: Audio("assets/audios/instrumental.mp3"), imageUrl: "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
+    MyAudio(
+        name: "Rock",
+        audio: Audio("assets/audios/rock.mp3"),
+        imageUrl:
+            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+    MyAudio(
+        name: "Country",
+        audio: Audio("assets/audios/country.mp3"),
+        imageUrl:
+            "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
+    MyAudio(
+        name: "Electronic",
+        audio: Audio("assets/audios/electronic.mp3"),
+        imageUrl: "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
+    MyAudio(
+        name: "HipHop",
+        audio: Audio("assets/audios/hiphop.mp3"),
+        imageUrl:
+            "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg "),
+    MyAudio(
+        name: "Pop",
+        audio: Audio("assets/audios/pop.mp3"),
+        imageUrl:
+            "https://lh3.googleusercontent.com/proxy/yiaIA8SYrF3hJ0qN86wTKbhvfHU4mLOId3mbP82xQ_hNpYSTGIbLHynjtf8OZ7_vr2j7lAgKQJiXjGkiETawIa4zmPaSf6g"),
+    MyAudio(
+        name: "Instrumental",
+        audio: Audio("assets/audios/instrumental.mp3"),
+        imageUrl: "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
   ];
 
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
@@ -70,15 +92,15 @@ class _MyAppState extends State<MyApp> {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 48.0),
               child: Column(
-                  children: this
-                      .audios
-                      .map(
-                        (e) => PlayerWidget(
-                          myAudio: e,
-                        ),
-                      )
-                      .toList(),
-                ),
+                children: this
+                    .audios
+                    .map(
+                      (e) => PlayerWidget(
+                        myAudio: e,
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
           ),
         ),
@@ -116,7 +138,8 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                 return Neumorphic(
                   margin: EdgeInsets.all(8),
                   padding: const EdgeInsets.all(12.0),
-                  boxShape: NeumorphicBoxShape.roundRect(borderRadius: BorderRadius.circular(8)),
+                  boxShape: NeumorphicBoxShape.roundRect(
+                      borderRadius: BorderRadius.circular(8)),
                   child: Column(
                     children: <Widget>[
                       Row(
@@ -129,7 +152,10 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Neumorphic(
                                     boxShape: NeumorphicBoxShape.circle(),
-                                    style: NeumorphicStyle(depth: 8, surfaceIntensity: 1, shape: NeumorphicShape.concave),
+                                    style: NeumorphicStyle(
+                                        depth: 8,
+                                        surfaceIntensity: 1,
+                                        shape: NeumorphicShape.concave),
                                     child: Image.network(
                                       widget.myAudio.imageUrl,
                                       height: 50,
@@ -147,7 +173,6 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                               ],
                             ),
                           ),
-
                           Expanded(
                             flex: 2,
                             child: PlayingControlsSmall(
@@ -158,7 +183,8 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                               },
                               onPlay: () {
                                 if (_assetsAudioPlayer.current.value == null) {
-                                  _assetsAudioPlayer.open(widget.myAudio.audio, autoStart: true);
+                                  _assetsAudioPlayer.open(widget.myAudio.audio,
+                                      autoStart: true);
                                 } else {
                                   _assetsAudioPlayer.playOrPause();
                                 }
@@ -168,21 +194,20 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                         ],
                       ),
                       StreamBuilder(
-                        stream: _assetsAudioPlayer.realtimePlayingInfos,
-                        builder: (context, snapshot) {
-                          if(!snapshot.hasData){
-                            return SizedBox();
-                          }
-                          RealtimePlayingInfos infos = snapshot.data;
-                          return PositionSeekWidget(
-                            seekTo: (to){
-                              _assetsAudioPlayer.seek(to);
-                            },
-                            duration: infos.duration,
-                            currentPosition: infos.currentPosition,
-                          );
-                        }
-                      ),
+                          stream: _assetsAudioPlayer.realtimePlayingInfos,
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return SizedBox();
+                            }
+                            RealtimePlayingInfos infos = snapshot.data;
+                            return PositionSeekWidget(
+                              seekTo: (to) {
+                                _assetsAudioPlayer.seek(to);
+                              },
+                              duration: infos.duration,
+                              currentPosition: infos.currentPosition,
+                            );
+                          }),
                     ],
                   ),
                 );

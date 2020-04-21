@@ -43,7 +43,9 @@ class PlayingControlsSmall extends StatelessWidget {
           padding: EdgeInsets.all(16),
           onClick: this.onPlay,
           child: Icon(
-            isPlaying ? AssetAudioPlayerIcons.pause : AssetAudioPlayerIcons.play,
+            isPlaying
+                ? AssetAudioPlayerIcons.pause
+                : AssetAudioPlayerIcons.play,
             size: 32,
           ),
         ),

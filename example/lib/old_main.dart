@@ -59,14 +59,16 @@ class _MyAppState extends State<MyApp> {
               ),
               RaisedButton(
                 onPressed: () {
-                  AssetsAudioPlayer.newPlayer().open(Audio("assets/audios/cat.wav"));
+                  AssetsAudioPlayer.newPlayer()
+                      .open(Audio("assets/audios/cat.wav"));
                 },
                 child: Text("Small Song in parallel"),
               ),
               Expanded(
                 child: StreamBuilder(
                     stream: _assetsAudioPlayer.current,
-                    builder: (BuildContext context, AsyncSnapshot<Playing> snapshot) {
+                    builder: (BuildContext context,
+                        AsyncSnapshot<Playing> snapshot) {
                       final Playing playing = snapshot.data;
 
                       return ListView.builder(
@@ -74,10 +76,14 @@ class _MyAppState extends State<MyApp> {
                           return ListTile(
                               title: Text(audios[position].path.split("/").last,
                                   style: TextStyle(
-                                    color: audios[position].path == playing?.audio?.assetAudioPath ? Colors.blue : Colors.black,
+                                    color: audios[position].path ==
+                                            playing?.audio?.assetAudioPath
+                                        ? Colors.blue
+                                        : Colors.black,
                                   )),
                               onTap: () {
-                                _assetsAudioPlayer.open(audios[position] /*, volume: 0.2*/);
+                                _assetsAudioPlayer
+                                    .open(audios[position] /*, volume: 0.2*/);
                               });
                         },
                         itemCount: audios.length,
@@ -91,7 +97,8 @@ class _MyAppState extends State<MyApp> {
                   StreamBuilder(
                     stream: _assetsAudioPlayer.isLooping,
                     initialData: false,
-                    builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    builder:
+                        (BuildContext context, AsyncSnapshot<bool> snapshot) {
                       return RaisedButton(
                         child: Text(snapshot.data ? "Looping" : "Not looping"),
                         onPressed: () {
@@ -115,7 +122,8 @@ class _MyAppState extends State<MyApp> {
                   StreamBuilder(
                     stream: _assetsAudioPlayer.currentPosition,
                     initialData: const Duration(),
-                    builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
+                    builder: (BuildContext context,
+                        AsyncSnapshot<Duration> snapshot) {
                       Duration duration = snapshot.data;
                       return Text(durationToString(duration));
                     },
@@ -123,7 +131,8 @@ class _MyAppState extends State<MyApp> {
                   Text(" - "),
                   StreamBuilder(
                     stream: _assetsAudioPlayer.current,
-                    builder: (BuildContext context, AsyncSnapshot<Playing> snapshot) {
+                    builder: (BuildContext context,
+                        AsyncSnapshot<Playing> snapshot) {
                       Duration duration = Duration();
                       if (snapshot.hasData) {
                         duration = snapshot.data.audio.duration;
@@ -169,12 +178,15 @@ class _MyAppState extends State<MyApp> {
                   StreamBuilder(
                     stream: _assetsAudioPlayer.isPlaying,
                     initialData: false,
-                    builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    builder:
+                        (BuildContext context, AsyncSnapshot<bool> snapshot) {
                       return IconButton(
                         onPressed: () {
                           _assetsAudioPlayer.playOrPause();
                         },
-                        icon: Icon(snapshot.data ? AssetAudioPlayerIcons.pause : AssetAudioPlayerIcons.play),
+                        icon: Icon(snapshot.data
+                            ? AssetAudioPlayerIcons.pause
+                            : AssetAudioPlayerIcons.play),
                       );
                     },
                   ),
@@ -200,7 +212,9 @@ String durationToString(Duration duration) {
     return "0$n";
   }
 
-  String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(Duration.minutesPerHour));
-  String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute));
+  String twoDigitMinutes =
+      twoDigits(duration.inMinutes.remainder(Duration.minutesPerHour));
+  String twoDigitSeconds =
+      twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute));
   return "$twoDigitMinutes:$twoDigitSeconds";
 }

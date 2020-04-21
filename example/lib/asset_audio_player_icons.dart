@@ -11,7 +11,7 @@
 ///      fonts:
 ///       - asset: fonts/AssetAudioPlayer.ttf
 ///
-/// 
+///
 /// * Entypo, Copyright (C) 2012 by Daniel Bruce
 ///         Author:    Daniel Bruce
 ///         License:   SIL (http://scripts.sil.org/OFL)
@@ -28,5 +28,6 @@ class AssetAudioPlayerIcons {
   static const IconData stop = const IconData(0xe801, fontFamily: _kFontFam);
   static const IconData pause = const IconData(0xe802, fontFamily: _kFontFam);
   static const IconData to_end = const IconData(0xe803, fontFamily: _kFontFam);
-  static const IconData to_start = const IconData(0xe804, fontFamily: _kFontFam);
+  static const IconData to_start =
+      const IconData(0xe804, fontFamily: _kFontFam);
 }

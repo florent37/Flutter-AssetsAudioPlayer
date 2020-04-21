@@ -184,9 +184,10 @@ class AssetsAudioPlayer {
   ///
   ValueStream<bool> get isLooping => _loop.stream;
 
-  final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos = BehaviorSubject<RealtimePlayingInfos>();
-  ValueStream<RealtimePlayingInfos> get realtimePlayingInfos => _realtimePlayingInfos.stream;
-
+  final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos =
+      BehaviorSubject<RealtimePlayingInfos>();
+  ValueStream<RealtimePlayingInfos> get realtimePlayingInfos =>
+      _realtimePlayingInfos.stream;
 
   Duration _lastSeek;
 
@@ -204,7 +205,6 @@ class AssetsAudioPlayer {
   void toggleLoop() {
     loop = !loop;
   }
-
 
   /// Call it to dispose stream
   void dispose() {
@@ -274,7 +274,7 @@ class AssetsAudioPlayer {
   }
 
   StreamSubscription _realTimeSubscription;
-  void _replaceRealtimeSubscription(){
+  void _replaceRealtimeSubscription() {
     _realTimeSubscription?.cancel();
     _realTimeSubscription = null;
     _realTimeSubscription = CombineLatestStream.list<dynamic>([
@@ -283,16 +283,15 @@ class AssetsAudioPlayer {
       this.isLooping,
       this.current,
       this.currentPosition,
-    ]).map((values) =>
-      RealtimePlayingInfos(
-        volume: values[0],
-        isPlaying: values[1],
-        isLooping: values[2],
-        current: values[3],
-        currentPosition: values[4],
-        playerId: this.id
-      )
-    ).listen((readingInfos) {
+    ])
+        .map((values) => RealtimePlayingInfos(
+            volume: values[0],
+            isPlaying: values[1],
+            isLooping: values[2],
+            current: values[3],
+            currentPosition: values[4],
+            playerId: this.id))
+        .listen((readingInfos) {
       this._realtimePlayingInfos.value = readingInfos;
     });
   }
@@ -473,7 +472,7 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.seek(Duration(minutes: 1, seconds: 34));
   ///
   void seek(Duration to) {
-    if(to != _lastSeek) {
+    if (to != _lastSeek) {
       _lastSeek = to;
       _sendChannel.invokeMethod('seek', {
         "id": this.id,

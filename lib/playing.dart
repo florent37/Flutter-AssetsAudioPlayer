@@ -132,20 +132,22 @@ class RealtimePlayingInfos {
     @required this.isLooping,
   }) : this.duration = current.audio.duration;
 
-  double get playingPercent => this.duration.inMilliseconds == 0 ? 0 : this.currentPosition.inMilliseconds / this.duration.inMilliseconds;
+  double get playingPercent => this.duration.inMilliseconds == 0
+      ? 0
+      : this.currentPosition.inMilliseconds / this.duration.inMilliseconds;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is RealtimePlayingInfos &&
-              runtimeType == other.runtimeType &&
-              playerId == other.playerId &&
-              current == other.current &&
-              duration == other.duration &&
-              currentPosition == other.currentPosition &&
-              volume == other.volume &&
-              isPlaying == other.isPlaying &&
-              isLooping == other.isLooping;
+      other is RealtimePlayingInfos &&
+          runtimeType == other.runtimeType &&
+          playerId == other.playerId &&
+          current == other.current &&
+          duration == other.duration &&
+          currentPosition == other.currentPosition &&
+          volume == other.volume &&
+          isPlaying == other.isPlaying &&
+          isLooping == other.isLooping;
 
   @override
   int get hashCode =>
@@ -161,6 +163,4 @@ class RealtimePlayingInfos {
   String toString() {
     return 'RealtimePlayingInfos{playerId: $playerId, current: $current, duration: $duration, currentPosition: $currentPosition, volume: $volume, isPlaying: $isPlaying, isLooping: $isLooping}';
   }
-
-
 }

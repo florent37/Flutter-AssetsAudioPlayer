@@ -17,10 +17,11 @@ class PositionSeekWidget extends StatefulWidget {
 }
 
 class _PositionSeekWidgetState extends State<PositionSeekWidget> {
-
   Duration _visibleValue;
   bool listenOnlyUserInterraction = false;
-  double get percent => widget.duration.inMilliseconds == 0 ? 0 : _visibleValue.inMilliseconds / widget.duration.inMilliseconds;
+  double get percent => widget.duration.inMilliseconds == 0
+      ? 0
+      : _visibleValue.inMilliseconds / widget.duration.inMilliseconds;
 
   @override
   void initState() {
@@ -31,7 +32,7 @@ class _PositionSeekWidgetState extends State<PositionSeekWidget> {
   @override
   void didUpdateWidget(PositionSeekWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if(!listenOnlyUserInterraction){
+    if (!listenOnlyUserInterraction) {
       _visibleValue = widget.currentPosition;
     }
   }
@@ -52,17 +53,15 @@ class _PositionSeekWidgetState extends State<PositionSeekWidget> {
               min: 0,
               max: widget.duration.inMilliseconds.toDouble(),
               value: percent * widget.duration.inMilliseconds.toDouble(),
-              style: SliderStyle(
-                  variant: Colors.grey,
-                  accent: Colors.grey[500]
-              ),
-              onChangeEnd: (newValue){
+              style:
+                  SliderStyle(variant: Colors.grey, accent: Colors.grey[500]),
+              onChangeEnd: (newValue) {
                 setState(() {
                   listenOnlyUserInterraction = false;
                   widget.seekTo(_visibleValue);
                 });
               },
-              onChangeStart: (_){
+              onChangeStart: (_) {
                 setState(() {
                   listenOnlyUserInterraction = true;
                 });
@@ -91,7 +90,9 @@ String durationToString(Duration duration) {
     return "0$n";
   }
 
-  String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(Duration.minutesPerHour));
-  String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute));
+  String twoDigitMinutes =
+      twoDigits(duration.inMinutes.remainder(Duration.minutesPerHour));
+  String twoDigitSeconds =
+      twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute));
   return "$twoDigitMinutes:$twoDigitSeconds";
 }

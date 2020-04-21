@@ -25,12 +25,34 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final audios = <MyAudio>[
-    MyAudio(name: "Rock", audio: Audio("assets/audios/rock.mp3"), imageUrl: "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
-    MyAudio(name: "Country", audio: Audio("assets/audios/country.mp3"), imageUrl: "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
-    MyAudio(name: "Electronic", audio: Audio("assets/audios/electronic.mp3"), imageUrl: "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
-    MyAudio(name: "HipHop", audio: Audio("assets/audios/hiphop.mp3"), imageUrl: "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg "),
-    MyAudio(name: "Pop", audio: Audio("assets/audios/pop.mp3"), imageUrl: "https://lh3.googleusercontent.com/proxy/yiaIA8SYrF3hJ0qN86wTKbhvfHU4mLOId3mbP82xQ_hNpYSTGIbLHynjtf8OZ7_vr2j7lAgKQJiXjGkiETawIa4zmPaSf6g"),
-    MyAudio(name: "Instrumental", audio: Audio("assets/audios/instrumental.mp3"), imageUrl: "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
+    MyAudio(
+        name: "Rock",
+        audio: Audio("assets/audios/rock.mp3"),
+        imageUrl:
+            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+    MyAudio(
+        name: "Country",
+        audio: Audio("assets/audios/country.mp3"),
+        imageUrl:
+            "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
+    MyAudio(
+        name: "Electronic",
+        audio: Audio("assets/audios/electronic.mp3"),
+        imageUrl: "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
+    MyAudio(
+        name: "HipHop",
+        audio: Audio("assets/audios/hiphop.mp3"),
+        imageUrl:
+            "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg "),
+    MyAudio(
+        name: "Pop",
+        audio: Audio("assets/audios/pop.mp3"),
+        imageUrl:
+            "https://lh3.googleusercontent.com/proxy/yiaIA8SYrF3hJ0qN86wTKbhvfHU4mLOId3mbP82xQ_hNpYSTGIbLHynjtf8OZ7_vr2j7lAgKQJiXjGkiETawIa4zmPaSf6g"),
+    MyAudio(
+        name: "Instrumental",
+        audio: Audio("assets/audios/instrumental.mp3"),
+        imageUrl: "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
   ];
 
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
@@ -71,21 +93,28 @@ class _MyAppState extends State<MyApp> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 Stack(
                   fit: StackFit.passthrough,
                   children: <Widget>[
                     StreamBuilder(
                       stream: _assetsAudioPlayer.current,
-                      builder: (BuildContext context, AsyncSnapshot<Playing> snapshot) {
+                      builder: (BuildContext context,
+                          AsyncSnapshot<Playing> snapshot) {
                         final Playing playing = snapshot.data;
                         if (playing != null) {
-                          final myAudio = find(this.audios, playing.audio.assetAudioPath);
+                          final myAudio =
+                              find(this.audios, playing.audio.assetAudioPath);
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Neumorphic(
                               boxShape: NeumorphicBoxShape.circle(),
-                              style: NeumorphicStyle(depth: 8, surfaceIntensity: 1, shape: NeumorphicShape.concave),
+                              style: NeumorphicStyle(
+                                  depth: 8,
+                                  surfaceIntensity: 1,
+                                  shape: NeumorphicShape.concave),
                               child: Image.network(
                                 myAudio.imageUrl,
                                 height: 150,
@@ -105,7 +134,8 @@ class _MyAppState extends State<MyApp> {
                         padding: EdgeInsets.all(18),
                         margin: EdgeInsets.all(18),
                         onClick: () {
-                          AssetsAudioPlayer.newPlayer().open(Audio("assets/audios/horn.mp3"));
+                          AssetsAudioPlayer.newPlayer()
+                              .open(Audio("assets/audios/horn.mp3"));
                         },
                         child: Icon(
                           Icons.add_alert,
@@ -115,8 +145,12 @@ class _MyAppState extends State<MyApp> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20,),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
                 StreamBuilder(
                     stream: _assetsAudioPlayer.current,
                     builder: (context, snapshot) {
@@ -139,8 +173,9 @@ class _MyAppState extends State<MyApp> {
                                     return PlayingControls(
                                       isLooping: isLooping,
                                       isPlaying: isPlaying,
-                                      isPlaylist: playing.playlist.audios.length > 1,
-                                      toggleLoop: (){
+                                      isPlaylist:
+                                          playing.playlist.audios.length > 1,
+                                      toggleLoop: () {
                                         _assetsAudioPlayer.toggleLoop();
                                       },
                                       onPlay: () {
@@ -162,7 +197,8 @@ class _MyAppState extends State<MyApp> {
                                 if (!snapshot.hasData) {
                                   return SizedBox();
                                 }
-                                final RealtimePlayingInfos infos = snapshot.data;
+                                final RealtimePlayingInfos infos =
+                                    snapshot.data;
                                 print("infos: $infos");
                                 return PositionSeekWidget(
                                   currentPosition: infos.currentPosition,
@@ -175,16 +211,20 @@ class _MyAppState extends State<MyApp> {
                         ],
                       );
                     }),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 Expanded(
                   child: StreamBuilder(
                       stream: _assetsAudioPlayer.current,
-                      builder: (BuildContext context, AsyncSnapshot<Playing> snapshot) {
+                      builder: (BuildContext context,
+                          AsyncSnapshot<Playing> snapshot) {
                         final Playing playing = snapshot.data;
                         return SongsSelector(
                           audios: this.audios,
                           onPlaylistSelected: (myAudios) {
-                            _assetsAudioPlayer.open(Playlist(audios: myAudios.map((e) => e.audio).toList()));
+                            _assetsAudioPlayer.open(Playlist(
+                                audios: myAudios.map((e) => e.audio).toList()));
                           },
                           onSelected: (myAudio) {
                             _assetsAudioPlayer.open(myAudio.audio);
