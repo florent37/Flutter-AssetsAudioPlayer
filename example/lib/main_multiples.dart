@@ -26,10 +26,12 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final audios = <MyAudio>[
-    MyAudio(name: "Astronomia", audio: Audio("assets/audios/astronomia.mp3"), imageUrl: "https://m.media-amazon.com/images/I/71Mpo3RQr6L._SS500_.jpg"),
-    MyAudio(name: "Interstellar", audio: Audio("assets/audios/interstellar.mp3"), imageUrl: "https://i2.wp.com/www.parentgalactique.fr/wp-content/uploads/2014/11/interstellar.jpg"),
-    MyAudio(name: "Counting Moews", audio: Audio("assets/audios/bongocat.mp3"), imageUrl: "http://img.youtube.com/vi/73afc3UOipk/maxresdefault.jpg"),
-    MyAudio(name: "Africa Cover (Peter Bence)", audio: Audio("assets/audios/africa.mp3"), imageUrl: "http://img.youtube.com/vi/_SywaUbg5wU/maxresdefault.jpg"),
+    MyAudio(name: "Rock", audio: Audio("assets/audios/rock.mp3"), imageUrl: "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+    MyAudio(name: "Country", audio: Audio("assets/audios/country.mp3"), imageUrl: "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
+    MyAudio(name: "Electronic", audio: Audio("assets/audios/electronic.mp3"), imageUrl: "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
+    MyAudio(name: "HipHop", audio: Audio("assets/audios/hiphop.mp3"), imageUrl: "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg "),
+    MyAudio(name: "Pop", audio: Audio("assets/audios/pop.mp3"), imageUrl: "https://lh3.googleusercontent.com/proxy/yiaIA8SYrF3hJ0qN86wTKbhvfHU4mLOId3mbP82xQ_hNpYSTGIbLHynjtf8OZ7_vr2j7lAgKQJiXjGkiETawIa4zmPaSf6g"),
+    MyAudio(name: "Instrumental", audio: Audio("assets/audios/instrumental.mp3"), imageUrl: "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
   ];
 
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
