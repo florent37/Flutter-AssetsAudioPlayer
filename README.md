@@ -3,19 +3,31 @@
 [![pub package](https://img.shields.io/pub/v/assets_audio_player.svg)](
 https://pub.dartlang.org/packages/assets_audio_player)
 
-You like the package ? buy me a kofi :)
-
-<a href='https://ko-fi.com/A160LCC' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-
 Play music/audio stored in assets files (simultaneously) directly from Flutter (android / ios / web). 
+
+
+```yaml
+flutter:
+  assets:
+    - assets/audios/
+```
+
+```Dart
+AssetsAudioPlayer.newPlayer().open(
+    Audio("assets/audios/song1.mp3"),
+    autoPlay: true,
+);
+```
+
+[![sample1](./medias/sample1.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
+[![sample1](./medias/sample2.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
+
+# 📥 Import
 
 ```yaml
 dependencies:
   assets_audio_player: ^1.3.6
 ```
-
-[![sample1](./medias/sample1.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
-[![sample1](./medias/sample2.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
 
 <details>
   <summary> 🌐 Web support</summary>
@@ -27,6 +39,11 @@ dependencies:
 ```
 
 </details>
+
+You like the package ? buy me a kofi :)
+
+<a href='https://ko-fi.com/A160LCC' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
 
 # 📁 Import assets files
 
