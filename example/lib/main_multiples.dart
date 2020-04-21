@@ -3,10 +3,7 @@ import 'package:assets_audio_player_example/player/PlayingControlsSmall.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
-import 'player/PlayingControls.dart';
 import 'player/PositionSeekWidget.dart';
-import 'player/SongsSelector.dart';
-import 'player/VolumeSelector.dart';
 import 'player/model/MyAudio.dart';
 
 void main() => runApp(

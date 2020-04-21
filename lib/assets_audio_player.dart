@@ -50,7 +50,7 @@ class AssetsAudioPlayer {
   MethodChannel _recieveChannel;
 
   /// Stores opened asset audio path to use it on the `_current` BehaviorSubject (in `PlayingAudio`)
-  String _lastOpenedAssetsAudioPath;
+  Audio _lastOpenedAssetsAudio;
 
   _CurrentPlaylist _playlist;
 
@@ -238,7 +238,7 @@ class AssetsAudioPlayer {
           final totalDuration = _toDuration(call.arguments["totalDuration"]);
 
           final playingAudio = PlayingAudio(
-            assetAudioPath: _lastOpenedAssetsAudioPath,
+            audio: _lastOpenedAssetsAudio,
             duration: totalDuration,
           );
 
@@ -298,14 +298,14 @@ class AssetsAudioPlayer {
 
   void playlistPlayAtIndex(int index) {
     _playlist.moveTo(index);
-    _open(_playlist.currentAudioPath());
+    _open(_playlist.currentAudio());
   }
 
   bool previous() {
     if (_playlist != null) {
       if (_playlist.hasPrev()) {
         _playlist.selectPrev();
-        _open(_playlist.currentAudioPath());
+        _open(_playlist.currentAudio());
         return true;
       } else if (_playlist.playlistIndex == 0) {
         seek(Duration.zero);
@@ -326,7 +326,7 @@ class AssetsAudioPlayer {
           playlist: this._current.value.playlist,
         ));
         _playlist.selectNext();
-        _open(_playlist.currentAudioPath());
+        _open(_playlist.currentAudio());
 
         return true;
       } else if (loop) {
@@ -339,7 +339,7 @@ class AssetsAudioPlayer {
         ));
 
         _playlist.returnToFirst();
-        _open(_playlist.currentAudioPath());
+        _open(_playlist.currentAudio());
 
         return true;
       } else if (stopIfLast) {
@@ -372,15 +372,16 @@ class AssetsAudioPlayer {
 
   //private method, used in open(playlist) and open(path)
   void _open(
-    String assetAudioPath, {
+    Audio audio, {
     bool autoStart = _DEFAULT_AUTO_START,
     double forcedVolume,
   }) async {
-    if (assetAudioPath != null) {
+    if (audio != null) {
       try {
         _sendChannel.invokeMethod('open', {
           "id": this.id,
-          "path": assetAudioPath,
+          "audioType" : _audioTypeDescription(audio.audioType),
+          "path": audio.path,
           "autoStart": autoStart,
           "volume": forcedVolume ?? this.volume.value ?? defaultVolume,
         });
@@ -388,7 +389,7 @@ class AssetsAudioPlayer {
         print(e);
       }
 
-      _lastOpenedAssetsAudioPath = assetAudioPath;
+      _lastOpenedAssetsAudio = audio;
     }
   }
 
@@ -401,8 +402,11 @@ class AssetsAudioPlayer {
     _replaceRealtimeSubscription();
     this._playlist = _CurrentPlaylist(playlist: playlist);
     _playlist.moveTo(playlist.startIndex);
-    _open(_playlist.currentAudioPath(),
-        autoStart: autoStart, forcedVolume: volume);
+    _open(
+      _playlist.currentAudio(),
+      autoStart: autoStart,
+      forcedVolume: volume,
+    );
   }
 
   /// Open a song from the asset
@@ -532,16 +536,16 @@ class _CurrentPlaylist {
   }
 
   //nullable
-  String audioPath({int at}) {
+  Audio audioAt({int at}) {
     if (at < playlist.audios.length) {
-      return playlist.audios[at]?.path;
+      return playlist.audios[at];
     } else {
       return null;
     }
   }
 
-  String currentAudioPath() {
-    return audioPath(at: playlistIndex);
+  Audio currentAudio() {
+    return audioAt(at: playlistIndex);
   }
 
   bool hasNext() {
@@ -564,4 +568,16 @@ class _CurrentPlaylist {
       playlistIndex = 0;
     }
   }
+}
+
+String _audioTypeDescription(AudioType audioType){
+  switch(audioType){
+    case AudioType.network:
+      return "network";
+    case AudioType.file:
+      return "file";
+    case AudioType.asset:
+      return "asset";
+  }
+  return null;
 }
