@@ -58,11 +58,14 @@ class SongsSelector extends StatelessWidget {
               itemCount: this.audios.length,
             ),
           ),
-          NeumorphicButton(
-            onClick: () {
-              this.onPlaylistSelected(this.audios);
-            },
-            child: Text("All as playlist"),
+          FractionallySizedBox(
+            widthFactor: 1,
+            child: NeumorphicButton(
+              onClick: () {
+                this.onPlaylistSelected(this.audios);
+              },
+              child: Center(child: Text("All as playlist")),
+            ),
           )
         ],
       ),

@@ -475,7 +475,6 @@ class AssetsAudioPlayer {
   void seek(Duration to) {
     if(to != _lastSeek) {
       _lastSeek = to;
-      print("to: $to");
       _sendChannel.invokeMethod('seek', {
         "id": this.id,
         "to": to.inSeconds.round(),
