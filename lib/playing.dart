@@ -19,19 +19,21 @@ import 'playable.dart';
 @immutable
 class PlayingAudio {
   ///the opened asset
-  final String assetAudioPath;
+  final Audio audio;
 
   ///the current song's total duration
   final Duration duration;
 
   const PlayingAudio({
-    this.assetAudioPath = "",
+    this.audio,
     this.duration = Duration.zero,
   });
 
+  String get assetAudioPath => audio.path;
+
   @override
   String toString() {
-    return 'PlayingAudio{assetAudioPath: $assetAudioPath, duration: $duration}';
+    return 'PlayingAudio{audio: $audio, duration: $duration}';
   }
 
   @override
@@ -39,11 +41,11 @@ class PlayingAudio {
       identical(this, other) ||
       other is PlayingAudio &&
           runtimeType == other.runtimeType &&
-          assetAudioPath == other.assetAudioPath &&
+          audio == other.audio &&
           duration == other.duration;
 
   @override
-  int get hashCode => assetAudioPath.hashCode ^ duration.hashCode;
+  int get hashCode => audio.hashCode ^ duration.hashCode;
 }
 
 @immutable

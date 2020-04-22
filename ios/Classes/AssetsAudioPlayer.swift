@@ -17,7 +17,12 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     let channel: FlutterMethodChannel
     let registrar: FlutterPluginRegistrar
+    var didSendDuration = false
+    var player: AVPlayer?
     
+    var observerStatus: NSKeyValueObservation?
+
+
     init(channel: FlutterMethodChannel, registrar: FlutterPluginRegistrar) {
         self.channel = channel
         self.registrar = registrar
@@ -27,70 +32,102 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         channel.invokeMethod("log", arguments: message)
     }
     
-    func open(assetPath: String, autoStart: Bool, volume: Double, result: FlutterResult){
-            let assetKey = registrar.lookupKey(forAsset: assetPath)
-            guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
-                 log("resource not found \(assetKey)")
-                 result("");
-                 return
-            }
-            
-            let url = URL(fileURLWithPath: path)
-    //        log("url: "+url.absoluteString)
-            do {
-                
-                /* set session category and mode with options */
-                if #available(iOS 10.0, *) {
-                    try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, mode: AVAudioSession.Mode.default, options: [])
-                } else {
-                    try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
-                }
-                
-                try AVAudioSession.sharedInstance().setActive(true)
-                
-                /* The following line is required for the player to work on iOS 11. Change the file type accordingly */
-                if #available(iOS 11.0, *) {
-                    self.player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.mp3.rawValue)
-                } else {
-                    /* iOS 10 and earlier require the following line: */
-                    self.player = try AVAudioPlayer(contentsOf: url)
-                }
-                
-                if(self.player == nil){
-                    //log("player is null");
-                    return
-                }
-                
-                self.player?.prepareToPlay()
-                
-                self.currentTime = 0
-                self.playing = false
-                
-                self.player?.delegate = self
+    func getUrlByType(path: String, audioType: String) -> URL? {
+        var url : URL
 
-                if(autoStart){
-                    play()
-                }
-                self.setVolume(volume: volume)
-                
-                result(true);
-                //log("play_ok");
-                
-                let asset = AVURLAsset(url: url, options: nil)
-        
-                let audioDurationSeconds = CMTimeGetSeconds(asset.duration)
-                
-                self.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": audioDurationSeconds])
-                
-            } catch let error {
-                result(error);
-                log(error.localizedDescription)
-                print(error.localizedDescription)
+        if(audioType == "network"){
+            let urlStr : String = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+            if let u = URL(string: urlStr) {
+                return u
+            } else {
+                print("Couldn't parse myURL = \(urlStr)")
+                return nil
             }
+
+        } else if(audioType == "file"){
+            let urlStr : String = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+            if let u = URL(string: urlStr) {
+                 return u
+            } else {
+                print("Couldn't parse myURL = \(urlStr)")
+                return nil
+            }
+        }  else { //asset
+            let assetKey = self.registrar.lookupKey(forAsset: path)
+
+            guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
+                 return nil
+            }
+
+            url = URL(fileURLWithPath: path)
+            return url
+        }
+    }
+    
+    func open(assetPath: String, audioType: String, autoStart: Bool, volume: Double, result: FlutterResult){
+        didSendDuration = false
+    
+        guard let url = self.getUrlByType(path: assetPath, audioType: audioType) else {
+             log("resource not found \(assetPath)")
+             result("");
+             return
         }
 
+//        log("url: "+url.absoluteString)
+        do {
+            
+            /* set session category and mode with options */
+            if #available(iOS 10.0, *) {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, mode: AVAudioSession.Mode.default, options: [])
+            } else {
+                try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
+            }
+            
+            try AVAudioSession.sharedInstance().setActive(true)
+
+            let item = AVPlayerItem(url: url)
+            self.player = AVPlayer(playerItem: item)
+            
+            NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
+            
+             observerStatus = item.observe(\.status, changeHandler: { [weak self] (item, value) in
+                 switch item.status {
+                 case .unknown:
+                     debugPrint("status: unknown")
+                 case .readyToPlay:
+                     debugPrint("status: ready to play")
+                     if(autoStart == true){
+                        self?.play()
+                     }
+                     self?.setVolume(volume: volume)
+                 case .failed:
+                     debugPrint("playback failed")
+                 @unknown default:
+                    fatalError()
+                }
+             })
+
+
+
+            if(self.player == nil){
+                //log("player is null");
+                return
+            }
+                            
+            self.currentTime = 0
+            self.playing = false
+            
+            result(true);
+        } catch let error {
+            result(error);
+            log(error.localizedDescription)
+            print(error.localizedDescription)
+        }
+    }
+
     func seek(to: Int){
-        self.player?.currentTime = Double(to)
+        let targetTime = CMTimeMakeWithSeconds(Double(to), preferredTimescale: 1)
+        self.player?.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }
     
     func setVolume(volume: Double){
@@ -99,7 +136,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     }
     
     func stop(){
-        self.player?.stop()
+        self.player?.pause()
+        self.player?.seek(to: CMTime.zero)
+        self.player?.rate = 0.0
+        self.player = nil
         self.playing = false
         self.currentTimeTimer?.invalidate()
     }
@@ -117,8 +157,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             return _currentTime
         }
         set(newValue) {
-            _currentTime = newValue
-            self.channel.invokeMethod(Music.METHOD_POSITION, arguments: self._currentTime)
+            if(_currentTime != newValue){
+                _currentTime = newValue
+                self.channel.invokeMethod(Music.METHOD_POSITION, arguments: self._currentTime)
+            }
         }
     };
     
@@ -134,23 +176,32 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     };
     
     var currentTimeTimer: Timer?
-    var player: AVAudioPlayer?
     
-    public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool){
+    @objc public func playerDidFinishPlaying(note: NSNotification){
         self.channel.invokeMethod(Music.METHOD_FINISHED, arguments: true)
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
     
     func pause(){
         self.player?.pause()
         self.playing = false
         self.currentTimeTimer?.invalidate()
     }
-    
+        
     @objc func updateTimer(){
         //log("updateTimer");
         if let p = self.player {
-            self.currentTime = p.currentTime
+            if let currentItem = p.currentItem {
+                if(!didSendDuration && p.status == .readyToPlay){
+                    didSendDuration = true
+                    let audioDurationSeconds = CMTimeGetSeconds(currentItem.duration) //CMTimeGetSeconds(asset.duration)
+                    self.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": audioDurationSeconds])
+                }
+                self.currentTime = CMTimeGetSeconds(currentItem.currentTime())
+            }
         }
     }
 }
@@ -240,10 +291,17 @@ class Music : NSObject {
                 let args = call.arguments as! NSDictionary
                 let id = args["id"] as! String
                 let assetPath = args["path"] as! String
+                let audioType = args["audioType"] as! String
                 let volume = args["volume"] as! Double
                 let autoStart = args["autoStart"] as! Bool
                 self.getOrCreatePlayer(id: id)
-                    .open(assetPath: assetPath, autoStart: autoStart, volume:volume, result: result);
+                    .open(
+                        assetPath: assetPath,
+                        audioType: audioType,
+                        autoStart: autoStart,
+                        volume:volume,
+                        result: result
+                    );
             break;
                 
             default:
