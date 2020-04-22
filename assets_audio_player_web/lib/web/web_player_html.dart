@@ -104,10 +104,10 @@ class WebPlayerHtml extends WebPlayer {
   }
 
   @override
-  Future<void> open({String path, double volume, bool autoStart}) async {
+  Future<void> open({String path, String audioType, double volume, bool autoStart}) async {
     stop();
 
-    _audioElement = html.AudioElement(findAssetPath(path));
+    _audioElement = html.AudioElement(findAssetPath(path, audioType));
 
     _onEndListener = _audioElement.onEnded.listen((event) {
       channel.invokeMethod(WebPlayer.methodFinished, true);
