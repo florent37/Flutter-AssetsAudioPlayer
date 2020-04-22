@@ -31,7 +31,10 @@ abstract class WebPlayer {
 
   void stop();
 
-  String findAssetPath(String path) {
+  String findAssetPath(String path, String audioType) {
+    if(audioType == "network" || audioType == "file"){
+      return path;
+    }
     //in web, assets are packaged in a /assets/ folder
     //if you want "/asset/3" as described in pubspec
     //it will be in /assets/asset/3
@@ -44,7 +47,7 @@ abstract class WebPlayer {
     return path;
   }
 
-  Future<void> open({String path, double volume, bool autoStart});
+  Future<void> open({String path, String audioType, double volume, bool autoStart});
 
   void seek({double to});
 }

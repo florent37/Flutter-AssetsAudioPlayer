@@ -95,10 +95,12 @@ class AssetsAudioPlayerWebPlugin {
       case "open":
         final String id = call.arguments["id"];
         final String path = call.arguments["path"];
+        final String audioType = call.arguments["audioType"];
         final double volume = call.arguments["volume"];
         final bool autoStart = call.arguments["autoStart"] ?? true;
         return _getOrCreate(id).open(
           path: path,
+          audioType: audioType,
           volume: volume,
           autoStart: autoStart,
         );
