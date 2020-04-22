@@ -91,23 +91,29 @@ class WebPlayer {
     }
   }
 
-  String findAssetPath(String path) {
-    //in web, assets are packaged in a /assets/ folder
-    //if you want "/asset/3" as described in pubspec
-    //it will be in /assets/asset/3
+  String findAssetPath(String path, {String audioType = "asset"}) {
+    if(audioType == "network"){
+      return path;
+    } else if(audioType == "file"){
+      return path;
+    } else { //asset
+      //in web, assets are packaged in a /assets/ folder
+      //if you want "/asset/3" as described in pubspec
+      //it will be in /assets/asset/3
 
-    /* for release mode, need to change the "url", remove the /#/ and add /asset before */
-    if (path.startsWith("/")) {
-      path = path.replaceFirst("/", "");
+      /* for release mode, need to change the "url", remove the /#/ and add /asset before */
+      if (path.startsWith("/")) {
+        path = path.replaceFirst("/", "");
+      }
+      path = (window.location.href.replaceAll("/#/", "") + "/assets/" + path);
+      return path;
     }
-    path = (window.location.href.replaceAll("/#/", "") + "/assets/" + path);
-    return path;
   }
 
-  void open({String path, double volume, bool autoStart}) async {
+  void open({String path, String audioType, double volume, bool autoStart}) async {
     stop();
 
-    _howl = Howl(src: [findAssetPath(path)]);
+    _howl = Howl(src: [findAssetPath(path, audioType: audioType)]);
 
     if (autoStart) {
       play();
