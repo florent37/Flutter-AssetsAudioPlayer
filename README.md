@@ -242,6 +242,35 @@ assetsAudioPlayer.isLooping.listen((loop){
 assetsAudioPlayer.toggleLoop(); //toggle the value of looping
 ```
 
+# Network Policies (android/iOS)
+
+Android only allow HTTPS calls, you will have an error if you're using HTTP, 
+don't forget to add INTERNET permission and seet `usesCleartextTraffic="true"` in your **AndroidManifest.xml**
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<manifest ...>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application
+        ...
+        android:usesCleartextTraffic="true"
+        ...>
+        ...
+    </application>
+</manifest>
+```
+
+iOS only allow HTTPS calls, you will have an error if you're using HTTP, 
+don't forget to edit your **info.plist** and set `NSAppTransportSecurity` to `NSAllowsArbitraryLoads`
+
+```
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
+</dict>
+```
+
 # 🌐 Web Support
 
 Web support is using [import_js_library](https://pub.dev/packages/import_js_library) to import the [Howler.js library](https://howlerjs.com/)
