@@ -13,7 +13,7 @@ class AssetsAudioPlayerWebPlugin {
   final Map<String, WebPlayer> _players = Map();
   final BinaryMessenger messenger;
 
-  static final bool useHowl = false;
+  static bool useHowl = false;
 
   AssetsAudioPlayerWebPlugin({this.messenger}) {
     initializeHowl();
