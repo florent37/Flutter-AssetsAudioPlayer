@@ -20,7 +20,6 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     var didSendDuration = false
     var player: AVPlayer?
     
-    var autoPlay = false
     var observerStatus: NSKeyValueObservation?
 
 
@@ -33,106 +32,101 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         channel.invokeMethod("log", arguments: message)
     }
     
+    func getUrlByType(path: String, audioType: String) -> URL? {
+        var url : URL
+
+        if(audioType == "network"){
+            let urlStr : String = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+            if let u = URL(string: urlStr) {
+                return u
+            } else {
+                print("Couldn't parse myURL = \(urlStr)")
+                return nil
+            }
+
+        } else if(audioType == "file"){
+            let urlStr : String = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+            if let u = URL(string: urlStr) {
+                 return u
+            } else {
+                print("Couldn't parse myURL = \(urlStr)")
+                return nil
+            }
+        }  else { //asset
+            let assetKey = self.registrar.lookupKey(forAsset: path)
+
+            guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
+                 return nil
+            }
+
+            url = URL(fileURLWithPath: path)
+            return url
+        }
+    }
+    
     func open(assetPath: String, audioType: String, autoStart: Bool, volume: Double, result: FlutterResult){
-            didSendDuration = false
-            self.autoPlay = autoStart
-        
-            var url : URL
-
-            if(audioType == "network"){
-                let urlStr : String = assetPath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-                if let u = URL(string: urlStr) {
-                    url = u
-                } else {
-                    print("Couldn't parse myURL = \(urlStr)")
-                    return
-                }
-
-            } else if(audioType == "file"){
-                let urlStr : String = assetPath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-                if let u = URL(string: urlStr) {
-                     url = u
-                } else {
-                    print("Couldn't parse myURL = \(urlStr)")
-                    return
-                }
-            }  else { //asset
-                let assetKey = registrar.lookupKey(forAsset: assetPath)
-
-                guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
-                     log("resource not found \(assetKey)")
-                     result("");
-                     return
-                }
-
-                url = URL(fileURLWithPath: path)
-            }
-
-    //        log("url: "+url.absoluteString)
-            do {
-                
-                /* set session category and mode with options */
-                if #available(iOS 10.0, *) {
-                    try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, mode: AVAudioSession.Mode.default, options: [])
-                } else {
-                    try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
-                }
-                
-                try AVAudioSession.sharedInstance().setActive(true)
-
-                let item = AVPlayerItem(url: url)
-                self.player = AVPlayer(playerItem: item)
-                
-                NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
-                
-                 observerStatus = item.observe(\.status, changeHandler: { [weak self] (item, value) in
-                     switch item.status {
-                     case .unknown:
-                         debugPrint("status: unknown")
-                     case .readyToPlay:
-                         debugPrint("status: ready to play")
-                         if(self?.autoPlay == true){
-                            self?.play()
-                         }
-                     case .failed:
-                         debugPrint("playback failed")
-                     @unknown default:
-                        fatalError()
-                    }
-                 })
-
-
-
-                if(self.player == nil){
-                    //log("player is null");
-                    return
-                }
-                
-                //self.player?.prepareToPlay()
-                
-                self.currentTime = 0
-                self.playing = false
-
-                if(autoStart){
-                    //play()
-                }
-                //self.setVolume(volume: volume)
-                
-                result(true);
-                //log("play_ok");
-                
-                //let asset = AVURLAsset(url: url!, options: nil)
-                
-            } catch let error {
-                result(error);
-                log(error.localizedDescription)
-                print(error.localizedDescription)
-            }
+        didSendDuration = false
+    
+        guard let url = self.getUrlByType(path: assetPath, audioType: audioType) else {
+             log("resource not found \(assetPath)")
+             result("");
+             return
         }
 
+//        log("url: "+url.absoluteString)
+        do {
+            
+            /* set session category and mode with options */
+            if #available(iOS 10.0, *) {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, mode: AVAudioSession.Mode.default, options: [])
+            } else {
+                try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
+            }
+            
+            try AVAudioSession.sharedInstance().setActive(true)
+
+            let item = AVPlayerItem(url: url)
+            self.player = AVPlayer(playerItem: item)
+            
+            NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
+            
+             observerStatus = item.observe(\.status, changeHandler: { [weak self] (item, value) in
+                 switch item.status {
+                 case .unknown:
+                     debugPrint("status: unknown")
+                 case .readyToPlay:
+                     debugPrint("status: ready to play")
+                     if(autoStart == true){
+                        self?.play()
+                     }
+                     self?.setVolume(volume: volume)
+                 case .failed:
+                     debugPrint("playback failed")
+                 @unknown default:
+                    fatalError()
+                }
+             })
+
+
+
+            if(self.player == nil){
+                //log("player is null");
+                return
+            }
+                            
+            self.currentTime = 0
+            self.playing = false
+            
+            result(true);
+        } catch let error {
+            result(error);
+            log(error.localizedDescription)
+            print(error.localizedDescription)
+        }
+    }
+
     func seek(to: Int){
-        
-        let targetTime = CMTimeMakeWithSeconds(Double(to), preferredTimescale: 1) // videoLastDuration hold the previous video state.
+        let targetTime = CMTimeMakeWithSeconds(Double(to), preferredTimescale: 1)
         self.player?.seek(to: targetTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }
     

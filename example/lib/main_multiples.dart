@@ -24,15 +24,19 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final audios = <MyAudio>[
     MyAudio(
+        name: "Online",
+        audio: Audio.network("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3"),
+        imageUrl: "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+    MyAudio(
         name: "Rock",
         audio: Audio("assets/audios/rock.mp3"),
         imageUrl:
-            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+        "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
     MyAudio(
         name: "Country",
         audio: Audio("assets/audios/country.mp3"),
         imageUrl:
-            "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
+        "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
     MyAudio(
         name: "Electronic",
         audio: Audio("assets/audios/electronic.mp3"),
@@ -41,12 +45,11 @@ class _MyAppState extends State<MyApp> {
         name: "HipHop",
         audio: Audio("assets/audios/hiphop.mp3"),
         imageUrl:
-            "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg "),
+        "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg "),
     MyAudio(
         name: "Pop",
         audio: Audio("assets/audios/pop.mp3"),
-        imageUrl:
-            "https://lh3.googleusercontent.com/proxy/yiaIA8SYrF3hJ0qN86wTKbhvfHU4mLOId3mbP82xQ_hNpYSTGIbLHynjtf8OZ7_vr2j7lAgKQJiXjGkiETawIa4zmPaSf6g"),
+        imageUrl: "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
     MyAudio(
         name: "Instrumental",
         audio: Audio("assets/audios/instrumental.mp3"),
