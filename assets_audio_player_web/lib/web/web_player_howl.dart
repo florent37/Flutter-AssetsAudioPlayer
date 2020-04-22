@@ -7,7 +7,6 @@ import 'abstract_web_player.dart';
 
 /// Web Player
 class WebPlayerHowl extends WebPlayer {
-
   @override
   WebPlayerHowl({MethodChannel channel}) : super(channel: channel);
 
@@ -52,7 +51,8 @@ class WebPlayerHowl extends WebPlayer {
       final duration = _howl.duration;
       if (duration != _duration) {
         _duration = duration;
-        channel.invokeMethod(WebPlayer.methodCurrent, {"totalDuration": duration});
+        channel
+            .invokeMethod(WebPlayer.methodCurrent, {"totalDuration": duration});
       }
 
       if (_position != currentPosition) {
@@ -95,7 +95,8 @@ class WebPlayerHowl extends WebPlayer {
   }
 
   @override
-  Future<void> open({String path, String audioType, double volume, bool autoStart}) async {
+  Future<void> open(
+      {String path, String audioType, double volume, bool autoStart}) async {
     stop();
 
     _howl = Howl(src: [findAssetPath(path, audioType)]);

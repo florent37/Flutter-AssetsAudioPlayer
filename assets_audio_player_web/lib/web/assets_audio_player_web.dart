@@ -19,8 +19,8 @@ class AssetsAudioPlayerWebPlugin {
     initializeHowl();
   }
 
-  WebPlayer _newPlayer(String id, MethodChannel channel){
-    if(useHowl){
+  WebPlayer _newPlayer(String id, MethodChannel channel) {
+    if (useHowl) {
       return WebPlayerHowl(
         channel: channel,
       );
@@ -35,11 +35,13 @@ class AssetsAudioPlayerWebPlugin {
     if (_players.containsKey(id)) {
       return _players[id];
     } else {
-      final WebPlayer newPlayer = _newPlayer(id, MethodChannel(
-          'assets_audio_player/' + id,
-          const StandardMethodCodec(),
-          this.messenger,
-      ));
+      final WebPlayer newPlayer = _newPlayer(
+          id,
+          MethodChannel(
+            'assets_audio_player/' + id,
+            const StandardMethodCodec(),
+            this.messenger,
+          ));
       _players[id] = newPlayer;
       return newPlayer;
     }

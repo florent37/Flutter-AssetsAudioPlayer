@@ -7,13 +7,12 @@ import 'abstract_web_player.dart';
 
 /// Web Player
 class WebPlayerHtml extends WebPlayer {
-
   @override
   WebPlayerHtml({MethodChannel channel}) : super(channel: channel);
 
   StreamSubscription _onEndListener;
 
-  void _clearListeners(){
+  void _clearListeners() {
     _onEndListener?.cancel();
   }
 
@@ -58,7 +57,8 @@ class WebPlayerHtml extends WebPlayer {
       final duration = _audioElement.duration;
       if (duration != _duration) {
         _duration = duration;
-        channel.invokeMethod(WebPlayer.methodCurrent, {"totalDuration": duration});
+        channel
+            .invokeMethod(WebPlayer.methodCurrent, {"totalDuration": duration});
       }
 
       if (_position != currentPosition) {
@@ -104,7 +104,8 @@ class WebPlayerHtml extends WebPlayer {
   }
 
   @override
-  Future<void> open({String path, String audioType, double volume, bool autoStart}) async {
+  Future<void> open(
+      {String path, String audioType, double volume, bool autoStart}) async {
     stop();
 
     _audioElement = html.AudioElement(findAssetPath(path, audioType));

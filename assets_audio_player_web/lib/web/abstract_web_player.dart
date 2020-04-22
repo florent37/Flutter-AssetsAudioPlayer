@@ -32,7 +32,7 @@ abstract class WebPlayer {
   void stop();
 
   String findAssetPath(String path, String audioType) {
-    if(audioType == "network" || audioType == "file"){
+    if (audioType == "network" || audioType == "file") {
       return path;
     }
     //in web, assets are packaged in a /assets/ folder
@@ -47,7 +47,8 @@ abstract class WebPlayer {
     return path;
   }
 
-  Future<void> open({String path, String audioType, double volume, bool autoStart});
+  Future<void> open(
+      {String path, String audioType, double volume, bool autoStart});
 
   void seek({double to});
 }

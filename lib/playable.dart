@@ -16,8 +16,6 @@ class Audio implements Playable {
   const Audio(this.path) : audioType = AudioType.asset;
   const Audio.file(this.path) : audioType = AudioType.file;
   const Audio.network(this.path) : audioType = AudioType.network;
-
-
 }
 
 @immutable

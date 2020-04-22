@@ -380,7 +380,7 @@ class AssetsAudioPlayer {
       try {
         _sendChannel.invokeMethod('open', {
           "id": this.id,
-          "audioType" : _audioTypeDescription(audio.audioType),
+          "audioType": _audioTypeDescription(audio.audioType),
           "path": audio.path,
           "autoStart": autoStart,
           "volume": forcedVolume ?? this.volume.value ?? defaultVolume,
@@ -570,8 +570,8 @@ class _CurrentPlaylist {
   }
 }
 
-String _audioTypeDescription(AudioType audioType){
-  switch(audioType){
+String _audioTypeDescription(AudioType audioType) {
+  switch (audioType) {
     case AudioType.network:
       return "network";
     case AudioType.file:
