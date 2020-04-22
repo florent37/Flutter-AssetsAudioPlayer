@@ -1,3 +1,9 @@
+## 1.3.8
+
+* Fully rebased the web support on html.AudioElement (instead of howler)
+* Fully rebases the ios support on AvPlayer (instead of AvAudioPlayer)
+* Added support for network audios with `.open(Audio.network(url))` on Android/ios/web
+
 ## 1.3.7+1
 
 * Added `RealtimePlayingInfos` stream

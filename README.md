@@ -5,6 +5,7 @@ https://pub.dartlang.org/packages/assets_audio_player)
 
 Play music/audio stored in assets files (simultaneously) directly from Flutter (android / ios / web). 
 
+try online :  https://flutter-assets-audio-player.web.app
 
 ```yaml
 flutter:
@@ -26,7 +27,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.3.7+1
+  assets_audio_player: ^1.3.8
 ```
 
 <details>
@@ -65,6 +66,16 @@ final assetsAudioPlayer = AssetsAudioPlayer();
 
 assetsAudioPlayer.open(
     Audio("assets/audios/song1.mp3"),
+);
+```
+
+You can also play *network songs* from *url*
+
+```Dart
+final assetsAudioPlayer = AssetsAudioPlayer();
+
+assetsAudioPlayer.open(
+    Audio.network("http://www.mysite.com/myMp3file.mp3"),
 );
 ```
 
