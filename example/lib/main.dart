@@ -202,7 +202,7 @@ class _MyAppState extends State<MyApp> {
                                 }
                                 final RealtimePlayingInfos infos =
                                     snapshot.data;
-                                print("infos: $infos");
+                                //print("infos: $infos");
                                 return PositionSeekWidget(
                                   currentPosition: infos.currentPosition,
                                   duration: infos.duration,
@@ -230,7 +230,7 @@ class _MyAppState extends State<MyApp> {
                                 audios: myAudios.map((e) => e.audio).toList()));
                           },
                           onSelected: (myAudio) {
-                            _assetsAudioPlayer.open(myAudio.audio);
+                            _assetsAudioPlayer.open(myAudio.audio, seek: Duration(minutes: 1));
                           },
                           playing: playing,
                         );

@@ -64,7 +64,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
     }
     
-    func open(assetPath: String, audioType: String, autoStart: Bool, volume: Double, result: FlutterResult){
+    func open(assetPath: String, audioType: String, autoStart: Bool, volume: Double, seek: Int?, result: FlutterResult){
         didSendDuration = false
     
         guard let url = self.getUrlByType(path: assetPath, audioType: audioType) else {
@@ -99,7 +99,12 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                      if(autoStart == true){
                         self?.play()
                      }
+                     
                      self?.setVolume(volume: volume)
+                    
+                     if(seek != nil){
+                        self?.seek(to: seek!)
+                     }
                  case .failed:
                      debugPrint("playback failed")
                  @unknown default:
@@ -293,6 +298,7 @@ class Music : NSObject {
                 let assetPath = args["path"] as! String
                 let audioType = args["audioType"] as! String
                 let volume = args["volume"] as! Double
+                let seek = args["seek"] as? Int
                 let autoStart = args["autoStart"] as! Bool
                 self.getOrCreatePlayer(id: id)
                     .open(
@@ -300,6 +306,7 @@ class Music : NSObject {
                         audioType: audioType,
                         autoStart: autoStart,
                         volume:volume,
+                        seek: seek,
                         result: result
                     );
             break;

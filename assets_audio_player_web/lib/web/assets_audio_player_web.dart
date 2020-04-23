@@ -99,11 +99,13 @@ class AssetsAudioPlayerWebPlugin {
         final String path = call.arguments["path"];
         final String audioType = call.arguments["audioType"];
         final double volume = call.arguments["volume"];
+        final double seek = call.arguments["seek"];
         final bool autoStart = call.arguments["autoStart"] ?? true;
         return _getOrCreate(id).open(
           path: path,
           audioType: audioType,
           volume: volume,
+          seek: seek,
           autoStart: autoStart,
         );
         break;

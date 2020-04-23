@@ -95,8 +95,12 @@ class WebPlayerHowl extends WebPlayer {
   }
 
   @override
-  Future<void> open(
-      {String path, String audioType, double volume, bool autoStart}) async {
+  Future<void> open({String path,
+    String audioType,
+    double volume,
+    double seek,
+    bool autoStart
+  }) async {
     stop();
 
     _howl = Howl(src: [findAssetPath(path, audioType)]);
@@ -105,6 +109,9 @@ class WebPlayerHowl extends WebPlayer {
       play();
     }
     this.volume = volume;
+    if(seek != null){
+      this.seek(to: seek);
+    }
   }
 
   @override

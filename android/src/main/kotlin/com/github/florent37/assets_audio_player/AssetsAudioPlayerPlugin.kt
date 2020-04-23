@@ -48,7 +48,7 @@ class Player(private val context: Context, private val channel: MethodChannel) {
         }
     }
 
-    fun open(assetAudioPath: String?, audioType: String, autoStart: Boolean, volume: Double, result: MethodChannel.Result, context: Context) {
+    fun open(assetAudioPath: String?, audioType: String, autoStart: Boolean, volume: Double, seek: Int?, result: MethodChannel.Result, context: Context) {
         stop()
 
         var totalDurationSeconds = 0L
@@ -91,6 +91,10 @@ class Player(private val context: Context, private val channel: MethodChannel) {
                     play()
                 }
                 setVolume(volume)
+
+                seek?.let {
+                    this.seek(seconds = seek);
+                }
             }
             mediaPlayer?.prepare()
         } catch (e: Exception) {
@@ -299,12 +303,14 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val messenge
                         return
                     }
                     val autoStart = args["autoStart"] as? Boolean ?: true
+                    val seek = args["seek"] as? Int?
 
                     getOrCreatePlayer(id).open(
                             path,
                             audioType,
                             autoStart,
                             volume,
+                            seek,
                             result,
                             context
                     )

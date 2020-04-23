@@ -11,9 +11,11 @@ class WebPlayerHtml extends WebPlayer {
   WebPlayerHtml({MethodChannel channel}) : super(channel: channel);
 
   StreamSubscription _onEndListener;
+  StreamSubscription _onCanPlayListener;
 
   void _clearListeners() {
     _onEndListener?.cancel();
+    _onCanPlayListener?.cancel();
   }
 
   html.AudioElement _audioElement;
@@ -48,8 +50,8 @@ class WebPlayerHtml extends WebPlayer {
 
   var __listenPosition = false;
 
-  double _duration = 0;
-  double _position = 0;
+  double _duration = null;
+  double _position = null;
 
   void _listenPosition() async {
     __listenPosition = true;
@@ -104,27 +106,41 @@ class WebPlayerHtml extends WebPlayer {
   }
 
   @override
-  Future<void> open(
-      {String path, String audioType, double volume, bool autoStart}) async {
+  Future<void> open({String path,
+    String audioType,
+    double volume,
+    double seek,
+    bool autoStart
+  }) async {
     stop();
-
+    _duration = null;
+    _position = null;
     _audioElement = html.AudioElement(findAssetPath(path, audioType));
 
     _onEndListener = _audioElement.onEnded.listen((event) {
       channel.invokeMethod(WebPlayer.methodFinished, true);
     });
+    _onCanPlayListener = _audioElement.onCanPlay.listen((event) {
+      if (autoStart) {
+        play();
+      }
+      this.volume = volume;
 
-    if (autoStart) {
-      play();
-    }
-    this.volume = volume;
+      if (seek != null) {
+        this.seek(to: seek);
+      }
+
+      //single event
+      _onCanPlayListener?.cancel();
+      _onCanPlayListener = null;
+    });
   }
 
   @override
   void seek({double to}) {
     if (_audioElement != null) {
       if (to != null) {
-        _audioElement?.currentTime = to;
+        _audioElement?.currentTime = 30.0;
       }
     }
   }

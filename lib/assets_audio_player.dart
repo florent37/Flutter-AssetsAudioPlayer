@@ -375,16 +375,21 @@ class AssetsAudioPlayer {
     Audio audio, {
     bool autoStart = _DEFAULT_AUTO_START,
     double forcedVolume,
+    Duration seek,
   }) async {
     if (audio != null) {
       try {
-        _sendChannel.invokeMethod('open', {
+        Map<String, dynamic> params = {
           "id": this.id,
           "audioType": _audioTypeDescription(audio.audioType),
           "path": audio.path,
           "autoStart": autoStart,
           "volume": forcedVolume ?? this.volume.value ?? defaultVolume,
-        });
+        };
+        if(seek != null){
+          params["seek"] = seek.inSeconds.round();
+        }
+        _sendChannel.invokeMethod('open', params);
       } catch (e) {
         print(e);
       }
@@ -397,6 +402,7 @@ class AssetsAudioPlayer {
     Playlist playlist, {
     bool autoStart = _DEFAULT_AUTO_START,
     double volume,
+    Duration seek,
   }) async {
     _lastSeek = null;
     _replaceRealtimeSubscription();
@@ -406,6 +412,7 @@ class AssetsAudioPlayer {
       _playlist.currentAudio(),
       autoStart: autoStart,
       forcedVolume: volume,
+      seek: seek,
     );
   }
 
@@ -422,15 +429,27 @@ class AssetsAudioPlayer {
   ///       assets:
   ///         - assets/audios/
   ///
-  void open(Playable playable,
-      {bool autoStart = _DEFAULT_AUTO_START, double volume}) async {
+  void open(Playable playable, {
+    bool autoStart = _DEFAULT_AUTO_START,
+    double volume,
+    Duration seek
+  }) async {
     if (playable is Playlist &&
         playable.audios != null &&
         playable.audios.length > 0) {
-      _openPlaylist(playable, autoStart: autoStart, volume: volume);
+      _openPlaylist(
+          playable,
+          autoStart: autoStart,
+          volume: volume,
+          seek: seek
+      );
     } else if (playable is Audio) {
-      _openPlaylist(Playlist(audios: [playable]),
-          autoStart: autoStart, volume: volume);
+      _openPlaylist(
+          Playlist(audios: [playable]),
+          autoStart: autoStart,
+          volume: volume,
+          seek: seek
+      );
     } else {
       //do nothing
       //throw exception ?
