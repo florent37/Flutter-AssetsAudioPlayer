@@ -1,3 +1,7 @@
+## 1.3.8+1
+
+* Added `seek` as optional parameter on `open` method
+
 ## 1.3.8
 
 * Fully rebased the web support on html.AudioElement (instead of howler)

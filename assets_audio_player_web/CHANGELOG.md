@@ -1,4 +1,4 @@
-## 1.3.8
+## 1.3.8+1
 
 * Web support is now based on html.AudioElement
 
