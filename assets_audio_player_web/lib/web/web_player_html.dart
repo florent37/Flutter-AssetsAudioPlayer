@@ -140,7 +140,7 @@ class WebPlayerHtml extends WebPlayer {
   void seek({double to}) {
     if (_audioElement != null) {
       if (to != null) {
-        _audioElement?.currentTime = 30.0;
+        _audioElement?.currentTime = to;
       }
     }
   }
