@@ -24,6 +24,8 @@ class Player(context: Context) {
     var onPlaying: ((Boolean) -> Unit)? = null
     //endregion
 
+    var respectSilentMode: Boolean = false
+
     val isPlaying: Boolean
         get() = mediaPlayer != null && mediaPlayer!!.isPlaying
 
@@ -60,6 +62,8 @@ class Player(context: Context) {
 
         this.mediaPlayer = MediaPlayer()
 
+        this.respectSilentMode = respectSilentMode
+
         try {
 
             if (audioType == "network") {
@@ -92,7 +96,7 @@ class Player(context: Context) {
                 if (autoStart) {
                     play()
                 }
-                setVolume(respectSilentMode, volume)
+                setVolume(volume)
 
                 seek?.let {
                     this.seek(seconds = seek)
@@ -160,10 +164,10 @@ class Player(context: Context) {
         }
     }
 
-    fun setVolume(respectSilentMode: Boolean, volume: Double) {
+    fun setVolume(volume: Double) {
         mediaPlayer?.let {
             var v = volume
-            if (respectSilentMode) {
+            if (this.respectSilentMode) {
                 v = when (am.ringerMode) {
                     AudioManager.RINGER_MODE_SILENT, AudioManager.RINGER_MODE_VIBRATE -> 0.toDouble()
                     else -> volume //AudioManager.RINGER_MODE_NORMAL

@@ -555,14 +555,10 @@ class AssetsAudioPlayer {
   /// MIN : 0
   /// MAX : 1
   ///
-  void setVolume(double volume, {bool respectSilentMode}) {
-    if(respectSilentMode != null){
-      _respectSilentMode = respectSilentMode;
-    }
+  void setVolume(double volume) {
     _sendChannel.invokeMethod('volume', {
       "id": this.id,
       "volume": volume.clamp(minVolume, maxVolume),
-      "respectSilentMode": _respectSilentMode,
     });
   }
 

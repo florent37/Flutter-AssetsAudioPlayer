@@ -121,8 +121,7 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val messenge
                         result.error("WRONG_FORMAT", "The specified argument must be an Double.", null)
                         return
                     }
-                    val respectSilentMode = args["respectSilentMode"] as? Boolean ?: false
-                    getOrCreatePlayer(id).setVolume(respectSilentMode, volume)
+                    getOrCreatePlayer(id).setVolume(volume)
                     result.success(null)
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
