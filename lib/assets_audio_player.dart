@@ -14,6 +14,7 @@ import 'playable.dart';
 export 'playable.dart';
 
 const _DEFAULT_AUTO_START = true;
+const _DEFAULT_RESPECT_SILENT_MODE = false;
 const _DEFAULT_PLAYER = "DEFAULT_PLAYER";
 
 const METHOD_POSITION = "player.position";
@@ -61,7 +62,7 @@ class AssetsAudioPlayer {
   }
 
   static final Map<String, AssetsAudioPlayer> _players = Map();
-  static Map<String, AssetsAudioPlayer> allPlayers(){
+  static Map<String, AssetsAudioPlayer> allPlayers() {
     return Map.from(_players); //return a copy
   }
 
@@ -75,27 +76,37 @@ class AssetsAudioPlayer {
     }
   }
 
-
   factory AssetsAudioPlayer.newPlayer() => _getOrCreate(id: uuid.v4());
 
   //empty constructor now create a new player
   factory AssetsAudioPlayer() => AssetsAudioPlayer.newPlayer();
 
-  factory AssetsAudioPlayer.withId(String id) => _getOrCreate(id: id ?? uuid.v4());
+  factory AssetsAudioPlayer.withId(String id) =>
+      _getOrCreate(id: id ?? uuid.v4());
 
   /**
    * Create a new player for this audio, play it, and dispose it automatically
    */
-  static void playAndForget(Audio audio, {double volume, Duration seek,}) {
+  static void playAndForget(
+    Audio audio, {
+    double volume,
+    bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
+    Duration seek,
+  }) {
     final player = AssetsAudioPlayer.newPlayer();
     StreamSubscription onFinished;
-    onFinished = player.playlistFinished.listen((finished){
-      if(finished) {
+    onFinished = player.playlistFinished.listen((finished) {
+      if (finished) {
         onFinished?.cancel();
         player.dispose();
       }
     });
-    player.open(audio, volume: volume, seek: seek, autoStart: true);
+    player.open(audio,
+        volume: volume,
+        seek: seek,
+        respectSilentMode: respectSilentMode,
+        autoStart: true
+    );
   }
 
   ReadingPlaylist get playlist {
@@ -143,7 +154,8 @@ class AssetsAudioPlayer {
   ///     })
   ///
   ValueStream<Playing> get current => _current.stream;
-  Stream<PlayingAudio> get onReadyToPlay => current.map((playing) => playing.audio); //another comprehensible name
+  Stream<PlayingAudio> get onReadyToPlay =>
+      current.map((playing) => playing.audio); //another comprehensible name
 
   /// Called when the the complete playlist finished to play (mutable)
   final BehaviorSubject<bool> _playlistFinished =
@@ -215,6 +227,9 @@ class AssetsAudioPlayer {
 
   /// returns the looping state : true -> looping, false -> not looping
   bool get loop => _loop.value;
+
+  bool _respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE;
+  bool get respectSilentMode => _respectSilentMode;
 
   /// assign the looping state : true -> looping, false -> not looping
   set loop(value) {
@@ -397,15 +412,18 @@ class AssetsAudioPlayer {
     Audio audio, {
     bool autoStart = _DEFAULT_AUTO_START,
     double forcedVolume,
+    bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
     Duration seek,
   }) async {
     if (audio != null) {
+      _respectSilentMode = respectSilentMode;
       try {
         Map<String, dynamic> params = {
           "id": this.id,
           "audioType": _audioTypeDescription(audio.audioType),
           "path": audio.path,
           "autoStart": autoStart,
+          "respectSilentMode": respectSilentMode,
           "volume": forcedVolume ?? this.volume.value ?? defaultVolume,
         };
         if (seek != null) {
@@ -424,6 +442,7 @@ class AssetsAudioPlayer {
     Playlist playlist, {
     bool autoStart = _DEFAULT_AUTO_START,
     double volume,
+    bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
     Duration seek,
   }) async {
     _lastSeek = null;
@@ -434,6 +453,7 @@ class AssetsAudioPlayer {
       _playlist.currentAudio(),
       autoStart: autoStart,
       forcedVolume: volume,
+      respectSilentMode: respectSilentMode,
       seek: seek,
     );
   }
@@ -451,17 +471,29 @@ class AssetsAudioPlayer {
   ///       assets:
   ///         - assets/audios/
   ///
-  void open(Playable playable,
-      {bool autoStart = _DEFAULT_AUTO_START,
-      double volume,
-      Duration seek}) async {
+  void open(Playable playable, {
+    bool autoStart = _DEFAULT_AUTO_START,
+    double volume,
+    bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
+    Duration seek,
+  }) async {
     if (playable is Playlist &&
         playable.audios != null &&
         playable.audios.length > 0) {
-      _openPlaylist(playable, autoStart: autoStart, volume: volume, seek: seek);
+      _openPlaylist(playable,
+          autoStart: autoStart,
+          volume: volume,
+          respectSilentMode: respectSilentMode,
+          seek: seek
+      );
     } else if (playable is Audio) {
       _openPlaylist(Playlist(audios: [playable]),
-          autoStart: autoStart, volume: volume, seek: seek);
+          autoStart:
+          autoStart,
+          volume: volume,
+          respectSilentMode: respectSilentMode,
+          seek: seek
+      );
     } else {
       //do nothing
       //throw exception ?
@@ -524,8 +556,10 @@ class AssetsAudioPlayer {
   /// MAX : 1
   ///
   void setVolume(double volume) {
-    _sendChannel.invokeMethod('volume',
-        {"id": this.id, "volume": volume.clamp(minVolume, maxVolume)});
+    _sendChannel.invokeMethod('volume', {
+      "id": this.id,
+      "volume": volume.clamp(minVolume, maxVolume),
+    });
   }
 
   /// Tells the media player to stop the current song, then release the MediaPlayer
