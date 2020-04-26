@@ -17,7 +17,6 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     let channel: FlutterMethodChannel
     let registrar: FlutterPluginRegistrar
-    var didSendDuration = false
     var player: AVPlayer?
     
     var observerStatus: NSKeyValueObservation?
@@ -65,8 +64,6 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     }
     
     func open(assetPath: String, audioType: String, autoStart: Bool, volume: Double, seek: Int?, result: FlutterResult){
-        didSendDuration = false
-    
         guard let url = self.getUrlByType(path: assetPath, audioType: audioType) else {
              log("resource not found \(assetPath)")
              result("");
@@ -90,12 +87,19 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
             
-             observerStatus = item.observe(\.status, changeHandler: { [weak self] (item, value) in
+            observerStatus?.invalidate()
+            observerStatus = item.observe(\.status, changeHandler: { [weak self] (item, value) in
                  switch item.status {
                  case .unknown:
                      debugPrint("status: unknown")
                  case .readyToPlay:
                      debugPrint("status: ready to play")
+
+                     
+                     let audioDurationSeconds = CMTimeGetSeconds(item.duration) //CMTimeGetSeconds(asset.duration)
+                     self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": audioDurationSeconds])
+                     
+
                      if(autoStart == true){
                         self?.play()
                      }
@@ -200,11 +204,6 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         //log("updateTimer");
         if let p = self.player {
             if let currentItem = p.currentItem {
-                if(!didSendDuration && p.status == .readyToPlay){
-                    didSendDuration = true
-                    let audioDurationSeconds = CMTimeGetSeconds(currentItem.duration) //CMTimeGetSeconds(asset.duration)
-                    self.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": audioDurationSeconds])
-                }
                 self.currentTime = CMTimeGetSeconds(currentItem.currentTime())
             }
         }
