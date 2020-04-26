@@ -1,6 +1,7 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'dart:async';
 
 import 'player/PlayingControls.dart';
 import 'player/PositionSeekWidget.dart';
@@ -59,18 +60,22 @@ class _MyAppState extends State<MyApp> {
   ];
 
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
+  final List<StreamSubscription> _subscriptions = [];
 
   @override
   void initState() {
-    _assetsAudioPlayer.playlistFinished.listen((data) {
+    _subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
       print("finished : $data");
-    });
-    _assetsAudioPlayer.playlistAudioFinished.listen((data) {
+    }));
+    _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
       print("playlistAudioFinished : $data");
-    });
-    _assetsAudioPlayer.current.listen((data) {
+    }));
+    _subscriptions.add(_assetsAudioPlayer.current.listen((data) {
       print("current : $data");
-    });
+    }));
+    _subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
+      print("onRedayToPlay : $audio");
+    }));
     super.initState();
   }
 
@@ -229,7 +234,7 @@ class _MyAppState extends State<MyApp> {
                                 audios: myAudios.map((e) => e.audio).toList()));
                           },
                           onSelected: (myAudio) {
-                            _assetsAudioPlayer.open(myAudio.audio);
+                            _assetsAudioPlayer.open(myAudio.audio, autoStart: false);
                           },
                           playing: playing,
                         );

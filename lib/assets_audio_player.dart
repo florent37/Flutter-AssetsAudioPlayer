@@ -143,6 +143,7 @@ class AssetsAudioPlayer {
   ///     })
   ///
   ValueStream<Playing> get current => _current.stream;
+  Stream<PlayingAudio> get onReadyToPlay => current.map((playing) => playing.audio); //another comprehensible name
 
   /// Called when the the complete playlist finished to play (mutable)
   final BehaviorSubject<bool> _playlistFinished =

@@ -55,6 +55,8 @@ class ReadingPlaylist {
 
   const ReadingPlaylist({@required this.audios, this.currentIndex = 0});
 
+  Audio get current => audios[currentIndex];
+
   @override
   String toString() {
     return 'ReadingPlaylist{audios: $audios, currentIndex: $currentIndex}';
