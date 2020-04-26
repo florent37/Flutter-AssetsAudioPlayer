@@ -72,10 +72,14 @@ class AssetsAudioPlayer {
     }
   }
 
+
   factory AssetsAudioPlayer.newPlayer() => _getOrCreate(id: uuid.v4());
 
-  factory AssetsAudioPlayer({String id = _DEFAULT_PLAYER}) =>
-      _getOrCreate(id: id);
+  //empty constructor now create a new player
+  factory AssetsAudioPlayer() => AssetsAudioPlayer.newPlayer();
+
+  factory AssetsAudioPlayer.withId(String id) => _getOrCreate(id: id ?? uuid.v4());
+
 
   ReadingPlaylist get playlist {
     if (_playlist == null) {
@@ -386,7 +390,7 @@ class AssetsAudioPlayer {
           "autoStart": autoStart,
           "volume": forcedVolume ?? this.volume.value ?? defaultVolume,
         };
-        if(seek != null){
+        if (seek != null) {
           params["seek"] = seek.inSeconds.round();
         }
         _sendChannel.invokeMethod('open', params);
@@ -429,27 +433,17 @@ class AssetsAudioPlayer {
   ///       assets:
   ///         - assets/audios/
   ///
-  void open(Playable playable, {
-    bool autoStart = _DEFAULT_AUTO_START,
-    double volume,
-    Duration seek
-  }) async {
+  void open(Playable playable,
+      {bool autoStart = _DEFAULT_AUTO_START,
+      double volume,
+      Duration seek}) async {
     if (playable is Playlist &&
         playable.audios != null &&
         playable.audios.length > 0) {
-      _openPlaylist(
-          playable,
-          autoStart: autoStart,
-          volume: volume,
-          seek: seek
-      );
+      _openPlaylist(playable, autoStart: autoStart, volume: volume, seek: seek);
     } else if (playable is Audio) {
-      _openPlaylist(
-          Playlist(audios: [playable]),
-          autoStart: autoStart,
-          volume: volume,
-          seek: seek
-      );
+      _openPlaylist(Playlist(audios: [playable]),
+          autoStart: autoStart, volume: volume, seek: seek);
     } else {
       //do nothing
       //throw exception ?

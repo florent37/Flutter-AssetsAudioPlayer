@@ -230,7 +230,7 @@ class _MyAppState extends State<MyApp> {
                                 audios: myAudios.map((e) => e.audio).toList()));
                           },
                           onSelected: (myAudio) {
-                            _assetsAudioPlayer.open(myAudio.audio, seek: Duration(minutes: 1));
+                            _assetsAudioPlayer.open(myAudio.audio);
                           },
                           playing: playing,
                         );

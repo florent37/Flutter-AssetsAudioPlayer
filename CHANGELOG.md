@@ -1,3 +1,8 @@
+## 1.3.9
+
+* Empty constructor now create a new player
+* Added factory AssetsAudioPlayer.withId()
+
 ## 1.3.8+1
 
 * Added `seek` as optional parameter on `open` method

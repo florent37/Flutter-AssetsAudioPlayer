@@ -106,12 +106,12 @@ class WebPlayerHtml extends WebPlayer {
   }
 
   @override
-  Future<void> open({String path,
-    String audioType,
-    double volume,
-    double seek,
-    bool autoStart
-  }) async {
+  Future<void> open(
+      {String path,
+      String audioType,
+      double volume,
+      double seek,
+      bool autoStart}) async {
     stop();
     _duration = null;
     _position = null;

@@ -47,12 +47,12 @@ abstract class WebPlayer {
     return path;
   }
 
-  Future<void> open({String path,
-    String audioType,
-    double volume,
-    double seek,
-    bool autoStart
-  });
+  Future<void> open(
+      {String path,
+      String audioType,
+      double volume,
+      double seek,
+      bool autoStart});
 
   void seek({double to});
 }
