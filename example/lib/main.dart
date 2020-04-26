@@ -137,8 +137,7 @@ class _MyAppState extends State<MyApp> {
                         padding: EdgeInsets.all(18),
                         margin: EdgeInsets.all(18),
                         onClick: () {
-                          AssetsAudioPlayer.newPlayer()
-                              .open(Audio("assets/audios/horn.mp3"));
+                          AssetsAudioPlayer.playAndForget(Audio("assets/audios/horn.mp3"));
                         },
                         child: Icon(
                           Icons.add_alert,

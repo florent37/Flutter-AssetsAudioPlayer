@@ -83,6 +83,17 @@ class AssetsAudioPlayer {
 
   factory AssetsAudioPlayer.withId(String id) => _getOrCreate(id: id ?? uuid.v4());
 
+  static void playAndForget(Audio audio, {double volume, Duration seek,}) {
+    final player = AssetsAudioPlayer.newPlayer();
+    StreamSubscription onFinished;
+    onFinished = player.playlistFinished.listen((finished){
+      if(finished) {
+        onFinished?.cancel();
+        player.dispose();
+      }
+    });
+    player.open(audio, volume: volume, seek: seek, autoStart: true);
+  }
 
   ReadingPlaylist get playlist {
     if (_playlist == null) {
