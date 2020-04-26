@@ -84,9 +84,7 @@ class AssetsAudioPlayer {
   factory AssetsAudioPlayer.withId(String id) =>
       _getOrCreate(id: id ?? uuid.v4());
 
-  /**
-   * Create a new player for this audio, play it, and dispose it automatically
-   */
+  /// Create a new player for this audio, play it, and dispose it automatically
   static void playAndForget(
     Audio audio, {
     double volume,

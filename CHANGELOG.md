@@ -1,4 +1,4 @@
-## 1.3.9+2
+## 1.3.9+3
 
 * Added `respectSilentMode` as open optional argument
 
