@@ -1,9 +1,6 @@
 package com.github.florent37.assets_audio_player
 
 import android.content.Context
-import android.media.MediaPlayer
-import android.net.Uri
-import android.os.Handler
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -19,159 +16,6 @@ internal val METHOD_CURRENT = "player.current"
 internal val METHOD_NEXT = "player.next"
 internal val METHOD_PREV = "player.prev"
 
-class Player(private val context: Context, private val channel: MethodChannel) {
-    // To handle position updates.
-    private val handler = Handler()
-
-    private var mediaPlayer: MediaPlayer? = null
-
-    val isPlaying: Boolean
-        get() = mediaPlayer != null && mediaPlayer!!.isPlaying
-
-    private val updatePosition = object : Runnable {
-        override fun run() {
-            mediaPlayer?.let { mediaPlayer ->
-                try {
-                    if (!mediaPlayer.isPlaying) {
-                        handler.removeCallbacks(this)
-                    }
-
-                    // Send position (seconds) to the application.
-                    channel.invokeMethod(METHOD_POSITION, mediaPlayer.currentPosition / 1000)
-
-                    // Update every 300ms.
-                    handler.postDelayed(this, 300)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-    }
-
-    fun open(assetAudioPath: String?, audioType: String, autoStart: Boolean, volume: Double, seek: Int?, result: MethodChannel.Result, context: Context) {
-        stop()
-
-        var totalDurationSeconds = 0L
-
-        this.mediaPlayer = MediaPlayer()
-
-        try {
-
-            if(audioType == "network"){
-                mediaPlayer?.reset();
-                mediaPlayer?.setDataSource(context, Uri.parse(assetAudioPath))
-            } else if(audioType == "file"){
-                mediaPlayer?.reset();
-                mediaPlayer?.setDataSource(context, Uri.parse(assetAudioPath))
-            } else { //asset
-                val afd = context.assets.openFd("flutter_assets/$assetAudioPath")
-                mediaPlayer?.reset();
-                mediaPlayer?.setDataSource(afd.fileDescriptor, afd.startOffset, afd.declaredLength)
-
-                afd.close()
-            }
-        } catch (e: Exception) {
-            channel.invokeMethod(METHOD_POSITION, 0)
-            e.printStackTrace()
-            result.error("OPEN", e.message, null)
-            return
-        }
-
-        try {
-            mediaPlayer?.setOnPreparedListener {
-                //retrieve duration in seconds
-                val duration = mediaPlayer?.duration ?: 0
-                //        mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
-                totalDurationSeconds = (duration.toLong() / 1000)
-                channel.invokeMethod(METHOD_CURRENT, mapOf(
-                        "totalDuration" to totalDurationSeconds)
-                )
-
-                if (autoStart) {
-                    play()
-                }
-                setVolume(volume)
-
-                seek?.let {
-                    this.seek(seconds = seek);
-                }
-            }
-            mediaPlayer?.prepare()
-        } catch (e: Exception) {
-            channel.invokeMethod(METHOD_POSITION, 0)
-            e.printStackTrace()
-            result.error("OPEN", e.message, null)
-            return
-        }
-
-        // Send duration to the application.
-        // channel.invokeMethod("platform.duration", mediaPlayer.getDuration() / 1000);
-
-        mediaPlayer?.setOnCompletionListener {
-            channel.invokeMethod(METHOD_FINISHED, null)
-            stop();
-        }
-
-
-        //will be done on play
-        //result.success(null);
-    }
-
-    fun stop() {
-        mediaPlayer?.apply {
-            // Reset duration and position.
-            // handler.removeCallbacks(updatePosition);
-            // channel.invokeMethod("player.duration", 0);
-            channel.invokeMethod(METHOD_POSITION, 0)
-
-            mediaPlayer?.stop()
-            mediaPlayer?.reset();
-            mediaPlayer?.release()
-            channel.invokeMethod(METHOD_IS_PLAYING, false)
-            handler.removeCallbacks(updatePosition)
-        }
-        mediaPlayer = null
-    }
-
-
-    fun toggle() {
-        if (isPlaying) {
-            pause()
-        } else {
-            play()
-        }
-    }
-
-    fun play() {
-        mediaPlayer?.apply {
-            start()
-            handler.post(updatePosition)
-            channel.invokeMethod(METHOD_IS_PLAYING, true)
-        }
-    }
-
-    fun pause() {
-        mediaPlayer?.apply {
-            pause()
-            handler.removeCallbacks(updatePosition)
-            channel.invokeMethod(METHOD_IS_PLAYING, false)
-        }
-    }
-
-    fun seek(seconds: Int) {
-        mediaPlayer?.apply {
-            seekTo(seconds * 1000)
-            channel.invokeMethod(METHOD_POSITION, currentPosition / 1000)
-        }
-    }
-
-    fun setVolume(volume: Double) {
-        mediaPlayer?.let {
-            it.setVolume(volume.toFloat(), volume.toFloat());
-            channel.invokeMethod(METHOD_VOLUME, volume)
-        }
-    }
-}
 
 class AssetsAudioPlayerPlugin(private val context: Context, private val messenger: BinaryMessenger, private val channel: MethodChannel) : MethodCallHandler {
 
@@ -187,10 +31,28 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val messenge
 
     private fun getOrCreatePlayer(id: String): Player {
         return players.getOrPut(id) {
-            Player(
-                    context = context,
-                    channel = MethodChannel(messenger, "assets_audio_player/$id")
-            )
+            val channel = MethodChannel(messenger, "assets_audio_player/$id")
+            val player = Player()
+            player.apply {
+                onVolumeChanged = { volume ->
+                    channel.invokeMethod(METHOD_VOLUME, volume)
+                }
+                onPositionChanged = { position ->
+                    channel.invokeMethod(METHOD_POSITION, position)
+                }
+                onReadyToPlay = { totalDurationSeconds ->
+                    channel.invokeMethod(METHOD_CURRENT, mapOf(
+                            "totalDuration" to totalDurationSeconds)
+                    )
+                }
+                onPlaying = {
+                    channel.invokeMethod(METHOD_IS_PLAYING, it)
+                }
+                onFinished = {
+                    channel.invokeMethod(METHOD_FINISHED, null)
+                }
+            }
+            return@getOrPut player
         }
     }
 
