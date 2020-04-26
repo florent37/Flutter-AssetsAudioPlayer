@@ -2,6 +2,7 @@
 
 * Empty constructor now create a new player
 * Added factory AssetsAudioPlayer.withId()
+* Added AssetsAudioPlayer.allPlayers() witch returns a map of all players
 
 ## 1.3.8+1
 
