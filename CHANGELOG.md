@@ -2,7 +2,9 @@
 
 * Empty constructor now create a new player
 * Added factory AssetsAudioPlayer.withId()
+* Added `playAndForget` witch create, open, play & dispose the player on finish
 * Added AssetsAudioPlayer.allPlayers() witch returns a map of all players
+* Reworked the android player
 
 ## 1.3.8+1
 

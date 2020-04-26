@@ -29,7 +29,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.3.8+1
+  assets_audio_player: ^1.3.9
 ```
 
 <details>
@@ -38,7 +38,7 @@ dependencies:
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
-  assets_audio_player_web: ^1.3.8+1
+  assets_audio_player_web: ^1.3.9
 ```
 
 </details>
@@ -81,6 +81,17 @@ assetsAudioPlayer.open(
 );
 ```
 
+And play *songs from file*
+
+```Dart
+//create a new player
+final assetsAudioPlayer = AssetsAudioPlayer();
+
+assetsAudioPlayer.open(
+    Audio.file(FILE_URI),
+);
+```
+
 ```Dart
 assetsAudioPlayer.playOrPause();
 assetsAudioPlayer.play();
@@ -112,7 +123,9 @@ AssetsAudioPlayer.newPlayer().open(
 AssetsAudioPlayer.newPlayer().open(
     Audio("assets/audios/song2.mp3")
 );
-AssetsAudioPlayer.newPlayer().open(
+
+//another way, with create, open, play & dispose the player on finish
+AssetsAudioPlayer.playAndForget(
     Audio("assets/audios/song3.mp3")
 );
 ```
@@ -120,7 +133,7 @@ AssetsAudioPlayer.newPlayer().open(
 Each player has an unique generated `id`, you can retrieve or create them manually using 
 
 ```dart
-final player = AssetsAudioPlayer(id: "MY_UNIQUE_ID")
+final player = AssetsAudioPlayer.withId(id: "MY_UNIQUE_ID");
 ```
 
 # 🗄️ Playlist
