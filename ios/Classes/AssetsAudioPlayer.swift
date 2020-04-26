@@ -63,7 +63,15 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
     }
     
-    func open(assetPath: String, audioType: String, autoStart: Bool, volume: Double, seek: Int?, result: FlutterResult){
+    func getAudioCategory(respectSilentMode: Bool) ->  AVAudioSession.Category {
+        if(respectSilentMode) {
+            return AVAudioSession.Category.soloAmbient
+        } else {
+            return AVAudioSession.Category.playback
+        }
+    }
+    
+    func open(assetPath: String, audioType: String, autoStart: Bool, volume: Double, seek: Int?, respectSilentMode: Bool, result: FlutterResult){
         guard let url = self.getUrlByType(path: assetPath, audioType: audioType) else {
              log("resource not found \(assetPath)")
              result("");
@@ -75,9 +83,9 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             /* set session category and mode with options */
             if #available(iOS 10.0, *) {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, mode: AVAudioSession.Mode.default, options: [])
+                try AVAudioSession.sharedInstance().setCategory(getAudioCategory(respectSilentMode: respectSilentMode), mode: AVAudioSession.Mode.default, options: [])
             } else {
-                try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
+                try AVAudioSession.sharedInstance().setCategory(getAudioCategory(respectSilentMode: respectSilentMode), options: .mixWithOthers)
             }
             
             try AVAudioSession.sharedInstance().setActive(true)
@@ -299,6 +307,7 @@ class Music : NSObject {
                 let volume = args["volume"] as! Double
                 let seek = args["seek"] as? Int
                 let autoStart = args["autoStart"] as! Bool
+                let respectSilentMode = args["respectSilentMode"] as? Bool ?? false
                 self.getOrCreatePlayer(id: id)
                     .open(
                         assetPath: assetPath,
@@ -306,6 +315,7 @@ class Music : NSObject {
                         autoStart: autoStart,
                         volume:volume,
                         seek: seek,
+                        respectSilentMode: respectSilentMode,
                         result: result
                     );
             break;
