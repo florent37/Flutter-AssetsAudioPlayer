@@ -61,6 +61,9 @@ class AssetsAudioPlayer {
   }
 
   static final Map<String, AssetsAudioPlayer> _players = Map();
+  static Map<String, AssetsAudioPlayer> allPlayers(){
+    return Map.from(_players); //return a copy
+  }
 
   static AssetsAudioPlayer _getOrCreate({String id}) {
     if (_players.containsKey(id)) {
