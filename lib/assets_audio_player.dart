@@ -78,7 +78,7 @@ class AssetsAudioPlayer {
 
   factory AssetsAudioPlayer.newPlayer() => _getOrCreate(id: uuid.v4());
 
-  //empty constructor now create a new player
+  /// empty constructor now create a new player
   factory AssetsAudioPlayer() => AssetsAudioPlayer.newPlayer();
 
   factory AssetsAudioPlayer.withId(String id) =>
@@ -105,8 +105,7 @@ class AssetsAudioPlayer {
         volume: volume,
         seek: seek,
         respectSilentMode: respectSilentMode,
-        autoStart: true
-    );
+        autoStart: true);
   }
 
   ReadingPlaylist get playlist {
@@ -471,7 +470,8 @@ class AssetsAudioPlayer {
   ///       assets:
   ///         - assets/audios/
   ///
-  void open(Playable playable, {
+  void open(
+    Playable playable, {
     bool autoStart = _DEFAULT_AUTO_START,
     double volume,
     bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
@@ -484,16 +484,13 @@ class AssetsAudioPlayer {
           autoStart: autoStart,
           volume: volume,
           respectSilentMode: respectSilentMode,
-          seek: seek
-      );
+          seek: seek);
     } else if (playable is Audio) {
       _openPlaylist(Playlist(audios: [playable]),
-          autoStart:
-          autoStart,
+          autoStart: autoStart,
           volume: volume,
           respectSilentMode: respectSilentMode,
-          seek: seek
-      );
+          seek: seek);
     } else {
       //do nothing
       //throw exception ?
