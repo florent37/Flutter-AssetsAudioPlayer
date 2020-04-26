@@ -32,7 +32,7 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val messenge
     private fun getOrCreatePlayer(id: String): Player {
         return players.getOrPut(id) {
             val channel = MethodChannel(messenger, "assets_audio_player/$id")
-            val player = Player()
+            val player = Player(context)
             player.apply {
                 onVolumeChanged = { volume ->
                     channel.invokeMethod(METHOD_VOLUME, volume)
@@ -121,7 +121,8 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val messenge
                         result.error("WRONG_FORMAT", "The specified argument must be an Double.", null)
                         return
                     }
-                    getOrCreatePlayer(id).setVolume(volume)
+                    val respectSilentMode = args["respectSilentMode"] as? Boolean ?: false
+                    getOrCreatePlayer(id).setVolume(respectSilentMode, volume)
                     result.success(null)
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
@@ -165,6 +166,7 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val messenge
                         return
                     }
                     val autoStart = args["autoStart"] as? Boolean ?: true
+                    val respectSilentMode = args["respectSilentMode"] as? Boolean ?: false
                     val seek = args["seek"] as? Int?
 
                     getOrCreatePlayer(id).open(
@@ -173,6 +175,7 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val messenge
                             autoStart,
                             volume,
                             seek,
+                            respectSilentMode,
                             result,
                             context
                     )

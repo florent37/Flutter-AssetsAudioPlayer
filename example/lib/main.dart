@@ -234,7 +234,7 @@ class _MyAppState extends State<MyApp> {
                                 audios: myAudios.map((e) => e.audio).toList()));
                           },
                           onSelected: (myAudio) {
-                            _assetsAudioPlayer.open(myAudio.audio, autoStart: false);
+                            _assetsAudioPlayer.open(myAudio.audio, autoStart: false, respectSilentMode: true);
                           },
                           playing: playing,
                         );

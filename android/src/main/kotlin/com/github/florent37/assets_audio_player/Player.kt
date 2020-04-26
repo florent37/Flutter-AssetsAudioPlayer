@@ -1,23 +1,27 @@
 package com.github.florent37.assets_audio_player
 
 import android.content.Context
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import io.flutter.plugin.common.MethodChannel
 
-class Player {
+class Player(context: Context) {
+
+    private val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
     // To handle position updates.
     private val handler = Handler()
 
     private var mediaPlayer: MediaPlayer? = null
 
     //region outputs
-    var onVolumeChanged : ((Double) -> Unit)? = null
-    var onReadyToPlay : ((Long) -> Unit)? = null
-    var onPositionChanged : ((Long) -> Unit)? = null
-    var onFinished : (() -> Unit)? = null
-    var onPlaying : ((Boolean) -> Unit)? = null
+    var onVolumeChanged: ((Double) -> Unit)? = null
+    var onReadyToPlay: ((Long) -> Unit)? = null
+    var onPositionChanged: ((Long) -> Unit)? = null
+    var onFinished: (() -> Unit)? = null
+    var onPlaying: ((Boolean) -> Unit)? = null
     //endregion
 
     val isPlaying: Boolean
@@ -45,17 +49,23 @@ class Player {
         }
     }
 
-    fun open(assetAudioPath: String?, audioType: String, autoStart: Boolean, volume: Double, seek: Int?, result: MethodChannel.Result, context: Context) {
+    fun open(assetAudioPath: String?,
+             audioType: String,
+             autoStart: Boolean,
+             volume: Double,
+             seek: Int?,
+             respectSilentMode: Boolean,
+             result: MethodChannel.Result, context: Context) {
         stop()
 
         this.mediaPlayer = MediaPlayer()
 
         try {
 
-            if(audioType == "network"){
+            if (audioType == "network") {
                 mediaPlayer?.reset();
                 mediaPlayer?.setDataSource(context, Uri.parse(assetAudioPath))
-            } else if(audioType == "file"){
+            } else if (audioType == "file") {
                 mediaPlayer?.reset();
                 mediaPlayer?.setDataSource(context, Uri.parse(assetAudioPath))
             } else { //asset
@@ -82,7 +92,7 @@ class Player {
                 if (autoStart) {
                     play()
                 }
-                setVolume(volume)
+                setVolume(respectSilentMode, volume)
 
                 seek?.let {
                     this.seek(seconds = seek)
@@ -150,10 +160,18 @@ class Player {
         }
     }
 
-    fun setVolume(volume: Double) {
+    fun setVolume(respectSilentMode: Boolean, volume: Double) {
         mediaPlayer?.let {
-            it.setVolume(volume.toFloat(), volume.toFloat());
-            onVolumeChanged?.invoke(volume)
+            var v = volume
+            if (respectSilentMode) {
+                v = when (am.ringerMode) {
+                    AudioManager.RINGER_MODE_SILENT, AudioManager.RINGER_MODE_VIBRATE -> 0.toDouble()
+                    else -> volume //AudioManager.RINGER_MODE_NORMAL
+                }
+            }
+
+            it.setVolume(v.toFloat(), v.toFloat());
+            onVolumeChanged?.invoke(v)
         }
     }
 }
