@@ -29,7 +29,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.3.9
+  assets_audio_player: ^1.3.9+1
 ```
 
 <details>
@@ -38,7 +38,7 @@ dependencies:
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
-  assets_audio_player_web: ^1.3.9
+  assets_audio_player_web: ^1.3.9+1
 ```
 
 </details>
@@ -218,6 +218,18 @@ Change the volume (between 0.0 & 1.0)
 ```Dart
 assetsAudioPlayer.setVolume(0.5);
 ```
+
+The media player can follow the system "volume mode" (vibrate, muted, normal)
+Simply set the `respectSilentMode` optional parameter as `true`
+
+```dart
+_player.open(PLAYABLE, respectSilentMode: true);
+```
+
+https://developer.android.com/reference/android/media/AudioManager.html?hl=fr#getRingerMode()
+
+https://developer.apple.com/documentation/avfoundation/avaudiosessioncategorysoloambient
+
 
 Listen the volume
 

@@ -1,3 +1,7 @@
+## 1.3.9+1
+
+* Added `respectSilentMode` as open optional argument
+
 ## 1.3.9
 
 * Empty constructor now create a new player
