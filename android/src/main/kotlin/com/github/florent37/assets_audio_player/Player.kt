@@ -24,10 +24,13 @@ class Player(context: Context) {
     var onPlaying: ((Boolean) -> Unit)? = null
     //endregion
 
-    var respectSilentMode: Boolean = false
+    private var respectSilentMode: Boolean = false
+    private var volume: Double = 1.0
 
     val isPlaying: Boolean
         get() = mediaPlayer != null && mediaPlayer!!.isPlaying
+
+    private var lastRingerMode: Int? = null //see https://developer.android.com/reference/android/media/AudioManager.html?hl=fr#getRingerMode()
 
     private val updatePosition = object : Runnable {
         override fun run() {
@@ -41,6 +44,14 @@ class Player(context: Context) {
 
                     // Send position (seconds) to the application.
                     onPositionChanged?.invoke(position)
+
+                    if(respectSilentMode){
+                        val ringerMode = am.ringerMode
+                        if(lastRingerMode != ringerMode){ //if changed
+                            lastRingerMode = ringerMode
+                            setVolume(volume) //re-apply volume if changed
+                        }
+                    }
 
                     // Update every 300ms.
                     handler.postDelayed(this, 300)
@@ -165,6 +176,7 @@ class Player(context: Context) {
     }
 
     fun setVolume(volume: Double) {
+        this.volume = volume
         mediaPlayer?.let {
             var v = volume
             if (this.respectSilentMode) {
@@ -175,7 +187,7 @@ class Player(context: Context) {
             }
 
             it.setVolume(v.toFloat(), v.toFloat());
-            onVolumeChanged?.invoke(v)
+            onVolumeChanged?.invoke(this.volume) //only notify the setted volume, not the silent mode one
         }
     }
 }
