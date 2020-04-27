@@ -38,6 +38,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/audios/
+    - assets/images/
   fonts:
     - family:  AssetAudioPlayer
       fonts:

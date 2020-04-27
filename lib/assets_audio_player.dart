@@ -15,6 +15,7 @@ export 'playable.dart';
 
 const _DEFAULT_AUTO_START = true;
 const _DEFAULT_RESPECT_SILENT_MODE = false;
+const _DEFAULT_SHOW_NOTIFICATION = false;
 const _DEFAULT_PLAYER = "DEFAULT_PLAYER";
 
 const METHOD_POSITION = "player.position";
@@ -22,8 +23,8 @@ const METHOD_VOLUME = "player.volume";
 const METHOD_FINISHED = "player.finished";
 const METHOD_IS_PLAYING = "player.isPlaying";
 const METHOD_CURRENT = "player.current";
-//const _METHOD_NEXT = "player.next"
-//const _METHOD_PREV = "player.prev"
+const METHOD_NEXT = "player.next";
+const METHOD_PREV = "player.prev";
 
 /// The AssetsAudioPlayer, playing audios from assets/
 /// Example :
@@ -268,6 +269,12 @@ class AssetsAudioPlayer {
         case METHOD_FINISHED:
           _onfinished(call.arguments);
           break;
+        case METHOD_NEXT:
+          next();
+          break;
+        case METHOD_PREV:
+          previous();
+          break;
         case METHOD_CURRENT:
           final totalDuration = _toDuration(call.arguments["totalDuration"]);
 
@@ -339,7 +346,7 @@ class AssetsAudioPlayer {
     if (_playlist != null) {
       if (_playlist.hasPrev()) {
         _playlist.selectPrev();
-        _open(_playlist.currentAudio());
+        _openPlaylistCurrent();
         return true;
       } else if (_playlist.playlistIndex == 0) {
         seek(Duration.zero);
@@ -348,6 +355,14 @@ class AssetsAudioPlayer {
     }
 
     return false;
+  }
+
+  void _openPlaylistCurrent(){
+    _open(_playlist.currentAudio(),
+      forcedVolume: _playlist.volume,
+      respectSilentMode: _playlist.respectSilentMode,
+      showNotification: _playlist.showNotification,
+    );
   }
 
   bool next({bool stopIfLast = false}) {
@@ -360,7 +375,7 @@ class AssetsAudioPlayer {
           playlist: this._current.value.playlist,
         ));
         _playlist.selectNext();
-        _open(_playlist.currentAudio());
+        _openPlaylistCurrent();
 
         return true;
       } else if (loop) {
@@ -373,7 +388,7 @@ class AssetsAudioPlayer {
         ));
 
         _playlist.returnToFirst();
-        _open(_playlist.currentAudio());
+        _openPlaylistCurrent();
 
         return true;
       } else if (stopIfLast) {
@@ -410,6 +425,7 @@ class AssetsAudioPlayer {
     bool autoStart = _DEFAULT_AUTO_START,
     double forcedVolume,
     bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
+    bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
   }) async {
     if (audio != null) {
@@ -421,10 +437,23 @@ class AssetsAudioPlayer {
           "path": audio.path,
           "autoStart": autoStart,
           "respectSilentMode": respectSilentMode,
+          "displayNotification": showNotification,
           "volume": forcedVolume ?? this.volume.value ?? defaultVolume,
         };
         if (seek != null) {
           params["seek"] = seek.inSeconds.round();
+        }
+        if (audio.metas != null) {
+          if(audio.metas.title != null)
+            params["song.title"] = audio.metas.title;
+          if(audio.metas.artist != null)
+            params["song.artist"] = audio.metas.artist;
+          if(audio.metas.album != null)
+            params["song.album"] = audio.metas.album;
+          if(audio.metas.image != null) {
+            params["song.image"] = audio.metas.image.path;
+            params["song.imageType"] = _metasImageTypeDescription(audio.metas.image.type);
+          }
         }
         _sendChannel.invokeMethod('open', params);
       } catch (e) {
@@ -440,17 +469,24 @@ class AssetsAudioPlayer {
     bool autoStart = _DEFAULT_AUTO_START,
     double volume,
     bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
+    bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
   }) async {
     _lastSeek = null;
     _replaceRealtimeSubscription();
-    this._playlist = _CurrentPlaylist(playlist: playlist);
+    this._playlist = _CurrentPlaylist(
+      playlist: playlist,
+      volume: volume,
+      respectSilentMode: respectSilentMode,
+      showNotification: showNotification,
+    );
     _playlist.moveTo(playlist.startIndex);
     _open(
       _playlist.currentAudio(),
       autoStart: autoStart,
       forcedVolume: volume,
       respectSilentMode: respectSilentMode,
+      showNotification: showNotification,
       seek: seek,
     );
   }
@@ -473,6 +509,7 @@ class AssetsAudioPlayer {
     bool autoStart = _DEFAULT_AUTO_START,
     double volume,
     bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
+    bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
   }) async {
     if (playable is Playlist &&
@@ -482,12 +519,14 @@ class AssetsAudioPlayer {
           autoStart: autoStart,
           volume: volume,
           respectSilentMode: respectSilentMode,
+          showNotification: showNotification,
           seek: seek);
     } else if (playable is Audio) {
       _openPlaylist(Playlist(audios: [playable]),
           autoStart: autoStart,
           volume: volume,
           respectSilentMode: respectSilentMode,
+          showNotification: showNotification,
           seek: seek);
     } else {
       //do nothing
@@ -577,6 +616,10 @@ class AssetsAudioPlayer {
 class _CurrentPlaylist {
   final Playlist playlist;
 
+  final double volume;
+  final bool respectSilentMode;
+  final bool showNotification;
+
   int playlistIndex = 0;
 
   int selectNext() {
@@ -612,7 +655,7 @@ class _CurrentPlaylist {
     return playlistIndex + 1 < playlist.numberOfItems;
   }
 
-  _CurrentPlaylist({@required this.playlist});
+  _CurrentPlaylist({@required this.playlist, this.volume, this.respectSilentMode, this.showNotification});
 
   void returnToFirst() {
     playlistIndex = 0;
@@ -637,6 +680,18 @@ String _audioTypeDescription(AudioType audioType) {
     case AudioType.file:
       return "file";
     case AudioType.asset:
+      return "asset";
+  }
+  return null;
+}
+
+String _metasImageTypeDescription(ImageType imageType) {
+  switch (imageType) {
+    case ImageType.network:
+      return "network";
+    case ImageType.file:
+      return "file";
+    case ImageType.asset:
       return "asset";
   }
   return null;
