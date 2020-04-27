@@ -346,7 +346,7 @@ class AssetsAudioPlayer {
     if (_playlist != null) {
       if (_playlist.hasPrev()) {
         _playlist.selectPrev();
-        _open(_playlist.currentAudio());
+        _openPlaylistCurrent();
         return true;
       } else if (_playlist.playlistIndex == 0) {
         seek(Duration.zero);
@@ -355,6 +355,14 @@ class AssetsAudioPlayer {
     }
 
     return false;
+  }
+
+  void _openPlaylistCurrent(){
+    _open(_playlist.currentAudio(),
+      forcedVolume: _playlist.volume,
+      respectSilentMode: _playlist.respectSilentMode,
+      showNotification: _playlist.showNotification,
+    );
   }
 
   bool next({bool stopIfLast = false}) {
@@ -367,7 +375,7 @@ class AssetsAudioPlayer {
           playlist: this._current.value.playlist,
         ));
         _playlist.selectNext();
-        _open(_playlist.currentAudio());
+        _openPlaylistCurrent();
 
         return true;
       } else if (loop) {
@@ -380,7 +388,7 @@ class AssetsAudioPlayer {
         ));
 
         _playlist.returnToFirst();
-        _open(_playlist.currentAudio());
+        _openPlaylistCurrent();
 
         return true;
       } else if (stopIfLast) {
@@ -466,7 +474,12 @@ class AssetsAudioPlayer {
   }) async {
     _lastSeek = null;
     _replaceRealtimeSubscription();
-    this._playlist = _CurrentPlaylist(playlist: playlist);
+    this._playlist = _CurrentPlaylist(
+      playlist: playlist,
+      volume: volume,
+      respectSilentMode: respectSilentMode,
+      showNotification: showNotification,
+    );
     _playlist.moveTo(playlist.startIndex);
     _open(
       _playlist.currentAudio(),
@@ -603,6 +616,10 @@ class AssetsAudioPlayer {
 class _CurrentPlaylist {
   final Playlist playlist;
 
+  final double volume;
+  final bool respectSilentMode;
+  final bool showNotification;
+
   int playlistIndex = 0;
 
   int selectNext() {
@@ -638,7 +655,7 @@ class _CurrentPlaylist {
     return playlistIndex + 1 < playlist.numberOfItems;
   }
 
-  _CurrentPlaylist({@required this.playlist});
+  _CurrentPlaylist({@required this.playlist, this.volume, this.respectSilentMode, this.showNotification});
 
   void returnToFirst() {
     playlistIndex = 0;

@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
           metas: Metas(
             title:  "Online",
             artist: "Florent Champigny",
-            album: null,
+            album: "",
             image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
           ),
         ),
@@ -43,7 +43,7 @@ class _MyAppState extends State<MyApp> {
           metas: Metas(
             title:  "Rock",
             artist: "Florent Champigny",
-            album: null,
+            album: "",
             image: MetasImage.network("https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
           ),
         ),
@@ -251,7 +251,9 @@ class _MyAppState extends State<MyApp> {
                           audios: this.audios,
                           onPlaylistSelected: (myAudios) {
                             _assetsAudioPlayer.open(Playlist(
-                                audios: myAudios.map((e) => e.audio).toList()));
+                                audios: myAudios.map((e) => e.audio).toList()),
+                                showNotification: true,
+                            );
                           },
                           onSelected: (myAudio) {
                             _assetsAudioPlayer.open(
