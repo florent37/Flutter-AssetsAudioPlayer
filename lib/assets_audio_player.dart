@@ -269,6 +269,12 @@ class AssetsAudioPlayer {
         case METHOD_FINISHED:
           _onfinished(call.arguments);
           break;
+        case METHOD_NEXT:
+          next();
+          break;
+        case METHOD_PREV:
+          previous();
+          break;
         case METHOD_CURRENT:
           final totalDuration = _toDuration(call.arguments["totalDuration"]);
 
