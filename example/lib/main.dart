@@ -28,31 +28,38 @@ class _MyAppState extends State<MyApp> {
   final audios = <MyAudio>[
     MyAudio(
         name: "Online",
-        audio: Audio.network("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3",
+        audio: Audio.network(
+          "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3",
           metas: Metas(
-            title:  "Online",
+            title: "Online",
             artist: "Florent Champigny",
             album: "",
-            image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+            image: MetasImage.network(
+                "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
           ),
         ),
-        imageUrl: "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+        imageUrl:
+            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
     MyAudio(
         name: "Rock",
-        audio: Audio("assets/audios/rock.mp3",
+        audio: Audio(
+          "assets/audios/rock.mp3",
           metas: Metas(
-            title:  "Rock",
+            title: "Rock",
             artist: "Florent Champigny",
             album: "",
-            image: MetasImage.network("https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+            image: MetasImage.network(
+                "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
           ),
         ),
-        imageUrl: "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+        imageUrl:
+            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
     MyAudio(
         name: "Country",
-        audio: Audio("assets/audios/country.mp3",
+        audio: Audio(
+          "assets/audios/country.mp3",
           metas: Metas(
-            title:  "Country",
+            title: "Country",
             artist: "Florent Champigny",
             album: "CountryAlbum",
             image: MetasImage.asset("assets/images/country.jpg"),
@@ -72,7 +79,8 @@ class _MyAppState extends State<MyApp> {
     MyAudio(
         name: "Pop",
         audio: Audio("assets/audios/pop.mp3"),
-        imageUrl: "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+        imageUrl:
+            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
     MyAudio(
         name: "Instrumental",
         audio: Audio("assets/audios/instrumental.mp3"),
@@ -162,7 +170,8 @@ class _MyAppState extends State<MyApp> {
                         padding: EdgeInsets.all(18),
                         margin: EdgeInsets.all(18),
                         onClick: () {
-                          AssetsAudioPlayer.playAndForget(Audio("assets/audios/horn.mp3"));
+                          AssetsAudioPlayer.playAndForget(
+                              Audio("assets/audios/horn.mp3"));
                         },
                         child: Icon(
                           Icons.add_alert,
@@ -250,17 +259,19 @@ class _MyAppState extends State<MyApp> {
                         return SongsSelector(
                           audios: this.audios,
                           onPlaylistSelected: (myAudios) {
-                            _assetsAudioPlayer.open(Playlist(
-                                audios: myAudios.map((e) => e.audio).toList()),
-                                showNotification: true,
+                            _assetsAudioPlayer.open(
+                              Playlist(
+                                  audios:
+                                      myAudios.map((e) => e.audio).toList()),
+                              showNotification: true,
                             );
                           },
                           onSelected: (myAudio) {
                             _assetsAudioPlayer.open(
-                                myAudio.audio,
-                                autoStart: false,
-                                respectSilentMode: true,
-                                showNotification: true,
+                              myAudio.audio,
+                              autoStart: false,
+                              respectSilentMode: true,
+                              showNotification: true,
                             );
                           },
                           playing: playing,

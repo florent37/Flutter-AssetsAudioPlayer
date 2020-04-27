@@ -37,7 +37,6 @@ class Metas {
     this.album,
     this.image,
   });
-
 }
 
 @immutable

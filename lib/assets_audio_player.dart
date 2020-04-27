@@ -357,8 +357,9 @@ class AssetsAudioPlayer {
     return false;
   }
 
-  void _openPlaylistCurrent(){
-    _open(_playlist.currentAudio(),
+  void _openPlaylistCurrent() {
+    _open(
+      _playlist.currentAudio(),
       forcedVolume: _playlist.volume,
       respectSilentMode: _playlist.respectSilentMode,
       showNotification: _playlist.showNotification,
@@ -444,15 +445,16 @@ class AssetsAudioPlayer {
           params["seek"] = seek.inSeconds.round();
         }
         if (audio.metas != null) {
-          if(audio.metas.title != null)
+          if (audio.metas.title != null)
             params["song.title"] = audio.metas.title;
-          if(audio.metas.artist != null)
+          if (audio.metas.artist != null)
             params["song.artist"] = audio.metas.artist;
-          if(audio.metas.album != null)
+          if (audio.metas.album != null)
             params["song.album"] = audio.metas.album;
-          if(audio.metas.image != null) {
+          if (audio.metas.image != null) {
             params["song.image"] = audio.metas.image.path;
-            params["song.imageType"] = _metasImageTypeDescription(audio.metas.image.type);
+            params["song.imageType"] =
+                _metasImageTypeDescription(audio.metas.image.type);
           }
         }
         _sendChannel.invokeMethod('open', params);
@@ -655,7 +657,11 @@ class _CurrentPlaylist {
     return playlistIndex + 1 < playlist.numberOfItems;
   }
 
-  _CurrentPlaylist({@required this.playlist, this.volume, this.respectSilentMode, this.showNotification});
+  _CurrentPlaylist(
+      {@required this.playlist,
+      this.volume,
+      this.respectSilentMode,
+      this.showNotification});
 
   void returnToFirst() {
     playlistIndex = 0;
