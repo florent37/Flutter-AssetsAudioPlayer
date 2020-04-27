@@ -3,17 +3,6 @@ import UIKit
 import AVFoundation
 import MediaPlayer
 
-public class SwiftAssetsAudioPlayerPlugin: NSObject, FlutterPlugin {
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    let music = Music(messenger: registrar.messenger(), registrar: registrar)
-    music.start()
-  }
-
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-
-  }
-}
-
 struct AudioMetas {
     var title: String?
     var artist: String?
