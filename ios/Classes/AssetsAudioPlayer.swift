@@ -111,13 +111,15 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         
         // Add handler for Pause Command
         commandCenter.previousTrackCommand.addTarget { [unowned self] event in
-            //TODO send this to Flutter
+            self.channel.invokeMethod(Music.METHOD_PREV, arguments: [])
+
             return .success
         }
         
         // Add handler for Pause Command
         commandCenter.nextTrackCommand.addTarget { [unowned self] event in
-            //TODO send this to Flutter
+            self.channel.invokeMethod(Music.METHOD_NEXT, arguments: [])
+
             return .success
         }
     }
@@ -139,21 +141,48 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             nowPlayingInfo[MPMediaItemPropertyArtist] = alb
         }
         
-        //TODO
-        //if #available(iOS 10.0, *) {
-        //    let image = UIImage(named: "logo.png")!
-        //    let artwork = MPMediaItemArtwork(boundsSize: image.size, requestHandler: { (size) -> UIImage in
-        //        return image
-        //    })
-        //    nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
-        //} else {
-        //    // Fallback on earlier versions
-        //}
+        if let imageMetasType = self.audioMetas?.imageType {
+            if let imageMetas = self.audioMetas?.image {
+                if #available(iOS 10.0, *) {
+                    if(imageMetasType == "assets") {
+                        let imageKey = self.registrar.lookupKey(forAsset: imageMetas)
+                        let imagePath = Bundle.main.path(forResource: imageKey, ofType: nil)!
+                        let image: UIImage = UIImage(contentsOfFile: imagePath)!
+
+                        var nowPlayingInfo: [String:Any] = MPNowPlayingInfoCenter.default().nowPlayingInfo!
+                        nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size, requestHandler: { (size) -> UIImage in
+                            return image
+                        })
+                        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+
+                    } else { //network or else (file, but not on ios...)
+                        DispatchQueue.global().async {
+                            if let url = URL(string: imageMetas)  {
+                                if let data = try? Data.init(contentsOf: url), let image = UIImage(data: data) {
+                                    let artwork = MPMediaItemArtwork(boundsSize: image.size, requestHandler: { (_ size : CGSize) -> UIImage in
+                                        return image
+                                    })
+                                    DispatchQueue.main.async {
+                                        
+                                        var nowPlayingInfo: [String:Any] = MPNowPlayingInfoCenter.default().nowPlayingInfo!
+                                        nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
+                                        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+                                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // Fallback on earlier versions
+                }
+            }
+        }
 
         
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = currentSongDuration
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
-        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.player!.rate
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
@@ -191,8 +220,9 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             self.displayMediaPlayerNotification = displayNotification
             self.audioMetas = audioMetas
             
+            NotificationCenter.default.removeObserver(self)
             NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
-            
+                        
             observerStatus?.invalidate()
             observerStatus = item.observe(\.status, changeHandler: { [weak self] (item, value) in
                  switch item.status {
@@ -257,7 +287,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.player?.pause()
         self.player?.seek(to: CMTime.zero)
         self.player?.rate = 0.0
-        self.player = nil
+        self.player = nil   
         self.playing = false
         self.currentTimeTimer?.invalidate()
     }
@@ -282,6 +312,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 if(self.displayMediaPlayerNotification){
                     var nowPlayingInfo: [String:Any] = MPNowPlayingInfoCenter.default().nowPlayingInfo!
                     nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
+                    nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.player!.rate
                     MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
                 }
             }
@@ -306,11 +337,17 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     }
 
     deinit {
+        observerStatus?.invalidate()
         NotificationCenter.default.removeObserver(self)
     }
     
     func pause(){
         self.player?.pause()
+        if(self.displayMediaPlayerNotification){
+            var nowPlayingInfo: [String:Any] = MPNowPlayingInfoCenter.default().nowPlayingInfo!
+            nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        }
         self.playing = false
         self.currentTimeTimer?.invalidate()
     }
@@ -332,7 +369,9 @@ class Music : NSObject, FlutterPlugin {
     static let METHOD_IS_PLAYING = "player.isPlaying"
     static let METHOD_CURRENT = "player.current"
     static let METHOD_VOLUME = "player.volume"
-    
+    static let METHOD_NEXT = "player.next"
+    static let METHOD_PREV = "player.prev"
+
     var players = Dictionary<String, Player>()
     
     func getOrCreatePlayer(id: String) -> Player {

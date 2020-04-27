@@ -431,14 +431,14 @@ class AssetsAudioPlayer {
         }
         if (audio.metas != null) {
           if(audio.metas.title != null)
-            params["sont.title"] = audio.metas.title;
+            params["song.title"] = audio.metas.title;
           if(audio.metas.artist != null)
-            params["sont.artist"] = audio.metas.artist;
+            params["song.artist"] = audio.metas.artist;
           if(audio.metas.album != null)
-            params["sont.album"] = audio.metas.album;
+            params["song.album"] = audio.metas.album;
           if(audio.metas.image != null) {
-            params["sont.image"] = audio.metas.image.path;
-            params["sont.image.type"] = _metasImageTypeDescription(audio.metas.image.type);
+            params["song.image"] = audio.metas.image.path;
+            params["song.imageType"] = _metasImageTypeDescription(audio.metas.image.type);
           }
         }
         _sendChannel.invokeMethod('open', params);

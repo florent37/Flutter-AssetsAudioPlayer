@@ -39,9 +39,15 @@ class _MyAppState extends State<MyApp> {
         imageUrl: "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
     MyAudio(
         name: "Rock",
-        audio: Audio("assets/audios/rock.mp3"),
-        imageUrl:
-            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+        audio: Audio("assets/audios/rock.mp3",
+          metas: Metas(
+            title:  "Rock",
+            artist: "Florent Champigny",
+            album: null,
+            image: MetasImage.network("https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+          ),
+        ),
+        imageUrl: "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
     MyAudio(
         name: "Country",
         audio: Audio("assets/audios/country.mp3"),
@@ -241,7 +247,12 @@ class _MyAppState extends State<MyApp> {
                                 audios: myAudios.map((e) => e.audio).toList()));
                           },
                           onSelected: (myAudio) {
-                            _assetsAudioPlayer.open(myAudio.audio, autoStart: false, respectSilentMode: true);
+                            _assetsAudioPlayer.open(
+                                myAudio.audio,
+                                autoStart: false,
+                                respectSilentMode: true,
+                                showNotification: true,
+                            );
                           },
                           playing: playing,
                         );
