@@ -144,17 +144,19 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         if let imageMetasType = self.audioMetas?.imageType {
             if let imageMetas = self.audioMetas?.image {
                 if #available(iOS 10.0, *) {
-                    if(imageMetasType == "assets") {
+                    if(imageMetasType == "asset") {
                         let imageKey = self.registrar.lookupKey(forAsset: imageMetas)
-                        let imagePath = Bundle.main.path(forResource: imageKey, ofType: nil)!
-                        let image: UIImage = UIImage(contentsOfFile: imagePath)!
+                            if(!imageKey.isEmpty){
+                                if let imagePath = Bundle.main.path(forResource: imageKey, ofType: nil) {
+                                    if(!imagePath.isEmpty){
+                                        let image: UIImage = UIImage(contentsOfFile: imagePath)!
 
-                        var nowPlayingInfo: [String:Any] = MPNowPlayingInfoCenter.default().nowPlayingInfo!
-                        nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size, requestHandler: { (size) -> UIImage in
-                            return image
-                        })
-                        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
-
+                                        nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size, requestHandler: { (size) -> UIImage in
+                                            return image
+                                        })
+                                    }
+                                }
+                        }
                     } else { //network or else (file, but not on ios...)
                         DispatchQueue.global().async {
                             if let url = URL(string: imageMetas)  {
@@ -214,16 +216,17 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             }
 
+            NotificationCenter.default.removeObserver(self)
+            observerStatus?.invalidate()
+
             let item = AVPlayerItem(url: url)
             self.player = AVPlayer(playerItem: item)
             
             self.displayMediaPlayerNotification = displayNotification
             self.audioMetas = audioMetas
             
-            NotificationCenter.default.removeObserver(self)
             NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
                         
-            observerStatus?.invalidate()
             observerStatus = item.observe(\.status, changeHandler: { [weak self] (item, value) in
                  switch item.status {
                  case .unknown:

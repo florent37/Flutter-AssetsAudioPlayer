@@ -50,7 +50,14 @@ class _MyAppState extends State<MyApp> {
         imageUrl: "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
     MyAudio(
         name: "Country",
-        audio: Audio("assets/audios/country.mp3"),
+        audio: Audio("assets/audios/country.mp3",
+          metas: Metas(
+            title:  "Country",
+            artist: "Florent Champigny",
+            album: "CountryAlbum",
+            image: MetasImage.asset("assets/images/country.jpg"),
+          ),
+        ),
         imageUrl:
             "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
     MyAudio(
