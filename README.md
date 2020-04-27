@@ -29,7 +29,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.3.9+2
+  assets_audio_player: ^1.4.0
 ```
 
 <details>
@@ -38,7 +38,7 @@ dependencies:
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
-  assets_audio_player_web: ^1.3.9+2
+  assets_audio_player_web: ^1.4.0
 ```
 
 </details>
