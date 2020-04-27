@@ -29,7 +29,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.3.9+2
+  assets_audio_player: ^1.4.0
 ```
 
 <details>
@@ -38,7 +38,7 @@ dependencies:
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
-  assets_audio_player_web: ^1.3.9+2
+  assets_audio_player_web: ^1.4.0
 ```
 
 </details>
@@ -279,6 +279,32 @@ assetsAudioPlayer.isLooping.listen((loop){
 
 assetsAudioPlayer.toggleLoop(); //toggle the value of looping
 ```
+
+# Notifications 
+
+on iOS, it will use `MPNowPlayingInfoCenter`
+
+[![notification](./medias/notification_iOS.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
+
+1. Add metas inside your audio
+
+```dart
+final audio = Audio("/assets/audio/country", 
+    metas: Metas(
+            title:  "Country",
+            artist: "Florent Champigny",
+            album: "",
+            image: MetasImage.asset("assets/images/country.jpg"), //can be MetasImage.network
+          ),
+   );
+```
+
+2. open with `showNotification: true`
+
+```dart
+_player.open(audio, showNotification: true)
+```
+
 
 # Network Policies (android/iOS)
 
