@@ -280,6 +280,32 @@ assetsAudioPlayer.isLooping.listen((loop){
 assetsAudioPlayer.toggleLoop(); //toggle the value of looping
 ```
 
+# Notifications 
+
+on iOS, it will use `MPNowPlayingInfoCenter`
+
+[![notification](./medias/notification_iOS.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
+
+1. Add metas inside your audio
+
+```dart
+final audio = Audio("/assets/audio/country", 
+    metas: Metas(
+            title:  "Country",
+            artist: "Florent Champigny",
+            album: "",
+            image: MetasImage.asset("assets/images/country.jpg"), //can be MetasImage.network
+          ),
+   );
+```
+
+2. open with `showNotification: true`
+
+```dart
+_player.open(audio, showNotification: true)
+```
+
+
 # Network Policies (android/iOS)
 
 Android only allow HTTPS calls, you will have an error if you're using HTTP, 
