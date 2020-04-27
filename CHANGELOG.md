@@ -1,6 +1,9 @@
-## 1.3.9+3
+## 1.4.0
 
 * Added `respectSilentMode` as open optional argument
+* Added `showNotification` on iOS to map with MPNowPlayingInfoCenter (default: false)
+* Added `metas` on audios
+* Use new plugin build format for iOS
 
 ## 1.3.9
 
