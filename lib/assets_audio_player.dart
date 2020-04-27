@@ -15,6 +15,7 @@ export 'playable.dart';
 
 const _DEFAULT_AUTO_START = true;
 const _DEFAULT_RESPECT_SILENT_MODE = false;
+const _DEFAULT_SHOW_NOTIFICATION = false;
 const _DEFAULT_PLAYER = "DEFAULT_PLAYER";
 
 const METHOD_POSITION = "player.position";
@@ -22,8 +23,8 @@ const METHOD_VOLUME = "player.volume";
 const METHOD_FINISHED = "player.finished";
 const METHOD_IS_PLAYING = "player.isPlaying";
 const METHOD_CURRENT = "player.current";
-//const _METHOD_NEXT = "player.next"
-//const _METHOD_PREV = "player.prev"
+const METHOD_NEXT = "player.next";
+const METHOD_PREV = "player.prev";
 
 /// The AssetsAudioPlayer, playing audios from assets/
 /// Example :
@@ -410,6 +411,7 @@ class AssetsAudioPlayer {
     bool autoStart = _DEFAULT_AUTO_START,
     double forcedVolume,
     bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
+    bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
   }) async {
     if (audio != null) {
@@ -421,10 +423,23 @@ class AssetsAudioPlayer {
           "path": audio.path,
           "autoStart": autoStart,
           "respectSilentMode": respectSilentMode,
+          "displayNotification": showNotification,
           "volume": forcedVolume ?? this.volume.value ?? defaultVolume,
         };
         if (seek != null) {
           params["seek"] = seek.inSeconds.round();
+        }
+        if (audio.metas != null) {
+          if(audio.metas.title != null)
+            params["sont.title"] = audio.metas.title;
+          if(audio.metas.artist != null)
+            params["sont.artist"] = audio.metas.artist;
+          if(audio.metas.album != null)
+            params["sont.album"] = audio.metas.album;
+          if(audio.metas.image != null) {
+            params["sont.image"] = audio.metas.image.path;
+            params["sont.image.type"] = _metasImageTypeDescription(audio.metas.image.type);
+          }
         }
         _sendChannel.invokeMethod('open', params);
       } catch (e) {
@@ -440,6 +455,7 @@ class AssetsAudioPlayer {
     bool autoStart = _DEFAULT_AUTO_START,
     double volume,
     bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
+    bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
   }) async {
     _lastSeek = null;
@@ -451,6 +467,7 @@ class AssetsAudioPlayer {
       autoStart: autoStart,
       forcedVolume: volume,
       respectSilentMode: respectSilentMode,
+      showNotification: showNotification,
       seek: seek,
     );
   }
@@ -473,6 +490,7 @@ class AssetsAudioPlayer {
     bool autoStart = _DEFAULT_AUTO_START,
     double volume,
     bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
+    bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
   }) async {
     if (playable is Playlist &&
@@ -482,12 +500,14 @@ class AssetsAudioPlayer {
           autoStart: autoStart,
           volume: volume,
           respectSilentMode: respectSilentMode,
+          showNotification: showNotification,
           seek: seek);
     } else if (playable is Audio) {
       _openPlaylist(Playlist(audios: [playable]),
           autoStart: autoStart,
           volume: volume,
           respectSilentMode: respectSilentMode,
+          showNotification: showNotification,
           seek: seek);
     } else {
       //do nothing
@@ -637,6 +657,18 @@ String _audioTypeDescription(AudioType audioType) {
     case AudioType.file:
       return "file";
     case AudioType.asset:
+      return "asset";
+  }
+  return null;
+}
+
+String _metasImageTypeDescription(ImageType imageType) {
+  switch (imageType) {
+    case ImageType.network:
+      return "network";
+    case ImageType.file:
+      return "file";
+    case ImageType.asset:
       return "asset";
   }
   return null;

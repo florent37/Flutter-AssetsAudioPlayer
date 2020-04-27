@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
 import AVFoundation
+import MediaPlayer
 
 public class SwiftAssetsAudioPlayerPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -13,6 +14,22 @@ public class SwiftAssetsAudioPlayerPlugin: NSObject, FlutterPlugin {
   }
 }
 
+struct AudioMetas {
+    var title: String?
+    var artist: String?
+    var album: String?
+    var image: String?
+    var imageType: String?
+    
+    init(title: String?, artist: String?, album: String?, image: String?, imageType: String?) {
+        self.title = title
+        self.artist = artist
+        self.album = album
+        self.image = image
+        self.imageType = imageType
+    }
+}
+
 public class Player : NSObject, AVAudioPlayerDelegate {
     
     let channel: FlutterMethodChannel
@@ -20,7 +37,9 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     var player: AVPlayer?
     
     var observerStatus: NSKeyValueObservation?
-
+    
+    var displayMediaPlayerNotification = false
+    var audioMetas : AudioMetas?
 
     init(channel: FlutterMethodChannel, registrar: FlutterPluginRegistrar) {
         self.channel = channel
@@ -71,27 +90,106 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
     }
     
-    func open(assetPath: String, audioType: String, autoStart: Bool, volume: Double, seek: Int?, respectSilentMode: Bool, result: FlutterResult){
+    func setupMediaPlayerNotificationView(currentSongDuration: Any) {
+        UIApplication.shared.beginReceivingRemoteControlEvents()
+        let commandCenter = MPRemoteCommandCenter.shared()
+        commandCenter.playCommand.isEnabled = self.playing
+        
+        self.setupNotificationView(currentSongDuration: currentSongDuration)
+
+        // Add handler for Play Command
+        commandCenter.playCommand.addTarget { [unowned self] event in
+            self.play();
+            return .success
+        }
+        
+        // Add handler for Pause Command
+        commandCenter.pauseCommand.addTarget { [unowned self] event in
+            self.pause();
+            return .success
+        }
+        
+        // Add handler for Pause Command
+        commandCenter.previousTrackCommand.addTarget { [unowned self] event in
+            //TODO send this to Flutter
+            return .success
+        }
+        
+        // Add handler for Pause Command
+        commandCenter.nextTrackCommand.addTarget { [unowned self] event in
+            //TODO send this to Flutter
+            return .success
+        }
+    }
+    
+    func setupNotificationView(currentSongDuration: Any) {
+        if(!self.displayMediaPlayerNotification){
+            return
+        }
+        
+        var nowPlayingInfo = [String: Any]()
+        
+        if let t = self.audioMetas?.title {
+             nowPlayingInfo[MPMediaItemPropertyTitle] = t
+        }
+        if let art = self.audioMetas?.artist {
+            nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = art
+        }
+        if let alb = self.audioMetas?.album {
+            nowPlayingInfo[MPMediaItemPropertyArtist] = alb
+        }
+        
+        //TODO
+        //if #available(iOS 10.0, *) {
+        //    let image = UIImage(named: "logo.png")!
+        //    let artwork = MPMediaItemArtwork(boundsSize: image.size, requestHandler: { (size) -> UIImage in
+        //        return image
+        //    })
+        //    nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
+        //} else {
+        //    // Fallback on earlier versions
+        //}
+
+        
+        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = currentSongDuration
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
+        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.player!.rate
+        
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+    }
+    
+    func open(assetPath: String, audioType: String,
+              autoStart: Bool, volume: Double,
+              seek: Int?, respectSilentMode: Bool,
+              audioMetas: AudioMetas, displayNotification: Bool,
+              result: FlutterResult
+    ){
         guard let url = self.getUrlByType(path: assetPath, audioType: audioType) else {
              log("resource not found \(assetPath)")
              result("");
              return
         }
 
-//        log("url: "+url.absoluteString)
         do {
-            
+//        log("url: "+url.absoluteString)
             /* set session category and mode with options */
             if #available(iOS 10.0, *) {
-                try AVAudioSession.sharedInstance().setCategory(getAudioCategory(respectSilentMode: respectSilentMode), mode: AVAudioSession.Mode.default, options: [])
+                
+                try AVAudioSession.sharedInstance().setCategory(getAudioCategory(respectSilentMode: respectSilentMode), mode: AVAudioSession.Mode.default, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setActive(true)
+           
             } else {
+                
                 try AVAudioSession.sharedInstance().setCategory(getAudioCategory(respectSilentMode: respectSilentMode), options: .mixWithOthers)
-            }
+                try AVAudioSession.sharedInstance().setActive(true)
             
-            try AVAudioSession.sharedInstance().setActive(true)
+            }
 
             let item = AVPlayerItem(url: url)
             self.player = AVPlayer(playerItem: item)
+            
+            self.displayMediaPlayerNotification = displayNotification
+            self.audioMetas = audioMetas
             
             NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
             
@@ -107,6 +205,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                      let audioDurationSeconds = CMTimeGetSeconds(item.duration) //CMTimeGetSeconds(asset.duration)
                      self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": audioDurationSeconds])
                      
+                     self?.setupMediaPlayerNotificationView(currentSongDuration: audioDurationSeconds)
 
                      if(autoStart == true){
                         self?.play()
@@ -117,6 +216,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                      if(seek != nil){
                         self?.seek(to: seek!)
                      }
+                    
+                    
                  case .failed:
                      debugPrint("playback failed")
                  @unknown default:
@@ -177,6 +278,12 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             if(_currentTime != newValue){
                 _currentTime = newValue
                 self.channel.invokeMethod(Music.METHOD_POSITION, arguments: self._currentTime)
+                
+                if(self.displayMediaPlayerNotification){
+                    var nowPlayingInfo: [String:Any] = MPNowPlayingInfoCenter.default().nowPlayingInfo!
+                    nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
+                    MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+                }
             }
         }
     };
@@ -218,7 +325,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     }
 }
 
-class Music : NSObject {
+class Music : NSObject, FlutterPlugin {
     
     static let METHOD_POSITION = "player.position"
     static let METHOD_FINISHED = "player.finished"
@@ -240,6 +347,15 @@ class Music : NSObject {
             return newPlayer
         }
     }
+    
+    static func register(with registrar: FlutterPluginRegistrar) {
+
+    }
+    
+    //public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
+    //    application.beginReceivingRemoteControlEvents()
+    //    return true;
+    //}
 
     let channel: FlutterMethodChannel
     let registrar: FlutterPluginRegistrar
@@ -250,6 +366,8 @@ class Music : NSObject {
     }
     
     func start(){
+        self.registrar.addApplicationDelegate(self)
+
         channel.setMethodCallHandler({(call: FlutterMethodCall, result: FlutterResult) -> Void in
             //self.log(call.method + call.arguments.debugDescription)
             switch(call.method){
@@ -307,7 +425,18 @@ class Music : NSObject {
                 let volume = args["volume"] as! Double
                 let seek = args["seek"] as? Int
                 let autoStart = args["autoStart"] as! Bool
+                //metas
+                let songTitle = args["song.title"] as? String
+                let songArtist = args["song.artist"] as? String
+                let songAlbum = args["song.album"] as? String
+                let songImage = args["song.image"] as? String
+                let songImageType = args["song.imageType"] as? String
+                //end-metas
                 let respectSilentMode = args["respectSilentMode"] as? Bool ?? false
+                let displayNotification = args["displayNotification"] as? Bool ?? false
+                
+                let audioMetas = AudioMetas(title: songTitle, artist: songArtist, album: songAlbum, image: songImage, imageType: songImageType)
+                
                 self.getOrCreatePlayer(id: id)
                     .open(
                         assetPath: assetPath,
@@ -316,6 +445,8 @@ class Music : NSObject {
                         volume:volume,
                         seek: seek,
                         respectSilentMode: respectSilentMode,
+                        audioMetas: audioMetas,
+                        displayNotification: displayNotification,
                         result: result
                     );
             break;

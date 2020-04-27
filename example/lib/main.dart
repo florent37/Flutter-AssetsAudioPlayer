@@ -28,7 +28,14 @@ class _MyAppState extends State<MyApp> {
   final audios = <MyAudio>[
     MyAudio(
         name: "Online",
-        audio: Audio.network("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3"),
+        audio: Audio.network("https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3",
+          metas: Metas(
+            title:  "Online",
+            artist: "Florent Champigny",
+            album: null,
+            image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+          ),
+        ),
         imageUrl: "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
     MyAudio(
         name: "Rock",
