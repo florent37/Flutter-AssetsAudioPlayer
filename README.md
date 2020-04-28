@@ -138,7 +138,7 @@ You like the package ? buy me a kofi :)
   <td>BackgroundPlay<br/> + <br/>system play notification</td>
   <td></td>
   <td>✅</td>
-  <td></td>
+  <td>🚫</td>
 </tr>
 <tr>
   <td>Respect System silent mode</td>
