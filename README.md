@@ -76,8 +76,8 @@ You like the package ? buy me a kofi :)
 <tr>
   <td>Open local file</td>
   <td>✅</td>
-  <td>?</td>
-  <td>?</td>
+  <td>🍎</td>
+  <td>✅</td>
 </tr>
 
 <tr>
@@ -144,7 +144,7 @@ You like the package ? buy me a kofi :)
   <td>Respect System silent mode</td>
   <td>✅</td>
   <td>✅</td>
-  <td></td>
+  <td>🚫</td>
 </tr>
 <tr>
   <td>Listener onReady(completeDuration)</td>
