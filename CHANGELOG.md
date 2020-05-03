@@ -1,3 +1,7 @@
+## 1.4.0+1
+
+* Bump gradle versions : `wrapper`=(5.4.1-all) `build:gradle`=(3.5.3)
+
 ## 1.4.0
 
 * Added `respectSilentMode` as open optional argument
