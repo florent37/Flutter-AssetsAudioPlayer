@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:assets_audio_player/playing.dart';
 import 'package:flutter/cupertino.dart';
@@ -190,7 +191,7 @@ class AssetsAudioPlayer {
   ///             final Duration duration = asyncSnapshot.data;
   ///             return Text(duration.toString());
   ///         }),
-  Stream<Duration> get currentPosition => _currentPosition.stream;
+  ValueStream<Duration> get currentPosition => _currentPosition.stream;
 
   /// The volume of the media Player (min: 0, max: 1)
   final BehaviorSubject<double> _volume =
@@ -581,6 +582,44 @@ class AssetsAudioPlayer {
         "id": this.id,
         "to": to.inSeconds.round(),
       });
+    }
+  }
+
+  /// Forward the current audio, to currentPosition + `by` (duration)
+  ///
+  /// eg: _assetsAudioPlayer.foward(Duration(seconds: 10))
+  ///
+  void forward(Duration by) {
+    //only if playing a song
+    final playing = this.current.value;
+    if(playing != null) {
+      final totalDuration = playing.audio.duration;
+
+      final currentPosition = this.currentPosition.value ?? Duration();
+      final nextPosition = currentPosition + by;
+
+      //don't seek more that song duration
+      final currentPositionCapped = Duration(milliseconds: min(totalDuration.inMilliseconds, nextPosition.inMilliseconds));
+
+      seek(currentPositionCapped);
+    }
+  }
+
+  /// Rewind the current audio, to currentPosition - `by` (duration)
+  ///
+  /// eg: _assetsAudioPlayer.rewind(Duration(seconds: 10))
+  ///
+  void rewind(Duration by) {
+    //only if playing a song
+    final playing = this.current.value;
+    if(playing != null) {
+      final currentPosition = this.currentPosition.value ?? Duration();
+      final nextPosition = currentPosition - by;
+
+      //don't seek less that 0
+      final currentPositionCapped = Duration(milliseconds: max(0, nextPosition.inMilliseconds));
+
+      seek(currentPositionCapped);
     }
   }
 
