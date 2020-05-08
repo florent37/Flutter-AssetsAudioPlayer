@@ -226,6 +226,29 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         
     }
     
+    class SlowMoPlayerItem: AVPlayerItem {
+
+        override var canPlaySlowForward: Bool {
+            return true
+        }
+        
+        override var canPlayReverse: Bool {
+            return true
+        }
+
+        override var canPlayFastForward: Bool {
+            return true
+        }
+        
+        override var canPlayFastReverse: Bool {
+            return true
+        }
+
+        override var canPlaySlowReverse: Bool {
+            return true
+        }
+    }
+    
     func open(assetPath: String, audioType: String,
               autoStart: Bool, volume: Double,
               seek: Int?, respectSilentMode: Bool,
@@ -254,7 +277,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             }
 
-            let item = AVPlayerItem(url: url)
+            let item = SlowMoPlayerItem(url: url)
             self.player = AVPlayer(playerItem: item)
             
             self.displayMediaPlayerNotification = displayNotification
@@ -321,9 +344,22 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.channel.invokeMethod(Music.METHOD_VOLUME, arguments: volume)
     }
     
+    var _rate : Float = 1.0
+    var rate : Float {
+        get {
+            return _rate
+        }
+        set(newValue) {
+            if(_rate != newValue){
+                _rate = newValue
+                self.channel.invokeMethod(Music.METHOD_PLAY_SPEED, arguments: _rate)
+            }
+        }
+       };
+    
     func setPlaySpeed(playSpeed: Double){
-        self.player?.rate = Float(playSpeed)
-        self.channel.invokeMethod(Music.METHOD_PLAY_SPEED, arguments: playSpeed)
+        self.rate = Float(playSpeed)
+        self.player?.rate = self.rate
     }
     
     func stop(){
@@ -341,6 +377,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     func play(){
         self.player?.play()
+        self.player?.rate = self.rate
         self.currentTimeTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
         self.currentTimeTimer?.fire()
         self.playing = true

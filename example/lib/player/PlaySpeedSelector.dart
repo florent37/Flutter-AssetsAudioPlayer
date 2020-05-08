@@ -19,7 +19,8 @@ class PlaySpeedSelector extends StatelessWidget {
           ),
           Expanded(
             child: NeumorphicSlider(
-              min: AssetsAudioPlayer.minPlaySpeed,
+              min: -1,
+              //AssetsAudioPlayer.minPlaySpeed,
               max: 2,
               //AssetsAudioPlayer.maxPlaySpeed,
               value: playSpeed,
