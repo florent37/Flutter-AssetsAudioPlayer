@@ -1,3 +1,8 @@
+## 1.4.1
+
+* Moved to android ExoPlayer
+* Added `playSpeed` (beta)
+
 ## 1.4.0+1
 
 * Bump gradle versions : `wrapper`=(5.4.1-all) `build:gradle`=(3.5.3)
