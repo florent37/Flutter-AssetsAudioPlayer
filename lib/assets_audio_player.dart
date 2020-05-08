@@ -46,8 +46,9 @@ class AssetsAudioPlayer {
   static final double minVolume = 0.0;
   static final double maxVolume = 1.0;
   static final double minPlaySpeed = 0.0;
-  static final double maxPlaySpeed = 1.0;
+  static final double maxPlaySpeed = 16.0;
   static final double defaultVolume = maxVolume;
+  static final double defaultPlaySpeed = 1.0;
 
   static final uuid = Uuid();
 

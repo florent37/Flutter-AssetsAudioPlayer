@@ -1,4 +1,5 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:assets_audio_player_example/player/PlaySpeedSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'dart:async';
@@ -288,6 +289,18 @@ class _MyAppState extends State<MyApp> {
                         volume: volume,
                         onChange: (v) {
                           _assetsAudioPlayer.setVolume(v);
+                        },
+                      );
+                    }),
+                StreamBuilder(
+                    stream: _assetsAudioPlayer.playSpeed,
+                    initialData: AssetsAudioPlayer.defaultPlaySpeed,
+                    builder: (context, snapshot) {
+                      final double playSpeed = snapshot.data;
+                      return PlaySpeedSelector(
+                        playSpeed: playSpeed,
+                        onChange: (v) {
+                          _assetsAudioPlayer.setPlaySpeed(v);
                         },
                       );
                     }),

@@ -321,6 +321,11 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.channel.invokeMethod(Music.METHOD_VOLUME, arguments: volume)
     }
     
+    func setPlaySpeed(playSpeed: Double){
+        self.player?.rate = Float(playSpeed)
+        self.channel.invokeMethod(Music.METHOD_PLAY_SPEED, arguments: playSpeed)
+    }
+    
     func stop(){
         self.player?.pause()
         self.player?.seek(to: CMTime.zero)
@@ -410,6 +415,7 @@ class Music : NSObject, FlutterPlugin {
     static let METHOD_IS_PLAYING = "player.isPlaying"
     static let METHOD_CURRENT = "player.current"
     static let METHOD_VOLUME = "player.volume"
+    static let METHOD_PLAY_SPEED = "player.playSpeed"
     static let METHOD_NEXT = "player.next"
     static let METHOD_PREV = "player.prev"
 
@@ -494,6 +500,15 @@ class Music : NSObject, FlutterPlugin {
                 let volume = args["volume"] as! Double;
                 self.getOrCreatePlayer(id: id)
                     .setVolume(volume: volume);
+                result(true);
+                break;
+                
+            case "playSpeed" :
+                let args = call.arguments as! NSDictionary
+                let id = args["id"] as! String
+                let playSpeed = args["playSpeed"] as! Double;
+                self.getOrCreatePlayer(id: id)
+                    .setPlaySpeed(playSpeed: playSpeed);
                 result(true);
                 break;
                 
