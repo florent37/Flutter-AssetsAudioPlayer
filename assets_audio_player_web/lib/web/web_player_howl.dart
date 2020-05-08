@@ -21,6 +21,15 @@ class WebPlayerHowl extends WebPlayer {
     channel.invokeMethod(WebPlayer.methodVolume, volume);
   }
 
+  @override
+  get playSpeed => 1.0; //handle for web
+
+  @override
+  set playSpeed(double playSpeed) {
+    //_howl?.playSpeed(playSpeed); handle web
+    channel.invokeMethod(WebPlayer.methodPlaySpeed, playSpeed);
+  }
+
   bool _isPlaying = false;
 
   @override
@@ -122,4 +131,5 @@ class WebPlayerHowl extends WebPlayer {
       }
     }
   }
+
 }

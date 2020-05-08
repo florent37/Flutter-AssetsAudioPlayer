@@ -86,6 +86,12 @@ class AssetsAudioPlayerWebPlugin {
         _getOrCreate(id).volume = volume;
         return Future.value(true);
         break;
+      case "playSpeed":
+        final String id = call.arguments["id"];
+        final double playSpeed = call.arguments["playSpeed"];
+        _getOrCreate(id).playSpeed = playSpeed;
+        return Future.value(true);
+        break;
       case "seek":
         final String id = call.arguments["id"];
         final double to = call.arguments["to"];

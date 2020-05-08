@@ -29,6 +29,15 @@ class WebPlayerHtml extends WebPlayer {
     channel.invokeMethod(WebPlayer.methodVolume, volume);
   }
 
+  @override
+  get playSpeed => _audioElement?.playbackRate ?? 1.0;
+
+  @override
+  set playSpeed(double playSpeed) {
+    _audioElement?.playbackRate = playSpeed;
+    channel.invokeMethod(WebPlayer.methodPlaySpeed, playSpeed);
+  }
+
   bool _isPlaying = false;
 
   @override
@@ -50,8 +59,8 @@ class WebPlayerHtml extends WebPlayer {
 
   var __listenPosition = false;
 
-  double _duration = null;
-  double _position = null;
+  double _duration;
+  double _position;
 
   void _listenPosition() async {
     __listenPosition = true;
