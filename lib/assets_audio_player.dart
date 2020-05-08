@@ -666,7 +666,7 @@ class AssetsAudioPlayer {
   void setPlaySpeed(double playSpeed){
     _sendChannel.invokeMethod('playSpeed', {
       "id": this.id,
-      "speed": playSpeed.clamp(minPlaySpeed, maxPlaySpeed),
+      "playSpeed": playSpeed.clamp(minPlaySpeed, maxPlaySpeed),
     });
   }
 

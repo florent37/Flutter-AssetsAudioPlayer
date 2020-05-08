@@ -7,6 +7,9 @@ import android.net.Uri
 import android.os.Handler
 import io.flutter.plugin.common.MethodChannel
 
+/**
+ * Does not depend on Flutter, feel free to use it in all your projects
+ */
 class Player(context: Context) {
 
     private val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -18,6 +21,7 @@ class Player(context: Context) {
 
     //region outputs
     var onVolumeChanged: ((Double) -> Unit)? = null
+    var onPlaySpeedChanged: ((Double) -> Unit)? = null
     var onReadyToPlay: ((Long) -> Unit)? = null
     var onPositionChanged: ((Long) -> Unit)? = null
     var onFinished: (() -> Unit)? = null
@@ -26,6 +30,7 @@ class Player(context: Context) {
 
     private var respectSilentMode: Boolean = false
     private var volume: Double = 1.0
+    private var playSpeed: Double = 1.0
 
     val isPlaying: Boolean
         get() = mediaPlayer != null && mediaPlayer!!.isPlaying
@@ -188,6 +193,14 @@ class Player(context: Context) {
 
             it.setVolume(v.toFloat(), v.toFloat());
             onVolumeChanged?.invoke(this.volume) //only notify the setted volume, not the silent mode one
+        }
+    }
+
+    fun setPlaySpeed(playSpeed: Double) {
+        this.playSpeed = playSpeed
+        mediaPlayer?.let {
+            //TODO
+            onPlaySpeedChanged?.invoke(this.playSpeed) //only notify the setted volume, not the silent mode one
         }
     }
 }
