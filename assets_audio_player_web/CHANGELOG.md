@@ -1,3 +1,7 @@
+## 1.4.1
+
+* Added `playSpeed`
+
 ## 1.4.0+1
 
 * Web support is now based on html.AudioElement

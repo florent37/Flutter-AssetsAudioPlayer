@@ -131,5 +131,4 @@ class WebPlayerHowl extends WebPlayer {
       }
     }
   }
-
 }

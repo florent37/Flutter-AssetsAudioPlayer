@@ -603,14 +603,16 @@ class AssetsAudioPlayer {
   void forward(Duration by) {
     //only if playing a song
     final playing = this.current.value;
-    if(playing != null) {
+    if (playing != null) {
       final totalDuration = playing.audio.duration;
 
       final currentPosition = this.currentPosition.value ?? Duration();
       final nextPosition = currentPosition + by;
 
       //don't seek more that song duration
-      final currentPositionCapped = Duration(milliseconds: min(totalDuration.inMilliseconds, nextPosition.inMilliseconds));
+      final currentPositionCapped = Duration(
+          milliseconds:
+              min(totalDuration.inMilliseconds, nextPosition.inMilliseconds));
 
       seek(currentPositionCapped);
     }
@@ -623,12 +625,13 @@ class AssetsAudioPlayer {
   void rewind(Duration by) {
     //only if playing a song
     final playing = this.current.value;
-    if(playing != null) {
+    if (playing != null) {
       final currentPosition = this.currentPosition.value ?? Duration();
       final nextPosition = currentPosition - by;
 
       //don't seek less that 0
-      final currentPositionCapped = Duration(milliseconds: max(0, nextPosition.inMilliseconds));
+      final currentPositionCapped =
+          Duration(milliseconds: max(0, nextPosition.inMilliseconds));
 
       seek(currentPositionCapped);
     }
@@ -664,7 +667,7 @@ class AssetsAudioPlayer {
   /// MIN : 0.0
   /// MAX : 1.0
   ///
-  void setPlaySpeed(double playSpeed){
+  void setPlaySpeed(double playSpeed) {
     _sendChannel.invokeMethod('playSpeed', {
       "id": this.id,
       "playSpeed": playSpeed.clamp(minPlaySpeed, maxPlaySpeed),
