@@ -26,6 +26,7 @@ const METHOD_IS_PLAYING = "player.isPlaying";
 const METHOD_CURRENT = "player.current";
 const METHOD_NEXT = "player.next";
 const METHOD_PREV = "player.prev";
+const METHOD_PLAY_SPEED = "player.playSpeed";
 
 /// The AssetsAudioPlayer, playing audios from assets/
 /// Example :
@@ -44,6 +45,8 @@ const METHOD_PREV = "player.prev";
 class AssetsAudioPlayer {
   static final double minVolume = 0.0;
   static final double maxVolume = 1.0;
+  static final double minPlaySpeed = 0.0;
+  static final double maxPlaySpeed = 1.0;
   static final double defaultVolume = maxVolume;
 
   static final uuid = Uuid();
@@ -222,6 +225,9 @@ class AssetsAudioPlayer {
   ValueStream<RealtimePlayingInfos> get realtimePlayingInfos =>
       _realtimePlayingInfos.stream;
 
+  BehaviorSubject<double> _playSpeed = BehaviorSubject.seeded(1.0);
+  ValueStream<double> get playSpeed => _playSpeed.stream;
+
   Duration _lastSeek;
 
   /// returns the looping state : true -> looping, false -> not looping
@@ -253,6 +259,7 @@ class AssetsAudioPlayer {
     _current.close();
     _playlistAudioFinished.close();
     _loop.close();
+    _playSpeed.close();
     _realtimePlayingInfos.close();
     _realTimeSubscription?.cancel();
 
@@ -308,6 +315,9 @@ class AssetsAudioPlayer {
           break;
         case METHOD_VOLUME:
           _volume.value = call.arguments;
+          break;
+        case METHOD_PLAY_SPEED:
+          _playSpeed.value = call.arguments;
           break;
         default:
           print('[ERROR] Channel method ${call.method} not implemented.');
@@ -641,7 +651,23 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.stop();
   ///
   void stop() {
-    _sendChannel.invokeMethod('stop', {"id": this.id});
+    _sendChannel.invokeMethod('stop', {
+      "id": this.id,
+    });
+  }
+
+  /// Change the current play speed (rate) of the MediaPlayer
+  ///
+  ///     _assetsAudioPlayer.setPlaySpeed(0.4);
+  ///
+  /// MIN : 0.0
+  /// MAX : 1.0
+  ///
+  void setPlaySpeed(double playSpeed){
+    _sendChannel.invokeMethod('playSpeed', {
+      "id": this.id,
+      "speed": playSpeed.clamp(minPlaySpeed, maxPlaySpeed),
+    });
   }
 
 //void shufflePlaylist() {
