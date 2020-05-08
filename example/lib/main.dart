@@ -218,6 +218,7 @@ class _MyAppState extends State<MyApp> {
                                         _assetsAudioPlayer.playOrPause();
                                       },
                                       onNext: () {
+                                        //_assetsAudioPlayer.forward(Duration(seconds: 10));
                                         _assetsAudioPlayer.next();
                                       },
                                       onPrevious: () {
