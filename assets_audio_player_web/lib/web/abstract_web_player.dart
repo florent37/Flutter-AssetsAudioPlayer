@@ -9,6 +9,7 @@ abstract class WebPlayer {
 
   static final methodPosition = "player.position";
   static final methodVolume = "player.volume";
+  static final methodPlaySpeed = "player.playSpeed";
   static final methodFinished = "player.finished";
   static final methodIsPlaying = "player.isPlaying";
   static final methodCurrent = "player.current";
@@ -18,6 +19,10 @@ abstract class WebPlayer {
   get volume;
 
   set volume(double volume);
+
+  get playSpeed;
+
+  set playSpeed(double playSpeed);
 
   get isPlaying;
 
