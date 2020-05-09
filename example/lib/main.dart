@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'dart:async';
 
+import 'player/ForwardRewindSelector.dart';
 import 'player/PlayingControls.dart';
 import 'player/PositionSeekWidget.dart';
 import 'player/SongsSelector.dart';
@@ -289,6 +290,18 @@ class _MyAppState extends State<MyApp> {
                         volume: volume,
                         onChange: (v) {
                           _assetsAudioPlayer.setVolume(v);
+                        },
+                      );
+                    }),
+                StreamBuilder(
+                    stream: _assetsAudioPlayer.forwardRewindSpeed,
+                    initialData: null,
+                    builder: (context, snapshot) {
+                      final double speed = snapshot.data;
+                      return ForwardRewindSelector(
+                        speed: speed,
+                        onChange: (v) {
+                          _assetsAudioPlayer.forwardOrRewind(v);
                         },
                       );
                     }),
