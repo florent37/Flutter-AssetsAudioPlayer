@@ -269,7 +269,7 @@ class Player(context: Context) {
         mediaPlayer?.let {
             it.playWhenReady = false
             //handler.removeCallbacks(updatePosition)
-            onPlaying?.invoke(false)
+            //onPlaying?.invoke(false)
         }
 
         onForwardRewind?.invoke(speed)

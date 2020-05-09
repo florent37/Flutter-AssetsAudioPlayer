@@ -362,6 +362,13 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.player?.rate = self.rate
     }
     
+    func forwardRewind(speed: Double){
+        //on ios we can have nevative speed
+        self.player?.rate = Float(speed) //it does not changes self.rate here
+        
+        self.channel.invokeMethod(Music.METHOD_FORWARD_REWIND, arguments: speed)
+    }
+    
     func stop(){
         self.player?.pause()
         self.player?.seek(to: CMTime.zero)
@@ -450,6 +457,7 @@ class Music : NSObject, FlutterPlugin {
     static let METHOD_POSITION = "player.position"
     static let METHOD_FINISHED = "player.finished"
     static let METHOD_IS_PLAYING = "player.isPlaying"
+    static let METHOD_FORWARD_REWIND = "player.forwardRewind"
     static let METHOD_CURRENT = "player.current"
     static let METHOD_VOLUME = "player.volume"
     static let METHOD_PLAY_SPEED = "player.playSpeed"
@@ -546,6 +554,15 @@ class Music : NSObject, FlutterPlugin {
                 let playSpeed = args["playSpeed"] as! Double;
                 self.getOrCreatePlayer(id: id)
                     .setPlaySpeed(playSpeed: playSpeed);
+                result(true);
+                break;
+                
+            case "forwardRewind" :
+                let args = call.arguments as! NSDictionary
+                let id = args["id"] as! String
+                let speed = args["speed"] as! Double;
+                self.getOrCreatePlayer(id: id)
+                    .forwardRewind(speed: speed);
                 result(true);
                 break;
                 
