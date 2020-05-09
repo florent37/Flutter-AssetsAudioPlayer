@@ -1,4 +1,4 @@
-## 1.4.2
+## 1.4.2+1
 
 * Moved to android ExoPlayer
 * Added `playSpeed` (beta)

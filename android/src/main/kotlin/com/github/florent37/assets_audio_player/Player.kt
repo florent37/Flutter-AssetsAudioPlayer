@@ -124,6 +124,7 @@ class Player(context: Context) {
             return
         }
 
+        var onThisMediaReady = false;
         this.mediaPlayer?.addListener(object : Player.EventListener {
 
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -133,19 +134,22 @@ class Player(context: Context) {
                         stop()
                     }
                     ExoPlayer.STATE_READY -> {
-                        //retrieve duration in seconds
-                        val duration = mediaPlayer?.duration ?: 0
-                        val totalDurationSeconds = (duration.toLong() / 1000)
+                        if(!onThisMediaReady) {
+                            onThisMediaReady = true
+                            //retrieve duration in seconds
+                            val duration = mediaPlayer?.duration ?: 0
+                            val totalDurationSeconds = (duration.toLong() / 1000)
 
-                        onReadyToPlay?.invoke(totalDurationSeconds)
+                            onReadyToPlay?.invoke(totalDurationSeconds)
 
-                        if (autoStart) {
-                            play()
-                        }
-                        setVolume(volume)
+                            if (autoStart) {
+                                play()
+                            }
+                            setVolume(volume)
 
-                        seek?.let {
-                            this@Player.seek(milliseconds = seek * 1000L)
+                            seek?.let {
+                                this@Player.seek(milliseconds = seek * 1000L)
+                            }
                         }
                     }
                     else -> {
