@@ -1,7 +1,9 @@
-## 1.4.1
+## 1.4.2
 
 * Moved to android ExoPlayer
 * Added `playSpeed` (beta)
+* Added `forwardRewind` (beta)
+* Added `seekBy`
 
 ## 1.4.0+1
 
