@@ -10,25 +10,20 @@ class PlaySpeedSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Wrap(
         children: <Widget>[
           Text(
             "PlaySpeed ",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          Expanded(
-            child: NeumorphicSlider(
-              min: -1,
-              //AssetsAudioPlayer.minPlaySpeed,
-              max: 2,
-              //AssetsAudioPlayer.maxPlaySpeed,
-              value: playSpeed,
-              style: SliderStyle(variant: Colors.grey, accent: Colors.grey[500]),
-              onChanged: (value) {
-                this.onChange(value);
-              },
-            ),
+          Row(
+            children: [
+              _button(-4.0),
+              _button(-2.0),
+              _button(1.0),
+              _button(2.0),
+              _button(4.0),
+            ],
           ),
           SizedBox(
               width: 40,
@@ -37,6 +32,19 @@ class PlaySpeedSelector extends StatelessWidget {
               ))
         ],
       ),
+    );
+  }
+
+  Widget _button(double value){
+    return NeumorphicButton(
+      margin: EdgeInsets.all(4),
+      boxShape: NeumorphicBoxShape.circle(),
+      child: Text(
+          "x$value"
+      ),
+      onClick: (){
+        this.onChange(value);
+      },
     );
   }
 
