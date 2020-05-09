@@ -10,6 +10,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 
 internal val METHOD_POSITION = "player.position"
 internal val METHOD_VOLUME = "player.volume"
+internal val METHOD_FORWARD_REWIND_SPEED = "player.forwardRewind"
 internal val METHOD_PLAY_SPEED = "player.playSpeed"
 internal val METHOD_FINISHED = "player.finished"
 internal val METHOD_IS_PLAYING = "player.isPlaying"
@@ -37,6 +38,9 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val messenge
             player.apply {
                 onVolumeChanged = { volume ->
                     channel.invokeMethod(METHOD_VOLUME, volume)
+                }
+                onForwardRewind = { speed ->
+                    channel.invokeMethod(METHOD_FORWARD_REWIND_SPEED, speed)
                 }
                 onPlaySpeedChanged = { speed ->
                     channel.invokeMethod(METHOD_PLAY_SPEED, speed)
@@ -143,6 +147,23 @@ class AssetsAudioPlayerPlugin(private val context: Context, private val messenge
                         return
                     }
                     getOrCreatePlayer(id).setPlaySpeed(speed)
+                    result.success(null)
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
+            "forwardRewind" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    val speed = args["speed"] as? Double ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument must be an Double.", null)
+                        return
+                    }
+                    getOrCreatePlayer(id).forwardRewind(speed)
                     result.success(null)
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)

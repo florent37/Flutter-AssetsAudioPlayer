@@ -8,11 +8,11 @@ import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:uuid/uuid.dart';
 
-import 'playing.dart';
-export 'playing.dart';
-
 import 'playable.dart';
+import 'playing.dart';
+
 export 'playable.dart';
+export 'playing.dart';
 
 const _DEFAULT_AUTO_START = true;
 const _DEFAULT_RESPECT_SILENT_MODE = false;
@@ -24,6 +24,7 @@ const METHOD_VOLUME = "player.volume";
 const METHOD_FINISHED = "player.finished";
 const METHOD_IS_PLAYING = "player.isPlaying";
 const METHOD_CURRENT = "player.current";
+const METHOD_FORWARD_REWIND_SPEED = "player.forwardRewind";
 const METHOD_NEXT = "player.next";
 const METHOD_PREV = "player.prev";
 const METHOD_PLAY_SPEED = "player.playSpeed";
@@ -45,7 +46,7 @@ const METHOD_PLAY_SPEED = "player.playSpeed";
 class AssetsAudioPlayer {
   static final double minVolume = 0.0;
   static final double maxVolume = 1.0;
-  static final double minPlaySpeed = -16.0;
+  static final double minPlaySpeed = 0.0;
   static final double maxPlaySpeed = 16.0;
   static final double defaultVolume = maxVolume;
   static final double defaultPlaySpeed = 1.0;
@@ -68,6 +69,7 @@ class AssetsAudioPlayer {
   }
 
   static final Map<String, AssetsAudioPlayer> _players = Map();
+
   static Map<String, AssetsAudioPlayer> allPlayers() {
     return Map.from(_players); //return a copy
   }
@@ -87,8 +89,7 @@ class AssetsAudioPlayer {
   /// empty constructor now create a new player
   factory AssetsAudioPlayer() => AssetsAudioPlayer.newPlayer();
 
-  factory AssetsAudioPlayer.withId(String id) =>
-      _getOrCreate(id: id ?? uuid.v4());
+  factory AssetsAudioPlayer.withId(String id) => _getOrCreate(id: id ?? uuid.v4());
 
   /// Create a new player for this audio, play it, and dispose it automatically
   static void playAndForget(
@@ -105,11 +106,7 @@ class AssetsAudioPlayer {
         player.dispose();
       }
     });
-    player.open(audio,
-        volume: volume,
-        seek: seek,
-        respectSilentMode: respectSilentMode,
-        autoStart: true);
+    player.open(audio, volume: volume, seek: seek, respectSilentMode: respectSilentMode, autoStart: true);
   }
 
   ReadingPlaylist get playlist {
@@ -157,12 +154,11 @@ class AssetsAudioPlayer {
   ///     })
   ///
   ValueStream<Playing> get current => _current.stream;
-  Stream<PlayingAudio> get onReadyToPlay =>
-      current.map((playing) => playing.audio); //another comprehensible name
+
+  Stream<PlayingAudio> get onReadyToPlay => current.map((playing) => playing.audio); //another comprehensible name
 
   /// Called when the the complete playlist finished to play (mutable)
-  final BehaviorSubject<bool> _playlistFinished =
-      BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _playlistFinished = BehaviorSubject<bool>.seeded(false);
 
   /// Called when the complete playlist has finished to play
   ///     _assetsAudioPlayer.finished.listen((finished){
@@ -183,8 +179,7 @@ class AssetsAudioPlayer {
   Stream<Playing> get playlistAudioFinished => _playlistAudioFinished.stream;
 
   /// Then current playing song position (in seconds) (mutable)
-  final BehaviorSubject<Duration> _currentPosition =
-      BehaviorSubject<Duration>.seeded(const Duration());
+  final BehaviorSubject<Duration> _currentPosition = BehaviorSubject<Duration>.seeded(const Duration());
 
   /// Retrieve directly the current song position (in seconds)
   ///     final Duration position = _assetsAudioPlayer.currentPosition.value;
@@ -198,8 +193,7 @@ class AssetsAudioPlayer {
   ValueStream<Duration> get currentPosition => _currentPosition.stream;
 
   /// The volume of the media Player (min: 0, max: 1)
-  final BehaviorSubject<double> _volume =
-      BehaviorSubject<double>.seeded(defaultVolume);
+  final BehaviorSubject<double> _volume = BehaviorSubject<double>.seeded(defaultVolume);
 
   /// Streams the volume of the media Player (min: 0, max: 1)
   ///     final double volume = _assetsAudioPlayer.volume.value;
@@ -221,13 +215,16 @@ class AssetsAudioPlayer {
   ///
   ValueStream<bool> get isLooping => _loop.stream;
 
-  final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos =
-      BehaviorSubject<RealtimePlayingInfos>();
-  ValueStream<RealtimePlayingInfos> get realtimePlayingInfos =>
-      _realtimePlayingInfos.stream;
+  final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos = BehaviorSubject<RealtimePlayingInfos>();
+
+  ValueStream<RealtimePlayingInfos> get realtimePlayingInfos => _realtimePlayingInfos.stream;
 
   BehaviorSubject<double> _playSpeed = BehaviorSubject.seeded(1.0);
+
   ValueStream<double> get playSpeed => _playSpeed.stream;
+
+  BehaviorSubject<double> _forwardRewindSpeed = BehaviorSubject.seeded(0);
+  ValueStream<double> get forwardRewindSpeed => _forwardRewindSpeed.stream;
 
   Duration _lastSeek;
 
@@ -235,6 +232,7 @@ class AssetsAudioPlayer {
   bool get loop => _loop.value;
 
   bool _respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE;
+
   bool get respectSilentMode => _respectSilentMode;
 
   /// assign the looping state : true -> looping, false -> not looping
@@ -261,6 +259,7 @@ class AssetsAudioPlayer {
     _playlistAudioFinished.close();
     _loop.close();
     _playSpeed.close();
+    _forwardRewindSpeed.close();
     _realtimePlayingInfos.close();
     _realTimeSubscription?.cancel();
 
@@ -276,7 +275,7 @@ class AssetsAudioPlayer {
           print("log: " + call.arguments);
           break;
         case METHOD_FINISHED:
-          _onfinished(call.arguments);
+          _onFinished(call.arguments);
           break;
         case METHOD_NEXT:
           next();
@@ -297,9 +296,7 @@ class AssetsAudioPlayer {
               audio: playingAudio,
               index: _playlist.playlistIndex,
               hasNext: _playlist.hasNext(),
-              playlist: ReadingPlaylist(
-                  audios: _playlist.playlist.audios,
-                  currentIndex: _playlist.playlistIndex),
+              playlist: ReadingPlaylist(audios: _playlist.playlist.audios, currentIndex: _playlist.playlistIndex),
             );
           }
           break;
@@ -320,6 +317,12 @@ class AssetsAudioPlayer {
         case METHOD_PLAY_SPEED:
           _playSpeed.value = call.arguments;
           break;
+        case METHOD_FORWARD_REWIND_SPEED:
+          final double newValue = call.arguments;
+          if(_forwardRewindSpeed.value != newValue){
+            _forwardRewindSpeed.value = newValue;
+          }
+          break;
         default:
           print('[ERROR] Channel method ${call.method} not implemented.');
       }
@@ -327,6 +330,7 @@ class AssetsAudioPlayer {
   }
 
   StreamSubscription _realTimeSubscription;
+
   void _replaceRealtimeSubscription() {
     _realTimeSubscription?.cancel();
     _realTimeSubscription = null;
@@ -336,15 +340,7 @@ class AssetsAudioPlayer {
       this.isLooping,
       this.current,
       this.currentPosition,
-    ])
-        .map((values) => RealtimePlayingInfos(
-            volume: values[0],
-            isPlaying: values[1],
-            isLooping: values[2],
-            current: values[3],
-            currentPosition: values[4],
-            playerId: this.id))
-        .listen((readingInfos) {
+    ]).map((values) => RealtimePlayingInfos(volume: values[0], isPlaying: values[1], isLooping: values[2], current: values[3], currentPosition: values[4], playerId: this.id)).listen((readingInfos) {
       this._realtimePlayingInfos.value = readingInfos;
     });
   }
@@ -412,7 +408,7 @@ class AssetsAudioPlayer {
     return false;
   }
 
-  void _onfinished(bool isFinished) {
+  void _onFinished(bool isFinished) {
     bool nextDone = next(stopIfLast: false);
     if (nextDone) {
       _playlistFinished.value = false; //continue playing the playlist
@@ -457,16 +453,12 @@ class AssetsAudioPlayer {
           params["seek"] = seek.inSeconds.round();
         }
         if (audio.metas != null) {
-          if (audio.metas.title != null)
-            params["song.title"] = audio.metas.title;
-          if (audio.metas.artist != null)
-            params["song.artist"] = audio.metas.artist;
-          if (audio.metas.album != null)
-            params["song.album"] = audio.metas.album;
+          if (audio.metas.title != null) params["song.title"] = audio.metas.title;
+          if (audio.metas.artist != null) params["song.artist"] = audio.metas.artist;
+          if (audio.metas.album != null) params["song.album"] = audio.metas.album;
           if (audio.metas.image != null) {
             params["song.image"] = audio.metas.image.path;
-            params["song.imageType"] =
-                _metasImageTypeDescription(audio.metas.image.type);
+            params["song.imageType"] = _metasImageTypeDescription(audio.metas.image.type);
           }
         }
         _sendChannel.invokeMethod('open', params);
@@ -526,22 +518,10 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
   }) async {
-    if (playable is Playlist &&
-        playable.audios != null &&
-        playable.audios.length > 0) {
-      _openPlaylist(playable,
-          autoStart: autoStart,
-          volume: volume,
-          respectSilentMode: respectSilentMode,
-          showNotification: showNotification,
-          seek: seek);
+    if (playable is Playlist && playable.audios != null && playable.audios.length > 0) {
+      _openPlaylist(playable, autoStart: autoStart, volume: volume, respectSilentMode: respectSilentMode, showNotification: showNotification, seek: seek);
     } else if (playable is Audio) {
-      _openPlaylist(Playlist(audios: [playable]),
-          autoStart: autoStart,
-          volume: volume,
-          respectSilentMode: respectSilentMode,
-          showNotification: showNotification,
-          seek: seek);
+      _openPlaylist(Playlist(audios: [playable]), autoStart: autoStart, volume: volume, respectSilentMode: respectSilentMode, showNotification: showNotification, seek: seek);
     } else {
       //do nothing
       //throw exception ?
@@ -596,44 +576,67 @@ class AssetsAudioPlayer {
     }
   }
 
-  /// Forward the current audio, to currentPosition + `by` (duration)
+  bool _wasPlayingBeforeForwardRewind;
+  /// If positive, forward (progressively)
+  /// If Negative rewind (progressively)
+  /// If 0 or null, restore the playing state
+  void forwardOrRewind(double speed) {
+    if(speed == 0 || speed == null){
+      if(_wasPlayingBeforeForwardRewind){
+        play();
+      } else {
+        pause();
+      }
+      _wasPlayingBeforeForwardRewind = null;
+    } else {
+      if(_wasPlayingBeforeForwardRewind == null) {
+        _wasPlayingBeforeForwardRewind = this.isPlaying.value;
+      }
+      _sendChannel.invokeMethod('forwardRewind', {
+        "id": this.id,
+        "speed": speed,
+      });
+
+    }
+  }
+
+  /// if by > 0 Forward (jump) the current audio, to currentPosition + `by` (duration)
   ///
   /// eg: _assetsAudioPlayer.foward(Duration(seconds: 10))
   ///
-  void forward(Duration by) {
+  /// Rewind (jump) the current audio, to currentPosition - `by` (duration)
+  ///
+  ///  eg: _assetsAudioPlayer.rewind(Duration(seconds: 10))
+  ///
+  void seekBy(Duration by) {
     //only if playing a song
     final playing = this.current.value;
     if (playing != null) {
       final totalDuration = playing.audio.duration;
 
       final currentPosition = this.currentPosition.value ?? Duration();
-      final nextPosition = currentPosition + by;
 
-      //don't seek more that song duration
-      final currentPositionCapped = Duration(
-          milliseconds:
-              min(totalDuration.inMilliseconds, nextPosition.inMilliseconds));
+      if (by.inMilliseconds >= 0) {
+        final nextPosition = currentPosition + by;
 
-      seek(currentPositionCapped);
-    }
-  }
+        //don't seek more that song duration
+        final currentPositionCapped = Duration(
+          milliseconds: min(totalDuration.inMilliseconds, nextPosition.inMilliseconds),
+        );
 
-  /// Rewind the current audio, to currentPosition - `by` (duration)
-  ///
-  /// eg: _assetsAudioPlayer.rewind(Duration(seconds: 10))
-  ///
-  void rewind(Duration by) {
-    //only if playing a song
-    final playing = this.current.value;
-    if (playing != null) {
-      final currentPosition = this.currentPosition.value ?? Duration();
-      final nextPosition = currentPosition - by;
+        seek(currentPositionCapped);
+      } else {
+        //only if playing a song
+        final currentPosition = this.currentPosition.value ?? Duration();
+        final nextPosition = currentPosition - by;
 
-      //don't seek less that 0
-      final currentPositionCapped =
-          Duration(milliseconds: max(0, nextPosition.inMilliseconds));
+        //don't seek less that 0
+        final currentPositionCapped = Duration(
+          milliseconds: max(0, nextPosition.inMilliseconds),
+        );
 
-      seek(currentPositionCapped);
+        seek(currentPositionCapped);
+      }
     }
   }
 
@@ -667,10 +670,12 @@ class AssetsAudioPlayer {
   /// MIN : 0.0
   /// MAX : 1.0
   ///
+  /// if null, set to defaultPlaySpeed (1.0)
+  ///
   void setPlaySpeed(double playSpeed) {
     _sendChannel.invokeMethod('playSpeed', {
       "id": this.id,
-      "playSpeed": playSpeed.clamp(minPlaySpeed, maxPlaySpeed),
+      "playSpeed": (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
     });
   }
 
@@ -726,11 +731,7 @@ class _CurrentPlaylist {
     return playlistIndex + 1 < playlist.numberOfItems;
   }
 
-  _CurrentPlaylist(
-      {@required this.playlist,
-      this.volume,
-      this.respectSilentMode,
-      this.showNotification});
+  _CurrentPlaylist({@required this.playlist, this.volume, this.respectSilentMode, this.showNotification});
 
   void returnToFirst() {
     playlistIndex = 0;

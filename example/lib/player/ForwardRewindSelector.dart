@@ -2,8 +2,8 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
-class PlaySpeedSelector extends StatelessWidget {
-  final double playSpeed;
+class ForwardRewindSelector extends StatelessWidget {
+  final double speed;
   final Function(double) onChange;
 
   @override
@@ -14,13 +14,11 @@ class PlaySpeedSelector extends StatelessWidget {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: <Widget>[
           Text(
-            "PlaySpeed ",
+            "Forward/Rewind ",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          _button(0.5),
-          _button(1.0),
+          _button(-2),
           _button(2.0),
-          _button(4.0),
         ],
       ),
     );
@@ -30,7 +28,7 @@ class PlaySpeedSelector extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: NeumorphicRadio(
-        groupValue: this.playSpeed,
+        groupValue: this.speed,
         padding: EdgeInsets.all(12.0),
         value: value,
         boxShape: NeumorphicBoxShape.circle(),
@@ -44,8 +42,8 @@ class PlaySpeedSelector extends StatelessWidget {
     );
   }
 
-  const PlaySpeedSelector({
-    @required this.playSpeed,
+  const ForwardRewindSelector({
+    @required this.speed,
     @required this.onChange,
   });
 }

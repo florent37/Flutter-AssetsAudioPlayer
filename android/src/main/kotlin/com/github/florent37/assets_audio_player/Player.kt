@@ -34,6 +34,7 @@ class Player(context: Context) {
     //region outputs
     var onVolumeChanged: ((Double) -> Unit)? = null
     var onPlaySpeedChanged: ((Double) -> Unit)? = null
+    var onForwardRewind: ((Double) -> Unit)? = null
     var onReadyToPlay: ((Long) -> Unit)? = null
     var onPositionChanged: ((Long) -> Unit)? = null
     var onFinished: (() -> Unit)? = null
@@ -168,10 +169,11 @@ class Player(context: Context) {
             onPlaying?.invoke(false)
             handler.removeCallbacks(updatePosition)
         }
-        if(forwardHandler != null){
+        if (forwardHandler != null) {
             forwardHandler!!.stop()
             forwardHandler = null
         }
+        onForwardRewind?.invoke(0.0)
         mediaPlayer = null
     }
 
@@ -184,12 +186,17 @@ class Player(context: Context) {
         }
     }
 
+    private fun stopForward(){
+        forwardHandler?.takeIf { h -> h.isActive }?.let { h ->
+            h.stop()
+            setPlaySpeed(this.playSpeed)
+        }
+        onForwardRewind?.invoke(0.0)
+    }
+
     fun play() {
         mediaPlayer?.let { player ->
-            forwardHandler?.takeIf { h -> h.isActive }?.let { h ->
-                h.stop()
-                setPlaySpeed(1.0)
-            }
+            stopForward()
             player.playWhenReady = true
             handler.post(updatePosition)
             onPlaying?.invoke(true)
@@ -200,6 +207,8 @@ class Player(context: Context) {
         mediaPlayer?.let {
             it.playWhenReady = false
             handler.removeCallbacks(updatePosition)
+
+            stopForward()
             onPlaying?.invoke(false)
         }
     }
@@ -236,33 +245,35 @@ class Player(context: Context) {
         }
     }
 
-    private var forwardHandler : ForwardHandler? = null;
+    private var forwardHandler: ForwardHandler? = null;
 
     fun setPlaySpeed(playSpeed: Double) {
-        if (playSpeed >= 0) {
-            if(forwardHandler != null){
+        if (playSpeed >= 0) { //android only take positive play speed
+            if (forwardHandler != null) {
                 forwardHandler!!.stop()
                 forwardHandler = null
             }
             this.playSpeed = playSpeed
             mediaPlayer?.let {
                 it.setPlaybackParameters(PlaybackParameters(playSpeed.toFloat()))
-                onPlaySpeedChanged?.invoke(this.playSpeed) //only notify the setted volume, not the silent mode one
+                onPlaySpeedChanged?.invoke(this.playSpeed)
             }
-        } else {
-            if(forwardHandler == null) {
-                forwardHandler = ForwardHandler()
-            }
-
-            mediaPlayer?.let {
-                it.playWhenReady = false
-                //handler.removeCallbacks(updatePosition)
-                onPlaying?.invoke(false)
-            }
-
-            onPlaySpeedChanged?.invoke(playSpeed) //notify the current speed, not the one of the player
-            forwardHandler!!.start(this, playSpeed)
         }
+    }
+
+    fun forwardRewind(speed: Double) {
+        if (forwardHandler == null) {
+            forwardHandler = ForwardHandler()
+        }
+
+        mediaPlayer?.let {
+            it.playWhenReady = false
+            //handler.removeCallbacks(updatePosition)
+            onPlaying?.invoke(false)
+        }
+
+        onForwardRewind?.invoke(speed)
+        forwardHandler!!.start(this, speed)
     }
 }
 
@@ -276,7 +287,7 @@ class ForwardHandler : Handler() {
     private var player: com.github.florent37.assets_audio_player.Player? = null
     private var speed: Double = 1.0
 
-    val isActive : Boolean
+    val isActive: Boolean
         get() = hasMessages(MESSAGE_FORWARD)
 
     fun start(player: com.github.florent37.assets_audio_player.Player, speed: Double) {
