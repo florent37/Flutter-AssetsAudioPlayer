@@ -24,7 +24,7 @@ class ForwardRewindSelector extends StatelessWidget {
     );
   }
 
-  Widget _button(double value){
+  Widget _button(double value) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: NeumorphicRadio(
@@ -32,10 +32,8 @@ class ForwardRewindSelector extends StatelessWidget {
         padding: EdgeInsets.all(12.0),
         value: value,
         boxShape: NeumorphicBoxShape.circle(),
-        child: Text(
-            "x$value"
-        ),
-        onChanged: (v){
+        child: Text("x$value"),
+        onChanged: (v) {
           this.onChange(v);
         },
       ),

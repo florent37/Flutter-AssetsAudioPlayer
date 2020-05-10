@@ -177,29 +177,28 @@ class WebPlayerHtml extends WebPlayer {
   void forwardRewind(double speed) {
     pause();
     channel.invokeMethod(WebPlayer.methodForwardRewindSpeed, speed);
-    if(forwardHandler != null){
+    if (forwardHandler != null) {
       forwardHandler.stop();
     }
     forwardHandler = ForwardHandler();
     _listenPosition(); //for this usecase, enable listen position
     forwardHandler.start(this, speed);
   }
-
 }
 
 class ForwardHandler {
-
   bool _isEnabled = false;
   static final _timelapse = 300;
 
   void start(WebPlayerHtml player, double speed) async {
     _isEnabled = true;
-    while(_isEnabled){
+    while (_isEnabled) {
       player.seekBy(by: speed * _timelapse);
       await Future.delayed(Duration(milliseconds: _timelapse));
     }
   }
-  void stop(){
+
+  void stop() {
     _isEnabled = false;
   }
 }

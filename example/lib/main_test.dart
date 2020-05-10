@@ -4,15 +4,14 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 void main() => runApp(
-  MaterialApp(
-    home: MediaPlayer(
-      getSongNo: 0,
-      subChapterID: "0",
-    ),
-  ),
-);
+      MaterialApp(
+        home: MediaPlayer(
+          getSongNo: 0,
+          subChapterID: "0",
+        ),
+      ),
+    );
 
 class MediaPlayer extends StatefulWidget {
   MediaPlayer({this.getSongNo, this.subChapterID});
@@ -82,16 +81,15 @@ class _MediaPlayerState extends State<MediaPlayer> {
     } else {
       setState(() {
         try {
-          nextSOng = "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3";
+          nextSOng =
+              "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3";
           chapterMediaID = "chapterMediaID";
           lastPlayedDuration = "00:00:10";
           //nextSOng = responseData['medias'][songNo]['media_url'];
           //chapterMediaID = responseData['medias'][songNo]['chapter_media_id'];
           //lastPlayedDuration = responseData['medias'][songNo]['last_played'];
-          _assetsAudioPlayer.open(
-            Audio.network(nextSOng),
-            seek: parseDuration(lastPlayedDuration)
-          );
+          _assetsAudioPlayer.open(Audio.network(nextSOng),
+              seek: parseDuration(lastPlayedDuration));
         } catch (e) {
           print('THIS NEVER GETS PRINTED');
           //Fluttertoast.showToast(msg: 'No More Song');
@@ -270,11 +268,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
                                   return GestureDetector(
                                       onTap: () async {
                                         var loginData =
-                                        //await WebConfig.pauseUrl(
-                                        //    currentPosition.toString(),
-                                        //    chapterMediaID);
-                                        //print(loginData);
-                                        setState(() {
+                                            //await WebConfig.pauseUrl(
+                                            //    currentPosition.toString(),
+                                            //    chapterMediaID);
+                                            //print(loginData);
+                                            setState(() {
                                           if (isPlaying == true) {
                                             //here use isPlaying
                                             _assetsAudioPlayer

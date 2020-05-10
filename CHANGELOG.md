@@ -1,3 +1,9 @@
+## 1.4.3
+
+* Moved to last flutter version `>=1.17.0`
+* Implemented new android `FlutterPlugin` 
+* Stop all players while getting a phone call
+
 ## 1.4.2+1
 
 * Moved to android ExoPlayer

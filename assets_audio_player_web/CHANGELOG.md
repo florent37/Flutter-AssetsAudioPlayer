@@ -1,3 +1,8 @@
+## 1.4.3
+
+* Added `ForwardRewind`
+* Removed `howl`
+
 ## 1.4.2
 
 * Added `playSpeed`

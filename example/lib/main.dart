@@ -12,14 +12,14 @@ import 'player/VolumeSelector.dart';
 import 'player/model/MyAudio.dart';
 
 void main() => runApp(
-  NeumorphicTheme(
-    theme: NeumorphicThemeData(
-      intensity: 0.8,
-      lightSource: LightSource.topLeft,
-    ),
-    child: MyApp(),
-  ),
-);
+      NeumorphicTheme(
+        theme: NeumorphicThemeData(
+          intensity: 0.8,
+          lightSource: LightSource.topLeft,
+        ),
+        child: MyApp(),
+      ),
+    );
 
 class MyApp extends StatefulWidget {
   @override
@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         imageUrl:
-        "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
     MyAudio(
         name: "Rock",
         audio: Audio(
@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         imageUrl:
-        "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
     MyAudio(
         name: "Country",
         audio: Audio(
@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         imageUrl:
-        "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
+            "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
     MyAudio(
         name: "Electronic",
         audio: Audio("assets/audios/electronic.mp3"),
@@ -77,12 +77,12 @@ class _MyAppState extends State<MyApp> {
         name: "HipHop",
         audio: Audio("assets/audios/hiphop.mp3"),
         imageUrl:
-        "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg "),
+            "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg "),
     MyAudio(
         name: "Pop",
         audio: Audio("assets/audios/pop.mp3"),
         imageUrl:
-        "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
     MyAudio(
         name: "Instrumental",
         audio: Audio("assets/audios/instrumental.mp3"),
@@ -144,7 +144,7 @@ class _MyAppState extends State<MyApp> {
                         final Playing playing = snapshot.data;
                         if (playing != null) {
                           final myAudio =
-                          find(this.audios, playing.audio.assetAudioPath);
+                              find(this.audios, playing.audio.assetAudioPath);
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Neumorphic(
@@ -212,7 +212,7 @@ class _MyAppState extends State<MyApp> {
                                       isLooping: isLooping,
                                       isPlaying: isPlaying,
                                       isPlaylist:
-                                      playing.playlist.audios.length > 1,
+                                          playing.playlist.audios.length > 1,
                                       toggleLoop: () {
                                         _assetsAudioPlayer.toggleLoop();
                                       },
@@ -265,7 +265,7 @@ class _MyAppState extends State<MyApp> {
                             _assetsAudioPlayer.open(
                               Playlist(
                                   audios:
-                                  myAudios.map((e) => e.audio).toList()),
+                                      myAudios.map((e) => e.audio).toList()),
                               showNotification: true,
                             );
                           },
