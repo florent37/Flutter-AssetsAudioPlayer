@@ -21,7 +21,7 @@ class SongsSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Neumorphic(
       boxShape:
-          NeumorphicBoxShape.roundRect(borderRadius: BorderRadius.circular(9)),
+          NeumorphicBoxShape.roundRect(BorderRadius.circular(9)),
       style: NeumorphicStyle(
         depth: -8,
       ),
@@ -38,7 +38,7 @@ class SongsSelector extends StatelessWidget {
                 return Neumorphic(
                   margin: EdgeInsets.all(4),
                   boxShape: NeumorphicBoxShape.roundRect(
-                      borderRadius: BorderRadius.circular(8)),
+                      BorderRadius.circular(8)),
                   style: NeumorphicStyle(
                     depth: isPlaying ? -4 : 0,
                   ),

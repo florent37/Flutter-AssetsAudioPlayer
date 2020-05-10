@@ -52,6 +52,7 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
 
     fun register() {
         stopWhenCall = StopWhenCallAudioFocus(context)
+        stopWhenCall?.register(stopWhenCallListener)
 
         val channel = MethodChannel(messenger, "assets_audio_player")
         channel.setMethodCallHandler(this)
@@ -61,6 +62,7 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
 
     fun unregister(){
         stopWhenCall?.stop()
+        stopWhenCall?.unregister(stopWhenCallListener)
         players.values.forEach {
             it.stop()
         }

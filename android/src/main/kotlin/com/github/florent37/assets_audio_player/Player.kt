@@ -65,7 +65,7 @@ class Player(context: Context) {
                     // Send position (seconds) to the application.
                     onPositionChanged?.invoke(position)
 
-                    if (respectSilentMode) {
+                    if (respectSilentMode)   {
                         val ringerMode = am.ringerMode
                         if (lastRingerMode != ringerMode) { //if changed
                             lastRingerMode = ringerMode
@@ -289,6 +289,7 @@ class Player(context: Context) {
     private var wasPlayingBeforeEnablePlayChange: Boolean? = null
     fun updateEnableToPlay(enabled: Boolean){
         if(enabled){
+            this.isEnabledToPlayPause = true //this one must be called before play/pause()
             wasPlayingBeforeEnablePlayChange?.let {
                 //phone call ended
                 if(it) {
@@ -297,13 +298,12 @@ class Player(context: Context) {
                     pause()
                 }
             }
+            wasPlayingBeforeEnablePlayChange = null
         } else {
             wasPlayingBeforeEnablePlayChange = this.isPlaying
-            if (!enabled) {
-                pause()
-            }
+            pause()
+            this.isEnabledToPlayPause = false //this one must be called after pause()
         }
-        this.isEnabledToPlayPause = enabled
     }
 }
 
