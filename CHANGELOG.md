@@ -1,4 +1,4 @@
-## 1.4.3+1
+## 1.4.3+2
 
 * Moved to last flutter version `>=1.12.13+hotfix.6`
 * Implemented new android `FlutterPlugin` 
