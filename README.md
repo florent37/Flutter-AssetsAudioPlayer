@@ -129,7 +129,31 @@ You like the package ? buy me a kofi :)
   <td>✅</td>
 </tr>
 <tr>
+  <td>SeekBy(position)</td>
+  <td>✅</td>
+  <td>✅</td>
+  <td>✅</td>
+</tr>
+<tr>
+  <td>Forward(speed)</td>
+  <td>✅</td>
+  <td>✅</td>
+  <td></td>
+</tr>
+<tr>
+  <td>Rewind(speed)</td>
+  <td>✅</td>
+  <td>✅</td>
+  <td></td>
+</tr>
+<tr>
   <td>get/set Volume</td>
+  <td>✅</td>
+  <td>✅</td>
+  <td>✅</td>
+</tr>
+<tr>
+  <td>get/set Play Speed</td>
   <td>✅</td>
   <td>✅</td>
   <td>✅</td>
@@ -142,6 +166,12 @@ You like the package ? buy me a kofi :)
 </tr>
 <tr>
   <td>Respect System silent mode</td>
+  <td>✅</td>
+  <td>✅</td>
+  <td>🚫</td>
+</tr>
+<tr>
+  <td>Pause on phone call</td>
   <td>✅</td>
   <td>✅</td>
   <td>🚫</td>

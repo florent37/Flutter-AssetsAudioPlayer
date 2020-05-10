@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:assets_audio_player_web/web/web_player_howl.dart';
 import 'package:assets_audio_player_web/web/web_player_html.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_howl/howl.dart';
@@ -13,22 +12,14 @@ class AssetsAudioPlayerWebPlugin {
   final Map<String, WebPlayer> _players = Map();
   final BinaryMessenger messenger;
 
-  static bool useHowl = false;
-
   AssetsAudioPlayerWebPlugin({this.messenger}) {
     initializeHowl();
   }
 
   WebPlayer _newPlayer(String id, MethodChannel channel) {
-    if (useHowl) {
-      return WebPlayerHowl(
-        channel: channel,
-      );
-    } else {
-      return WebPlayerHtml(
-        channel: channel,
-      );
-    }
+    return WebPlayerHtml(
+      channel: channel,
+    );
   }
 
   WebPlayer _getOrCreate(String id) {
