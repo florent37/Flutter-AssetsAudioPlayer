@@ -32,6 +32,8 @@ dependencies:
   assets_audio_player: ^1.4.2+1
 ```
 
+**Works with `  flutter: ">=1.17.0 <2.0.0"`, be sure to upgrade your sdk**
+
 <details>
   <summary> 🌐 Web support</summary>
   
