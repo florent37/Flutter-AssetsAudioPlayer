@@ -253,6 +253,12 @@ assetsAudioPlayer.pause();
 
 ```Dart
 assetsAudioPlayer.seek(Duration to);
+assetsAudioPlayer.seekBy(Duration by);
+```
+
+```Dart
+assetsAudioPlayer.forwardRewind(double speed);
+//if positive, forward, if negative, rewind
 ```
 
 ```Dart
