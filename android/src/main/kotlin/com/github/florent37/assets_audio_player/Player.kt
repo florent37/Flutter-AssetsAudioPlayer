@@ -45,6 +45,8 @@ class Player(context: Context) {
     private var volume: Double = 1.0
     private var playSpeed: Double = 1.0
 
+    private var isEnabledToPlayPause: Boolean = true
+
     val isPlaying: Boolean
         get() = mediaPlayer != null && mediaPlayer!!.isPlaying
 
@@ -134,7 +136,7 @@ class Player(context: Context) {
                         stop()
                     }
                     ExoPlayer.STATE_READY -> {
-                        if(!onThisMediaReady) {
+                        if (!onThisMediaReady) {
                             onThisMediaReady = true
                             //retrieve duration in seconds
                             val duration = mediaPlayer?.duration ?: 0
@@ -190,7 +192,7 @@ class Player(context: Context) {
         }
     }
 
-    private fun stopForward(){
+    private fun stopForward() {
         forwardHandler?.takeIf { h -> h.isActive }?.let { h ->
             h.stop()
             setPlaySpeed(this.playSpeed)
@@ -199,21 +201,25 @@ class Player(context: Context) {
     }
 
     fun play() {
-        mediaPlayer?.let { player ->
-            stopForward()
-            player.playWhenReady = true
-            handler.post(updatePosition)
-            onPlaying?.invoke(true)
+        if(isEnabledToPlayPause) { //can be disabled while recieving phone call
+            mediaPlayer?.let { player ->
+                stopForward()
+                player.playWhenReady = true
+                handler.post(updatePosition)
+                onPlaying?.invoke(true)
+            }
         }
     }
 
     fun pause() {
-        mediaPlayer?.let {
-            it.playWhenReady = false
-            handler.removeCallbacks(updatePosition)
+        if(isEnabledToPlayPause) {
+            mediaPlayer?.let {
+                it.playWhenReady = false
+                handler.removeCallbacks(updatePosition)
 
-            stopForward()
-            onPlaying?.invoke(false)
+                stopForward()
+                onPlaying?.invoke(false)
+            }
         }
     }
 
@@ -278,6 +284,26 @@ class Player(context: Context) {
 
         onForwardRewind?.invoke(speed)
         forwardHandler!!.start(this, speed)
+    }
+
+    private var wasPlayingBeforeEnablePlayChange: Boolean? = null
+    fun updateEnableToPlay(enabled: Boolean){
+        if(enabled){
+            wasPlayingBeforeEnablePlayChange?.let {
+                //phone call ended
+                if(it) {
+                    play()
+                } else {
+                    pause()
+                }
+            }
+        } else {
+            wasPlayingBeforeEnablePlayChange = this.isPlaying
+            if (!enabled) {
+                pause()
+            }
+        }
+        this.isEnabledToPlayPause = enabled
     }
 }
 

@@ -1,6 +1,9 @@
 package com.github.florent37.assets_audio_player
 
+import StopWhenCall
+import StopWhenCallAudioFocus
 import android.content.Context
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -17,15 +20,30 @@ internal val METHOD_IS_PLAYING = "player.isPlaying"
 internal val METHOD_CURRENT = "player.current"
 internal val METHOD_NEXT = "player.next"
 internal val METHOD_PREV = "player.prev"
-
-
+    
 class AssetsAudioPlayerPlugin(private val context: Context, private val messenger: BinaryMessenger, private val channel: MethodChannel) : MethodCallHandler {
 
     companion object {
+        
+        private var stopWhenCall : StopWhenCall? = null
+        private val stopWhenCallListener = object: StopWhenCall.Listener {
+            override fun onPhoneStateChanged(enabledToPlay: Boolean) {
+                players.values.forEach {
+                    it.updateEnableToPlay(enabledToPlay)
+                }
+            }
+        }
+        
         @JvmStatic
         fun registerWith(registrar: Registrar) {
+            stopWhenCall = StopWhenCallAudioFocus(registrar.context())
+
             val channel = MethodChannel(registrar.messenger(), "assets_audio_player")
             channel.setMethodCallHandler(AssetsAudioPlayerPlugin(registrar.context(), registrar.messenger(), channel))
+
+            stopWhenCall?.start()
+
+            //TODO unregister, need to update flutter version
         }
 
         private val players = mutableMapOf<String, Player>()
