@@ -48,4 +48,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation 'com.google.android.exoplayer:exoplayer:2.11.4'
+    implementation "androidx.media:media:1.1.0"
 }
