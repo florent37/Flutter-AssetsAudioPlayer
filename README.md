@@ -140,13 +140,13 @@ You like the package ? buy me a kofi :)
   <td>Forward(speed)</td>
   <td>✅</td>
   <td>✅</td>
-  <td></td>
+  <td>✅</td>
 </tr>
 <tr>
   <td>Rewind(speed)</td>
   <td>✅</td>
   <td>✅</td>
-  <td></td>
+  <td>✅</td>
 </tr>
 <tr>
   <td>get/set Volume</td>

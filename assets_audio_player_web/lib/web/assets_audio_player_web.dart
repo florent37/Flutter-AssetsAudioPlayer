@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:assets_audio_player_web/web/web_player_html.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_web_howl/howl.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 import 'abstract_web_player.dart';
@@ -12,9 +11,7 @@ class AssetsAudioPlayerWebPlugin {
   final Map<String, WebPlayer> _players = Map();
   final BinaryMessenger messenger;
 
-  AssetsAudioPlayerWebPlugin({this.messenger}) {
-    initializeHowl();
-  }
+  AssetsAudioPlayerWebPlugin({this.messenger});
 
   WebPlayer _newPlayer(String id, MethodChannel channel) {
     return WebPlayerHtml(
@@ -81,6 +78,12 @@ class AssetsAudioPlayerWebPlugin {
         final String id = call.arguments["id"];
         final double playSpeed = call.arguments["playSpeed"];
         _getOrCreate(id).playSpeed = playSpeed;
+        return Future.value(true);
+        break;
+      case "forwardRewind":
+        final String id = call.arguments["id"];
+        final double speed = call.arguments["speed"];
+        _getOrCreate(id).forwardRewind(speed);
         return Future.value(true);
         break;
       case "seek":

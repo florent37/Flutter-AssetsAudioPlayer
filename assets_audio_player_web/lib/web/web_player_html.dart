@@ -90,6 +90,7 @@ class WebPlayerHtml extends WebPlayer {
   void play() {
     if (_audioElement != null) {
       isPlaying = true;
+      forwardHandler?.stop();
       _audioElement.play();
     }
   }
@@ -98,12 +99,16 @@ class WebPlayerHtml extends WebPlayer {
   void pause() {
     if (_audioElement != null) {
       isPlaying = false;
+      forwardHandler?.stop();
       _audioElement.pause();
     }
   }
 
   @override
   void stop() {
+    forwardHandler?.stop();
+    forwardHandler = null;
+
     _clearListeners();
 
     if (_audioElement != null) {
@@ -135,6 +140,13 @@ class WebPlayerHtml extends WebPlayer {
       }
       this.volume = volume;
 
+      final duration = _audioElement.duration;
+      if (duration != _duration) {
+        _duration = duration;
+        channel
+            .invokeMethod(WebPlayer.methodCurrent, {"totalDuration": duration});
+      }
+
       if (seek != null) {
         this.seek(to: seek);
       }
@@ -152,5 +164,42 @@ class WebPlayerHtml extends WebPlayer {
         _audioElement?.currentTime = to;
       }
     }
+  }
+
+  void seekBy({double by}) {
+    final current = currentPosition;
+    final to = current + by;
+    seek(to: to);
+  }
+
+  ForwardHandler forwardHandler;
+  @override
+  void forwardRewind(double speed) {
+    pause();
+    channel.invokeMethod(WebPlayer.methodForwardRewindSpeed, speed);
+    if(forwardHandler != null){
+      forwardHandler.stop();
+    }
+    forwardHandler = ForwardHandler();
+    _listenPosition(); //for this usecase, enable listen position
+    forwardHandler.start(this, speed);
+  }
+
+}
+
+class ForwardHandler {
+
+  bool _isEnabled = false;
+  static final _timelapse = 300;
+
+  void start(WebPlayerHtml player, double speed) async {
+    _isEnabled = true;
+    while(_isEnabled){
+      player.seekBy(by: speed * _timelapse);
+      await Future.delayed(Duration(milliseconds: _timelapse));
+    }
+  }
+  void stop(){
+    _isEnabled = false;
   }
 }

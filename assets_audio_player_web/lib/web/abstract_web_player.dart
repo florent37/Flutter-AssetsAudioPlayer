@@ -13,6 +13,7 @@ abstract class WebPlayer {
   static final methodFinished = "player.finished";
   static final methodIsPlaying = "player.isPlaying";
   static final methodCurrent = "player.current";
+  static final methodForwardRewindSpeed = "player.forwardRewind";
 
   WebPlayer({this.channel});
 
@@ -60,4 +61,6 @@ abstract class WebPlayer {
       bool autoStart});
 
   void seek({double to});
+
+  void forwardRewind(double speed);
 }
