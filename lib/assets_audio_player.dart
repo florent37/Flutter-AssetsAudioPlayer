@@ -89,8 +89,7 @@ class AssetsAudioPlayer {
   /// empty constructor now create a new player
   factory AssetsAudioPlayer() => AssetsAudioPlayer.newPlayer();
 
-  factory AssetsAudioPlayer.withId(String id) =>
-      _getOrCreate(id: id ?? uuid.v4());
+  factory AssetsAudioPlayer.withId(String id) => _getOrCreate(id: id ?? uuid.v4());
 
   /// Create a new player for this audio, play it, and dispose it automatically
   static void playAndForget(
@@ -108,7 +107,14 @@ class AssetsAudioPlayer {
         player.dispose();
       }
     });
-    player.open(audio, volume: volume, seek: seek, respectSilentMode: respectSilentMode, autoStart: true, playSpeed: playSpeed);
+    player.open(
+      audio,
+      volume: volume,
+      seek: seek,
+      respectSilentMode: respectSilentMode,
+      autoStart: true,
+      playSpeed: playSpeed,
+    );
   }
 
   ReadingPlaylist get playlist {
@@ -299,7 +305,10 @@ class AssetsAudioPlayer {
               audio: playingAudio,
               index: _playlist.playlistIndex,
               hasNext: _playlist.hasNext(),
-              playlist: ReadingPlaylist(audios: _playlist.playlist.audios, currentIndex: _playlist.playlistIndex),
+              playlist: ReadingPlaylist(
+                audios: _playlist.playlist.audios,
+                currentIndex: _playlist.playlistIndex,
+              ),
             );
           }
           break;
@@ -345,7 +354,13 @@ class AssetsAudioPlayer {
       this.currentPosition,
     ])
         .map((values) => RealtimePlayingInfos(
-            volume: values[0], isPlaying: values[1], isLooping: values[2], current: values[3], currentPosition: values[4], playerId: this.id))
+              volume: values[0],
+              isPlaying: values[1],
+              isLooping: values[2],
+              current: values[3],
+              currentPosition: values[4],
+              playerId: this.id,
+            ))
         .listen((readingInfos) {
       this._realtimePlayingInfos.value = readingInfos;
     });
@@ -372,11 +387,13 @@ class AssetsAudioPlayer {
   }
 
   void _openPlaylistCurrent() {
-    _open(_playlist.currentAudio(),
-        forcedVolume: _playlist.volume,
-        respectSilentMode: _playlist.respectSilentMode,
-        showNotification: _playlist.showNotification,
-        playSpeed: _playlist.playSpeed);
+    _open(
+      _playlist.currentAudio(),
+      forcedVolume: _playlist.volume,
+      respectSilentMode: _playlist.respectSilentMode,
+      showNotification: _playlist.showNotification,
+      playSpeed: _playlist.playSpeed,
+    );
   }
 
   bool next({bool stopIfLast = false}) {
@@ -488,8 +505,13 @@ class AssetsAudioPlayer {
   }) async {
     _lastSeek = null;
     _replaceRealtimeSubscription();
-    this._playlist =
-        _CurrentPlaylist(playlist: playlist, volume: volume, respectSilentMode: respectSilentMode, showNotification: showNotification, playSpeed: playSpeed);
+    this._playlist = _CurrentPlaylist(
+      playlist: playlist,
+      volume: volume,
+      respectSilentMode: respectSilentMode,
+      showNotification: showNotification,
+      playSpeed: playSpeed,
+    );
     _playlist.moveTo(playlist.startIndex);
     _open(
       _playlist.currentAudio(),
@@ -525,11 +547,25 @@ class AssetsAudioPlayer {
     double playSpeed,
   }) async {
     if (playable is Playlist && playable.audios != null && playable.audios.length > 0) {
-      _openPlaylist(playable,
-          autoStart: autoStart, volume: volume, respectSilentMode: respectSilentMode, showNotification: showNotification, seek: seek, playSpeed: playSpeed);
+      _openPlaylist(
+        playable,
+        autoStart: autoStart,
+        volume: volume,
+        respectSilentMode: respectSilentMode,
+        showNotification: showNotification,
+        seek: seek,
+        playSpeed: playSpeed,
+      );
     } else if (playable is Audio) {
-      _openPlaylist(Playlist(audios: [playable]),
-          autoStart: autoStart, volume: volume, respectSilentMode: respectSilentMode, showNotification: showNotification, seek: seek, playSpeed: playSpeed);
+      _openPlaylist(
+        Playlist(audios: [playable]),
+        autoStart: autoStart,
+        volume: volume,
+        respectSilentMode: respectSilentMode,
+        showNotification: showNotification,
+        seek: seek,
+        playSpeed: playSpeed,
+      );
     } else {
       //do nothing
       //throw exception ?
@@ -740,7 +776,13 @@ class _CurrentPlaylist {
     return playlistIndex + 1 < playlist.numberOfItems;
   }
 
-  _CurrentPlaylist({@required this.playlist, this.volume, this.respectSilentMode, this.showNotification, this.playSpeed});
+  _CurrentPlaylist({
+    @required this.playlist,
+    this.volume,
+    this.respectSilentMode,
+    this.showNotification,
+    this.playSpeed,
+  });
 
   void returnToFirst() {
     playlistIndex = 0;
