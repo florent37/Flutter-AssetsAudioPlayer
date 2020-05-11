@@ -495,6 +495,7 @@ class AssetsAudioPlayer {
       _playlist.currentAudio(),
       autoStart: autoStart,
       forcedVolume: volume,
+      playSpeed: playSpeed,
       respectSilentMode: respectSilentMode,
       showNotification: showNotification,
       seek: seek,
