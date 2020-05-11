@@ -88,6 +88,7 @@ class Player(context: Context) {
              volume: Double,
              seek: Int?,
              respectSilentMode: Boolean,
+             playSpeed: Double,
              result: MethodChannel.Result, context: Context) {
         stop()
 
@@ -148,6 +149,7 @@ class Player(context: Context) {
                                 play()
                             }
                             setVolume(volume)
+                            setPlaySpeed(playSpeed)
 
                             seek?.let {
                                 this@Player.seek(milliseconds = seek * 1000L)

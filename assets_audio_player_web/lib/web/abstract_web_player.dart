@@ -58,7 +58,8 @@ abstract class WebPlayer {
       String audioType,
       double volume,
       double seek,
-      bool autoStart});
+      bool autoStart,
+      double playSpeed});
 
   void seek({double to});
 
