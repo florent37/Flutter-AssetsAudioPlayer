@@ -739,11 +739,7 @@ class _CurrentPlaylist {
     return playlistIndex + 1 < playlist.numberOfItems;
   }
 
-  _CurrentPlaylist(
-      {@required this.playlist,
-      this.volume,
-      this.respectSilentMode,
-      this.showNotification});
+  _CurrentPlaylist({@required this.playlist, this.volume, this.respectSilentMode, this.showNotification, this.playSpeed});
 
   void returnToFirst() {
     playlistIndex = 0;
