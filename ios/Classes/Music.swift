@@ -253,6 +253,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
               autoStart: Bool, volume: Double,
               seek: Int?, respectSilentMode: Bool,
               audioMetas: AudioMetas, displayNotification: Bool,
+              playSpeed: Double,
               result: FlutterResult
     ){
         self.stop();
@@ -303,7 +304,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                      }
                      
                      self?.setVolume(volume: volume)
-                    
+                     self?.setPlaySpeed(playSpeed: playSpeed)
+
                      if(seek != nil){
                         self?.seek(to: seek!)
                      }
@@ -573,6 +575,7 @@ class Music : NSObject, FlutterPlugin {
                 let audioType = args["audioType"] as! String
                 let volume = args["volume"] as! Double
                 let seek = args["seek"] as? Int
+                let playSpeed = args["playSpeed"] as! Double
                 let autoStart = args["autoStart"] as! Bool
                 //metas
                 let songTitle = args["song.title"] as? String
@@ -596,6 +599,7 @@ class Music : NSObject, FlutterPlugin {
                         respectSilentMode: respectSilentMode,
                         audioMetas: audioMetas,
                         displayNotification: displayNotification,
+                        playSpeed: playSpeed,
                         result: result
                     );
             break;

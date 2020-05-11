@@ -246,6 +246,10 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
                         result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
                         return
                     }
+                    val playSpeed = args["playSpeed"] as? Double ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
+                        return
+                    }
                     val autoStart = args["autoStart"] as? Boolean ?: true
                     val respectSilentMode = args["respectSilentMode"] as? Boolean ?: false
                     val seek = args["seek"] as? Int?
@@ -257,6 +261,7 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
                             volume,
                             seek,
                             respectSilentMode,
+                            playSpeed,
                             result,
                             context
                     )

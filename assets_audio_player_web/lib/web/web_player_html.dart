@@ -125,7 +125,8 @@ class WebPlayerHtml extends WebPlayer {
       String audioType,
       double volume,
       double seek,
-      bool autoStart}) async {
+      bool autoStart,
+      double playSpeed}) async {
     stop();
     _duration = null;
     _position = null;
@@ -149,6 +150,10 @@ class WebPlayerHtml extends WebPlayer {
 
       if (seek != null) {
         this.seek(to: seek);
+      }
+
+      if(playSpeed != null){
+        this.playSpeed(playSpeed);
       }
 
       //single event
