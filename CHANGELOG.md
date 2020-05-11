@@ -1,8 +1,9 @@
-## 1.4.3+2
+## 1.4.3+3
 
 * Moved to last flutter version `>=1.12.13+hotfix.6`
 * Implemented new android `FlutterPlugin` 
 * Stop all players while getting a phone call
+* Added `playspeed` as optional parameter on on open()
 
 ## 1.4.2+1
 

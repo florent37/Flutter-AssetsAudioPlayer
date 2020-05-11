@@ -152,7 +152,7 @@ class WebPlayerHtml extends WebPlayer {
         this.seek(to: seek);
       }
 
-      if(playSpeed != null){
+      if (playSpeed != null) {
         this.playSpeed(playSpeed);
       }
 
