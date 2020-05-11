@@ -134,7 +134,7 @@ class RealtimePlayingInfos {
     @required this.volume,
     @required this.isPlaying,
     @required this.isLooping,
-  }) : this.duration = current.audio.duration;
+  }) : this.duration = current?.audio?.duration ?? Duration();
 
   double get playingPercent => this.duration.inMilliseconds == 0
       ? 0

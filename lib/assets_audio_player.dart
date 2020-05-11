@@ -300,23 +300,26 @@ class AssetsAudioPlayer {
           previous();
           break;
         case METHOD_CURRENT:
-          final totalDuration = _toDuration(call.arguments["totalDuration"]);
+          if(call.arguments == null){
+            _current.value = null;
+          } else {
+            final totalDuration = _toDuration(call.arguments["totalDuration"]);
 
-          final playingAudio = PlayingAudio(
-            audio: _lastOpenedAssetsAudio,
-            duration: totalDuration,
-          );
-
-          if (_playlist != null) {
-            _current.value = Playing(
-              audio: playingAudio,
-              index: _playlist.playlistIndex,
-              hasNext: _playlist.hasNext(),
-              playlist: ReadingPlaylist(
-                audios: _playlist.playlist.audios,
-                currentIndex: _playlist.playlistIndex,
-              ),
+            final playingAudio = PlayingAudio(
+              audio: _lastOpenedAssetsAudio,
+              duration: totalDuration,
             );
+
+            if (_playlist != null) {
+              _current.value = Playing(
+                audio: playingAudio,
+                index: _playlist.playlistIndex,
+                hasNext: _playlist.hasNext(),
+                playlist: ReadingPlaylist(
+                  audios: _playlist.playlist.audios,
+                  currentIndex: _playlist.playlistIndex),
+              );
+            }
           }
           break;
         case METHOD_POSITION:

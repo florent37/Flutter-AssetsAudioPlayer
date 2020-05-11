@@ -1,15 +1,15 @@
+import 'dart:async';
+
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:assets_audio_player_example/player/PlaySpeedSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'dart:async';
 
 import 'player/ForwardRewindSelector.dart';
 import 'player/PlayingControls.dart';
 import 'player/PositionSeekWidget.dart';
 import 'player/SongsSelector.dart';
 import 'player/VolumeSelector.dart';
-import 'player/model/MyAudio.dart';
 
 void main() => runApp(
       NeumorphicTheme(
@@ -27,66 +27,70 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final audios = <MyAudio>[
-    MyAudio(
-        name: "Online",
-        audio: Audio.network(
-          "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3",
-          metas: Metas(
-            title: "Online",
-            artist: "Florent Champigny",
-            album: "",
-            image: MetasImage.network(
-                "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
-          ),
-        ),
-        imageUrl:
-            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
-    MyAudio(
-        name: "Rock",
-        audio: Audio(
-          "assets/audios/rock.mp3",
-          metas: Metas(
-            title: "Rock",
-            artist: "Florent Champigny",
-            album: "",
-            image: MetasImage.network(
-                "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
-          ),
-        ),
-        imageUrl:
-            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
-    MyAudio(
-        name: "Country",
-        audio: Audio(
-          "assets/audios/country.mp3",
-          metas: Metas(
-            title: "Country",
-            artist: "Florent Champigny",
-            album: "CountryAlbum",
-            image: MetasImage.asset("assets/images/country.jpg"),
-          ),
-        ),
-        imageUrl:
-            "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
-    MyAudio(
-        name: "Electronic",
-        audio: Audio("assets/audios/electronic.mp3"),
-        imageUrl: "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
-    MyAudio(
-        name: "HipHop",
-        audio: Audio("assets/audios/hiphop.mp3"),
-        imageUrl:
-            "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg "),
-    MyAudio(
-        name: "Pop",
-        audio: Audio("assets/audios/pop.mp3"),
-        imageUrl:
-            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
-    MyAudio(
-        name: "Instrumental",
-        audio: Audio("assets/audios/instrumental.mp3"),
-        imageUrl: "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
+  final audios = <Audio>[
+    Audio.network(
+      "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3",
+      metas: Metas(
+        title: "Online",
+        artist: "Florent Champigny",
+        album: "",
+        image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+      ),
+    ),
+    Audio(
+      "assets/audios/rock.mp3",
+      metas: Metas(
+        title: "Rock",
+        artist: "Florent Champigny",
+        album: "",
+        image: MetasImage.network("https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+      ),
+    ),
+    Audio(
+      "assets/audios/country.mp3",
+      metas: Metas(
+        title: "Country",
+        artist: "Florent Champigny",
+        album: "CountryAlbum",
+        image: MetasImage.asset("assets/images/country.jpg"),
+      ),
+    ),
+    Audio(
+      "assets/audios/electronic.mp3",
+      metas: Metas(
+        title: "Electronic",
+        artist: "Florent Champigny",
+        album: "ElectronicAlbum",
+        image: MetasImage.network("https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
+      ),
+    ),
+    Audio(
+      "assets/audios/hiphop.mp3",
+      metas: Metas(
+        title: "HipHop",
+        artist: "Florent Champigny",
+        album: "HipHopAlbum",
+        image: MetasImage.network("https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg"),
+      ),
+    ),
+    Audio(
+      "assets/audios/pop.mp3",
+      metas: Metas(
+        title: "Pop",
+        artist: "Florent Champigny",
+        album: "PopAlbum",
+        image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+      ),
+    ),
+    Audio(
+      "assets/audios/instrumental.mp3",
+      metas: Metas(
+        title: "Instrumental",
+        artist: "Florent Champigny",
+        album: "InstrumentalAlbum",
+        image: MetasImage.network("https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
+      ),
+    ),
   ];
 
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
@@ -115,8 +119,8 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  MyAudio find(List<MyAudio> source, String fromPath) {
-    return source.firstWhere((element) => element.audio.path == fromPath);
+  Audio find(List<Audio> source, String fromPath) {
+    return source.firstWhere((element) => element.path == fromPath);
   }
 
   @override
@@ -139,26 +143,28 @@ class _MyAppState extends State<MyApp> {
                   children: <Widget>[
                     StreamBuilder(
                       stream: _assetsAudioPlayer.current,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<Playing> snapshot) {
+                      builder: (BuildContext context, AsyncSnapshot<Playing> snapshot) {
                         final Playing playing = snapshot.data;
                         if (playing != null) {
-                          final myAudio =
-                              find(this.audios, playing.audio.assetAudioPath);
+                          final myAudio = find(this.audios, playing.audio.assetAudioPath);
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Neumorphic(
                               boxShape: NeumorphicBoxShape.circle(),
-                              style: NeumorphicStyle(
-                                  depth: 8,
-                                  surfaceIntensity: 1,
-                                  shape: NeumorphicShape.concave),
-                              child: Image.network(
-                                myAudio.imageUrl,
-                                height: 150,
-                                width: 150,
-                                fit: BoxFit.contain,
-                              ),
+                              style: NeumorphicStyle(depth: 8, surfaceIntensity: 1, shape: NeumorphicShape.concave),
+                              child: myAudio.metas.image.type == ImageType.network
+                                  ? Image.network(
+                                      myAudio.metas.image.path,
+                                      height: 150,
+                                      width: 150,
+                                      fit: BoxFit.contain,
+                                    )
+                                  : Image.asset(
+                                      myAudio.metas.image.path,
+                                      height: 150,
+                                      width: 150,
+                                      fit: BoxFit.contain,
+                                    ),
                             ),
                           );
                         }
@@ -172,8 +178,7 @@ class _MyAppState extends State<MyApp> {
                         padding: EdgeInsets.all(18),
                         margin: EdgeInsets.all(18),
                         onClick: () {
-                          AssetsAudioPlayer.playAndForget(
-                              Audio("assets/audios/horn.mp3"));
+                          AssetsAudioPlayer.playAndForget(Audio("assets/audios/horn.mp3"));
                         },
                         child: Icon(
                           Icons.add_alert,
@@ -211,8 +216,7 @@ class _MyAppState extends State<MyApp> {
                                     return PlayingControls(
                                       isLooping: isLooping,
                                       isPlaying: isPlaying,
-                                      isPlaylist:
-                                          playing.playlist.audios.length > 1,
+                                      isPlaylist: playing.playlist.audios.length > 1,
                                       toggleLoop: () {
                                         _assetsAudioPlayer.toggleLoop();
                                       },
@@ -236,8 +240,7 @@ class _MyAppState extends State<MyApp> {
                                 if (!snapshot.hasData) {
                                   return SizedBox();
                                 }
-                                final RealtimePlayingInfos infos =
-                                    snapshot.data;
+                                final RealtimePlayingInfos infos = snapshot.data;
                                 //print("infos: $infos");
                                 return PositionSeekWidget(
                                   currentPosition: infos.currentPosition,
@@ -256,22 +259,19 @@ class _MyAppState extends State<MyApp> {
                 Expanded(
                   child: StreamBuilder(
                       stream: _assetsAudioPlayer.current,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<Playing> snapshot) {
+                      builder: (BuildContext context, AsyncSnapshot<Playing> snapshot) {
                         final Playing playing = snapshot.data;
                         return SongsSelector(
                           audios: this.audios,
                           onPlaylistSelected: (myAudios) {
                             _assetsAudioPlayer.open(
-                              Playlist(
-                                  audios:
-                                      myAudios.map((e) => e.audio).toList()),
+                              Playlist(audios: myAudios),
                               showNotification: true,
                             );
                           },
                           onSelected: (myAudio) {
                             _assetsAudioPlayer.open(
-                              myAudio.audio,
+                              myAudio,
                               autoStart: false,
                               respectSilentMode: true,
                               showNotification: true,

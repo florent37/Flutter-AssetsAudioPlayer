@@ -6,6 +6,8 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Handler
 import android.os.Message
+import com.github.florent37.assets_audio_player.notification.AudioMetas
+import com.github.florent37.assets_audio_player.notification.NotificationManager
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player
@@ -23,7 +25,7 @@ import kotlin.math.max
 /**
  * Does not depend on Flutter, feel free to use it in all your projects
  */
-class Player(context: Context, private val stopWhenCall: StopWhenCall) {
+class Player(val id: String, context: Context, private val stopWhenCall: StopWhenCall, private val notificationManager: NotificationManager) {
 
     companion object {
         const val VOLUME_WHEN_REDUCED = 0.3
@@ -44,6 +46,9 @@ class Player(context: Context, private val stopWhenCall: StopWhenCall) {
     var onPositionChanged: ((Long) -> Unit)? = null
     var onFinished: (() -> Unit)? = null
     var onPlaying: ((Boolean) -> Unit)? = null
+    var onNext: (() -> Unit)? = null
+    var onPrev: (() -> Unit)? = null
+    var onStop: (() -> Unit)? = null
     //endregion
 
     private var respectSilentMode: Boolean = false
@@ -58,6 +63,9 @@ class Player(context: Context, private val stopWhenCall: StopWhenCall) {
 
     private var lastRingerMode: Int? = null //see https://developer.android.com/reference/android/media/AudioManager.html?hl=fr#getRingerMode()
 
+    private var displayNotification = false
+    private var audioMetas: AudioMetas? = null
+
     private val updatePosition = object : Runnable {
         override fun run() {
             mediaPlayer?.let { mediaPlayer ->
@@ -71,7 +79,7 @@ class Player(context: Context, private val stopWhenCall: StopWhenCall) {
                     // Send position (seconds) to the application.
                     onPositionChanged?.invoke(position)
 
-                    if (respectSilentMode)   {
+                    if (respectSilentMode) {
                         val ringerMode = am.ringerMode
                         if (lastRingerMode != ringerMode) { //if changed
                             lastRingerMode = ringerMode
@@ -88,18 +96,29 @@ class Player(context: Context, private val stopWhenCall: StopWhenCall) {
         }
     }
 
+    fun next() {
+        this.onNext?.invoke()
+    }
+
+    fun prev() {
+        this.onPrev?.invoke()
+    }
+
     fun open(assetAudioPath: String?,
              audioType: String,
              autoStart: Boolean,
              volume: Double,
              seek: Int?,
              respectSilentMode: Boolean,
+             displayNotification: Boolean,
+             audioMetas: AudioMetas,
              playSpeed: Double,
              result: MethodChannel.Result, context: Context) {
         stop()
 
         this.mediaPlayer = SimpleExoPlayer.Builder(context).build();
-
+        this.displayNotification = displayNotification
+        this.audioMetas = audioMetas
         this.respectSilentMode = respectSilentMode
 
         lateinit var mediaSource: MediaSource
@@ -154,6 +173,7 @@ class Player(context: Context, private val stopWhenCall: StopWhenCall) {
                             if (autoStart) {
                                 play()
                             }
+                            updateNotif()
                             setVolume(volume)
                             setPlaySpeed(playSpeed)
 
@@ -180,6 +200,7 @@ class Player(context: Context, private val stopWhenCall: StopWhenCall) {
 
             mediaPlayer?.stop()
             mediaPlayer?.release()
+            updateNotif()
             onPlaying?.invoke(false)
             handler.removeCallbacks(updatePosition)
         }
@@ -189,6 +210,7 @@ class Player(context: Context, private val stopWhenCall: StopWhenCall) {
         }
         onForwardRewind?.invoke(0.0)
         mediaPlayer = null
+        onStop?.invoke()
     }
 
 
@@ -208,13 +230,20 @@ class Player(context: Context, private val stopWhenCall: StopWhenCall) {
         onForwardRewind?.invoke(0.0)
     }
 
+    private fun updateNotif() {
+        this.audioMetas?.takeIf { this.displayNotification }?.let { audioMetas ->
+            notificationManager.showNotification(playerId = id, audioMetas = audioMetas, isPlaying = this.isPlaying)
+        }
+    }
+
     fun play() {
-        if(isEnabledToPlayPause) { //can be disabled while recieving phone call
+        if (isEnabledToPlayPause) { //can be disabled while recieving phone call
             mediaPlayer?.let { player ->
                 stopForward()
                 player.playWhenReady = true
                 handler.post(updatePosition)
                 onPlaying?.invoke(true)
+                updateNotif()
             }
         } else {
             this.stopWhenCall.requestAudioFocus()
@@ -222,13 +251,14 @@ class Player(context: Context, private val stopWhenCall: StopWhenCall) {
     }
 
     fun pause() {
-        if(isEnabledToPlayPause) {
+        if (isEnabledToPlayPause) {
             mediaPlayer?.let {
                 it.playWhenReady = false
                 handler.removeCallbacks(updatePosition)
 
                 stopForward()
                 onPlaying?.invoke(false)
+                updateNotif()
             }
         }
     }
