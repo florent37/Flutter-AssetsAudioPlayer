@@ -706,8 +706,6 @@ class _CurrentPlaylist {
 
   int playlistIndex = 0;
 
-  _CurrentPlaylist({@required this.playlist, this.volume, this.respectSilentMode, this.showNotification, this.playSpeed});
-
   int selectNext() {
     if (hasNext()) {
       playlistIndex += 1;
