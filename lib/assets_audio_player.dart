@@ -98,6 +98,7 @@ class AssetsAudioPlayer {
     double volume,
     bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
     Duration seek,
+    double playSpeed,
   }) {
     final player = AssetsAudioPlayer.newPlayer();
     StreamSubscription onFinished;
@@ -107,7 +108,7 @@ class AssetsAudioPlayer {
         player.dispose();
       }
     });
-    player.open(audio, volume: volume, seek: seek, respectSilentMode: respectSilentMode, autoStart: true);
+    player.open(audio, volume: volume, seek: seek, respectSilentMode: respectSilentMode, autoStart: true, playSpeed: playSpeed);
   }
 
   ReadingPlaylist get playlist {
