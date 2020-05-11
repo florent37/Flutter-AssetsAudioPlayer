@@ -141,8 +141,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                 return Neumorphic(
                   margin: EdgeInsets.all(8),
                   padding: const EdgeInsets.all(12.0),
-                  boxShape: NeumorphicBoxShape.roundRect(
-                      borderRadius: BorderRadius.circular(8)),
+                  boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
                   child: Column(
                     children: <Widget>[
                       Row(
