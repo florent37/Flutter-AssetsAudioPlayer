@@ -61,11 +61,12 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             }
 
         } else if(audioType == "file"){
-            let urlStr : String = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-            if let u = URL(string: urlStr) {
+            let localPath = "file://"+path
+            //let urlStr : String = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+            if let u = URL(string: localPath) {
                  return u
             } else {
-                print("Couldn't parse myURL = \(urlStr)")
+                print("Couldn't parse myURL = \(localPath)")
                 return nil
             }
         }  else { //asset
