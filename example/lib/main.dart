@@ -33,7 +33,7 @@ class _MyAppState extends State<MyApp> {
       metas: Metas(
         title: "Online",
         artist: "Florent Champigny",
-        album: "",
+        album: "OnlineAlbum",
         image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
       ),
     ),
@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
       metas: Metas(
         title: "Rock",
         artist: "Florent Champigny",
-        album: "",
+        album: "RockAlbum",
         image: MetasImage.network("https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
       ),
     ),

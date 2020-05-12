@@ -62,7 +62,7 @@ class NotificationService : Service() {
         GlobalScope.launch(Dispatchers.Main) {
             if (action.audioMetas.imageType != null && action.audioMetas.image != null) {
                 try {
-                    val image = getBitmap(context = applicationContext, fileType = action.audioMetas.imageType, filePath = action.audioMetas.image)
+                    val image = ImageDownloader.getBitmap(context = applicationContext, fileType = action.audioMetas.imageType, filePath = action.audioMetas.image)
                     displayNotification(action, image) //display without image for now
                 } catch (t: Throwable) {
                     t.printStackTrace()
@@ -115,8 +115,9 @@ class NotificationService : Service() {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentTitle(action.audioMetas.title)
                 .setContentText(action.audioMetas.artist)
-                .setSubText(action.audioMetas.title)
-                .setContentIntent(PendingIntent.getBroadcast(this, 0, createReturnIntent(forAction = NotificationAction.ACTION_SELECT, forPlayer = action.playerId), PendingIntent.FLAG_CANCEL_CURRENT))
+                .setSubText(action.audioMetas.album)
+                .setContentIntent(PendingIntent.getBroadcast(this, 0,
+                        createReturnIntent(forAction = NotificationAction.ACTION_SELECT, forPlayer = action.playerId), PendingIntent.FLAG_CANCEL_CURRENT))
                 .also {
                     if(bitmap != null){
                         it.setLargeIcon(bitmap)
@@ -145,86 +146,6 @@ class NotificationService : Service() {
             NotificationManagerCompat.from(applicationContext).createNotificationChannel(
                     serviceChannel
             )
-        }
-    }
-
-    suspend fun getBitmap(context: Context, fileType: String, filePath: String): Bitmap = withContext(Dispatchers.IO) {
-        suspendCoroutine<Bitmap> { continuation ->
-            try {
-                when (fileType) {
-                    "asset" -> {
-                        Glide.with(applicationContext)
-                                .asBitmap()
-                                .timeout(5000)
-                                .load(Uri.parse("file:///android_asset/flutter_assets/$filePath"))
-                                .into(object : CustomTarget<Bitmap>() {
-                                    override fun onLoadFailed(errorDrawable: Drawable?) {
-                                        continuation.resumeWithException(Exception("failed to download $filePath"))
-                                    }
-
-                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                        continuation.resume(resource)
-                                    }
-
-                                    override fun onLoadCleared(placeholder: Drawable?) {
-
-                                    }
-                                })
-
-                        //val istr = context.assets.open("flutter_assets/$filePath")
-                        //val bitmap = BitmapFactory.decodeStream(istr)
-                        //continuation.resume(bitmap)
-                    }
-                    "network" -> {
-                        Glide.with(applicationContext)
-                                .asBitmap()
-                                .timeout(5000)
-                                .load(filePath)
-                                .into(object : CustomTarget<Bitmap>() {
-                                    override fun onLoadFailed(errorDrawable: Drawable?) {
-                                        continuation.resumeWithException(Exception("failed to download $filePath"))
-                                    }
-
-                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                        continuation.resume(resource)
-                                    }
-
-                                    override fun onLoadCleared(placeholder: Drawable?) {
-
-                                    }
-                                })
-                    }
-                    else -> {
-                        //val options = BitmapFactory.Options().apply {
-                        //    inPreferredConfig = Bitmap.Config.ARGB_8888
-                        //}
-                        //val bitmap = BitmapFactory.decodeFile(filePath, options)
-                        //continuation.resume(bitmap)
-
-                        Glide.with(applicationContext)
-                                .asBitmap()
-                                .timeout(5000)
-                                .load(File(filePath).path)
-                                .into(object : CustomTarget<Bitmap>() {
-                                    override fun onLoadFailed(errorDrawable: Drawable?) {
-                                        continuation.resumeWithException(Exception("failed to download $filePath"))
-                                    }
-
-                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                        continuation.resume(resource)
-                                    }
-
-                                    override fun onLoadCleared(placeholder: Drawable?) {
-
-                                    }
-                                })
-                    }
-                }
-            } catch (t: Throwable) {
-                // handle exception
-                t.printStackTrace()
-                continuation.resumeWithException(t)
-            }
         }
     }
 
