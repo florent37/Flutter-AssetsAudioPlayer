@@ -1,3 +1,7 @@
+## 1.4+3+6
+
+* Beta fix for audio focus
+
 ## 1.4+3+5 
 
 * Beta implementation of local file play on iOS
