@@ -1,0 +1,37 @@
+package com.github.florent37.assets_audio_player.notification
+
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import com.github.florent37.assets_audio_player.AssetsAudioPlayerPlugin
+
+class NotificationActionReciever : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        val playerId = intent.getStringExtra(NotificationService.EXTRA_PLAYER_ID)
+        val player = AssetsAudioPlayerPlugin.instance?.assetsAudioPlayer?.getPlayer(playerId)
+                ?: return
+        when (intent.action) {
+             NotificationAction.ACTION_PREV -> player.prev()
+             NotificationAction.ACTION_STOP -> {
+                 player.stop()
+                 NotificationManager(context).hideNotification()
+             }
+             NotificationAction.ACTION_NEXT -> player.next()
+             NotificationAction.ACTION_TOGGLE -> {
+                val notificationAction = intent.getSerializableExtra(NotificationService.EXTRA_NOTIFICATION_ACTION) as NotificationAction.Show
+                if (notificationAction.isPlaying) { //toggle was made into notification show
+                    player.play()
+                } else {
+                    player.pause()
+                }
+
+                //update notif
+                //NotificationManager(context).showNotification(playerId= playerId, audioMetas = notificationAction.audioMetas, isPlaying = player.)
+            }
+            NotificationAction.ACTION_SELECT -> {
+                context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
+                context.startActivity(context.packageManager.getLaunchIntentForPackage(context.packageName))
+            }
+        }
+    }
+}

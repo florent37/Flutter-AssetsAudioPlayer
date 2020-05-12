@@ -4,6 +4,8 @@ import StopWhenCall
 import StopWhenCallAudioFocus
 import android.content.Context
 import androidx.annotation.NonNull
+import com.github.florent37.assets_audio_player.notification.AudioMetas
+import com.github.florent37.assets_audio_player.notification.NotificationManager
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
@@ -23,9 +25,13 @@ internal val METHOD_PREV = "player.prev"
 
 class AssetsAudioPlayerPlugin : FlutterPlugin {
 
-    private var assetsAudioPlayer : AssetsAudioPlayer? = null
+    companion object {
+        var instance: AssetsAudioPlayerPlugin? = null
+    }
+    var assetsAudioPlayer : AssetsAudioPlayer? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        instance = this
         assetsAudioPlayer = AssetsAudioPlayer(
                 context = flutterPluginBinding.applicationContext,
                 messenger = flutterPluginBinding.binaryMessenger
@@ -34,13 +40,15 @@ class AssetsAudioPlayerPlugin : FlutterPlugin {
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        assetsAudioPlayer?.unregister();
+        assetsAudioPlayer?.unregister()
+        instance = null
     }
 }
 
 class AssetsAudioPlayer(private val context: Context, private val messenger: BinaryMessenger) : MethodCallHandler {
 
     private var stopWhenCall: StopWhenCall? = null
+    private val notificationManager = NotificationManager(context)
     private val stopWhenCallListener = object : StopWhenCall.Listener {
         override fun onPhoneStateChanged(audioState: StopWhenCall.AudioState) {
             players.values.forEach {
@@ -70,10 +78,14 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
 
     private val players = mutableMapOf<String, Player>()
 
+    fun getPlayer(id: String): Player? {
+        return this.players[id]
+    }
+
     private fun getOrCreatePlayer(id: String): Player {
         return players.getOrPut(id) {
             val channel = MethodChannel(messenger, "assets_audio_player/$id")
-            val player = Player(context= context, stopWhenCall= stopWhenCall!!)
+            val player = Player(context = context, id = id, notificationManager = notificationManager,  stopWhenCall= stopWhenCall!!)
             player.apply {
                 onVolumeChanged = { volume ->
                     channel.invokeMethod(METHOD_VOLUME, volume)
@@ -97,6 +109,16 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
                 }
                 onFinished = {
                     channel.invokeMethod(METHOD_FINISHED, null)
+                }
+
+                onPrev = {
+                    channel.invokeMethod(METHOD_PREV, null)
+                }
+                onNext = {
+                    channel.invokeMethod(METHOD_NEXT, null)
+                }
+                onStop = {
+                    channel.invokeMethod(METHOD_CURRENT, null)
                 }
             }
             return@getOrPut player
@@ -250,19 +272,32 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
                         return
                     }
                     val autoStart = args["autoStart"] as? Boolean ?: true
+                    val displayNotification = args["displayNotification"] as? Boolean ?: false
                     val respectSilentMode = args["respectSilentMode"] as? Boolean ?: false
                     val seek = args["seek"] as? Int?
 
+                    //region metas
+                    val songTitle = args["song.title"] as? String
+                    val songArtist = args["song.artist"] as? String
+                    val songAlbum = args["song.album"] as? String
+                    val songImage = args["song.image"] as? String
+                    val songImageType = args["song.imageType"] as? String
+                    //endregion metas
+
+                    val audioMetas = AudioMetas(title = songTitle, artist = songArtist, album = songAlbum, image = songImage, imageType = songImageType)
+
                     getOrCreatePlayer(id).open(
-                            path,
-                            audioType,
-                            autoStart,
-                            volume,
-                            seek,
-                            respectSilentMode,
-                            playSpeed,
-                            result,
-                            context
+                            assetAudioPath = path,
+                            audioType= audioType,
+                            autoStart= autoStart,
+                            volume= volume,
+                            seek= seek,
+                            respectSilentMode= respectSilentMode,
+                            displayNotification= displayNotification,
+                            result= result,
+                            playSpeed= playSpeed,
+                            audioMetas= audioMetas,
+                            context= context
                     )
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
