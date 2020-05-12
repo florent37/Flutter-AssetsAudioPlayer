@@ -300,7 +300,7 @@ class AssetsAudioPlayer {
           previous();
           break;
         case METHOD_CURRENT:
-          if(call.arguments == null){
+          if (call.arguments == null) {
             _current.value = null;
           } else {
             final totalDuration = _toDuration(call.arguments["totalDuration"]);
@@ -316,8 +316,8 @@ class AssetsAudioPlayer {
                 index: _playlist.playlistIndex,
                 hasNext: _playlist.hasNext(),
                 playlist: ReadingPlaylist(
-                  audios: _playlist.playlist.audios,
-                  currentIndex: _playlist.playlistIndex),
+                    audios: _playlist.playlist.audios,
+                    currentIndex: _playlist.playlistIndex),
               );
             }
           }
