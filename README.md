@@ -29,7 +29,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.4.3+6
+  assets_audio_player: ^1.4.4
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -40,7 +40,7 @@ dependencies:
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
-  assets_audio_player_web: ^1.4.3+6
+  assets_audio_player_web: ^1.4.4
 ```
 
 </details>
@@ -445,6 +445,8 @@ on iOS, it will use `MPNowPlayingInfoCenter`
 
 [![notification](./medias/notification_iOS.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
 
+[![notification](./medias/notification_android.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
+
 1. Add metas inside your audio
 
 ```dart
@@ -452,7 +454,7 @@ final audio = Audio("/assets/audio/country.mp3",
     metas: Metas(
             title:  "Country",
             artist: "Florent Champigny",
-            album: "",
+            album: "CountryAlbum",
             image: MetasImage.asset("assets/images/country.jpg"), //can be MetasImage.network
           ),
    );

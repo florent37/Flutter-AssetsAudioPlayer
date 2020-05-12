@@ -1,3 +1,7 @@
+## 1.4.4
+
+* Added notifications on android
+
 ## 1.4+3+6
 
 * Beta fix for audio focus
