@@ -29,7 +29,7 @@ class StopWhenCallAudioFocus(private val context: Context) : StopWhenCall() {
         }
     }
 
-    override fun start() {
+    override fun requestAudioFocus() {
         this.request = AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN).also {
             it.setAudioAttributes(AudioAttributesCompat.Builder().run {
                 setUsage(AudioAttributesCompat.USAGE_MEDIA)

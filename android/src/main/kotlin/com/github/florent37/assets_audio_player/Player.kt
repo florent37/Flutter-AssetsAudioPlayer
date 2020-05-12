@@ -1,5 +1,6 @@
 package com.github.florent37.assets_audio_player
 
+import StopWhenCall
 import android.content.Context
 import android.media.AudioManager
 import android.net.Uri
@@ -22,7 +23,7 @@ import kotlin.math.max
 /**
  * Does not depend on Flutter, feel free to use it in all your projects
  */
-class Player(context: Context) {
+class Player(context: Context, private val stopWhenCall: StopWhenCall) {
 
     companion object {
         const val VOLUME_WHEN_REDUCED = 0.3
@@ -215,6 +216,8 @@ class Player(context: Context) {
                 handler.post(updatePosition)
                 onPlaying?.invoke(true)
             }
+        } else {
+            this.stopWhenCall.requestAudioFocus()
         }
     }
 
