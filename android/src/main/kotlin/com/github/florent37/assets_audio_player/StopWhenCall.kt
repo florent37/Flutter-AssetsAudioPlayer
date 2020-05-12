@@ -26,7 +26,7 @@ abstract class StopWhenCall {
         }
     }
 
-    abstract fun start()
+    abstract fun requestAudioFocus()
     abstract fun stop()
 }
 

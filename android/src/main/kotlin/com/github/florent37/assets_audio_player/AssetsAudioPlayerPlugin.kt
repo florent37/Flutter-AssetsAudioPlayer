@@ -9,7 +9,6 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.PluginRegistry.Registrar
 
 
 internal val METHOD_POSITION = "player.position"
@@ -57,7 +56,7 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
         val channel = MethodChannel(messenger, "assets_audio_player")
         channel.setMethodCallHandler(this)
 
-        stopWhenCall?.start()
+        stopWhenCall?.requestAudioFocus()
     }
 
     fun unregister(){
@@ -74,7 +73,7 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
     private fun getOrCreatePlayer(id: String): Player {
         return players.getOrPut(id) {
             val channel = MethodChannel(messenger, "assets_audio_player/$id")
-            val player = Player(context)
+            val player = Player(context= context, stopWhenCall= stopWhenCall!!)
             player.apply {
                 onVolumeChanged = { volume ->
                     channel.invokeMethod(METHOD_VOLUME, volume)
