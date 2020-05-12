@@ -1,3 +1,7 @@
+## 1.4+3+5 
+
+* Beta implementation of local file play on iOS
+
 ## 1.4.3+4
 
 * Moved to last flutter version `>=1.12.13+hotfix.6`
