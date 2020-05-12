@@ -43,9 +43,9 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
 
     private var stopWhenCall: StopWhenCall? = null
     private val stopWhenCallListener = object : StopWhenCall.Listener {
-        override fun onPhoneStateChanged(enabledToPlay: Boolean) {
+        override fun onPhoneStateChanged(audioState: StopWhenCall.AudioState) {
             players.values.forEach {
-                it.updateEnableToPlay(enabledToPlay)
+                it.updateEnableToPlay(audioState)
             }
         }
     }

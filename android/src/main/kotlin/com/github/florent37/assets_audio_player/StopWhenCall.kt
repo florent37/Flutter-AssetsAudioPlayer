@@ -1,7 +1,13 @@
 abstract class StopWhenCall {
 
+    enum class AudioState {
+        AUTHORIZED_TO_PLAY,
+        REDUCE_VOLUME,
+        FORBIDDEN
+    }
+
     interface Listener {
-        fun onPhoneStateChanged(enabledToPlay: Boolean)
+        fun onPhoneStateChanged(audioState: AudioState)
     }
 
     private val listeners = mutableSetOf<Listener>()
@@ -14,9 +20,9 @@ abstract class StopWhenCall {
         listeners.remove(listener)
     }
 
-    protected fun pingListeners(enabledToPlay: Boolean) {
+    protected fun pingListeners(audioState: AudioState) {
         listeners.forEach {
-            it.onPhoneStateChanged(enabledToPlay)
+            it.onPhoneStateChanged(audioState= audioState)
         }
     }
 

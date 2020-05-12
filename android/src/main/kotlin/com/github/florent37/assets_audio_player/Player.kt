@@ -24,6 +24,10 @@ import kotlin.math.max
  */
 class Player(context: Context) {
 
+    companion object {
+        const val VOLUME_WHEN_REDUCED = 0.3
+    }
+
     private val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     // To handle position updates.
@@ -46,6 +50,7 @@ class Player(context: Context) {
     private var playSpeed: Double = 1.0
 
     private var isEnabledToPlayPause: Boolean = true
+    private var isEnabledToChangeVolume: Boolean = true
 
     val isPlaying: Boolean
         get() = mediaPlayer != null && mediaPlayer!!.isPlaying
@@ -241,19 +246,21 @@ class Player(context: Context) {
     }
 
     fun setVolume(volume: Double) {
-        this.volume = volume
-        mediaPlayer?.let {
-            var v = volume
-            if (this.respectSilentMode) {
-                v = when (am.ringerMode) {
-                    AudioManager.RINGER_MODE_SILENT, AudioManager.RINGER_MODE_VIBRATE -> 0.toDouble()
-                    else -> volume //AudioManager.RINGER_MODE_NORMAL
+        if(isEnabledToChangeVolume) {
+            this.volume = volume
+            mediaPlayer?.let {
+                var v = volume
+                if (this.respectSilentMode) {
+                    v = when (am.ringerMode) {
+                        AudioManager.RINGER_MODE_SILENT, AudioManager.RINGER_MODE_VIBRATE -> 0.toDouble()
+                        else -> volume //AudioManager.RINGER_MODE_NORMAL
+                    }
                 }
+
+                it.audioComponent?.volume = v.toFloat();
+
+                onVolumeChanged?.invoke(this.volume) //only notify the setted volume, not the silent mode one
             }
-
-            it.audioComponent?.volume = v.toFloat();
-
-            onVolumeChanged?.invoke(this.volume) //only notify the setted volume, not the silent mode one
         }
     }
 
@@ -288,23 +295,37 @@ class Player(context: Context) {
         forwardHandler!!.start(this, speed)
     }
 
+    private var volumeBeforePhoneStateChanged: Double? = null
     private var wasPlayingBeforeEnablePlayChange: Boolean? = null
-    fun updateEnableToPlay(enabled: Boolean){
-        if(enabled){
-            this.isEnabledToPlayPause = true //this one must be called before play/pause()
-            wasPlayingBeforeEnablePlayChange?.let {
-                //phone call ended
-                if(it) {
-                    play()
-                } else {
-                    pause()
+    fun updateEnableToPlay(audioState: StopWhenCall.AudioState){
+        when(audioState){
+            StopWhenCall.AudioState.AUTHORIZED_TO_PLAY -> {
+                this.isEnabledToPlayPause = true //this one must be called before play/pause()
+                this.isEnabledToChangeVolume = true //this one must be called before play/pause()
+                wasPlayingBeforeEnablePlayChange?.let {
+                    //phone call ended
+                    if(it) {
+                        play()
+                    } else {
+                        pause()
+                    }
                 }
+                volumeBeforePhoneStateChanged?.let {
+                    setVolume(it)
+                }
+                wasPlayingBeforeEnablePlayChange = null
+                volumeBeforePhoneStateChanged = null
             }
-            wasPlayingBeforeEnablePlayChange = null
-        } else {
-            wasPlayingBeforeEnablePlayChange = this.isPlaying
-            pause()
-            this.isEnabledToPlayPause = false //this one must be called after pause()
+            StopWhenCall.AudioState.REDUCE_VOLUME -> {
+                volumeBeforePhoneStateChanged = this.volume
+                setVolume(VOLUME_WHEN_REDUCED)
+                this.isEnabledToChangeVolume = false //this one must be called after setVolume()
+            }
+            StopWhenCall.AudioState.FORBIDDEN -> {
+                wasPlayingBeforeEnablePlayChange = this.isPlaying
+                pause()
+                this.isEnabledToPlayPause = false //this one must be called after pause()
+            }
         }
     }
 }
