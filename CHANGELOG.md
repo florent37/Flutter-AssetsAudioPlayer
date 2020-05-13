@@ -1,4 +1,4 @@
-## 1.4.4+1 
+## 1.4.5
 
 * fixed implementation of local file play on iOS
 

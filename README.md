@@ -29,7 +29,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.4+4+1 
+  assets_audio_player: ^1.4.5
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -40,7 +40,7 @@ dependencies:
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
-  assets_audio_player_web: ^1.4+4+1 
+  assets_audio_player_web: ^1.4.5
 ```
 
 </details>
@@ -78,7 +78,7 @@ You like the package ? buy me a kofi :)
 <tr>
   <td>Open local file</td>
   <td>✅</td>
-  <td>🍎</td>
+  <td>✅</td>
   <td>✅</td>
 </tr>
 
@@ -161,8 +161,8 @@ You like the package ? buy me a kofi :)
   <td>✅</td>
 </tr>
 <tr>
-  <td>BackgroundPlay<br/> + <br/>system play notification</td>
-  <td></td>
+  <td>system play notification</td>
+  <td>v</td>
   <td>✅</td>
   <td>🚫</td>
 </tr>
