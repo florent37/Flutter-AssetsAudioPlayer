@@ -162,7 +162,7 @@ You like the package ? buy me a kofi :)
 </tr>
 <tr>
   <td>system play notification</td>
-  <td>v</td>
+  <td>✅</td>
   <td>✅</td>
   <td>🚫</td>
 </tr>
