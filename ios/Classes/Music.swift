@@ -62,14 +62,18 @@ public class Player : NSObject, AVAudioPlayerDelegate {
 
         } else if(audioType == "file"){
             var localPath = path
-            if(!localPath.starts(with: "file://")){ //if alreeady starts with "file://", do not add
+            //if(localPath.starts(with: "/")){ //if alreeady starts with "file://", do not add
+            //    localPath = "file:/" + localPath
+            //}
+            if(!localPath.starts(with: "file://")){ //if already starts with "file://", do not add
                 localPath = "file://" + localPath
             }
-            //let urlStr : String = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-            if let u = URL(string: localPath) {
+            let urlStr : String = localPath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+            if let u = URL(string: urlStr) {
+                print(u)
                  return u
             } else {
-                print("Couldn't parse myURL = \(localPath)")
+                print("Couldn't parse myURL = \(urlStr)")
                 return nil
             }
         }  else { //asset
@@ -365,7 +369,9 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     func setPlaySpeed(playSpeed: Double){
         self.rate = Float(playSpeed)
-        self.player?.rate = self.rate
+        if(self._playing){
+            self.player?.rate = self.rate
+        }
     }
     
     func forwardRewind(speed: Double){

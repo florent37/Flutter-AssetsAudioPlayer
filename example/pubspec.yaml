@@ -12,6 +12,10 @@ dependencies:
     sdk: flutter
   flutter_neumorphic: ^1.0.5+1
 
+  # for local file test
+  dio: 3.0.9
+  path_provider: ^1.6.8
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
