@@ -400,7 +400,7 @@ class AssetsAudioPlayer {
   }
 
   void _openPlaylistCurrent() {
-    if(_playlist != null) {
+    if (_playlist != null) {
       _open(
         _playlist.currentAudio(),
         forcedVolume: _playlist.volume,
@@ -428,8 +428,7 @@ class AssetsAudioPlayer {
         _openPlaylistCurrent();
 
         return true;
-      }
-      else if (loop) {
+      } else if (loop) {
         //last element
         _playlistAudioFinished.add(Playing(
           audio: this._current.value.audio,
@@ -445,7 +444,7 @@ class AssetsAudioPlayer {
       } else if (stopIfLast) {
         stop();
         return true;
-      } else if(requestByUser){
+      } else if (requestByUser) {
         //last element
         _playlistAudioFinished.add(Playing(
           audio: this._current.value.audio,
@@ -632,14 +631,15 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.play();
   ///
   void play() {
-    if(_playlistFinished.value == true){ //open the last
+    if (_playlistFinished.value == true) {
+      //open the last
       _openPlaylistCurrent();
     } else {
       _play();
     }
   }
 
-  void _play(){
+  void _play() {
     _sendChannel.invokeMethod('play', {
       "id": this.id,
     });
