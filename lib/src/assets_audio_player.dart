@@ -26,6 +26,7 @@ const METHOD_CURRENT = "player.current";
 const METHOD_FORWARD_REWIND_SPEED = "player.forwardRewind";
 const METHOD_NEXT = "player.next";
 const METHOD_PREV = "player.prev";
+const METHOD_PLAY_OR_PAUSE = "player.playOrPause";
 const METHOD_PLAY_SPEED = "player.playSpeed";
 
 /// The AssetsAudioPlayer, playing audios from assets/
@@ -298,6 +299,9 @@ class AssetsAudioPlayer {
         case METHOD_PREV:
           previous();
           break;
+        case METHOD_PLAY_OR_PAUSE: //eg: from notification
+          playOrPause();
+          break;
         case METHOD_CURRENT:
           if (call.arguments == null) {
             _current.value = null;
@@ -396,16 +400,22 @@ class AssetsAudioPlayer {
   }
 
   void _openPlaylistCurrent() {
-    _open(
-      _playlist.currentAudio(),
-      forcedVolume: _playlist.volume,
-      respectSilentMode: _playlist.respectSilentMode,
-      showNotification: _playlist.showNotification,
-      playSpeed: _playlist.playSpeed,
-    );
+    if(_playlist != null) {
+      _open(
+        _playlist.currentAudio(),
+        forcedVolume: _playlist.volume,
+        respectSilentMode: _playlist.respectSilentMode,
+        showNotification: _playlist.showNotification,
+        playSpeed: _playlist.playSpeed,
+      );
+    }
   }
 
   bool next({bool stopIfLast = false}) {
+    return _next(stopIfLast: stopIfLast, requestByUser: true);
+  }
+
+  bool _next({bool stopIfLast = false, bool requestByUser = false}) {
     if (_playlist != null) {
       if (_playlist.hasNext()) {
         _playlistAudioFinished.add(Playing(
@@ -435,7 +445,7 @@ class AssetsAudioPlayer {
       } else if (stopIfLast) {
         stop();
         return true;
-      } else { //by default, play first
+      } else if(requestByUser){
         //last element
         _playlistAudioFinished.add(Playing(
           audio: this._current.value.audio,
@@ -454,7 +464,7 @@ class AssetsAudioPlayer {
   }
 
   void _onFinished(bool isFinished) {
-    bool nextDone = next(stopIfLast: false);
+    bool nextDone = _next(stopIfLast: false, requestByUser: false);
     if (nextDone) {
       _playlistFinished.value = false; //continue playing the playlist
     } else {
@@ -513,6 +523,8 @@ class AssetsAudioPlayer {
           }
         }
         _sendChannel.invokeMethod('open', params);
+
+        _playlistFinished.value = false;
       } catch (e) {
         print(e);
       }
@@ -620,6 +632,14 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.play();
   ///
   void play() {
+    if(_playlistFinished.value == true){ //open the last
+      _openPlaylistCurrent();
+    } else {
+      _play();
+    }
+  }
+
+  void _play(){
     _sendChannel.invokeMethod('play', {
       "id": this.id,
     });

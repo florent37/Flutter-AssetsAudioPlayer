@@ -22,6 +22,7 @@ internal val METHOD_IS_PLAYING = "player.isPlaying"
 internal val METHOD_CURRENT = "player.current"
 internal val METHOD_NEXT = "player.next"
 internal val METHOD_PREV = "player.prev"
+internal val METHOD_PLAY_OR_PAUSE = "player.playOrPause"
 
 class AssetsAudioPlayerPlugin : FlutterPlugin {
 
@@ -119,6 +120,9 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
                 }
                 onStop = {
                     channel.invokeMethod(METHOD_CURRENT, null)
+                }
+                onNotificationPlayOrPause = {
+                    channel.invokeMethod(METHOD_PLAY_OR_PAUSE, null)
                 }
             }
             return@getOrPut player

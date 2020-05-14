@@ -18,12 +18,8 @@ class NotificationActionReciever : BroadcastReceiver() {
              }
              NotificationAction.ACTION_NEXT -> player.next()
              NotificationAction.ACTION_TOGGLE -> {
-                val notificationAction = intent.getSerializableExtra(NotificationService.EXTRA_NOTIFICATION_ACTION) as NotificationAction.Show
-                if (notificationAction.isPlaying) { //toggle was made into notification show
-                    player.play()
-                } else {
-                    player.pause()
-                }
+                //val notificationAction = intent.getSerializableExtra(NotificationService.EXTRA_NOTIFICATION_ACTION) as NotificationAction.Show
+                player.askPlayOrPause() //send it to flutter
 
                 //update notif
                 //NotificationManager(context).showNotification(playerId= playerId, audioMetas = notificationAction.audioMetas, isPlaying = player.)

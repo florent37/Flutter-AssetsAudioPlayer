@@ -49,6 +49,7 @@ class Player(val id: String, context: Context, private val stopWhenCall: StopWhe
     var onNext: (() -> Unit)? = null
     var onPrev: (() -> Unit)? = null
     var onStop: (() -> Unit)? = null
+    var onNotificationPlayOrPause: (() -> Unit)? = null
     //endregion
 
     private var respectSilentMode: Boolean = false
@@ -152,17 +153,17 @@ class Player(val id: String, context: Context, private val stopWhenCall: StopWhe
             return
         }
 
-        var onThisMediaReady = false;
+        var onThisMediaReady = false
         this.mediaPlayer?.addListener(object : Player.EventListener {
 
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 when (playbackState) {
                     ExoPlayer.STATE_ENDED -> {
+                        pause()
                         this@Player.onFinished?.invoke()
-                        stop()
                     }
                     ExoPlayer.STATE_READY -> {
-                        if (!onThisMediaReady) {
+                            if (!onThisMediaReady) {
                             onThisMediaReady = true
                             //retrieve duration in seconds
                             val duration = mediaPlayer?.duration ?: 0
@@ -360,6 +361,10 @@ class Player(val id: String, context: Context, private val stopWhenCall: StopWhe
                 this.isEnabledToPlayPause = false //this one must be called after pause()
             }
         }
+    }
+
+    fun askPlayOrPause() {
+        this.onNotificationPlayOrPause?.invoke()
     }
 }
 
