@@ -141,9 +141,10 @@ class _MyAppState extends State<MyApp> {
                 Stack(
                   fit: StackFit.passthrough,
                   children: <Widget>[
-                    PlayerBuilder.current(
-                      player: _assetsAudioPlayer,
-                      builder: (BuildContext context, Playing playing) {
+                    StreamBuilder(
+                      stream: _assetsAudioPlayer.current,
+                      builder: (BuildContext context, AsyncSnapshot<Playing> snapshot) {
+                        final Playing playing = snapshot.data;
                         if (playing != null) {
                           final myAudio = find(this.audios, playing.audio.assetAudioPath);
                           return Padding(
@@ -193,20 +194,25 @@ class _MyAppState extends State<MyApp> {
                 SizedBox(
                   height: 20,
                 ),
-                PlayerBuilder.current(
-                    player: _assetsAudioPlayer,
-                    builder: (context, playing) {
-                      if (playing == null) {
+                StreamBuilder(
+                    stream: _assetsAudioPlayer.current,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
                         return SizedBox();
                       }
+                      final Playing playing = snapshot.data;
                       return Column(
                         children: <Widget>[
-                          PlayerBuilder.isLooping(
-                            player: _assetsAudioPlayer,
-                            builder: (context, isLooping) {
-                              return PlayerBuilder.isPlaying(
-                                  player: _assetsAudioPlayer,
-                                  builder: (context, isPlaying) {
+                          StreamBuilder(
+                            stream: _assetsAudioPlayer.isLooping,
+                            initialData: false,
+                            builder: (context, snapshotLooping) {
+                              final bool isLooping = snapshotLooping.data;
+                              return StreamBuilder(
+                                  stream: _assetsAudioPlayer.isPlaying,
+                                  initialData: false,
+                                  builder: (context, snapshotPlaying) {
+                                    final isPlaying = snapshotPlaying.data;
                                     return PlayingControls(
                                       isLooping: isLooping,
                                       isPlaying: isPlaying,
@@ -228,12 +234,13 @@ class _MyAppState extends State<MyApp> {
                                   });
                             },
                           ),
-                          PlayerBuilder.realtimePlayingInfos(
-                              player: _assetsAudioPlayer,
-                              builder: (context, infos) {
-                                if (infos == null) {
+                          StreamBuilder(
+                              stream: _assetsAudioPlayer.realtimePlayingInfos,
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
                                   return SizedBox();
                                 }
+                                final RealtimePlayingInfos infos = snapshot.data;
                                 //print("infos: $infos");
                                 return PositionSeekWidget(
                                   currentPosition: infos.currentPosition,
@@ -250,9 +257,10 @@ class _MyAppState extends State<MyApp> {
                   height: 20,
                 ),
                 Expanded(
-                  child: PlayerBuilder.current(
-                      player: _assetsAudioPlayer,
-                      builder: (BuildContext context, Playing playing) {
+                  child: StreamBuilder(
+                      stream: _assetsAudioPlayer.current,
+                      builder: (BuildContext context, AsyncSnapshot<Playing> snapshot) {
+                        final Playing playing = snapshot.data;
                         return SongsSelector(
                           audios: this.audios,
                           onPlaylistSelected: (myAudios) {
@@ -273,9 +281,11 @@ class _MyAppState extends State<MyApp> {
                         );
                       }),
                 ),
-                PlayerBuilder.volume(
-                    player: _assetsAudioPlayer,
-                    builder: (context, volume) {
+                StreamBuilder(
+                    stream: _assetsAudioPlayer.volume,
+                    initialData: AssetsAudioPlayer.defaultVolume,
+                    builder: (context, snapshot) {
+                      final double volume = snapshot.data;
                       return VolumeSelector(
                         volume: volume,
                         onChange: (v) {
@@ -283,9 +293,11 @@ class _MyAppState extends State<MyApp> {
                         },
                       );
                     }),
-                PlayerBuilder.forwardRewindSpeed(
-                    player: _assetsAudioPlayer,
-                    builder: (context, speed) {
+                StreamBuilder(
+                    stream: _assetsAudioPlayer.forwardRewindSpeed,
+                    initialData: null,
+                    builder: (context, snapshot) {
+                      final double speed = snapshot.data;
                       return ForwardRewindSelector(
                         speed: speed,
                         onChange: (v) {
@@ -293,9 +305,11 @@ class _MyAppState extends State<MyApp> {
                         },
                       );
                     }),
-                PlayerBuilder.playSpeed(
-                    player: _assetsAudioPlayer,
-                    builder: (context, playSpeed) {
+                StreamBuilder(
+                    stream: _assetsAudioPlayer.playSpeed,
+                    initialData: AssetsAudioPlayer.defaultPlaySpeed,
+                    builder: (context, snapshot) {
+                      final double playSpeed = snapshot.data;
                       return PlaySpeedSelector(
                         playSpeed: playSpeed,
                         onChange: (v) {

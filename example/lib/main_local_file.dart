@@ -5,8 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'builders/bulders.dart';
-
 final mp3Url =
     "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3";
 var dio = Dio();
@@ -116,7 +114,7 @@ class _PlayerState extends State<Player> {
 
   @override
   Widget build(BuildContext context) {
-    return PlayingBuilder(
+    return PlayerBuilder.isPlaying(
       player: _player,
       builder: (context, isPlaying) {
         return FloatingActionButton(
