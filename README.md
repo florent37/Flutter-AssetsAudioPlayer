@@ -29,7 +29,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.4.5
+  assets_audio_player: ^1.4.6
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -40,7 +40,7 @@ dependencies:
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
-  assets_audio_player_web: ^1.4.5
+  assets_audio_player_web: ^1.4.6
 ```
 
 </details>
@@ -265,6 +265,36 @@ assetsAudioPlayer.forwardRewind(double speed);
 assetsAudioPlayer.stop();
 ```
 
+
+# Notifications 
+
+
+[![notification](./medias/notification_android.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
+
+[![notification](./medias/notification_iOS.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
+
+on iOS, it will use `MPNowPlayingInfoCenter`
+
+1. Add metas inside your audio
+
+```dart
+final audio = Audio("/assets/audio/country.mp3", 
+    metas: Metas(
+            title:  "Country",
+            artist: "Florent Champigny",
+            album: "CountryAlbum",
+            image: MetasImage.asset("assets/images/country.jpg"), //can be MetasImage.network
+          ),
+   );
+```
+
+2. open with `showNotification: true`
+
+```dart
+_player.open(audio, showNotification: true)
+```
+
+
 # ⛓ Play in parallel / simultaneously
 
 You can create new AssetsAudioPlayer using AssetsAudioPlayer.newPlayer(), 
@@ -354,6 +384,17 @@ return StreamBuilder(
     }),
 ```
 
+or use a PlayerBuilder !
+
+```dart
+PlayerBuilder.currentPosition(
+     player: _assetsAudioPlayer,
+     builder: (context, duration) {
+       return Text(duration.toString());  
+     }
+)
+```
+
 ### ▶ IsPlaying
 boolean observable representing the current mediaplayer playing state
 ```Dart
@@ -369,6 +410,17 @@ return StreamBuilder(
         final bool isPlaying = asyncSnapshot.data;
         return Text(isPlaying ? "Pause" : "Play");  
     }),
+```
+
+or use a PlayerBuilder !
+
+```dart
+PlayerBuilder.isPlaying(
+     player: _assetsAudioPlayer,
+     builder: (context, isPlaying) {
+       return Text(isPlaying ? "Pause" : "Play");  
+     }
+)
 ```
 
 ### 🔊 Volume
@@ -399,6 +451,17 @@ return StreamBuilder(
         final double volume = asyncSnapshot.data;
         return Text("volume : $volume");  
     }),
+```
+
+or use a PlayerBuilder !
+
+```dart
+PlayerBuilder.volume(
+     player: _assetsAudioPlayer,
+     builder: (context, volume) {
+       return Text("volume : $volume");
+     }
+)
 ```
 
 ### ✋ Finished
@@ -438,34 +501,6 @@ assetsAudioPlayer.isLooping.listen((loop){
 
 assetsAudioPlayer.toggleLoop(); //toggle the value of looping
 ```
-
-# Notifications 
-
-on iOS, it will use `MPNowPlayingInfoCenter`
-
-[![notification](./medias/notification_iOS.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
-
-[![notification](./medias/notification_android.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
-
-1. Add metas inside your audio
-
-```dart
-final audio = Audio("/assets/audio/country.mp3", 
-    metas: Metas(
-            title:  "Country",
-            artist: "Florent Champigny",
-            album: "CountryAlbum",
-            image: MetasImage.asset("assets/images/country.jpg"), //can be MetasImage.network
-          ),
-   );
-```
-
-2. open with `showNotification: true`
-
-```dart
-_player.open(audio, showNotification: true)
-```
-
 
 # Network Policies (android/iOS)
 

@@ -1,3 +1,9 @@
+## 1.4.6
+
+* fixed android notifications actions
+* refactored package, added `src/` and `package` keyword
+* added player_builders
+
 ## 1.4.5
 
 * fixed implementation of local file play on iOS
