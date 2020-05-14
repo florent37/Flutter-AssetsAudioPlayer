@@ -210,7 +210,7 @@ class _MyAppState extends State<MyApp> {
                                     return PlayingControls(
                                       isLooping: isLooping,
                                       isPlaying: isPlaying,
-                                      isPlaylist: playing.playlist.audios.length > 1,
+                                      isPlaylist: true,
                                       toggleLoop: () {
                                         _assetsAudioPlayer.toggleLoop();
                                       },

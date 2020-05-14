@@ -418,7 +418,8 @@ class AssetsAudioPlayer {
         _openPlaylistCurrent();
 
         return true;
-      } else if (loop) {
+      }
+      else if (loop) {
         //last element
         _playlistAudioFinished.add(Playing(
           audio: this._current.value.audio,
@@ -433,6 +434,19 @@ class AssetsAudioPlayer {
         return true;
       } else if (stopIfLast) {
         stop();
+        return true;
+      } else { //by default, play first
+        //last element
+        _playlistAudioFinished.add(Playing(
+          audio: this._current.value.audio,
+          index: this._current.value.index,
+          hasNext: false,
+          playlist: this._current.value.playlist,
+        ));
+
+        _playlist.returnToFirst();
+        _openPlaylistCurrent();
+
         return true;
       }
     }
