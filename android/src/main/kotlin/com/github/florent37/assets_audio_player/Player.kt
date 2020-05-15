@@ -115,7 +115,7 @@ class Player(val id: String, context: Context, private val stopWhenCall: StopWhe
              audioMetas: AudioMetas,
              playSpeed: Double,
              result: MethodChannel.Result, context: Context) {
-        stop()
+        stop(pingListener = false)
 
         this.mediaPlayer = SimpleExoPlayer.Builder(context).build();
         this.displayNotification = displayNotification
@@ -192,7 +192,7 @@ class Player(val id: String, context: Context, private val stopWhenCall: StopWhe
         mediaPlayer?.prepare(mediaSource)
     }
 
-    fun stop() {
+    fun stop(pingListener: Boolean = true) {
         mediaPlayer?.apply {
             // Reset duration and position.
             // handler.removeCallbacks(updatePosition);
@@ -211,7 +211,9 @@ class Player(val id: String, context: Context, private val stopWhenCall: StopWhe
         }
         onForwardRewind?.invoke(0.0)
         mediaPlayer = null
-        onStop?.invoke()
+        if(pingListener) {
+            onStop?.invoke()
+        }
     }
 
 
