@@ -1,4 +1,4 @@
-## 1.4.6
+## 1.4.6+1
 
 * fixed android notifications actions
 * refactored package, added `src/` and `package` keyword
