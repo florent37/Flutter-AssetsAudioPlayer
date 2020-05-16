@@ -20,9 +20,16 @@ class MetasImage {
   final String package;
   final ImageType type;
 
-  const MetasImage.network(this.path) : type = ImageType.network, package = null;
-  const MetasImage.asset(this.path, {this.package,}) : type = ImageType.asset;
-  const MetasImage.file(this.path) : type = ImageType.file, package = null;
+  const MetasImage.network(this.path)
+      : type = ImageType.network,
+        package = null;
+  const MetasImage.asset(
+    this.path, {
+    this.package,
+  }) : type = ImageType.asset;
+  const MetasImage.file(this.path)
+      : type = ImageType.file,
+        package = null;
 }
 
 @immutable
@@ -47,9 +54,14 @@ class Audio implements Playable {
   final AudioType audioType;
   final Metas metas;
 
-  const Audio(this.path, {this.metas, this.package}) : audioType = AudioType.asset;
-  const Audio.file(this.path, {this.metas}) : audioType = AudioType.file, package = null;
-  const Audio.network(this.path, {this.metas}) : audioType = AudioType.network, package = null;
+  const Audio(this.path, {this.metas, this.package})
+      : audioType = AudioType.asset;
+  const Audio.file(this.path, {this.metas})
+      : audioType = AudioType.file,
+        package = null;
+  const Audio.network(this.path, {this.metas})
+      : audioType = AudioType.network,
+        package = null;
 }
 
 @immutable

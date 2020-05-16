@@ -418,7 +418,8 @@ class AssetsAudioPlayer {
     );
   }
 
-  Future<bool> _next({bool stopIfLast = false, bool requestByUser = false}) async {
+  Future<bool> _next(
+      {bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
       if (_playlist.hasNext()) {
         _playlistAudioFinished.add(Playing(
@@ -494,7 +495,7 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
     double playSpeed,
-  }) async  {
+  }) async {
     final currentAudio = _lastOpenedAssetsAudio;
     if (audio != null) {
       _respectSilentMode = respectSilentMode;
@@ -529,7 +530,7 @@ class AssetsAudioPlayer {
           }
         }
         _lastOpenedAssetsAudio = audio;
-        /*final result = */await _sendChannel.invokeMethod('open', params);
+        /*final result = */ await _sendChannel.invokeMethod('open', params);
 
         _playlistFinished.value = false;
       } catch (e) {
