@@ -8,10 +8,8 @@ import android.os.Handler
 import android.os.Message
 import com.github.florent37.assets_audio_player.notification.AudioMetas
 import com.github.florent37.assets_audio_player.notification.NotificationManager
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.PlaybackParameters
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -122,7 +120,9 @@ class Player(
              displayNotification: Boolean,
              audioMetas: AudioMetas,
              playSpeed: Double,
-             result: MethodChannel.Result, context: Context) {
+             result: MethodChannel.Result,
+             context: Context
+    ) {
         stop(pingListener = false)
 
         this.mediaPlayer = SimpleExoPlayer.Builder(context).build();
@@ -168,6 +168,10 @@ class Player(
         var onThisMediaReady = false
         this.mediaPlayer?.addListener(object : Player.EventListener {
 
+            override fun onPlayerError(error: ExoPlaybackException) {
+                result.error("OPEN", error.message, null)
+            }
+
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 when (playbackState) {
                     ExoPlayer.STATE_ENDED -> {
@@ -193,6 +197,8 @@ class Player(
                             seek?.let {
                                 this@Player.seek(milliseconds = seek * 1000L)
                             }
+
+                            result.success(null)
                         }
                     }
                     else -> {

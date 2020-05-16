@@ -379,16 +379,16 @@ class AssetsAudioPlayer {
     });
   }
 
-  void playlistPlayAtIndex(int index) {
+  Future<void> playlistPlayAtIndex(int index) async {
     _playlist.moveTo(index);
-    _openPlaylistCurrent();
+    await _openPlaylistCurrent();
   }
 
-  bool previous() {
+  Future<bool> previous() async {
     if (_playlist != null) {
       if (_playlist.hasPrev()) {
         _playlist.selectPrev();
-        _openPlaylistCurrent();
+        await _openPlaylistCurrent();
         return true;
       } else if (_playlist.playlistIndex == 0) {
         seek(Duration.zero);
@@ -399,9 +399,9 @@ class AssetsAudioPlayer {
     return false;
   }
 
-  void _openPlaylistCurrent() {
+  Future<void> _openPlaylistCurrent() async {
     if (_playlist != null) {
-      _open(
+      return _open(
         _playlist.currentAudio(),
         forcedVolume: _playlist.volume,
         respectSilentMode: _playlist.respectSilentMode,
@@ -411,11 +411,14 @@ class AssetsAudioPlayer {
     }
   }
 
-  bool next({bool stopIfLast = false}) {
-    return _next(stopIfLast: stopIfLast, requestByUser: true);
+  Future<bool> next({bool stopIfLast = false}) {
+    return _next(
+      stopIfLast: stopIfLast,
+      requestByUser: true,
+    );
   }
 
-  bool _next({bool stopIfLast = false, bool requestByUser = false}) {
+  Future<bool> _next({bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
       if (_playlist.hasNext()) {
         _playlistAudioFinished.add(Playing(
@@ -425,7 +428,7 @@ class AssetsAudioPlayer {
           playlist: this._current.value.playlist,
         ));
         _playlist.selectNext();
-        _openPlaylistCurrent();
+        await _openPlaylistCurrent();
 
         return true;
       } else if (loop) {
@@ -438,7 +441,7 @@ class AssetsAudioPlayer {
         ));
 
         _playlist.returnToFirst();
-        _openPlaylistCurrent();
+        await _openPlaylistCurrent();
 
         return true;
       } else if (stopIfLast) {
@@ -454,7 +457,7 @@ class AssetsAudioPlayer {
         ));
 
         _playlist.returnToFirst();
-        _openPlaylistCurrent();
+        await _openPlaylistCurrent();
 
         return true;
       }
@@ -462,8 +465,8 @@ class AssetsAudioPlayer {
     return false;
   }
 
-  void _onFinished(bool isFinished) {
-    bool nextDone = _next(stopIfLast: false, requestByUser: false);
+  Future<void> _onFinished(bool isFinished) async {
+    bool nextDone = await _next(stopIfLast: false, requestByUser: false);
     if (nextDone) {
       _playlistFinished.value = false; //continue playing the playlist
     } else {
@@ -483,7 +486,7 @@ class AssetsAudioPlayer {
   }
 
   //private method, used in open(playlist) and open(path)
-  void _open(
+  Future<void> _open(
     Audio audio, {
     bool autoStart = _DEFAULT_AUTO_START,
     double forcedVolume,
@@ -491,7 +494,8 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
     double playSpeed,
-  }) async {
+  }) async  {
+    final currentAudio = _lastOpenedAssetsAudio;
     if (audio != null) {
       _respectSilentMode = respectSilentMode;
       try {
@@ -522,18 +526,18 @@ class AssetsAudioPlayer {
                 _metasImageTypeDescription(audio.metas.image.type);
           }
         }
-        _sendChannel.invokeMethod('open', params);
+        _lastOpenedAssetsAudio = audio;
+        /*final result = */await _sendChannel.invokeMethod('open', params);
 
         _playlistFinished.value = false;
       } catch (e) {
-        print(e);
+        _lastOpenedAssetsAudio = currentAudio; //revert to the previous audio
+        return Future.error(e);
       }
-
-      _lastOpenedAssetsAudio = audio;
     }
   }
 
-  void _openPlaylist(
+  Future<void> _openPlaylist(
     Playlist playlist, {
     bool autoStart = _DEFAULT_AUTO_START,
     double volume,
@@ -552,7 +556,7 @@ class AssetsAudioPlayer {
       playSpeed: playSpeed,
     );
     _playlist.moveTo(playlist.startIndex);
-    _open(
+    return _open(
       _playlist.currentAudio(),
       autoStart: autoStart,
       forcedVolume: volume,
@@ -576,7 +580,7 @@ class AssetsAudioPlayer {
   ///       assets:
   ///         - assets/audios/
   ///
-  void open(
+  Future<void> open(
     Playable playable, {
     bool autoStart = _DEFAULT_AUTO_START,
     double volume,
@@ -588,7 +592,7 @@ class AssetsAudioPlayer {
     if (playable is Playlist &&
         playable.audios != null &&
         playable.audios.length > 0) {
-      _openPlaylist(
+      await _openPlaylist(
         playable,
         autoStart: autoStart,
         volume: volume,
@@ -598,7 +602,7 @@ class AssetsAudioPlayer {
         playSpeed: playSpeed,
       );
     } else if (playable is Audio) {
-      _openPlaylist(
+      await _openPlaylist(
         Playlist(audios: [playable]),
         autoStart: autoStart,
         volume: volume,
@@ -619,29 +623,29 @@ class AssetsAudioPlayer {
   ///
   ///     _assetsAudioPlayer.playOfPause();
   ///
-  void playOrPause() async {
+  Future<void> playOrPause() async {
     final bool playing = _isPlaying.value;
     if (playing) {
-      pause();
+      await pause();
     } else {
-      play();
+      await play();
     }
   }
 
   /// Tells the media player to play the current song
   ///     _assetsAudioPlayer.play();
   ///
-  void play() {
+  Future<void> play() async {
     if (_playlistFinished.value == true) {
       //open the last
-      _openPlaylistCurrent();
+      await _openPlaylistCurrent();
     } else {
-      _play();
+      await _play();
     }
   }
 
-  void _play() {
-    _sendChannel.invokeMethod('play', {
+  Future<void> _play() async {
+    await _sendChannel.invokeMethod('play', {
       "id": this.id,
     });
   }
@@ -649,8 +653,8 @@ class AssetsAudioPlayer {
   /// Tells the media player to play the current song
   ///     _assetsAudioPlayer.pause();
   ///
-  void pause() {
-    _sendChannel.invokeMethod('pause', {
+  Future<void> pause() async {
+    await _sendChannel.invokeMethod('pause', {
       "id": this.id,
     });
   }
@@ -660,10 +664,10 @@ class AssetsAudioPlayer {
   ///
   ///     _assetsAudioPlayer.seek(Duration(minutes: 1, seconds: 34));
   ///
-  void seek(Duration to) {
+  Future<void> seek(Duration to) async {
     if (to != _lastSeek) {
       _lastSeek = to;
-      _sendChannel.invokeMethod('seek', {
+      await _sendChannel.invokeMethod('seek', {
         "id": this.id,
         "to": to.inSeconds.round(),
       });
@@ -675,19 +679,19 @@ class AssetsAudioPlayer {
   /// If positive, forward (progressively)
   /// If Negative rewind (progressively)
   /// If 0 or null, restore the playing state
-  void forwardOrRewind(double speed) {
+  Future<void> forwardOrRewind(double speed) async {
     if (speed == 0 || speed == null) {
       if (_wasPlayingBeforeForwardRewind) {
-        play();
+        await play();
       } else {
-        pause();
+        await pause();
       }
       _wasPlayingBeforeForwardRewind = null;
     } else {
       if (_wasPlayingBeforeForwardRewind == null) {
         _wasPlayingBeforeForwardRewind = this.isPlaying.value;
       }
-      _sendChannel.invokeMethod('forwardRewind', {
+      await _sendChannel.invokeMethod('forwardRewind', {
         "id": this.id,
         "speed": speed,
       });
@@ -702,7 +706,7 @@ class AssetsAudioPlayer {
   ///
   ///  eg: _assetsAudioPlayer.rewind(Duration(seconds: 10))
   ///
-  void seekBy(Duration by) {
+  Future<void> seekBy(Duration by) async {
     //only if playing a song
     final playing = this.current.value;
     if (playing != null) {
@@ -719,7 +723,7 @@ class AssetsAudioPlayer {
               min(totalDuration.inMilliseconds, nextPosition.inMilliseconds),
         );
 
-        seek(currentPositionCapped);
+        await seek(currentPositionCapped);
       } else {
         //only if playing a song
         final currentPosition = this.currentPosition.value ?? Duration();
@@ -730,7 +734,7 @@ class AssetsAudioPlayer {
           milliseconds: max(0, nextPosition.inMilliseconds),
         );
 
-        seek(currentPositionCapped);
+        await seek(currentPositionCapped);
       }
     }
   }
@@ -742,8 +746,8 @@ class AssetsAudioPlayer {
   /// MIN : 0
   /// MAX : 1
   ///
-  void setVolume(double volume) {
-    _sendChannel.invokeMethod('volume', {
+  Future<void> setVolume(double volume) async {
+    await _sendChannel.invokeMethod('volume', {
       "id": this.id,
       "volume": volume.clamp(minVolume, maxVolume),
     });
@@ -752,8 +756,8 @@ class AssetsAudioPlayer {
   /// Tells the media player to stop the current song, then release the MediaPlayer
   ///     _assetsAudioPlayer.stop();
   ///
-  void stop() {
-    _sendChannel.invokeMethod('stop', {
+  Future<void> stop() async {
+    await _sendChannel.invokeMethod('stop', {
       "id": this.id,
     });
   }
@@ -767,8 +771,8 @@ class AssetsAudioPlayer {
   ///
   /// if null, set to defaultPlaySpeed (1.0)
   ///
-  void setPlaySpeed(double playSpeed) {
-    _sendChannel.invokeMethod('playSpeed', {
+  Future<void> setPlaySpeed(double playSpeed) async {
+    await _sendChannel.invokeMethod('playSpeed', {
       "id": this.id,
       "playSpeed":
           (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
