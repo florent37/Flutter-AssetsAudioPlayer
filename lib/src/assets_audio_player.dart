@@ -381,12 +381,7 @@ class AssetsAudioPlayer {
 
   void playlistPlayAtIndex(int index) {
     _playlist.moveTo(index);
-    _open(_playlist.currentAudio(),
-      autoStart: true,
-      respectSilentMode: _playlist.respectSilentMode,
-      playSpeed: _playlist.playSpeed,
-      showNotification: _playlist.showNotification,
-    );
+    _openPlaylistCurrent();
   }
 
   bool previous() {
