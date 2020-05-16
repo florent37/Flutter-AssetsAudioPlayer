@@ -332,7 +332,11 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                  case .failed:
                      debugPrint("playback failed")
                     
-                    result("play error");
+                     result(FlutterError(
+                        code: "PLAY_ERROR",
+                        message: "Cannot play "+assetPath,
+                        details: nil)
+                     );
                  @unknown default:
                     fatalError()
                 }
