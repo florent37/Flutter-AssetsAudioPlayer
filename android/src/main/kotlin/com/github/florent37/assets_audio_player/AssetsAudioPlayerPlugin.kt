@@ -299,9 +299,17 @@ class AssetsAudioPlayer(
                     val songAlbum = args["song.album"] as? String
                     val songImage = args["song.image"] as? String
                     val songImageType = args["song.imageType"] as? String
+                    val songImagePackage = args["song.imagePackage"] as? String
                     //endregion metas
 
-                    val audioMetas = AudioMetas(title = songTitle, artist = songArtist, album = songAlbum, image = songImage, imageType = songImageType)
+                    val audioMetas = AudioMetas(
+                            title = songTitle, 
+                            artist = songArtist, 
+                            album = songAlbum, 
+                            image = songImage, 
+                            imageType = songImageType,
+                            imagePackage = songImagePackage
+                    )
 
                     getOrCreatePlayer(id).open(
                             assetAudioPath = path,

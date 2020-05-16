@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.github.florent37.assets_audio_player.R
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -57,12 +58,12 @@ class NotificationService : Service() {
                 .setAction(forAction)
                 .putExtra(EXTRA_PLAYER_ID, forPlayer)
     }
-
+    
     private fun displayNotification(action: NotificationAction.Show) {
         GlobalScope.launch(Dispatchers.Main) {
             if (action.audioMetas.imageType != null && action.audioMetas.image != null) {
                 try {
-                    val image = ImageDownloader.getBitmap(context = applicationContext, fileType = action.audioMetas.imageType, filePath = action.audioMetas.image)
+                    val image = ImageDownloader.getBitmap(context = applicationContext, fileType = action.audioMetas.imageType, filePath = action.audioMetas.image, filePackage = action.audioMetas.imagePackage)
                     displayNotification(action, image) //display without image for now
                 } catch (t: Throwable) {
                     t.printStackTrace()
