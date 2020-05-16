@@ -19,13 +19,20 @@ import com.google.android.exoplayer2.upstream.AssetDataSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
 import kotlin.math.max
 
 /**
  * Does not depend on Flutter, feel free to use it in all your projects
  */
-class Player(val id: String, context: Context, private val stopWhenCall: StopWhenCall, private val notificationManager: NotificationManager) {
+class Player(
+        val id: String,
+        context: Context,
+        private val stopWhenCall: StopWhenCall,
+        private val notificationManager: NotificationManager,
+        private val flutterAssets: FlutterPlugin.FlutterAssets
+) {
 
     companion object {
         const val VOLUME_WHEN_REDUCED = 0.3
@@ -106,6 +113,7 @@ class Player(val id: String, context: Context, private val stopWhenCall: StopWhe
     }
 
     fun open(assetAudioPath: String?,
+             assetAudioPackage: String?,
              audioType: String,
              autoStart: Boolean,
              volume: Double,
@@ -137,9 +145,13 @@ class Player(val id: String, context: Context, private val stopWhenCall: StopWhe
             } else { //asset
                 mediaPlayer?.stop()
 
-                val dataSpec = DataSpec(Uri.parse("assets:///flutter_assets/$assetAudioPath"))
+                val path = if (assetAudioPackage.isNullOrBlank()) {
+                    flutterAssets.getAssetFilePathByName(assetAudioPath!!)
+                } else {
+                    flutterAssets.getAssetFilePathByName(assetAudioPath!!, assetAudioPackage)
+                }
                 val assetDataSource = AssetDataSource(context)
-                assetDataSource.open(dataSpec)
+                assetDataSource.open(DataSpec(Uri.parse(path)))
 
                 val factory = DataSource.Factory { assetDataSource }
                 mediaSource = ProgressiveMediaSource
@@ -163,7 +175,7 @@ class Player(val id: String, context: Context, private val stopWhenCall: StopWhe
                         this@Player.onFinished?.invoke()
                     }
                     ExoPlayer.STATE_READY -> {
-                            if (!onThisMediaReady) {
+                        if (!onThisMediaReady) {
                             onThisMediaReady = true
                             //retrieve duration in seconds
                             val duration = mediaPlayer?.duration ?: 0
@@ -211,7 +223,7 @@ class Player(val id: String, context: Context, private val stopWhenCall: StopWhe
         }
         onForwardRewind?.invoke(0.0)
         mediaPlayer = null
-        if(pingListener) {
+        if (pingListener) {
             onStop?.invoke()
         }
     }
@@ -282,7 +294,7 @@ class Player(val id: String, context: Context, private val stopWhenCall: StopWhe
     }
 
     fun setVolume(volume: Double) {
-        if(isEnabledToChangeVolume) {
+        if (isEnabledToChangeVolume) {
             this.volume = volume
             mediaPlayer?.let {
                 var v = volume
@@ -333,14 +345,14 @@ class Player(val id: String, context: Context, private val stopWhenCall: StopWhe
 
     private var volumeBeforePhoneStateChanged: Double? = null
     private var wasPlayingBeforeEnablePlayChange: Boolean? = null
-    fun updateEnableToPlay(audioState: StopWhenCall.AudioState){
-        when(audioState){
+    fun updateEnableToPlay(audioState: StopWhenCall.AudioState) {
+        when (audioState) {
             StopWhenCall.AudioState.AUTHORIZED_TO_PLAY -> {
                 this.isEnabledToPlayPause = true //this one must be called before play/pause()
                 this.isEnabledToChangeVolume = true //this one must be called before play/pause()
                 wasPlayingBeforeEnablePlayChange?.let {
                     //phone call ended
-                    if(it) {
+                    if (it) {
                         play()
                     } else {
                         pause()

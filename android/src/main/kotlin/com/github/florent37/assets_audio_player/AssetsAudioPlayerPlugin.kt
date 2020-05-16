@@ -34,6 +34,7 @@ class AssetsAudioPlayerPlugin : FlutterPlugin {
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         instance = this
         assetsAudioPlayer = AssetsAudioPlayer(
+                flutterAssets = flutterPluginBinding.flutterAssets,
                 context = flutterPluginBinding.applicationContext,
                 messenger = flutterPluginBinding.binaryMessenger
         )
@@ -46,7 +47,11 @@ class AssetsAudioPlayerPlugin : FlutterPlugin {
     }
 }
 
-class AssetsAudioPlayer(private val context: Context, private val messenger: BinaryMessenger) : MethodCallHandler {
+class AssetsAudioPlayer(
+        private val context: Context, 
+        private val messenger: BinaryMessenger,
+        private val flutterAssets: FlutterPlugin.FlutterAssets
+) : MethodCallHandler {
 
     private var stopWhenCall: StopWhenCall? = null
     private val notificationManager = NotificationManager(context)
@@ -86,7 +91,13 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
     private fun getOrCreatePlayer(id: String): Player {
         return players.getOrPut(id) {
             val channel = MethodChannel(messenger, "assets_audio_player/$id")
-            val player = Player(context = context, id = id, notificationManager = notificationManager,  stopWhenCall= stopWhenCall!!)
+            val player = Player(
+                    context = context,
+                    id = id,
+                    notificationManager = notificationManager,
+                    stopWhenCall= stopWhenCall!!,
+                    flutterAssets= flutterAssets
+            )
             player.apply {
                 onVolumeChanged = { volume ->
                     channel.invokeMethod(METHOD_VOLUME, volume)
@@ -263,16 +274,18 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
                         result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
                         return
                     }
+                    val assetPackage = args["package"] as? String
+
                     val audioType = args["audioType"] as? String ?: run {
                         result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `audioType`", null)
                         return
                     }
                     val volume = args["volume"] as? Double ?: run {
-                        result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
+                        result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `volume`", null)
                         return
                     }
                     val playSpeed = args["playSpeed"] as? Double ?: run {
-                        result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
+                        result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `playSpeed`", null)
                         return
                     }
                     val autoStart = args["autoStart"] as? Boolean ?: true
@@ -292,6 +305,7 @@ class AssetsAudioPlayer(private val context: Context, private val messenger: Bin
 
                     getOrCreatePlayer(id).open(
                             assetAudioPath = path,
+                            assetAudioPackage = assetPackage,
                             audioType= audioType,
                             autoStart= autoStart,
                             volume= volume,

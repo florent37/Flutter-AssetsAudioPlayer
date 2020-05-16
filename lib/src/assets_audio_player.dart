@@ -499,6 +499,7 @@ class AssetsAudioPlayer {
           "id": this.id,
           "audioType": _audioTypeDescription(audio.audioType),
           "path": audio.path,
+          "package": audio.package,
           "autoStart": autoStart,
           "respectSilentMode": respectSilentMode,
           "displayNotification": showNotification,
