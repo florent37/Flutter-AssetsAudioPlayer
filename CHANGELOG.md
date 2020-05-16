@@ -1,3 +1,9 @@
+## 1.4.7
+
+* added `package` on assets audios (& notif images)
+* all methods return Future
+* open can throw an exception if the url is not found
+
 ## 1.4.6+1
 
 * fixed android notifications actions

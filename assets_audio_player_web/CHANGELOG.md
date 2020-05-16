@@ -1,4 +1,4 @@
-## 1.4.6+1
+## 1.4.7
 
 * Added `ForwardRewind`
 * Removed `howl`

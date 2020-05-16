@@ -29,7 +29,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.4.6+1
+  assets_audio_player: ^1.4.7
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -40,7 +40,7 @@ dependencies:
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
-  assets_audio_player_web: ^1.4.6+1
+  assets_audio_player_web: ^1.4.7
 ```
 
 </details>
@@ -161,7 +161,7 @@ You like the package ? buy me a kofi :)
   <td>✅</td>
 </tr>
 <tr>
-  <td>system play notification</td>
+  <td>system notification</td>
   <td>✅</td>
   <td>✅</td>
   <td>🚫</td>
@@ -229,9 +229,13 @@ You can also play *network songs* from *url*
 ```Dart
 final assetsAudioPlayer = AssetsAudioPlayer();
 
-assetsAudioPlayer.open(
-    Audio.network("http://www.mysite.com/myMp3file.mp3"),
-);
+try {
+    await assetsAudioPlayer.open(
+        Audio.network("http://www.mysite.com/myMp3file.mp3"),
+    );
+} catch (t) {
+    //mp3 unreachable
+}
 ```
 
 And play *songs from file*
