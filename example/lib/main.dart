@@ -141,8 +141,7 @@ class _MyAppState extends State<MyApp> {
                 Stack(
                   fit: StackFit.passthrough,
                   children: <Widget>[
-                    PlayerBuilder.current(
-                      player: _assetsAudioPlayer,
+                    _assetsAudioPlayer.builderCurrent(
                       builder: (BuildContext context, Playing playing) {
                         if (playing != null) {
                           final myAudio = find(this.audios, playing.audio.assetAudioPath);
@@ -193,16 +192,14 @@ class _MyAppState extends State<MyApp> {
                 SizedBox(
                   height: 20,
                 ),
-                PlayerBuilder.current(
-                    player: _assetsAudioPlayer,
+                _assetsAudioPlayer.builderCurrent(
                     builder: (context, playing) {
                       if (playing == null) {
                         return SizedBox();
                       }
                       return Column(
                         children: <Widget>[
-                          PlayerBuilder.isLooping(
-                            player: _assetsAudioPlayer,
+                          _assetsAudioPlayer.builderIsLooping(
                             builder: (context, isLooping) {
                               return PlayerBuilder.isPlaying(
                                   player: _assetsAudioPlayer,
@@ -228,8 +225,7 @@ class _MyAppState extends State<MyApp> {
                                   });
                             },
                           ),
-                          PlayerBuilder.realtimePlayingInfos(
-                              player: _assetsAudioPlayer,
+                          _assetsAudioPlayer.builderRealtimePlayingInfos(
                               builder: (context, infos) {
                                 if (infos == null) {
                                   return SizedBox();
@@ -272,8 +268,7 @@ class _MyAppState extends State<MyApp> {
                   height: 20,
                 ),
                 Expanded(
-                  child: PlayerBuilder.current(
-                      player: _assetsAudioPlayer,
+                  child: _assetsAudioPlayer.builderCurrent(
                       builder: (BuildContext context, Playing playing) {
                         return SongsSelector(
                           audios: this.audios,
