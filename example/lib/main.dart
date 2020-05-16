@@ -245,6 +245,7 @@ class _MyAppState extends State<MyApp> {
                                       },
                                     ),
                                     Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         NeumorphicButton(
                                           child: Text("-10"),
@@ -252,6 +253,7 @@ class _MyAppState extends State<MyApp> {
                                             _assetsAudioPlayer.seekBy(Duration(seconds: -10));
                                           },
                                         ),
+                                        SizedBox(width: 12,),
                                         NeumorphicButton(
                                           child: Text("+10"),
                                           onClick: (){
