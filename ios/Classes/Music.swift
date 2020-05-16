@@ -48,7 +48,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         channel.invokeMethod("log", arguments: message)
     }
     
-    func getUrlByType(path: String, audioType: String) -> URL? {
+    func getUrlByType(path: String, audioType: String, assetPackage: String?) -> URL? {
         var url : URL
 
         if(audioType == "network"){
@@ -77,7 +77,12 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 return nil
             }
         }  else { //asset
-            let assetKey = self.registrar.lookupKey(forAsset: path)
+            var assetKey: String
+            if(assetPackage != nil && !assetPackage!.isEmpty){
+                assetKey = self.registrar.lookupKey(forAsset: path, fromPackage: assetPackage!)
+            } else {
+                assetKey = self.registrar.lookupKey(forAsset: path)
+            }
 
             guard let path = Bundle.main.path(forResource: assetKey, ofType: nil) else {
                  return nil
@@ -257,15 +262,20 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
     }
     
-    func open(assetPath: String, audioType: String,
-              autoStart: Bool, volume: Double,
-              seek: Int?, respectSilentMode: Bool,
-              audioMetas: AudioMetas, displayNotification: Bool,
+    func open(assetPath: String,
+              assetPackage: String?,
+              audioType: String,
+              autoStart: Bool,
+              volume: Double,
+              seek: Int?,
+              respectSilentMode: Bool,
+              audioMetas: AudioMetas,
+              displayNotification: Bool,
               playSpeed: Double,
-              result: FlutterResult
+              result: @escaping FlutterResult
     ){
         self.stop();
-        guard let url = self.getUrlByType(path: assetPath, audioType: audioType) else {
+        guard let url = self.getUrlByType(path: assetPath, audioType: audioType, assetPackage: assetPackage) else {
              log("resource not found \(assetPath)")
              result("");
              return
@@ -293,7 +303,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             self.audioMetas = audioMetas
             
             NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
-                        
+
             observerStatus = item.observe(\.status, changeHandler: { [weak self] (item, value) in
                  switch item.status {
                  case .unknown:
@@ -318,9 +328,11 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                         self?.seek(to: seek!)
                      }
                     
-                    
+                    result(nil)
                  case .failed:
                      debugPrint("playback failed")
+                    
+                    result("play error");
                  @unknown default:
                     fatalError()
                 }
@@ -335,8 +347,6 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                             
             self.currentTime = 0
             self.playing = false
-            
-            result(true);
         } catch let error {
             result(error);
             log(error.localizedDescription)
@@ -511,7 +521,7 @@ class Music : NSObject, FlutterPlugin {
     func start(){
         self.registrar.addApplicationDelegate(self)
 
-        channel.setMethodCallHandler({(call: FlutterMethodCall, result: FlutterResult) -> Void in
+        channel.setMethodCallHandler({(call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
             //self.log(call.method + call.arguments.debugDescription)
             switch(call.method){
             case "isPlaying" :
@@ -524,7 +534,7 @@ class Music : NSObject, FlutterPlugin {
                 let id = args["id"] as! String
                 self.getOrCreatePlayer(id: id)
                     .play();
-            result(true);
+                result(true);
             break;
                 
             case "pause" :
@@ -582,6 +592,7 @@ class Music : NSObject, FlutterPlugin {
                 let args = call.arguments as! NSDictionary
                 let id = args["id"] as! String
                 let assetPath = args["path"] as! String
+                let assetPackage = args["package"] as? String
                 let audioType = args["audioType"] as! String
                 let volume = args["volume"] as! Double
                 let seek = args["seek"] as? Int
@@ -602,6 +613,7 @@ class Music : NSObject, FlutterPlugin {
                 self.getOrCreatePlayer(id: id)
                     .open(
                         assetPath: assetPath,
+                        assetPackage: assetPackage,
                         audioType: audioType,
                         autoStart: autoStart,
                         volume:volume,

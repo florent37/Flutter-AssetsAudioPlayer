@@ -532,6 +532,7 @@ class AssetsAudioPlayer {
         _playlistFinished.value = false;
       } catch (e) {
         _lastOpenedAssetsAudio = currentAudio; //revert to the previous audio
+        print(e);
         return Future.error(e);
       }
     }

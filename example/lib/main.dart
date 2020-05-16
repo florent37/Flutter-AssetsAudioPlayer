@@ -264,7 +264,7 @@ class _MyAppState extends State<MyApp> {
                           onSelected: (myAudio) {
                             _assetsAudioPlayer.open(
                               myAudio,
-                              autoStart: false,
+                              autoStart: true,
                               respectSilentMode: true,
                               showNotification: true,
                             );
