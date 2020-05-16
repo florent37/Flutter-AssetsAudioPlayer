@@ -235,12 +235,32 @@ class _MyAppState extends State<MyApp> {
                                   return SizedBox();
                                 }
                                 //print("infos: $infos");
-                                return PositionSeekWidget(
-                                  currentPosition: infos.currentPosition,
-                                  duration: infos.duration,
-                                  seekTo: (to) {
-                                    _assetsAudioPlayer.seek(to);
-                                  },
+                                return Column(
+                                  children: [
+                                    PositionSeekWidget(
+                                      currentPosition: infos.currentPosition,
+                                      duration: infos.duration,
+                                      seekTo: (to) {
+                                        _assetsAudioPlayer.seek(to);
+                                      },
+                                    ),
+                                    Row(
+                                      children: [
+                                        NeumorphicButton(
+                                          child: Text("-10"),
+                                          onClick: (){
+                                            _assetsAudioPlayer.seekBy(Duration(seconds: -10));
+                                          },
+                                        ),
+                                        NeumorphicButton(
+                                          child: Text("+10"),
+                                          onClick: (){
+                                            _assetsAudioPlayer.seekBy(Duration(seconds: 10));
+                                          },
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 );
                               }),
                         ],
@@ -273,6 +293,7 @@ class _MyAppState extends State<MyApp> {
                         );
                       }),
                 ),
+                /*
                 PlayerBuilder.volume(
                     player: _assetsAudioPlayer,
                     builder: (context, volume) {
@@ -283,6 +304,8 @@ class _MyAppState extends State<MyApp> {
                         },
                       );
                     }),
+                 */
+                /*
                 PlayerBuilder.forwardRewindSpeed(
                     player: _assetsAudioPlayer,
                     builder: (context, speed) {
@@ -293,6 +316,8 @@ class _MyAppState extends State<MyApp> {
                         },
                       );
                     }),
+                 */
+                /*
                 PlayerBuilder.playSpeed(
                     player: _assetsAudioPlayer,
                     builder: (context, playSpeed) {
@@ -303,6 +328,7 @@ class _MyAppState extends State<MyApp> {
                         },
                       );
                     }),
+                 */
               ],
             ),
           ),

@@ -728,7 +728,7 @@ class AssetsAudioPlayer {
       } else {
         //only if playing a song
         final currentPosition = this.currentPosition.value ?? Duration();
-        final nextPosition = currentPosition - by;
+        final nextPosition = currentPosition + by;
 
         //don't seek less that 0
         final currentPositionCapped = Duration(
