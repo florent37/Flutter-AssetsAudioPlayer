@@ -9,6 +9,7 @@ enum _PlayingBuilderType {
   forwardRewindSpeed,
   current,
   isLooping,
+  isBuffering,
   realtimePlayingInfos,
 }
 
@@ -26,6 +27,8 @@ typedef PositionWidgetBuilder = Widget Function(
     BuildContext context, double position);
 typedef CurrentWidgetBuilder = Widget Function(
     BuildContext context, Playing playing);
+typedef IsBufferingWidgetBuilder = Widget Function(
+    BuildContext context, bool isBuffering);
 typedef RealtimeWidgetBuilder = Widget Function(
     BuildContext context, RealtimePlayingInfos realtimePlayingInfos);
 
@@ -38,6 +41,12 @@ class PlayerBuilder extends StatefulWidget {
       {Key key, @required this.player, @required PlayingWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.isPlaying,
+        super(key: key);
+
+  const PlayerBuilder.isBuffering(
+      {Key key, @required this.player, @required PlayingWidgetBuilder builder})
+      : this.builder = builder,
+        this.builderType = _PlayingBuilderType.isBuffering,
         super(key: key);
 
   const PlayerBuilder.isLooping(
@@ -97,6 +106,15 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
       case _PlayingBuilderType.isPlaying:
         return StreamBuilder(
           stream: widget.player.isPlaying,
+          initialData: false,
+          builder: (context, snap) {
+            return this.widget.builder(context, snap.data);
+          },
+        );
+        break;
+      case _PlayingBuilderType.isBuffering:
+        return StreamBuilder(
+          stream: widget.player.isBuffering,
           initialData: false,
           builder: (context, snap) {
             return this.widget.builder(context, snap.data);

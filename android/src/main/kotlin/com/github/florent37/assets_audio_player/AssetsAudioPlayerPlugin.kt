@@ -19,6 +19,7 @@ internal val METHOD_FORWARD_REWIND_SPEED = "player.forwardRewind"
 internal val METHOD_PLAY_SPEED = "player.playSpeed"
 internal val METHOD_FINISHED = "player.finished"
 internal val METHOD_IS_PLAYING = "player.isPlaying"
+internal val METHOD_IS_BUFFERING = "player.isBuffering"
 internal val METHOD_CURRENT = "player.current"
 internal val METHOD_NEXT = "player.next"
 internal val METHOD_PREV = "player.prev"
@@ -118,6 +119,9 @@ class AssetsAudioPlayer(
                 }
                 onPlaying = {
                     channel.invokeMethod(METHOD_IS_PLAYING, it)
+                }
+                onBuffering = {
+                    channel.invokeMethod(METHOD_IS_BUFFERING, it)
                 }
                 onFinished = {
                     channel.invokeMethod(METHOD_FINISHED, null)

@@ -51,6 +51,7 @@ class Player(
     var onPositionChanged: ((Long) -> Unit)? = null
     var onFinished: (() -> Unit)? = null
     var onPlaying: ((Boolean) -> Unit)? = null
+    var onBuffering: ((Boolean) -> Unit)? = null
     var onNext: (() -> Unit)? = null
     var onPrev: (() -> Unit)? = null
     var onStop: (() -> Unit)? = null
@@ -132,19 +133,16 @@ class Player(
 
         lateinit var mediaSource: MediaSource
         try {
-            if (audioType == "network") {
-                mediaPlayer?.stop();
+            mediaPlayer?.stop()
+            if (audioType == "network" || audioType == "liveStream") {
                 mediaSource = ProgressiveMediaSource
                         .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
                         .createMediaSource(Uri.parse(assetAudioPath))
             } else if (audioType == "file") {
-                mediaPlayer?.stop()
                 mediaSource = ProgressiveMediaSource
                         .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
                         .createMediaSource(Uri.parse(assetAudioPath))
             } else { //asset
-                mediaPlayer?.stop()
-
                 val path = if (assetAudioPackage.isNullOrBlank()) {
                     flutterAssets.getAssetFilePathByName(assetAudioPath!!)
                 } else {
@@ -177,8 +175,13 @@ class Player(
                     ExoPlayer.STATE_ENDED -> {
                         pause()
                         this@Player.onFinished?.invoke()
+                        this@Player.onBuffering?.invoke(false)
+                    }
+                    ExoPlayer.STATE_BUFFERING -> {
+                        this@Player.onBuffering?.invoke(true)
                     }
                     ExoPlayer.STATE_READY -> {
+                        this@Player.onBuffering?.invoke(false)
                         if (!onThisMediaReady) {
                             onThisMediaReady = true
                             //retrieve duration in seconds
