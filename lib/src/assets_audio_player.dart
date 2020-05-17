@@ -90,7 +90,8 @@ class AssetsAudioPlayer {
   /// empty constructor now create a new player
   factory AssetsAudioPlayer() => AssetsAudioPlayer.newPlayer();
 
-  factory AssetsAudioPlayer.withId(String id) => _getOrCreate(id: id ?? uuid.v4());
+  factory AssetsAudioPlayer.withId(String id) =>
+      _getOrCreate(id: id ?? uuid.v4());
 
   /// Create a new player for this audio, play it, and dispose it automatically
   static void playAndForget(
@@ -164,10 +165,12 @@ class AssetsAudioPlayer {
   ///
   ValueStream<Playing> get current => _current.stream;
 
-  Stream<PlayingAudio> get onReadyToPlay => current.map((playing) => playing?.audio); //another comprehensible name
+  Stream<PlayingAudio> get onReadyToPlay =>
+      current.map((playing) => playing?.audio); //another comprehensible name
 
   /// Called when the the complete playlist finished to play (mutable)
-  final BehaviorSubject<bool> _playlistFinished = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _playlistFinished =
+      BehaviorSubject<bool>.seeded(false);
 
   /// Called when the complete playlist has finished to play
   ///     _assetsAudioPlayer.finished.listen((finished){
@@ -188,7 +191,8 @@ class AssetsAudioPlayer {
   Stream<Playing> get playlistAudioFinished => _playlistAudioFinished.stream;
 
   /// Then current playing song position (in seconds) (mutable)
-  final BehaviorSubject<Duration> _currentPosition = BehaviorSubject<Duration>.seeded(const Duration());
+  final BehaviorSubject<Duration> _currentPosition =
+      BehaviorSubject<Duration>.seeded(const Duration());
 
   /// Retrieve directly the current song position (in seconds)
   ///     final Duration position = _assetsAudioPlayer.currentPosition.value;
@@ -202,10 +206,12 @@ class AssetsAudioPlayer {
   ValueStream<Duration> get currentPosition => _currentPosition.stream;
 
   /// The volume of the media Player (min: 0, max: 1)
-  final BehaviorSubject<double> _volume = BehaviorSubject<double>.seeded(defaultVolume);
+  final BehaviorSubject<double> _volume =
+      BehaviorSubject<double>.seeded(defaultVolume);
 
   ValueStream<bool> get isBuffering => _isBuffering.stream;
-  final BehaviorSubject<bool> _isBuffering = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _isBuffering =
+      BehaviorSubject<bool>.seeded(false);
 
   /// Streams the volume of the media Player (min: 0, max: 1)
   ///     final double volume = _assetsAudioPlayer.volume.value;
@@ -227,9 +233,11 @@ class AssetsAudioPlayer {
   ///
   ValueStream<bool> get isLooping => _loop.stream;
 
-  final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos = BehaviorSubject<RealtimePlayingInfos>();
+  final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos =
+      BehaviorSubject<RealtimePlayingInfos>();
 
-  ValueStream<RealtimePlayingInfos> get realtimePlayingInfos => _realtimePlayingInfos.stream;
+  ValueStream<RealtimePlayingInfos> get realtimePlayingInfos =>
+      _realtimePlayingInfos.stream;
 
   BehaviorSubject<double> _playSpeed = BehaviorSubject.seeded(1.0);
 
@@ -316,7 +324,9 @@ class AssetsAudioPlayer {
                 audio: playingAudio,
                 index: _playlist.playlistIndex,
                 hasNext: _playlist.hasNext(),
-                playlist: ReadingPlaylist(audios: _playlist.playlist.audios, currentIndex: _playlist.playlistIndex),
+                playlist: ReadingPlaylist(
+                    audios: _playlist.playlist.audios,
+                    currentIndex: _playlist.playlistIndex),
               );
             }
           }
@@ -417,7 +427,8 @@ class AssetsAudioPlayer {
     );
   }
 
-  Future<bool> _next({bool stopIfLast = false, bool requestByUser = false}) async {
+  Future<bool> _next(
+      {bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
       if (_playlist.hasNext()) {
         _playlistAudioFinished.add(Playing(
@@ -513,10 +524,14 @@ class AssetsAudioPlayer {
           params["seek"] = seek.inSeconds.round();
         }
         if (audio.metas != null) {
-          if (audio.metas.title != null) params["song.title"] = audio.metas.title;
-          if (audio.metas.artist != null) params["song.artist"] = audio.metas.artist;
-          if (audio.metas.album != null) params["song.album"] = audio.metas.album;
-          if (audio.metas.image.package != null) params["song.imagePackage"] = audio.metas.image.package;
+          if (audio.metas.title != null)
+            params["song.title"] = audio.metas.title;
+          if (audio.metas.artist != null)
+            params["song.artist"] = audio.metas.artist;
+          if (audio.metas.album != null)
+            params["song.album"] = audio.metas.album;
+          if (audio.metas.image.package != null)
+            params["song.imagePackage"] = audio.metas.image.package;
           if (audio.metas.image != null) {
             params["song.image"] = audio.metas.image.path;
             params["song.imageType"] = audio.metas.image.type.description();
@@ -591,7 +606,9 @@ class AssetsAudioPlayer {
     Duration seek,
     double playSpeed,
   }) async {
-    if (playable is Playlist && playable.audios != null && playable.audios.length > 0) {
+    if (playable is Playlist &&
+        playable.audios != null &&
+        playable.audios.length > 0) {
       await _openPlaylist(
         playable,
         autoStart: autoStart,
@@ -727,7 +744,8 @@ class AssetsAudioPlayer {
 
         //don't seek more that song duration
         final currentPositionCapped = Duration(
-          milliseconds: min(totalDuration.inMilliseconds, nextPosition.inMilliseconds),
+          milliseconds:
+              min(totalDuration.inMilliseconds, nextPosition.inMilliseconds),
         );
 
         await seek(currentPositionCapped);
@@ -781,7 +799,8 @@ class AssetsAudioPlayer {
   Future<void> setPlaySpeed(double playSpeed) async {
     await _sendChannel.invokeMethod('playSpeed', {
       "id": this.id,
-      "playSpeed": (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
+      "playSpeed":
+          (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
     });
   }
 

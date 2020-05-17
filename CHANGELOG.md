@@ -1,3 +1,7 @@
+## 1.4.7+1
+
+* Added `Audio.liveStream(url)`
+
 ## 1.4.7
 
 * added `package` on assets audios (& notif images)

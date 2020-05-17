@@ -39,7 +39,9 @@ abstract class WebPlayer {
   void stop();
 
   String findAssetPath(String path, String audioType) {
-    if (audioType == "network" || audioType == "liveStream" || audioType == "file") {
+    if (audioType == "network" ||
+        audioType == "liveStream" ||
+        audioType == "file") {
       return path;
     }
     //in web, assets are packaged in a /assets/ folder
