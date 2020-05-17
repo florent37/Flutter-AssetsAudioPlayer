@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -27,10 +28,15 @@ object ImageDownloader {
                         } else {
                             FlutterLoader.getInstance().getLookupKeyForAsset(filePath, filePackage)
                         }
+                        //Log.d("ImageDownloader", "path $path")
+                        val completePath = "file:///android_asset/$path" //or file://$path
+                        //Log.d("ImageDownloader", "completePath $completePath")
+                        val uri = Uri.parse(completePath)
+                        //Log.d("ImageDownloader", "uri $uri")
                         Glide.with(context)
                                 .asBitmap()
                                 .timeout(5000)
-                                .load(Uri.parse("file://$path"))
+                                .load(uri)
                                 .into(object : CustomTarget<Bitmap>() {
                                     override fun onLoadFailed(errorDrawable: Drawable?) {
                                         continuation.resumeWithException(Exception("failed to download $filePath"))
