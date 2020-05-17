@@ -37,7 +37,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     let registrar: FlutterPluginRegistrar
     var player: AVPlayer?
     
-    var observerStatus: NSKeyValueObservation?
+    var observerStatus: [NSKeyValueObservation] = []
     
     var displayMediaPlayerNotification = false
     var audioMetas : AudioMetas?
@@ -54,7 +54,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     func getUrlByType(path: String, audioType: String, assetPackage: String?) -> URL? {
         var url : URL
         
-        if(audioType == "network"){
+        if(audioType == "network" || audioType == "liveStream"){
             let urlStr : String = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
             if let u = URL(string: urlStr) {
                 return u
@@ -312,7 +312,22 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
             
-            observerStatus = item.observe(\.status, changeHandler: { [weak self] (item, value) in
+            observerStatus.append( item.observe(\.isPlaybackBufferEmpty, options: [.new]) { [weak self] (_, _) in
+                // show buffering
+                self?.setBuffering(true)
+            })
+
+            observerStatus.append( item.observe(\.isPlaybackLikelyToKeepUp, options: [.new]) { [weak self] (_, _) in
+                // hide buffering
+                self?.setBuffering(false)
+            })
+
+            observerStatus.append( item.observe( \.isPlaybackBufferFull, options: [.new]) { [weak self] (_, _) in
+                // hide buffering
+                self?.setBuffering(false)
+            })
+            
+            observerStatus.append( item.observe(\.status, changeHandler: { [weak self] (item, value) in
                 switch item.status {
                 case .unknown:
                     debugPrint("status: unknown")
@@ -348,7 +363,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 @unknown default:
                     fatalError()
                 }
-            })
+            }))
             
             
             
@@ -364,6 +379,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             log(error.localizedDescription)
             print(error.localizedDescription)
         }
+    }
+    
+    private func setBuffering(_ value: Bool){
+        self.channel.invokeMethod(Music.METHOD_IS_BUFFERING, arguments: value)
     }
     
     func seek(to: Int){
@@ -412,7 +431,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.currentTimeTimer?.invalidate()
         self.deinitMediaPlayerNotifEvent()
         NotificationCenter.default.removeObserver(self)
-        self.observerStatus?.invalidate()
+        self.observerStatus.forEach {
+            $0.invalidate()
+        }
+        self.observerStatus.removeAll()
         self.nowPlayingInfo.removeAll()
     }
     
@@ -461,7 +483,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     }
     
     deinit {
-        observerStatus?.invalidate()
+        self.observerStatus.forEach {
+            $0.invalidate()
+        }
+        self.observerStatus.removeAll()
         self.deinitMediaPlayerNotifEvent()
         NotificationCenter.default.removeObserver(self)
     }
@@ -494,6 +519,7 @@ class Music : NSObject, FlutterPlugin {
     static let METHOD_FORWARD_REWIND = "player.forwardRewind"
     static let METHOD_CURRENT = "player.current"
     static let METHOD_VOLUME = "player.volume"
+    static let METHOD_IS_BUFFERING = "player.isBuffering"
     static let METHOD_PLAY_SPEED = "player.playSpeed"
     static let METHOD_NEXT = "player.next"
     static let METHOD_PREV = "player.prev"

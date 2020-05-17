@@ -4,14 +4,45 @@ class Playable {}
 
 enum AudioType {
   network,
+  liveStream,
   file,
   asset,
+}
+
+extension AudioTypeDescription on AudioType {
+  String description() {
+    switch (this) {
+      case AudioType.network:
+        return "network";
+      case AudioType.liveStream:
+        return "liveStream";
+      case AudioType.file:
+        return "file";
+      case AudioType.asset:
+        return "asset";
+    }
+    return null;
+  }
 }
 
 enum ImageType {
   network,
   file,
   asset,
+}
+
+extension ImageTypeDescription on ImageType {
+  String description() {
+    switch (this) {
+      case ImageType.network:
+        return "network";
+      case ImageType.file:
+        return "file";
+      case ImageType.asset:
+        return "asset";
+    }
+    return null;
+  }
 }
 
 @immutable
@@ -61,6 +92,9 @@ class Audio implements Playable {
         package = null;
   const Audio.network(this.path, {this.metas})
       : audioType = AudioType.network,
+        package = null;
+  const Audio.liveStream(this.path, {this.metas})
+      : audioType = AudioType.liveStream,
         package = null;
 }
 

@@ -22,6 +22,7 @@ const METHOD_POSITION = "player.position";
 const METHOD_VOLUME = "player.volume";
 const METHOD_FINISHED = "player.finished";
 const METHOD_IS_PLAYING = "player.isPlaying";
+const METHOD_IS_BUFFERING = "player.isBuffering";
 const METHOD_CURRENT = "player.current";
 const METHOD_FORWARD_REWIND_SPEED = "player.forwardRewind";
 const METHOD_NEXT = "player.next";
@@ -89,8 +90,7 @@ class AssetsAudioPlayer {
   /// empty constructor now create a new player
   factory AssetsAudioPlayer() => AssetsAudioPlayer.newPlayer();
 
-  factory AssetsAudioPlayer.withId(String id) =>
-      _getOrCreate(id: id ?? uuid.v4());
+  factory AssetsAudioPlayer.withId(String id) => _getOrCreate(id: id ?? uuid.v4());
 
   /// Create a new player for this audio, play it, and dispose it automatically
   static void playAndForget(
@@ -164,12 +164,10 @@ class AssetsAudioPlayer {
   ///
   ValueStream<Playing> get current => _current.stream;
 
-  Stream<PlayingAudio> get onReadyToPlay =>
-      current.map((playing) => playing?.audio); //another comprehensible name
+  Stream<PlayingAudio> get onReadyToPlay => current.map((playing) => playing?.audio); //another comprehensible name
 
   /// Called when the the complete playlist finished to play (mutable)
-  final BehaviorSubject<bool> _playlistFinished =
-      BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _playlistFinished = BehaviorSubject<bool>.seeded(false);
 
   /// Called when the complete playlist has finished to play
   ///     _assetsAudioPlayer.finished.listen((finished){
@@ -190,8 +188,7 @@ class AssetsAudioPlayer {
   Stream<Playing> get playlistAudioFinished => _playlistAudioFinished.stream;
 
   /// Then current playing song position (in seconds) (mutable)
-  final BehaviorSubject<Duration> _currentPosition =
-      BehaviorSubject<Duration>.seeded(const Duration());
+  final BehaviorSubject<Duration> _currentPosition = BehaviorSubject<Duration>.seeded(const Duration());
 
   /// Retrieve directly the current song position (in seconds)
   ///     final Duration position = _assetsAudioPlayer.currentPosition.value;
@@ -205,8 +202,10 @@ class AssetsAudioPlayer {
   ValueStream<Duration> get currentPosition => _currentPosition.stream;
 
   /// The volume of the media Player (min: 0, max: 1)
-  final BehaviorSubject<double> _volume =
-      BehaviorSubject<double>.seeded(defaultVolume);
+  final BehaviorSubject<double> _volume = BehaviorSubject<double>.seeded(defaultVolume);
+
+  ValueStream<bool> get isBuffering => _isBuffering.stream;
+  final BehaviorSubject<bool> _isBuffering = BehaviorSubject<bool>.seeded(false);
 
   /// Streams the volume of the media Player (min: 0, max: 1)
   ///     final double volume = _assetsAudioPlayer.volume.value;
@@ -228,11 +227,9 @@ class AssetsAudioPlayer {
   ///
   ValueStream<bool> get isLooping => _loop.stream;
 
-  final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos =
-      BehaviorSubject<RealtimePlayingInfos>();
+  final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos = BehaviorSubject<RealtimePlayingInfos>();
 
-  ValueStream<RealtimePlayingInfos> get realtimePlayingInfos =>
-      _realtimePlayingInfos.stream;
+  ValueStream<RealtimePlayingInfos> get realtimePlayingInfos => _realtimePlayingInfos.stream;
 
   BehaviorSubject<double> _playSpeed = BehaviorSubject.seeded(1.0);
 
@@ -275,6 +272,7 @@ class AssetsAudioPlayer {
     _playlistAudioFinished.close();
     _loop.close();
     _playSpeed.close();
+    _isBuffering.close();
     _forwardRewindSpeed.close();
     _realtimePlayingInfos.close();
     _realTimeSubscription?.cancel();
@@ -318,9 +316,7 @@ class AssetsAudioPlayer {
                 audio: playingAudio,
                 index: _playlist.playlistIndex,
                 hasNext: _playlist.hasNext(),
-                playlist: ReadingPlaylist(
-                    audios: _playlist.playlist.audios,
-                    currentIndex: _playlist.playlistIndex),
+                playlist: ReadingPlaylist(audios: _playlist.playlist.audios, currentIndex: _playlist.playlistIndex),
               );
             }
           }
@@ -338,6 +334,9 @@ class AssetsAudioPlayer {
           break;
         case METHOD_VOLUME:
           _volume.value = call.arguments;
+          break;
+        case METHOD_IS_BUFFERING:
+          _isBuffering.value = call.arguments;
           break;
         case METHOD_PLAY_SPEED:
           _playSpeed.value = call.arguments;
@@ -418,8 +417,7 @@ class AssetsAudioPlayer {
     );
   }
 
-  Future<bool> _next(
-      {bool stopIfLast = false, bool requestByUser = false}) async {
+  Future<bool> _next({bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
       if (_playlist.hasNext()) {
         _playlistAudioFinished.add(Playing(
@@ -502,7 +500,7 @@ class AssetsAudioPlayer {
       try {
         Map<String, dynamic> params = {
           "id": this.id,
-          "audioType": _audioTypeDescription(audio.audioType),
+          "audioType": audio.audioType.description(),
           "path": audio.path,
           "package": audio.package,
           "autoStart": autoStart,
@@ -515,22 +513,18 @@ class AssetsAudioPlayer {
           params["seek"] = seek.inSeconds.round();
         }
         if (audio.metas != null) {
-          if (audio.metas.title != null)
-            params["song.title"] = audio.metas.title;
-          if (audio.metas.artist != null)
-            params["song.artist"] = audio.metas.artist;
-          if (audio.metas.album != null)
-            params["song.album"] = audio.metas.album;
-          if (audio.metas.image.package != null)
-            params["song.imagePackage"] = audio.metas.image.package;
+          if (audio.metas.title != null) params["song.title"] = audio.metas.title;
+          if (audio.metas.artist != null) params["song.artist"] = audio.metas.artist;
+          if (audio.metas.album != null) params["song.album"] = audio.metas.album;
+          if (audio.metas.image.package != null) params["song.imagePackage"] = audio.metas.image.package;
           if (audio.metas.image != null) {
             params["song.image"] = audio.metas.image.path;
-            params["song.imageType"] =
-                _metasImageTypeDescription(audio.metas.image.type);
+            params["song.imageType"] = audio.metas.image.type.description();
           }
         }
         _lastOpenedAssetsAudio = audio;
-        /*final result = */ await _sendChannel.invokeMethod('open', params);
+        /*final result = */
+        await _sendChannel.invokeMethod('open', params);
 
         _playlistFinished.value = false;
       } catch (e) {
@@ -571,6 +565,10 @@ class AssetsAudioPlayer {
     );
   }
 
+  bool get _isLiveStream {
+    return _lastOpenedAssetsAudio?.audioType == AudioType.liveStream;
+  }
+
   /// Open a song from the asset
   /// ### Example
   ///
@@ -593,9 +591,7 @@ class AssetsAudioPlayer {
     Duration seek,
     double playSpeed,
   }) async {
-    if (playable is Playlist &&
-        playable.audios != null &&
-        playable.audios.length > 0) {
+    if (playable is Playlist && playable.audios != null && playable.audios.length > 0) {
       await _openPlaylist(
         playable,
         autoStart: autoStart,
@@ -640,7 +636,10 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.play();
   ///
   Future<void> play() async {
-    if (_playlistFinished.value == true) {
+    if (_isLiveStream) {
+      //on livestream, it re-open the media to be live and not on buffer
+      await _openPlaylistCurrent();
+    } else if (_playlistFinished.value == true) {
       //open the last
       await _openPlaylistCurrent();
     } else {
@@ -658,9 +657,14 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.pause();
   ///
   Future<void> pause() async {
-    await _sendChannel.invokeMethod('pause', {
-      "id": this.id,
-    });
+    if (_isLiveStream) {
+      //on livestream, we stop
+      await stop();
+    } else {
+      await _sendChannel.invokeMethod('pause', {
+        "id": this.id,
+      });
+    }
   }
 
   /// Change the current position of the song
@@ -723,8 +727,7 @@ class AssetsAudioPlayer {
 
         //don't seek more that song duration
         final currentPositionCapped = Duration(
-          milliseconds:
-              min(totalDuration.inMilliseconds, nextPosition.inMilliseconds),
+          milliseconds: min(totalDuration.inMilliseconds, nextPosition.inMilliseconds),
         );
 
         await seek(currentPositionCapped);
@@ -778,8 +781,7 @@ class AssetsAudioPlayer {
   Future<void> setPlaySpeed(double playSpeed) async {
     await _sendChannel.invokeMethod('playSpeed', {
       "id": this.id,
-      "playSpeed":
-          (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
+      "playSpeed": (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
     });
   }
 
@@ -858,28 +860,4 @@ class _CurrentPlaylist {
       playlistIndex = 0;
     }
   }
-}
-
-String _audioTypeDescription(AudioType audioType) {
-  switch (audioType) {
-    case AudioType.network:
-      return "network";
-    case AudioType.file:
-      return "file";
-    case AudioType.asset:
-      return "asset";
-  }
-  return null;
-}
-
-String _metasImageTypeDescription(ImageType imageType) {
-  switch (imageType) {
-    case ImageType.network:
-      return "network";
-    case ImageType.file:
-      return "file";
-    case ImageType.asset:
-      return "asset";
-  }
-  return null;
 }

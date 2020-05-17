@@ -12,6 +12,16 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
         builder: builder,
       );
 
+  PlayerBuilder builderIsBuffering({
+    Key key,
+    @required IsBufferingWidgetBuilder builder,
+  }) =>
+      PlayerBuilder.isBuffering(
+        key: key,
+        player: this,
+        builder: builder,
+      );
+
   PlayerBuilder builderIsLooping({
     Key key,
     @required IsLoopingWidgetBuilder builder,
