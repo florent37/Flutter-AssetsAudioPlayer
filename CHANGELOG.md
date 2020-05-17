@@ -1,6 +1,7 @@
-## 1.4.7+1
+## 1.4.7+2
 
 * Added `Audio.liveStream(url)`
+* Fixed notification image from assets on android
 
 ## 1.4.7
 
