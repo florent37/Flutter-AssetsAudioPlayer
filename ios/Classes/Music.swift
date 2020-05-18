@@ -115,18 +115,21 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         
         self.deinitMediaPlayerNotifEvent()
         // Add handler for Play Command
+        commandCenter.playCommand.isEnabled = true
         self.targets["play"] = commandCenter.playCommand.addTarget { [unowned self] event in
             self.play();
             return .success
         }
         
         // Add handler for Pause Command
+        commandCenter.pauseCommand.isEnabled = true
         self.targets["pause"] = commandCenter.pauseCommand.addTarget { [unowned self] event in
             self.pause();
             return .success
         }
         
         // Add handler for Pause Command
+        commandCenter.previousTrackCommand.isEnabled = true
         self.targets["prev"] = commandCenter.previousTrackCommand.addTarget { [unowned self] event in
             self.channel.invokeMethod(Music.METHOD_PREV, arguments: [])
             
@@ -134,6 +137,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
         
         // Add handler for Pause Command
+        commandCenter.nextTrackCommand.isEnabled = true
         self.targets["next"] = commandCenter.nextTrackCommand.addTarget { [unowned self] event in
             self.channel.invokeMethod(Music.METHOD_NEXT, arguments: [])
             
@@ -294,7 +298,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             /* set session category and mode with options */
             if #available(iOS 10.0, *) {
                 
-                try AVAudioSession.sharedInstance().setCategory(getAudioCategory(respectSilentMode: respectSilentMode), mode: AVAudioSession.Mode.default, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setCategory(getAudioCategory(respectSilentMode: respectSilentMode), mode: AVAudioSession.Mode.default, options: [.mixWithOthers, .allowAirPlay])
                 try AVAudioSession.sharedInstance().setActive(true)
                 
             } else {
@@ -424,6 +428,11 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     func stop(){
         self.player?.pause()
+        if(self.displayMediaPlayerNotification){
+            if #available(iOS 13.0, *) {
+                MPNowPlayingInfoCenter.default().playbackState = .stopped
+            }
+        }
         self.player?.seek(to: CMTime.zero)
         self.player?.rate = 0.0
         self.player = nil   
@@ -444,6 +453,12 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.currentTimeTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
         self.currentTimeTimer?.fire()
         self.playing = true
+        
+        if(self.displayMediaPlayerNotification){
+            if #available(iOS 13.0, *) {
+                MPNowPlayingInfoCenter.default().playbackState = .playing
+            }
+        }
     }
     
     var _currentTime : TimeInterval = 0
@@ -496,6 +511,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         if(self.displayMediaPlayerNotification){
             self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0
             MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
+            
+            if #available(iOS 13.0, *) {
+                MPNowPlayingInfoCenter.default().playbackState = .paused
+            }
         }
         self.playing = false
         self.currentTimeTimer?.invalidate()
