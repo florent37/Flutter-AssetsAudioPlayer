@@ -431,24 +431,28 @@ class AssetsAudioPlayer {
       {bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
       if (_playlist.hasNext()) {
-        _playlistAudioFinished.add(Playing(
-          audio: this._current.value.audio,
-          index: this._current.value.index,
-          hasNext: true,
-          playlist: this._current.value.playlist,
-        ));
+        if(this._current.value != null) {
+          _playlistAudioFinished.add(Playing(
+            audio: this._current.value.audio,
+            index: this._current.value.index,
+            hasNext: true,
+            playlist: this._current.value.playlist,
+          ));
+        }
         _playlist.selectNext();
         await _openPlaylistCurrent();
 
         return true;
       } else if (loop) {
         //last element
-        _playlistAudioFinished.add(Playing(
-          audio: this._current.value.audio,
-          index: this._current.value.index,
-          hasNext: false,
-          playlist: this._current.value.playlist,
-        ));
+        if(this._current.value != null) {
+          _playlistAudioFinished.add(Playing(
+            audio: this._current.value.audio,
+            index: this._current.value.index,
+            hasNext: false,
+            playlist: this._current.value.playlist,
+          ));
+        }
 
         _playlist.returnToFirst();
         await _openPlaylistCurrent();
@@ -459,12 +463,14 @@ class AssetsAudioPlayer {
         return true;
       } else if (requestByUser) {
         //last element
-        _playlistAudioFinished.add(Playing(
-          audio: this._current.value.audio,
-          index: this._current.value.index,
-          hasNext: false,
-          playlist: this._current.value.playlist,
-        ));
+        if(this._current.value != null) {
+          _playlistAudioFinished.add(Playing(
+            audio: this._current.value.audio,
+            index: this._current.value.index,
+            hasNext: false,
+            playlist: this._current.value.playlist,
+          ));
+        }
 
         _playlist.returnToFirst();
         await _openPlaylistCurrent();
