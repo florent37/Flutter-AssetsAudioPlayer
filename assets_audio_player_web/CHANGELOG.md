@@ -1,4 +1,4 @@
-## 1.4.7+3
+## 1.4.7+4
 
 * Added `Audio.liveStream(url)`
 
