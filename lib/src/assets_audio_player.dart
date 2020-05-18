@@ -431,7 +431,7 @@ class AssetsAudioPlayer {
       {bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
       if (_playlist.hasNext()) {
-        if(this._current.value != null) {
+        if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
             audio: this._current.value.audio,
             index: this._current.value.index,
@@ -445,7 +445,7 @@ class AssetsAudioPlayer {
         return true;
       } else if (loop) {
         //last element
-        if(this._current.value != null) {
+        if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
             audio: this._current.value.audio,
             index: this._current.value.index,
@@ -463,7 +463,7 @@ class AssetsAudioPlayer {
         return true;
       } else if (requestByUser) {
         //last element
-        if(this._current.value != null) {
+        if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
             audio: this._current.value.audio,
             index: this._current.value.index,
