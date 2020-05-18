@@ -61,6 +61,22 @@ class MetasImage {
   const MetasImage.file(this.path)
       : type = ImageType.file,
         package = null;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is MetasImage &&
+              runtimeType == other.runtimeType &&
+              path == other.path &&
+              package == other.package &&
+              type == other.type;
+
+  @override
+  int get hashCode =>
+      path.hashCode ^
+      package.hashCode ^
+      type.hashCode;
+
 }
 
 @immutable
@@ -76,6 +92,24 @@ class Metas {
     this.album,
     this.image,
   });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Metas &&
+              runtimeType == other.runtimeType &&
+              title == other.title &&
+              artist == other.artist &&
+              album == other.album &&
+              image == other.image;
+
+  @override
+  int get hashCode =>
+      title.hashCode ^
+      artist.hashCode ^
+      album.hashCode ^
+      image.hashCode;
+
 }
 
 @immutable
@@ -96,6 +130,24 @@ class Audio implements Playable {
   const Audio.liveStream(this.path, {this.metas})
       : audioType = AudioType.liveStream,
         package = null;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Audio &&
+              runtimeType == other.runtimeType &&
+              path == other.path &&
+              package == other.package &&
+              audioType == other.audioType &&
+              metas == other.metas;
+
+  @override
+  int get hashCode =>
+      path.hashCode ^
+      package.hashCode ^
+      audioType.hashCode ^
+      metas.hashCode;
+
 }
 
 @immutable
@@ -107,4 +159,18 @@ class Playlist implements Playable {
   const Playlist({@required this.audios, this.startIndex = 0});
 
   int get numberOfItems => audios.length;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Playlist &&
+              runtimeType == other.runtimeType &&
+              audios == other.audios &&
+              startIndex == other.startIndex;
+
+  @override
+  int get hashCode =>
+      audios.hashCode ^
+      startIndex.hashCode;
+
 }
