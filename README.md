@@ -196,6 +196,12 @@ You like the package ? buy me a kofi :)
           <td>✅</td>
           <td>🚫</td>
         </tr>
+        <tr>
+           <td>Audio Widget</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+        </tr>
     </tbody>
 </table>
 
@@ -422,6 +428,47 @@ assetsAudioPlayer.next();
 assetsAudioPlayer.prev();
 assetsAudioPlayer.playAtIndex(1);
 ```
+
+## Audio Widget
+
+If you want a more flutter way to play audio, try the `AudioWidget` !
+
+[![sample](./medias/audio_widget.gif)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
+
+```dart
+//inside a stateful widget
+
+bool _play = false;
+
+@override
+Widget build(BuildContext context) {
+  return Audio.assets(
+     path: "assets/audios/country.mp3",
+     play: _play,
+     child: RaisedButton(
+           child: Text(
+               _play ? "pause" : "play",
+           ),
+           onPressed: () {
+               setState(() {
+                 _play = !_play;
+               });
+           }
+      ),
+      onReadyToPlay: (duration) {
+          //onReadyToPlay
+      },
+      onPositionChanged: (current, duration) {
+          //onReadyToPlay
+      },
+  );
+}
+```
+
+How to 🛑 stop 🛑 the AudioWidget ?
+
+Just remove the Audio from the tree !
+Or simply keep `play: false`
 
 ## 🎧 Listeners
 
