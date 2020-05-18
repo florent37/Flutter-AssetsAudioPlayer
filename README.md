@@ -433,6 +433,8 @@ assetsAudioPlayer.playAtIndex(1);
 
 If you want a more flutter way to play audio, try the `AudioWidget` !
 
+[![sample](./medias/audio_widget.gif)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
+
 ```dart
 //inside a stateful widget
 
