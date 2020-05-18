@@ -49,164 +49,235 @@ You like the package ? buy me a kofi :)
 
 <a href='https://ko-fi.com/A160LCC' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-
 <table>
-<thead>
-<tr>
-<th>Feature</th>
-<th>Android</th>
-<th>iOS</th>
-<th>Web</th>
-</tr>
-</thead>
-<tbody>
-
-<tr>
-  <td>Open Asset file</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-
-<tr>
-  <td>Open Network file</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-
-<tr>
-  <td>Open local file</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-
-<tr>
-  <td>Open network LiveStream</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-
-<tr>
-  <td>Play</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>Pause</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>Stop</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>Loop</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>Multiple players</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>Open Playlist</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>Playlist Actions (next/prev)</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>Seek(position)</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>SeekBy(position)</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>Forward(speed)</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>Rewind(speed)</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>get/set Volume</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>get/set Play Speed</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>system notification</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>🚫</td>
-</tr>
-<tr>
-  <td>Respect System silent mode</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>🚫</td>
-</tr>
-<tr>
-  <td>Pause on phone call</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>🚫</td>
-</tr>
-<tr>
-  <td>Listener onReady(completeDuration)</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>Listener finished</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-<tr>
-  <td>Listener currentPosition</td>
-  <td>✅</td>
-  <td>✅</td>
-  <td>✅</td>
-</tr>
-
-</tbody>
+    <thead>
+        <tr>
+            <th>Audio Source</th>
+            <th>Android</th>
+            <th>iOS</th>
+            <th>Web</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>Asset file (asset path)</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>Network file (url)</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>Local file (path)</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>Network LiveStream (url)</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+    </tbody>
 </table>
 
+
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Commands</th>
+            <th>Android</th>
+            <th>iOS</th>
+            <th>Web</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>Play</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>Pause</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>Stop</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>Seek(position)</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>SeekBy(position)</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>Forward(speed)</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>Rewind(speed)</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>Next</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+           <td>Prev</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+        </tr>
+    </tbody>
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <th>Feature</th>
+            <th>Android</th>
+            <th>iOS</th>
+            <th>Web</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>Multiple players</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>Open Playlist</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>system notification</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>🚫</td>
+        </tr>
+        <tr>
+          <td>Respect System silent mode</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>🚫</td>
+        </tr>
+        <tr>
+          <td>Pause on phone call</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>🚫</td>
+        </tr>
+    </tbody>
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <th>Properties</th>
+            <th>Android</th>
+            <th>iOS</th>
+            <th>Web</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>Loop</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>get/set Volume</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>get/set Play Speed</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+    </tbody>
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <th>Listeners</th>
+            <th>Android</th>
+            <th>iOS</th>
+            <th>Web</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>Listener onReady(completeDuration)</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+           <td>Listener currentPosition</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+        </tr>
+        <tr>
+          <td>Listener finished</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+           <td>Listener buffering</td>
+           <td>✅</td>
+           <td>✅</td>
+           <td>✅</td>
+        </tr>
+        <tr>
+          <td>Listener volume</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>Listener Play Speed</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+    </tbody>
+</table>
 
 # 📁 Import assets files
 
