@@ -29,7 +29,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.4.7+4
+  assets_audio_player: ^1.5.0
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -40,7 +40,7 @@ dependencies:
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
-  assets_audio_player_web: ^1.4.7+4
+  assets_audio_player_web: ^1.5.0
 ```
 
 </details>
@@ -322,6 +322,22 @@ try {
 }
 ```
 
+*LiveStream / Radio* from *url*
+
+**The main difference with network, if you pause/play, on livestream it will resume to present duration**
+
+```Dart
+final assetsAudioPlayer = AssetsAudioPlayer();
+
+try {
+    await assetsAudioPlayer.open(
+        Audio.liveStream(MY_LIVESTREAM_URL),
+    );
+} catch (t) {
+    //stream unreachable
+}
+```
+
 And play *songs from file*
 
 ```Dart
@@ -332,6 +348,8 @@ assetsAudioPlayer.open(
     Audio.file(FILE_URI),
 );
 ```
+
+for file uri, please look at https://pub.dev/packages/path_provider
 
 ```Dart
 assetsAudioPlayer.playOrPause();
