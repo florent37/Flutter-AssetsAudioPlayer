@@ -196,12 +196,37 @@ You like the package ? buy me a kofi :)
           <td>✅</td>
           <td>🚫</td>
         </tr>
+    </tbody>
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <th>Widgets</th>
+            <th>Android</th>
+            <th>iOS</th>
+            <th>Web</th>
+        </tr>
+    </thead>
+    <tbody>
         <tr>
            <td>Audio Widget</td>
            <td>✅</td>
            <td>✅</td>
            <td>✅</td>
         </tr>
+        <tr>
+            <td>Widget Builders</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+        </tr>
+        <tr>
+             <td>AudioPlayer Builders Extension</td>
+             <td>✅</td>
+             <td>✅</td>
+             <td>✅</td>
+         </tr>
     </tbody>
 </table>
 
@@ -542,6 +567,16 @@ PlayerBuilder.currentPosition(
 )
 ```
 
+or Player Builder Extension
+
+```dart
+_assetsAudioPlayer.builderCurrentPosition(
+     builder: (context, duration) {
+       return Text(duration.toString());  
+     }
+)
+```
+
 ### ▶ IsPlaying
 boolean observable representing the current mediaplayer playing state
 ```Dart
@@ -564,6 +599,16 @@ or use a PlayerBuilder !
 ```dart
 PlayerBuilder.isPlaying(
      player: _assetsAudioPlayer,
+     builder: (context, isPlaying) {
+       return Text(isPlaying ? "Pause" : "Play");  
+     }
+)
+```
+
+or Player Builder Extension
+
+```dart
+_assetsAudioPlayer.builderIsPlaying(
      builder: (context, isPlaying) {
        return Text(isPlaying ? "Pause" : "Play");  
      }
