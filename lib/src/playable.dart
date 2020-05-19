@@ -65,18 +65,14 @@ class MetasImage {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is MetasImage &&
-              runtimeType == other.runtimeType &&
-              path == other.path &&
-              package == other.package &&
-              type == other.type;
+      other is MetasImage &&
+          runtimeType == other.runtimeType &&
+          path == other.path &&
+          package == other.package &&
+          type == other.type;
 
   @override
-  int get hashCode =>
-      path.hashCode ^
-      package.hashCode ^
-      type.hashCode;
-
+  int get hashCode => path.hashCode ^ package.hashCode ^ type.hashCode;
 }
 
 @immutable
@@ -96,20 +92,16 @@ class Metas {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Metas &&
-              runtimeType == other.runtimeType &&
-              title == other.title &&
-              artist == other.artist &&
-              album == other.album &&
-              image == other.image;
+      other is Metas &&
+          runtimeType == other.runtimeType &&
+          title == other.title &&
+          artist == other.artist &&
+          album == other.album &&
+          image == other.image;
 
   @override
   int get hashCode =>
-      title.hashCode ^
-      artist.hashCode ^
-      album.hashCode ^
-      image.hashCode;
-
+      title.hashCode ^ artist.hashCode ^ album.hashCode ^ image.hashCode;
 }
 
 @immutable
@@ -134,20 +126,16 @@ class Audio implements Playable {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Audio &&
-              runtimeType == other.runtimeType &&
-              path == other.path &&
-              package == other.package &&
-              audioType == other.audioType &&
-              metas == other.metas;
+      other is Audio &&
+          runtimeType == other.runtimeType &&
+          path == other.path &&
+          package == other.package &&
+          audioType == other.audioType &&
+          metas == other.metas;
 
   @override
   int get hashCode =>
-      path.hashCode ^
-      package.hashCode ^
-      audioType.hashCode ^
-      metas.hashCode;
-
+      path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode;
 }
 
 @immutable
@@ -163,14 +151,11 @@ class Playlist implements Playable {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Playlist &&
-              runtimeType == other.runtimeType &&
-              audios == other.audios &&
-              startIndex == other.startIndex;
+      other is Playlist &&
+          runtimeType == other.runtimeType &&
+          audios == other.audios &&
+          startIndex == other.startIndex;
 
   @override
-  int get hashCode =>
-      audios.hashCode ^
-      startIndex.hashCode;
-
+  int get hashCode => audios.hashCode ^ startIndex.hashCode;
 }

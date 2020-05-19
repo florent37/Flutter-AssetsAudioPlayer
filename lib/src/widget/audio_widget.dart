@@ -139,7 +139,8 @@ class _AudioWidgetState extends State<AudioWidget> {
 
     _playlistAudioFinishedSubscription?.cancel();
     _playlistAudioFinishedSubscription = null;
-    _playlistAudioFinishedSubscription = _player.playlistAudioFinished.listen((event) {
+    _playlistAudioFinishedSubscription =
+        _player.playlistAudioFinished.listen((event) {
       if (widget.onFinished != null) {
         widget.onFinished();
       }
