@@ -1,3 +1,7 @@
+## 1.5.0+1
+
+* Added some checks on swift code
+
 ## 1.5.0
 
 * Added `Audio.liveStream(url)`
