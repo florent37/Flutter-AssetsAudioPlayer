@@ -519,7 +519,6 @@ class AssetsAudioPlayer {
           "id": this.id,
           "audioType": audio.audioType.description(),
           "path": audio.path,
-          "package": audio.package,
           "autoStart": autoStart,
           "respectSilentMode": respectSilentMode,
           "displayNotification": showNotification,
@@ -528,6 +527,9 @@ class AssetsAudioPlayer {
         };
         if (seek != null) {
           params["seek"] = seek.inSeconds.round();
+        }
+        if (audio.package != null) {
+          params["package"] = audio.package;
         }
         if (audio.metas != null) {
           if (audio.metas.title != null)
