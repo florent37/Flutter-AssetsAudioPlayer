@@ -1,4 +1,4 @@
-## 1.5.0+1S
+## 1.5.0+2
 
 * Added `Audio.liveStream(url)`
 * Added `AudioWidget`
