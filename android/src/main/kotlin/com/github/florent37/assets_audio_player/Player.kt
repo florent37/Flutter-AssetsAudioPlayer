@@ -34,6 +34,11 @@ class Player(
 
     companion object {
         const val VOLUME_WHEN_REDUCED = 0.3
+
+        const val AUDIO_TYPE_NETWORK = "network"
+        const val AUDIO_TYPE_LIVESTREAM = "liveStream"
+        const val AUDIO_TYPE_FILE = "file"
+        const val AUDIO_TYPE_ASSET = "asset"
     }
 
     private val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -134,11 +139,11 @@ class Player(
         lateinit var mediaSource: MediaSource
         try {
             mediaPlayer?.stop()
-            if (audioType == "network" || audioType == "liveStream") {
+            if (audioType == AUDIO_TYPE_NETWORK || audioType == AUDIO_TYPE_LIVESTREAM) {
                 mediaSource = ProgressiveMediaSource
                         .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
                         .createMediaSource(Uri.parse(assetAudioPath))
-            } else if (audioType == "file") {
+            } else if (audioType == AUDIO_TYPE_FILE) {
                 mediaSource = ProgressiveMediaSource
                         .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
                         .createMediaSource(Uri.parse(assetAudioPath))
@@ -185,10 +190,14 @@ class Player(
                         if (!onThisMediaReady) {
                             onThisMediaReady = true
                             //retrieve duration in seconds
-                            val duration = mediaPlayer?.duration ?: 0
-                            val totalDurationSeconds = (duration.toLong() / 1000)
+                            if(audioType == AUDIO_TYPE_LIVESTREAM) {
+                                onReadyToPlay?.invoke(0) //no duration for livestream
+                            } else {
+                                val duration = mediaPlayer?.duration ?: 0
+                                val totalDurationSeconds = (duration.toLong() / 1000)
 
-                            onReadyToPlay?.invoke(totalDurationSeconds)
+                                onReadyToPlay?.invoke(totalDurationSeconds)
+                            }
 
                             if (autoStart) {
                                 play()
