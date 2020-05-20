@@ -1,4 +1,4 @@
-## 1.5.0+2
+## 1.5.0+3
 
 * Added some checks on swift code
 * Fixed totalDuration or liveStream
