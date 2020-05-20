@@ -298,7 +298,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             /* set session category and mode with options */
             if #available(iOS 10.0, *) {
                 
-                try AVAudioSession.sharedInstance().setCategory(getAudioCategory(respectSilentMode: respectSilentMode), mode: AVAudioSession.Mode.default, options: [.mixWithOthers, .allowAirPlay])
+                try AVAudioSession.sharedInstance().setCategory(getAudioCategory(respectSilentMode: respectSilentMode), mode: AVAudioSession.Mode.default, options: [.mixWithOthers])
                 try AVAudioSession.sharedInstance().setActive(true)
                 
             } else {
@@ -385,7 +385,11 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             self.currentTime = 0
             self.playing = false
         } catch let error {
-            result(error);
+            result(FlutterError(
+                code: "PLAY_ERROR",
+                message: "Cannot play "+assetPath,
+                details: error.localizedDescription)
+            )
             log(error.localizedDescription)
             print(error.localizedDescription)
         }
