@@ -291,7 +291,7 @@ class AssetsAudioPlayer {
   _init() {
     _recieveChannel = MethodChannel('assets_audio_player/$id');
     _recieveChannel.setMethodCallHandler((MethodCall call) async {
-      //print("received call ${call.method} with arguments ${call.arguments}");
+      print("received call ${call.method} with arguments ${call.arguments}");
       switch (call.method) {
         case 'log':
           print("log: " + call.arguments);
@@ -320,7 +320,7 @@ class AssetsAudioPlayer {
             );
 
             if (_playlist != null) {
-              _current.value = Playing(
+              final current = Playing(
                 audio: playingAudio,
                 index: _playlist.playlistIndex,
                 hasNext: _playlist.hasNext(),
@@ -328,6 +328,7 @@ class AssetsAudioPlayer {
                     audios: _playlist.playlist.audios,
                     currentIndex: _playlist.playlistIndex),
               );
+              _current.value = current;
             }
           }
           break;
@@ -492,7 +493,9 @@ class AssetsAudioPlayer {
 
   /// Converts a number to duration
   Duration _toDuration(num value) {
-    if (value is int) {
+    if(value.isNaN){
+      return Duration(seconds: 0);
+    } else if (value is int) {
       return Duration(seconds: value);
     } else if (value is double) {
       return Duration(seconds: value.round());

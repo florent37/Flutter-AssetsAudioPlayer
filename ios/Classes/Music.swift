@@ -332,18 +332,24 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             })
             
             observerStatus.append( item.observe(\.status, changeHandler: { [weak self] (item, value) in
+                
                 switch item.status {
                 case .unknown:
                     debugPrint("status: unknown")
                 case .readyToPlay:
                     debugPrint("status: ready to play")
                     
-                    
-                    let audioDurationSeconds = CMTimeGetSeconds(item.duration) //CMTimeGetSeconds(asset.duration)
-                    self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": audioDurationSeconds])
-                    
-                    self?.setupMediaPlayerNotificationView(currentSongDuration: audioDurationSeconds)
-                    
+                    if(audioType == "liveStream"){
+                        self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": 0.0])
+                        
+                        self?.setupMediaPlayerNotificationView(currentSongDuration: 0)
+                    } else {
+                        let audioDurationSeconds = CMTimeGetSeconds(item.duration) //CMTimeGetSeconds(asset.duration)
+                        self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": audioDurationSeconds])
+                        
+                        self?.setupMediaPlayerNotificationView(currentSongDuration: audioDurationSeconds)
+                    }
+                                        
                     if(autoStart == true){
                         self?.play()
                     }
