@@ -541,11 +541,11 @@ class AssetsAudioPlayer {
             params["song.artist"] = audio.metas.artist;
           if (audio.metas.album != null)
             params["song.album"] = audio.metas.album;
-          if (audio.metas.image.package != null)
-            params["song.imagePackage"] = audio.metas.image.package;
           if (audio.metas.image != null) {
             params["song.image"] = audio.metas.image.path;
             params["song.imageType"] = audio.metas.image.type.description();
+            if (audio.metas.image.package != null)
+              params["song.imagePackage"] = audio.metas.image.package;
           }
         }
         _lastOpenedAssetsAudio = audio;
