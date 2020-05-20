@@ -493,7 +493,7 @@ class AssetsAudioPlayer {
 
   /// Converts a number to duration
   Duration _toDuration(num value) {
-    if(value.isNaN){
+    if (value.isNaN) {
       return Duration(seconds: 0);
     } else if (value is int) {
       return Duration(seconds: value);
