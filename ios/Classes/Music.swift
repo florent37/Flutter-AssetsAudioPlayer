@@ -96,8 +96,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
     }
     
-    func getAudioCategory(respectSilentMode: Bool) ->  AVAudioSession.Category {
-        if(respectSilentMode) {
+    func getAudioCategory(respectSilentMode: Bool, showNotification: Bool) ->  AVAudioSession.Category {
+        if(showNotification) {
+            return AVAudioSession.Category.playback
+        } else if(respectSilentMode) {
             return AVAudioSession.Category.soloAmbient
         } else {
             return AVAudioSession.Category.playback
@@ -108,7 +110,6 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     func setupMediaPlayerNotificationView(currentSongDuration: Any) {
         UIApplication.shared.beginReceivingRemoteControlEvents()
         let commandCenter = MPRemoteCommandCenter.shared()
-        //commandCenter.playCommand.isEnabled = self.playing
         
         self.setupNotificationView(currentSongDuration: currentSongDuration)
         
@@ -143,6 +144,20 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             return .success
         }
+        
+        //https://stackoverflow.com/questions/34563451/set-mpnowplayinginfocenter-with-other-background-audio-playing
+        //This isn't currently possible in iOS. Even just changing your category options to .MixWithOthers causes your nowPlayingInfo to be ignored.
+        do {
+            if #available(iOS 10.0, *) {
+                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+                try AVAudioSession.sharedInstance().setActive(true)
+            } else {
+                try AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                try AVAudioSession.sharedInstance().setActive(true)
+            }
+        } catch let error {
+            print(error)
+        }
     }
     
     func deinitMediaPlayerNotifEvent() {
@@ -172,33 +187,37 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         
         let audioMetas : AudioMetas? = self.audioMetas
         
+        self.nowPlayingInfo.removeAll()
+        
         if let t = audioMetas?.title {
-            nowPlayingInfo[MPMediaItemPropertyTitle] = t
+            self.nowPlayingInfo[MPMediaItemPropertyTitle] = t
         } else {
-            nowPlayingInfo[MPMediaItemPropertyTitle] = ""
+            self.nowPlayingInfo[MPMediaItemPropertyTitle] = ""
         }
         
         if let art = audioMetas?.artist {
-            nowPlayingInfo[MPMediaItemPropertyArtist] = art
+            self.nowPlayingInfo[MPMediaItemPropertyArtist] = art
         } else {
-            nowPlayingInfo[MPMediaItemPropertyArtist] = ""
+            self.nowPlayingInfo[MPMediaItemPropertyArtist] = ""
         }
         
         if let alb = audioMetas?.album {
-            nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = alb
+            self.nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = alb
         } else {
             nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = ""
         }
         
         
-        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = currentSongDuration
-        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
-        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0
+        self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = currentSongDuration
+        self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
+        self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0
         
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        
+        print(self.nowPlayingInfo.description)
+        
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
         
         //load image async
-        
         if let imageMetasType = self.audioMetas?.imageType {
             if let imageMetas = self.audioMetas?.image {
                 if #available(iOS 10.0, *) {
@@ -235,6 +254,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                                     })
                                     DispatchQueue.main.async {
                                         if(self.audioMetas == audioMetas){ //always the sam song ?
+                                            print(self.nowPlayingInfo.description)
+                                            
                                             self.nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
                                             MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
                                         }
@@ -294,16 +315,23 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
         
         do {
+            let category = getAudioCategory(respectSilentMode: respectSilentMode, showNotification: displayNotification)
+            let mode = AVAudioSession.Mode.default
+            
+            
+            print("category " + category.rawValue);
+            print("mode " + mode.rawValue);
+            print("displayNotification " + displayNotification.description);
+            
             //        log("url: "+url.absoluteString)
             /* set session category and mode with options */
             if #available(iOS 10.0, *) {
-                
-                try AVAudioSession.sharedInstance().setCategory(getAudioCategory(respectSilentMode: respectSilentMode), mode: AVAudioSession.Mode.default, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setCategory(category, mode: mode, options: [.mixWithOthers])
                 try AVAudioSession.sharedInstance().setActive(true)
                 
             } else {
                 
-                try AVAudioSession.sharedInstance().setCategory(getAudioCategory(respectSilentMode: respectSilentMode), options: .mixWithOthers)
+                try AVAudioSession.sharedInstance().setCategory(category, options: .mixWithOthers)
                 try AVAudioSession.sharedInstance().setActive(true)
                 
             }
@@ -342,14 +370,14 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                     if(audioType == "liveStream"){
                         self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": 0.0])
                         
-                        self?.setupMediaPlayerNotificationView(currentSongDuration: 0)
+                        self?.setupMediaPlayerNotificationView(currentSongDuration: Float64(0.0))
                     } else {
                         let audioDurationSeconds = CMTimeGetSeconds(item.duration) //CMTimeGetSeconds(asset.duration)
                         self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": audioDurationSeconds])
                         
                         self?.setupMediaPlayerNotificationView(currentSongDuration: audioDurationSeconds)
                     }
-                                        
+                    
                     if(autoStart == true){
                         self?.play()
                     }
@@ -438,13 +466,15 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     func stop(){
         self.player?.pause()
+        self.player?.rate = 0.0
         if(self.displayMediaPlayerNotification){
             if #available(iOS 13.0, *) {
                 MPNowPlayingInfoCenter.default().playbackState = .stopped
             }
+            self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.player?.rate
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
         }
         self.player?.seek(to: CMTime.zero)
-        self.player?.rate = 0.0
         self.player = nil   
         self.playing = false
         self.currentTimeTimer?.invalidate()
@@ -468,6 +498,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             if #available(iOS 13.0, *) {
                 MPNowPlayingInfoCenter.default().playbackState = .playing
             }
+            self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.player?.rate
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
         }
     }
     
