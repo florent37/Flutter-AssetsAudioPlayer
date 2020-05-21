@@ -2,9 +2,11 @@ package com.github.florent37.assets_audio_player
 
 import StopWhenCall
 import StopWhenCallAudioFocus
+import android.app.RemoteAction
 import android.content.Context
 import androidx.annotation.NonNull
 import com.github.florent37.assets_audio_player.notification.AudioMetas
+import com.github.florent37.assets_audio_player.notification.MediaButtonsReciever
 import com.github.florent37.assets_audio_player.notification.NotificationManager
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
@@ -30,7 +32,8 @@ class AssetsAudioPlayerPlugin : FlutterPlugin {
     companion object {
         var instance: AssetsAudioPlayerPlugin? = null
     }
-    var assetsAudioPlayer : AssetsAudioPlayer? = null
+
+    var assetsAudioPlayer: AssetsAudioPlayer? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         instance = this
@@ -49,13 +52,14 @@ class AssetsAudioPlayerPlugin : FlutterPlugin {
 }
 
 class AssetsAudioPlayer(
-        private val context: Context, 
+        private val context: Context,
         private val messenger: BinaryMessenger,
         private val flutterAssets: FlutterPlugin.FlutterAssets
 ) : MethodCallHandler {
 
     private var stopWhenCall: StopWhenCall? = null
     private val notificationManager = NotificationManager(context)
+    private var mediaButtonsReciever : MediaButtonsReciever? = null
     private val stopWhenCallListener = object : StopWhenCall.Listener {
         override fun onPhoneStateChanged(audioState: StopWhenCall.AudioState) {
             players.values.forEach {
@@ -64,9 +68,15 @@ class AssetsAudioPlayer(
         }
     }
 
+    private var lastPlayerIdWithNotificationEnabled: String? = null
+
     fun register() {
         stopWhenCall = StopWhenCallAudioFocus(context)
         stopWhenCall?.register(stopWhenCallListener)
+
+        mediaButtonsReciever = MediaButtonsReciever(context, onAction = {
+            onMediaButton(it)
+        })
 
         val channel = MethodChannel(messenger, "assets_audio_player")
         channel.setMethodCallHandler(this)
@@ -74,7 +84,7 @@ class AssetsAudioPlayer(
         stopWhenCall?.requestAudioFocus()
     }
 
-    fun unregister(){
+    fun unregister() {
         stopWhenCall?.stop()
         stopWhenCall?.unregister(stopWhenCallListener)
         players.values.forEach {
@@ -96,8 +106,8 @@ class AssetsAudioPlayer(
                     context = context,
                     id = id,
                     notificationManager = notificationManager,
-                    stopWhenCall= stopWhenCall!!,
-                    flutterAssets= flutterAssets
+                    stopWhenCall = stopWhenCall!!,
+                    flutterAssets = flutterAssets
             )
             player.apply {
                 onVolumeChanged = { volume ->
@@ -307,10 +317,10 @@ class AssetsAudioPlayer(
                     //endregion metas
 
                     val audioMetas = AudioMetas(
-                            title = songTitle, 
-                            artist = songArtist, 
-                            album = songAlbum, 
-                            image = songImage, 
+                            title = songTitle,
+                            artist = songArtist,
+                            album = songAlbum,
+                            image = songImage,
                             imageType = songImageType,
                             imagePackage = songImagePackage
                     )
@@ -318,16 +328,16 @@ class AssetsAudioPlayer(
                     getOrCreatePlayer(id).open(
                             assetAudioPath = path,
                             assetAudioPackage = assetPackage,
-                            audioType= audioType,
-                            autoStart= autoStart,
-                            volume= volume,
-                            seek= seek,
-                            respectSilentMode= respectSilentMode,
-                            displayNotification= displayNotification,
-                            result= result,
-                            playSpeed= playSpeed,
-                            audioMetas= audioMetas,
-                            context= context
+                            audioType = audioType,
+                            autoStart = autoStart,
+                            volume = volume,
+                            seek = seek,
+                            respectSilentMode = respectSilentMode,
+                            displayNotification = displayNotification,
+                            result = result,
+                            playSpeed = playSpeed,
+                            audioMetas = audioMetas,
+                            context = context
                     )
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
@@ -336,5 +346,25 @@ class AssetsAudioPlayer(
             }
             else -> result.notImplemented()
         }
+    }
+
+    fun registerLastPlayerWithNotif(playerId: String) {
+        this.lastPlayerIdWithNotificationEnabled = playerId
+    }
+
+    fun onMediaButton(action: MediaButtonsReciever.MediaButtonAction) {
+        lastPlayerIdWithNotificationEnabled
+                ?.let {
+                    getPlayer(it)
+                }?.let { player ->
+                    when(action) {
+                        MediaButtonsReciever.MediaButtonAction.play -> player.play()
+                        MediaButtonsReciever.MediaButtonAction.pause -> player.pause()
+                        MediaButtonsReciever.MediaButtonAction.playOrPause -> player.toggle()
+                        MediaButtonsReciever.MediaButtonAction.next -> player.next()
+                        MediaButtonsReciever.MediaButtonAction.prev -> player.prev()
+                        MediaButtonsReciever.MediaButtonAction.stop -> player.stop()
+                    }
+                }
     }
 }
