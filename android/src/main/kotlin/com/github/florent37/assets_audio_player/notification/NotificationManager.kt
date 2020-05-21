@@ -2,6 +2,7 @@ package com.github.florent37.assets_audio_player.notification
 
 import android.content.Context
 import android.content.Intent
+import com.github.florent37.assets_audio_player.AssetsAudioPlayerPlugin
 
 class NotificationManager(private val context: Context) {
 
@@ -13,6 +14,7 @@ class NotificationManager(private val context: Context) {
                     playerId = playerId
             ))
         })
+        AssetsAudioPlayerPlugin.instance?.assetsAudioPlayer?.registerLastPlayerWithNotif(playerId)
     }
 
     fun hideNotification() {

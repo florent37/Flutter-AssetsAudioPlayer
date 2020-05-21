@@ -1,8 +1,9 @@
-## 1.5.0+5
+## 1.6.0
 
 * Added some checks on swift code
 * Fixed totalDuration or liveStream
 * Fixed ios notifications
+* Added bluetooth headset actions (play/pause/next/prev/stop)
 
 ## 1.5.0
 

@@ -29,7 +29,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.5.0+5
+  assets_audio_player: ^1.6.0
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -40,7 +40,7 @@ dependencies:
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
-  assets_audio_player_web: ^1.5.0+5
+  assets_audio_player_web: ^1.6.0
 ```
 
 </details>
@@ -179,7 +179,13 @@ You like the package ? buy me a kofi :)
           <td>✅</td>
         </tr>
         <tr>
-          <td>system notification</td>
+          <td>💬System notification</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>🚫</td>
+        </tr>
+        <tr>
+          <td>🎧 Bluetooth actions</td>
           <td>✅</td>
           <td>✅</td>
           <td>🚫</td>
@@ -425,6 +431,16 @@ final audio = Audio("/assets/audio/country.mp3",
 _player.open(audio, showNotification: true)
 ```
 
+## Bluetooth Actions
+ 
+You have to enable notification to make them work
+
+Available remote commands : 
+
+- Play / Pause
+- Next
+- Prev
+- Stop 
 
 # ⛓ Play in parallel / simultaneously
 
