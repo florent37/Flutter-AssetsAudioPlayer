@@ -1,7 +1,8 @@
-## 1.5.0+4
+## 1.5.0+5
 
 * Added some checks on swift code
 * Fixed totalDuration or liveStream
+* Fixed ios notifications
 
 ## 1.5.0
 
