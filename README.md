@@ -19,6 +19,7 @@ flutter:
 AssetsAudioPlayer.newPlayer().open(
     Audio("assets/audios/song1.mp3"),
     autoPlay: true,
+    showNotification: true,
 );
 ```
 
