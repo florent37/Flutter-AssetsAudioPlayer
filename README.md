@@ -7,7 +7,7 @@ Play music/audio stored in assets files (simultaneously) directly from Flutter (
 
 You can also use play audio files from **network** using their url, **radios/livestream** and **local files**
 
-try online :  https://flutter-assets-audio-player.web.app
+**Notification can be displayed on Android & iOS, and bluetooth actions are handled**
 
 ```yaml
 flutter:
