@@ -100,55 +100,55 @@ You like the package ? buy me a kofi :)
     </thead>
     <tbody>
         <tr>
-          <td>Play</td>
+          <td>▶ Play</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>Pause</td>
+          <td>⏸ Pause</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>Stop</td>
+          <td>⏹ Stop</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>Seek(position)</td>
+          <td>⏩ Seek(position)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>SeekBy(position)</td>
+          <td>⏪⏩ SeekBy(position)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>Forward(speed)</td>
+          <td>⏩ Forward(speed)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>Rewind(speed)</td>
+          <td>⏪ Rewind(speed)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>Next</td>
+          <td>⏭ Next</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-           <td>Prev</td>
+           <td>⏮ Prev</td>
            <td>✅</td>
            <td>✅</td>
            <td>✅</td>
@@ -167,13 +167,13 @@ You like the package ? buy me a kofi :)
     </thead>
     <tbody>
         <tr>
-          <td>Multiple players</td>
+          <td>🎶 Multiple players</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>Open Playlist</td>
+          <td>💽 Open Playlist</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
@@ -191,13 +191,13 @@ You like the package ? buy me a kofi :)
           <td>🚫</td>
         </tr>
         <tr>
-          <td>Respect System silent mode</td>
+          <td>🔕 Respect System silent mode</td>
           <td>✅</td>
           <td>✅</td>
           <td>🚫</td>
         </tr>
         <tr>
-          <td>Pause on phone call</td>
+          <td>📞 Pause on phone call</td>
           <td>✅</td>
           <td>✅</td>
           <td>🚫</td>
@@ -216,19 +216,19 @@ You like the package ? buy me a kofi :)
     </thead>
     <tbody>
         <tr>
-           <td>Audio Widget</td>
+           <td>🐦 Audio Widget</td>
            <td>✅</td>
            <td>✅</td>
            <td>✅</td>
         </tr>
         <tr>
-            <td>Widget Builders</td>
+            <td>🐦 Widget Builders</td>
             <td>✅</td>
             <td>✅</td>
             <td>✅</td>
         </tr>
         <tr>
-             <td>AudioPlayer Builders Extension</td>
+             <td>🐦 AudioPlayer Builders Extension</td>
              <td>✅</td>
              <td>✅</td>
              <td>✅</td>
@@ -247,19 +247,19 @@ You like the package ? buy me a kofi :)
     </thead>
     <tbody>
         <tr>
-          <td>Loop</td>
+          <td>🔁 Loop</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>get/set Volume</td>
+          <td>🔊 get/set Volume</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>get/set Play Speed</td>
+          <td>⏩ get/set Play Speed</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
@@ -278,37 +278,37 @@ You like the package ? buy me a kofi :)
     </thead>
     <tbody>
         <tr>
-          <td>Listener onReady(completeDuration)</td>
+          <td>🦻 Listener onReady(completeDuration)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-           <td>Listener currentPosition</td>
+           <td>🦻 Listener currentPosition</td>
            <td>✅</td>
            <td>✅</td>
            <td>✅</td>
         </tr>
         <tr>
-          <td>Listener finished</td>
+          <td>🦻 Listener finished</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-           <td>Listener buffering</td>
+           <td>🦻 Listener buffering</td>
            <td>✅</td>
            <td>✅</td>
            <td>✅</td>
         </tr>
         <tr>
-          <td>Listener volume</td>
+          <td>🦻 Listener volume</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>Listener Play Speed</td>
+          <td>🦻Listener Play Speed</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
