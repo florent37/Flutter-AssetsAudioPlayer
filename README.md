@@ -60,25 +60,25 @@ You like the package ? buy me a kofi :)
     </thead>
     <tbody>
         <tr>
-          <td>Asset file (asset path)</td>
+          <td>🗄️ Asset file (asset path)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>Network file (url)</td>
+          <td>🌐 Network file (url)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>Local file (path)</td>
+          <td>📁 Local file (path)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
         </tr>
         <tr>
-          <td>Network LiveStream (url)</td>
+          <td>📻 Network LiveStream / radio (url)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
