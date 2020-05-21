@@ -86,8 +86,54 @@ You like the package ? buy me a kofi :)
     </tbody>
 </table>
 
-
-
+<table>
+    <thead>
+        <tr>
+            <th>Feature</th>
+            <th>Android</th>
+            <th>iOS</th>
+            <th>Web</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>🎶 Multiple players</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>💽 Open Playlist</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
+          <td>💬System notification</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>🚫</td>
+        </tr>
+        <tr>
+          <td>🎧 Bluetooth actions</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>🚫</td>
+        </tr>
+        <tr>
+          <td>🔕 Respect System silent mode</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>🚫</td>
+        </tr>
+        <tr>
+          <td>📞 Pause on phone call</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>🚫</td>
+        </tr>
+    </tbody>
+</table>
 
 <table>
     <thead>
@@ -152,55 +198,6 @@ You like the package ? buy me a kofi :)
            <td>✅</td>
            <td>✅</td>
            <td>✅</td>
-        </tr>
-    </tbody>
-</table>
-
-<table>
-    <thead>
-        <tr>
-            <th>Feature</th>
-            <th>Android</th>
-            <th>iOS</th>
-            <th>Web</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>🎶 Multiple players</td>
-          <td>✅</td>
-          <td>✅</td>
-          <td>✅</td>
-        </tr>
-        <tr>
-          <td>💽 Open Playlist</td>
-          <td>✅</td>
-          <td>✅</td>
-          <td>✅</td>
-        </tr>
-        <tr>
-          <td>💬System notification</td>
-          <td>✅</td>
-          <td>✅</td>
-          <td>🚫</td>
-        </tr>
-        <tr>
-          <td>🎧 Bluetooth actions</td>
-          <td>✅</td>
-          <td>✅</td>
-          <td>🚫</td>
-        </tr>
-        <tr>
-          <td>🔕 Respect System silent mode</td>
-          <td>✅</td>
-          <td>✅</td>
-          <td>🚫</td>
-        </tr>
-        <tr>
-          <td>📞 Pause on phone call</td>
-          <td>✅</td>
-          <td>✅</td>
-          <td>🚫</td>
         </tr>
     </tbody>
 </table>
