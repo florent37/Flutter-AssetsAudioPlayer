@@ -1,3 +1,7 @@
+## 1.6.0+1
+
+* Fixed playlist issue on android
+
 ## 1.6.0
 
 * Added some checks on swift code

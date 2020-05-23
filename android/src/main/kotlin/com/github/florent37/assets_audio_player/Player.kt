@@ -169,6 +169,7 @@ class Player(
         }
 
         var onThisMediaReady = false
+        var lastState : Int? = null
         this.mediaPlayer?.addListener(object : Player.EventListener {
 
             override fun onPlayerError(error: ExoPlaybackException) {
@@ -176,46 +177,49 @@ class Player(
             }
 
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                when (playbackState) {
-                    ExoPlayer.STATE_ENDED -> {
-                        pause()
-                        this@Player.onFinished?.invoke()
-                        this@Player.onBuffering?.invoke(false)
-                    }
-                    ExoPlayer.STATE_BUFFERING -> {
-                        this@Player.onBuffering?.invoke(true)
-                    }
-                    ExoPlayer.STATE_READY -> {
-                        this@Player.onBuffering?.invoke(false)
-                        if (!onThisMediaReady) {
-                            onThisMediaReady = true
-                            //retrieve duration in seconds
-                            if(audioType == AUDIO_TYPE_LIVESTREAM) {
-                                onReadyToPlay?.invoke(0) //no duration for livestream
-                            } else {
-                                val duration = mediaPlayer?.duration ?: 0
-                                val totalDurationSeconds = (duration.toLong() / 1000)
+                if(lastState != playbackState) {
+                    when (playbackState) {
+                        ExoPlayer.STATE_ENDED -> {
+                            pause()
+                            this@Player.onFinished?.invoke()
+                            this@Player.onBuffering?.invoke(false)
+                        }
+                        ExoPlayer.STATE_BUFFERING -> {
+                            this@Player.onBuffering?.invoke(true)
+                        }
+                        ExoPlayer.STATE_READY -> {
+                            this@Player.onBuffering?.invoke(false)
+                            if (!onThisMediaReady) {
+                                onThisMediaReady = true
+                                //retrieve duration in seconds
+                                if (audioType == AUDIO_TYPE_LIVESTREAM) {
+                                    onReadyToPlay?.invoke(0) //no duration for livestream
+                                } else {
+                                    val duration = mediaPlayer?.duration ?: 0
+                                    val totalDurationSeconds = (duration.toLong() / 1000)
 
-                                onReadyToPlay?.invoke(totalDurationSeconds)
+                                    onReadyToPlay?.invoke(totalDurationSeconds)
+                                }
+
+                                if (autoStart) {
+                                    play()
+                                }
+                                updateNotif()
+                                setVolume(volume)
+                                setPlaySpeed(playSpeed)
+
+                                seek?.let {
+                                    this@Player.seek(milliseconds = seek * 1000L)
+                                }
+
+                                result.success(null)
                             }
-
-                            if (autoStart) {
-                                play()
-                            }
-                            updateNotif()
-                            setVolume(volume)
-                            setPlaySpeed(playSpeed)
-
-                            seek?.let {
-                                this@Player.seek(milliseconds = seek * 1000L)
-                            }
-
-                            result.success(null)
+                        }
+                        else -> {
                         }
                     }
-                    else -> {
-                    }
                 }
+                lastState = playbackState
             }
         })
 
