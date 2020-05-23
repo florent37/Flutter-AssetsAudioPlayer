@@ -1,6 +1,7 @@
-## 1.6.0+1cd 
+## 1.6.0+2
 
 * Fixed playlist issue on android
+* Fixed issue on bluetooth android play/pause
 
 ## 1.6.0
 
