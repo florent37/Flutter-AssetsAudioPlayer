@@ -358,9 +358,9 @@ class AssetsAudioPlayer(
                     getPlayer(it)
                 }?.let { player ->
                     when(action) {
-                        MediaButtonsReciever.MediaButtonAction.play -> player.play()
-                        MediaButtonsReciever.MediaButtonAction.pause -> player.pause()
-                        MediaButtonsReciever.MediaButtonAction.playOrPause -> player.toggle()
+                        MediaButtonsReciever.MediaButtonAction.play -> player.askPlayOrPause()
+                        MediaButtonsReciever.MediaButtonAction.pause -> player.askPlayOrPause()
+                        MediaButtonsReciever.MediaButtonAction.playOrPause -> player.askPlayOrPause()
                         MediaButtonsReciever.MediaButtonAction.next -> player.next()
                         MediaButtonsReciever.MediaButtonAction.prev -> player.prev()
                         MediaButtonsReciever.MediaButtonAction.stop -> player.stop()
