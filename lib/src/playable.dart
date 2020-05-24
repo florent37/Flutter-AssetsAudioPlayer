@@ -80,6 +80,7 @@ class Metas {
   final String title;
   final String artist;
   final String album;
+  final Map<String, dynamic> extra;
   final MetasImage image;
 
   const Metas({
@@ -87,6 +88,7 @@ class Metas {
     this.artist,
     this.album,
     this.image,
+    this.extra,
   });
 
   @override
