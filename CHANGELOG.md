@@ -1,8 +1,9 @@
-## 1.6.0+3
+## 1.6.0+4
 
 * Fixed playlist issue on android
 * Fixed issue on bluetooth android play/pause
 * Fixed PlayerBuilder currentPosition
+* Added extra map into audio
 
 ## 1.6.0
 
