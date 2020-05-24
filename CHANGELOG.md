@@ -1,7 +1,8 @@
-## 1.6.0+2
+## 1.6.0+3
 
 * Fixed playlist issue on android
 * Fixed issue on bluetooth android play/pause
+* Fixed PlayerBuilder currentPosition
 
 ## 1.6.0
 
