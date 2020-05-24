@@ -24,7 +24,7 @@ typedef PlaySpeedWidgetBuilder = Widget Function(
 typedef ForwardRewindSpeedWidgetBuilder = Widget Function(
     BuildContext context, double playSpeed);
 typedef PositionWidgetBuilder = Widget Function(
-    BuildContext context, double position);
+    BuildContext context, Duration position);
 typedef CurrentWidgetBuilder = Widget Function(
     BuildContext context, Playing playing);
 typedef IsBufferingWidgetBuilder = Widget Function(
