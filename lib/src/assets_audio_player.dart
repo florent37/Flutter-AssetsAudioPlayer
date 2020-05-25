@@ -119,7 +119,7 @@ class AssetsAudioPlayer {
     );
   }
 
-  ReadingPlaylist get playlist {
+  ReadingPlaylist get readingPlaylist {
     if (_playlist == null) {
       return null;
     } else {
@@ -130,6 +130,8 @@ class AssetsAudioPlayer {
       );
     }
   }
+
+  Playlist get playlist => _playlist?.playlist;
 
   /// Then mediaplayer playing state (mutable)
   final BehaviorSubject<bool> _isPlaying = BehaviorSubject<bool>.seeded(false);
@@ -483,7 +485,7 @@ class AssetsAudioPlayer {
   }
 
   Future<void> _onFinished(bool isFinished) async {
-    bool nextDone = await _next(stopIfLast: false, requestByUser: false);
+    bool nextDone = await , _next(stopIfLast: false, requestByUser: false);
     if (nextDone) {
       _playlistFinished.value = false; //continue playing the playlist
     } else {
