@@ -253,6 +253,8 @@ class AssetsAudioPlayer {
 
   Duration _lastSeek;
 
+  Future<String> Function(Audio) onPlay;
+
   /// returns the looping state : true -> looping, false -> not looping
   bool get loop => _loop.value;
   bool get shuffle => _loop.value;
@@ -266,6 +268,7 @@ class AssetsAudioPlayer {
     _loop.value = value;
   }
 
+  /// assign the shuffling state : true -> shuffling, false -> not shuffling
   set shuffle(value) {
     _shuffle.value = value;
   }
@@ -277,6 +280,9 @@ class AssetsAudioPlayer {
     loop = !loop;
   }
 
+  /// toggle the shuffling state
+  /// if it was shuffling -> stops this
+  /// if it was'nt shuffling -> now it is
   void toggleShuffle() {
     shuffle = !shuffle;
   }
@@ -547,11 +553,13 @@ class AssetsAudioPlayer {
     final currentAudio = _lastOpenedAssetsAudio;
     if (audio != null) {
       _respectSilentMode = respectSilentMode;
+      String path;
+      path = await onPlay(audio);
       try {
         Map<String, dynamic> params = {
           "id": this.id,
           "audioType": audio.audioType.description(),
-          "path": audio.path,
+          "path": path,
           "autoStart": autoStart,
           "respectSilentMode": respectSilentMode,
           "displayNotification": showNotification,
@@ -580,6 +588,7 @@ class AssetsAudioPlayer {
         }
         _lastOpenedAssetsAudio = audio;
         /*final result = */
+
         await _sendChannel.invokeMethod('open', params);
 
         _playlistFinished.value = false;
@@ -872,10 +881,21 @@ class _CurrentPlaylist {
     return playlistIndex;
   }
 
+  List<int> _playedAudios = [];
+
   int shuffle() {
-    Random random = Random();
-    playlistIndex = random.nextInt(playlist.audios.length - 1);
+    playlistIndex = _shuffleNumbers();
+    _playedAudios.add(playlistIndex);
     return playlistIndex;
+  }
+
+  int _shuffleNumbers() {
+    Random random = Random();
+    int index = random.nextInt(playlist.audios.length);
+    if (_playedAudios.contains(index)) {
+      index = _shuffleNumbers();
+    }
+    return index;
   }
 
   int moveTo(int index) {
