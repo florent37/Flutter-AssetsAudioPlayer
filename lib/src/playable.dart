@@ -140,15 +140,32 @@ class Audio implements Playable {
       path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode;
 }
 
-@immutable
 class Playlist implements Playable {
-  final List<Audio> audios;
+  final List<Audio> audios = [];
 
   final int startIndex;
 
-  const Playlist({@required this.audios, this.startIndex = 0});
+  Playlist({List<Audio> audios, this.startIndex = 0}) {
+    if(audios != null) {
+      this.audios.addAll(audios);
+    }
+  }
 
   int get numberOfItems => audios.length;
+
+  Playlist add(Audio audio) {
+    if(audio != null) {
+      this.audios.add(audio);
+    }
+    return this;
+  }
+
+  Playlist addAll(List<Audio> audios) {
+    if(audios != null) {
+      this.audios.addAll(audios);
+    }
+    return this;
+  }
 
   @override
   bool operator ==(Object other) =>
