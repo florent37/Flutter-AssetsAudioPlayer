@@ -30,7 +30,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.6.1
+  assets_audio_player: ^1.6.2
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -427,6 +427,20 @@ final audio = Audio("/assets/audio/country.mp3",
 
 ```dart
 _player.open(audio, showNotification: true)
+```
+
+## Custom notification
+
+Custom icon (android only)
+
+1. Add your icon into your android's `res` folder (android/app/src/main/res)
+
+2. Reference this icon into your AndroidManifest (android/app/src/main/AndroidManifest.xml)
+
+```xml
+<meta-data
+     android:name="assets.audio.player.notification.icon"
+     android:resource="@drawable/ic_music_custom"/>
 ```
 
 ## Bluetooth Actions
