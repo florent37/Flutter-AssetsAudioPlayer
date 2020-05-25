@@ -257,7 +257,7 @@ class AssetsAudioPlayer {
 
   /// returns the looping state : true -> looping, false -> not looping
   bool get loop => _loop.value;
-  bool get shuffle => _loop.value;
+  bool get shuffle => _shuffle.value;
 
   bool _respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE;
 
@@ -285,6 +285,7 @@ class AssetsAudioPlayer {
   /// if it was'nt shuffling -> now it is
   void toggleShuffle() {
     shuffle = !shuffle;
+    _playlist.playedAudios.clear();
   }
 
   /// Call it to dispose stream
@@ -443,7 +444,9 @@ class AssetsAudioPlayer {
     }
   }
 
-  Future<bool> next({bool stopIfLast = false, bool shuffle = false}) {
+  Future<bool> next({
+    bool stopIfLast = false,
+  }) {
     return _next(
       stopIfLast: stopIfLast,
       requestByUser: true,
@@ -554,7 +557,16 @@ class AssetsAudioPlayer {
     if (audio != null) {
       _respectSilentMode = respectSilentMode;
       String path;
-      path = await onPlay(audio);
+      if (onPlay != null) {
+        try {
+          path = await onPlay(audio);
+        } catch (e) {
+          print(e);
+          return Future.error(e);
+        }
+      } else {
+        path = audio.path;
+      }
       try {
         Map<String, dynamic> params = {
           "id": this.id,
@@ -881,18 +893,18 @@ class _CurrentPlaylist {
     return playlistIndex;
   }
 
-  List<int> _playedAudios = [];
+  List<int> playedAudios = [];
 
   int shuffle() {
     playlistIndex = _shuffleNumbers();
-    _playedAudios.add(playlistIndex);
+    playedAudios.add(playlistIndex);
     return playlistIndex;
   }
 
   int _shuffleNumbers() {
     Random random = Random();
     int index = random.nextInt(playlist.audios.length);
-    if (_playedAudios.contains(index)) {
+    if (playedAudios.contains(index)) {
       index = _shuffleNumbers();
     }
     return index;
