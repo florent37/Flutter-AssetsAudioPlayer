@@ -629,6 +629,7 @@ class AssetsAudioPlayer {
       showNotification: showNotification,
       playSpeed: playSpeed,
     );
+    _playlist.clearPlayeAudio(shuffle);
     _playlist.moveTo(playlist.startIndex);
     return _open(
       _playlist.currentAudio(),
