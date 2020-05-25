@@ -254,6 +254,7 @@ class AssetsAudioPlayer {
   Duration _lastSeek;
 
   Future<String> Function(Audio) onPlay;
+  Future Function() onStop;
 
   /// returns the looping state : true -> looping, false -> not looping
   bool get loop => _loop.value;
@@ -305,7 +306,7 @@ class AssetsAudioPlayer {
     _forwardRewindSpeed.close();
     _realtimePlayingInfos.close();
     _realTimeSubscription?.cancel();
-
+    onStop();
     _players.remove(this.id);
   }
 
