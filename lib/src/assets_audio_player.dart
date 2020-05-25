@@ -347,9 +347,10 @@ class AssetsAudioPlayer {
                 index: _playlist.playlistIndex,
                 hasNext: _playlist.hasNext(),
                 playlist: ReadingPlaylist(
-                    indexes: _playlist.playedAudios,
                     audios: _playlist.playlist.audios,
-                    currentIndex: _playlist.playlistIndex),
+                    currentIndex: _playlist.playlistIndex,
+                    nextIndex: _playlist.nextIndex(),
+                    previousIndex: _playlist.previousIndex()),
               );
               _current.value = current;
             }
@@ -887,11 +888,30 @@ class _CurrentPlaylist {
 
   int playlistIndex = 0;
 
-  int selectNext() {
-    if (hasNext()) {
-      playlistIndex += 1;
+  int nextIndex() {
+    int index = playedAudios.indexWhere((element) => playlistIndex == element);
+    if (index + 1 == playedAudios.length) {
+      return playedAudios.first;
+    } else {
+      return index;
     }
-    return playedAudios[playlistIndex];
+  }
+
+  int previousIndex() {
+    int index = playedAudios.indexWhere((element) => playlistIndex == element);
+    if (index == 0) {
+      return playedAudios.last;
+    } else {
+      return index;
+    }
+  }
+
+  int selectNext() {
+    int index = playedAudios.indexWhere((element) => playlistIndex == element);
+    if (hasNext()) {
+      index += 1;
+    }
+    return playedAudios[index];
   }
 
   List<int> playedAudios = [];
@@ -950,7 +970,8 @@ class _CurrentPlaylist {
   }
 
   bool hasNext() {
-    return playlistIndex + 1 < playlist.numberOfItems;
+    int index = playedAudios.indexWhere((element) => playlistIndex == element);
+    return index + 1 < playlist.numberOfItems;
   }
 
   _CurrentPlaylist({
@@ -966,7 +987,8 @@ class _CurrentPlaylist {
   }
 
   bool hasPrev() {
-    return playlistIndex > 0;
+    int index = playedAudios.indexWhere((element) => playlistIndex == element);
+    return index > 0;
   }
 
   void selectPrev() {

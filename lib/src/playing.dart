@@ -51,11 +51,16 @@ class PlayingAudio {
 @immutable
 class ReadingPlaylist {
   final List<Audio> audios;
-  final List<int> indexes;
+  final int nextIndex;
+  final int previousIndex;
   final int currentIndex;
 
-  const ReadingPlaylist(
-      {@required this.indexes, this.audios, this.currentIndex = 0});
+  const ReadingPlaylist({
+    this.previousIndex,
+    this.nextIndex,
+    this.audios,
+    this.currentIndex = 0,
+  });
 
   Audio get current => audios[currentIndex];
 
