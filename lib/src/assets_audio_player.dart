@@ -285,7 +285,7 @@ class AssetsAudioPlayer {
   /// if it was'nt shuffling -> now it is
   void toggleShuffle() {
     shuffle = !shuffle;
-    _playlist.playedAudios.clear();
+    _playlist.clearPlayeAudio(shuffle);
   }
 
   /// Call it to dispose stream
@@ -434,11 +434,7 @@ class AssetsAudioPlayer {
 
   Future<void> _openPlaylistCurrent() async {
     if (_playlist != null) {
-      if (shuffle) {
-        _playlist.shuffleAudios();
-      } else {
-        _playlist.fillPlayedAudios();
-      }
+      _playlist.clearPlayeAudio(shuffle);
       return _open(
         _playlist.currentAudio(),
         forcedVolume: _playlist.volume,
