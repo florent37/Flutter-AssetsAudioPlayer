@@ -937,7 +937,7 @@ class _CurrentPlaylist {
   //nullable
   Audio audioAt({int at}) {
     if (at < playlist.audios.length) {
-      return playlist.audios[playedAudios[at]];
+      return playlist.audios[at];
     } else {
       return null;
     }
