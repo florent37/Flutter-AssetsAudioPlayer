@@ -554,7 +554,7 @@ class AssetsAudioPlayer {
     if (audio != null) {
       _respectSilentMode = respectSilentMode;
       String path;
-      path = await onPlay(audio.path);
+      path = await onPlay(audio);
       try {
         Map<String, dynamic> params = {
           "id": this.id,
