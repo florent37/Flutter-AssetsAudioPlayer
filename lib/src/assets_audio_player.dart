@@ -434,7 +434,6 @@ class AssetsAudioPlayer {
 
   Future<void> _openPlaylistCurrent() async {
     if (_playlist != null) {
-      _playlist.clearPlayeAudio(shuffle);
       return _open(
         _playlist.currentAudio(),
         forcedVolume: _playlist.volume,
