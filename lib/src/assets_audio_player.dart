@@ -253,7 +253,7 @@ class AssetsAudioPlayer {
 
   Duration _lastSeek;
 
-  Future<String> Function(String) onPlay;
+  Future<String> Function(Audio) onPlay;
 
   /// returns the looping state : true -> looping, false -> not looping
   bool get loop => _loop.value;
