@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
@@ -75,6 +76,16 @@ class NotificationService : Service() {
         }
     }
 
+    private fun getSmallIcon(context: Context) : Int {
+        try {
+            val appInfos = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+            val customIcon = appInfos.metaData.get("assets.audio.player.notification.icon") as? Int
+            return customIcon ?: R.drawable.exo_icon_circular_play
+        } catch (t : Throwable) {
+            return R.drawable.exo_icon_circular_play
+        }
+    }
+
     private fun displayNotification(action: NotificationAction.Show, bitmap: Bitmap?) {
         createNotificationChannel()
         val mediaSession = MediaSessionCompat(this, MEDIA_SESSION_TAG)
@@ -110,7 +121,7 @@ class NotificationService : Service() {
                         .setShowCancelButton(true)
                         .setMediaSession(mediaSession.sessionToken)
                 )
-                .setSmallIcon(R.drawable.exo_icon_circular_play)
+                .setSmallIcon(getSmallIcon(applicationContext))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setVibrate(longArrayOf(0L))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
