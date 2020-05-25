@@ -911,8 +911,8 @@ class _CurrentPlaylist {
 
   shuffleAudios() {
     for (var i = 0; i < this.playlist.audios.length; i++) {
-      playlistIndex = _shuffleNumbers();
-      playedAudios.add(playlistIndex);
+      int index = _shuffleNumbers();
+      playedAudios.add(index);
     }
   }
 
