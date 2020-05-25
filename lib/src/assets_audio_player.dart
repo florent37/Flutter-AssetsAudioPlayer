@@ -347,6 +347,7 @@ class AssetsAudioPlayer {
                 index: _playlist.playlistIndex,
                 hasNext: _playlist.hasNext(),
                 playlist: ReadingPlaylist(
+                    indexes: _playlist.playedAudios,
                     audios: _playlist.playlist.audios,
                     currentIndex: _playlist.playlistIndex),
               );
