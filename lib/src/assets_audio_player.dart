@@ -893,7 +893,7 @@ class _CurrentPlaylist {
     if (index + 1 == playedAudios.length) {
       return playedAudios.first;
     } else {
-      return index;
+      return index + 1;
     }
   }
 
@@ -902,16 +902,16 @@ class _CurrentPlaylist {
     if (index == 0) {
       return playedAudios.last;
     } else {
-      return index;
+      return index - 1;
     }
   }
 
-  int selectNext() {
+  selectNext() {
     int index = playedAudios.indexWhere((element) => playlistIndex == element);
     if (hasNext()) {
       index = index + 1;
     }
-    return playedAudios[index];
+    playlistIndex = index;
   }
 
   List<int> playedAudios = [];
