@@ -77,9 +77,13 @@ class NotificationService : Service() {
     }
 
     private fun getSmallIcon(context: Context) : Int {
-        val appInfos = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-        val customIcon = appInfos.metaData.get("assets.audio.player.notification.icon") as? Int
-        return customIcon ?: R.drawable.exo_icon_circular_play
+        try {
+            val appInfos = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+            val customIcon = appInfos.metaData.get("assets.audio.player.notification.icon") as? Int
+            return customIcon ?: R.drawable.exo_icon_circular_play
+        } catch (t : Throwable) {
+            return R.drawable.exo_icon_circular_play
+        }
     }
 
     private fun displayNotification(action: NotificationAction.Show, bitmap: Bitmap?) {
