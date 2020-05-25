@@ -146,7 +146,7 @@ class Playlist implements Playable {
   final int startIndex;
 
   Playlist({List<Audio> audios, this.startIndex = 0}) {
-    if(audios != null) {
+    if (audios != null) {
       this.audios.addAll(audios);
     }
   }
@@ -154,14 +154,14 @@ class Playlist implements Playable {
   int get numberOfItems => audios.length;
 
   Playlist add(Audio audio) {
-    if(audio != null) {
+    if (audio != null) {
       this.audios.add(audio);
     }
     return this;
   }
 
   Playlist addAll(List<Audio> audios) {
-    if(audios != null) {
+    if (audios != null) {
       this.audios.addAll(audios);
     }
     return this;
