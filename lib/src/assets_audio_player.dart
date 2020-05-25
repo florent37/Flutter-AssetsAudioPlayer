@@ -434,6 +434,11 @@ class AssetsAudioPlayer {
 
   Future<void> _openPlaylistCurrent() async {
     if (_playlist != null) {
+      if (shuffle) {
+        _playlist.shuffleAudios();
+      } else {
+        _playlist.fillPlayedAudios();
+      }
       return _open(
         _playlist.currentAudio(),
         forcedVolume: _playlist.volume,
@@ -465,11 +470,9 @@ class AssetsAudioPlayer {
             playlist: this._current.value.playlist,
           ));
         }
-        _playlist.shuffle();
         await _openPlaylistCurrent();
         return true;
       }
-
       if (_playlist.hasNext()) {
         if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
@@ -890,15 +893,31 @@ class _CurrentPlaylist {
     if (hasNext()) {
       playlistIndex += 1;
     }
-    return playlistIndex;
+    return playedAudios[playlistIndex];
   }
 
   List<int> playedAudios = [];
 
-  int shuffle() {
-    playlistIndex = _shuffleNumbers();
-    playedAudios.add(playlistIndex);
-    return playlistIndex;
+  fillPlayedAudios() {
+    for (var i = 0; i < this.playlist.audios.length; i++) {
+      playedAudios.add(i);
+    }
+  }
+
+  clearPlayeAudio(bool shuffle) {
+    playedAudios.clear();
+    if (shuffle) {
+      shuffleAudios();
+    } else {
+      fillPlayedAudios();
+    }
+  }
+
+  shuffleAudios() {
+    for (var i = 0; i < this.playlist.audios.length; i++) {
+      playlistIndex = _shuffleNumbers();
+      playedAudios.add(playlistIndex);
+    }
   }
 
   int _shuffleNumbers() {
@@ -929,7 +948,7 @@ class _CurrentPlaylist {
   }
 
   Audio currentAudio() {
-    return audioAt(at: playlistIndex);
+    return audioAt(at: playedAudios[playlistIndex]);
   }
 
   bool hasNext() {
