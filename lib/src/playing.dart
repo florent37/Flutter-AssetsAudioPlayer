@@ -126,6 +126,7 @@ class RealtimePlayingInfos {
   final double volume;
   final bool isPlaying;
   final bool isLooping;
+  final bool isShuffling;
 
   RealtimePlayingInfos({
     @required this.playerId,
@@ -134,6 +135,7 @@ class RealtimePlayingInfos {
     @required this.volume,
     @required this.isPlaying,
     @required this.isLooping,
+    this.isShuffling,
   }) : this.duration = current?.audio?.duration ?? Duration();
 
   double get playingPercent => this.duration.inMilliseconds == 0
@@ -151,7 +153,8 @@ class RealtimePlayingInfos {
           currentPosition == other.currentPosition &&
           volume == other.volume &&
           isPlaying == other.isPlaying &&
-          isLooping == other.isLooping;
+          isLooping == other.isLooping &&
+          isShuffling == other.isShuffling;
 
   @override
   int get hashCode =>
@@ -161,10 +164,11 @@ class RealtimePlayingInfos {
       currentPosition.hashCode ^
       volume.hashCode ^
       isPlaying.hashCode ^
-      isLooping.hashCode;
+      isLooping.hashCode ^
+      isShuffling.hashCode;
 
   @override
   String toString() {
-    return 'RealtimePlayingInfos{playerId: $playerId, current: $current, duration: $duration, currentPosition: $currentPosition, volume: $volume, isPlaying: $isPlaying, isLooping: $isLooping}';
+    return 'RealtimePlayingInfos{playerId: $playerId, current: $current, duration: $duration, currentPosition: $currentPosition, volume: $volume, isPlaying: $isPlaying, isLooping: $isLooping, isShuffling: $isShuffling}';
   }
 }

@@ -227,6 +227,7 @@ class AssetsAudioPlayer {
   ValueStream<double> get volume => _volume.stream;
 
   final BehaviorSubject<bool> _loop = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _shuffle = BehaviorSubject<bool>.seeded(false);
 
   /// Called when the looping state changes
   ///     _assetsAudioPlayer.isLooping.listen((looping){
@@ -234,6 +235,7 @@ class AssetsAudioPlayer {
   ///     })
   ///
   ValueStream<bool> get isLooping => _loop.stream;
+  ValueStream<bool> get isShuffling => _shuffle.stream;
 
   final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos =
       BehaviorSubject<RealtimePlayingInfos>();
@@ -253,6 +255,7 @@ class AssetsAudioPlayer {
 
   /// returns the looping state : true -> looping, false -> not looping
   bool get loop => _loop.value;
+  bool get shuffle => _loop.value;
 
   bool _respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE;
 
@@ -263,11 +266,19 @@ class AssetsAudioPlayer {
     _loop.value = value;
   }
 
+  set shuffle(value) {
+    _shuffle.value = value;
+  }
+
   /// toggle the looping state
   /// if it was looping -> stops this
   /// if it was'nt looping -> now it is
   void toggleLoop() {
     loop = !loop;
+  }
+
+  void toggleShuffle() {
+    shuffle = !shuffle;
   }
 
   /// Call it to dispose stream
@@ -281,6 +292,7 @@ class AssetsAudioPlayer {
     _current.close();
     _playlistAudioFinished.close();
     _loop.close();
+    _shuffle.close();
     _playSpeed.close();
     _isBuffering.close();
     _forwardRewindSpeed.close();
@@ -375,6 +387,7 @@ class AssetsAudioPlayer {
       this.volume,
       this.isPlaying,
       this.isLooping,
+      this.isShuffling,
       this.current,
       this.currentPosition,
     ])
@@ -382,8 +395,9 @@ class AssetsAudioPlayer {
               volume: values[0],
               isPlaying: values[1],
               isLooping: values[2],
-              current: values[3],
-              currentPosition: values[4],
+              isShuffling: values[3],
+              current: values[4],
+              currentPosition: values[5],
               playerId: this.id,
             ))
         .listen((readingInfos) {
@@ -423,7 +437,7 @@ class AssetsAudioPlayer {
     }
   }
 
-  Future<bool> next({bool stopIfLast = false}) {
+  Future<bool> next({bool stopIfLast = false, bool shuffle = false}) {
     return _next(
       stopIfLast: stopIfLast,
       requestByUser: true,
@@ -433,6 +447,20 @@ class AssetsAudioPlayer {
   Future<bool> _next(
       {bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
+      if (shuffle) {
+        if (this._current.value != null) {
+          _playlistAudioFinished.add(Playing(
+            audio: this._current.value.audio,
+            index: this._current.value.index,
+            hasNext: true,
+            playlist: this._current.value.playlist,
+          ));
+        }
+        _playlist.shuffle();
+        await _openPlaylistCurrent();
+        return true;
+      }
+
       if (_playlist.hasNext()) {
         if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
@@ -841,6 +869,12 @@ class _CurrentPlaylist {
     if (hasNext()) {
       playlistIndex += 1;
     }
+    return playlistIndex;
+  }
+
+  int shuffle() {
+    Random random = Random();
+    playlistIndex = random.nextInt(playlist.audios.length - 1);
     return playlistIndex;
   }
 
