@@ -893,7 +893,7 @@ class _CurrentPlaylist {
     if (index + 1 == playedAudios.length) {
       return playedAudios.first;
     } else {
-      return index + 1;
+      return playedAudios[index + 1];
     }
   }
 
@@ -902,7 +902,7 @@ class _CurrentPlaylist {
     if (index == 0) {
       return playedAudios.last;
     } else {
-      return index - 1;
+      return playedAudios[index - 1];
     }
   }
 
