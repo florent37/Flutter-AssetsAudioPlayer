@@ -79,17 +79,13 @@ class AssetsAudioPlayer {
     if (_players.containsKey(id)) {
       return _players[id];
     } else {
-      final player = AssetsAudioPlayer._(
-        id: id,
-      );
+      final player = AssetsAudioPlayer._(id: id);
       _players[id] = player;
       return player;
     }
   }
 
   factory AssetsAudioPlayer.newPlayer() => _getOrCreate(id: uuid.v4());
-
-  AudioPlayerHandler audioPlayerHandler;
 
   /// empty constructor now create a new player
   factory AssetsAudioPlayer() => AssetsAudioPlayer.newPlayer();
@@ -256,6 +252,8 @@ class AssetsAudioPlayer {
   ValueStream<double> get forwardRewindSpeed => _forwardRewindSpeed.stream;
 
   Duration _lastSeek;
+
+  Future<String> Function(String) onPlay;
 
   /// returns the looping state : true -> looping, false -> not looping
   bool get loop => _loop.value;
@@ -556,7 +554,7 @@ class AssetsAudioPlayer {
     if (audio != null) {
       _respectSilentMode = respectSilentMode;
       String path;
-      path = await audioPlayerHandler.onPlay(audio);
+      path = await onPlay(audio.path);
       try {
         Map<String, dynamic> params = {
           "id": this.id,
@@ -948,8 +946,4 @@ class _CurrentPlaylist {
       playlistIndex = 0;
     }
   }
-}
-
-abstract class AudioPlayerHandler {
-  Future<String> Function(Audio) onPlay;
 }
