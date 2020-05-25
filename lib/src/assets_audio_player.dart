@@ -927,9 +927,9 @@ class _CurrentPlaylist {
 
   int moveTo(int index) {
     if (index < 0) {
-      playlistIndex = playedAudios.firstWhere((element) => element == 0);
+      playlistIndex = playedAudios.indexWhere((element) => element == 0);
     } else {
-      playlistIndex = playedAudios.firstWhere((element) => element == index);
+      playlistIndex = playedAudios.indexWhere((element) => element == index);
     }
     return playlistIndex;
   }
