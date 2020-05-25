@@ -1,3 +1,9 @@
+## 1.6.1
+
+* Playlist is now mutable, we can add audios after creation
+* renamed `ReadingPlaylist get playlist` to `ReadingPlaylist get readingPlaylist`
+* added `Playlist get playlist`
+
 ## 1.6.0+4
 
 * Fixed playlist issue on android
