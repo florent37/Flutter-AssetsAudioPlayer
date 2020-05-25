@@ -909,7 +909,7 @@ class _CurrentPlaylist {
   int selectNext() {
     int index = playedAudios.indexWhere((element) => playlistIndex == element);
     if (hasNext()) {
-      index += 1;
+      index = index + 1;
     }
     return playedAudios[index];
   }
@@ -971,7 +971,7 @@ class _CurrentPlaylist {
 
   bool hasNext() {
     int index = playedAudios.indexWhere((element) => playlistIndex == element);
-    return index + 1 < playlist.numberOfItems;
+    return index + 1 < playedAudios.length;
   }
 
   _CurrentPlaylist({
