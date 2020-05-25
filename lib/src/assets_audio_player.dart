@@ -65,7 +65,7 @@ class AssetsAudioPlayer {
 
   final String id;
 
-  AssetsAudioPlayer._({this.audioPlayerHandler, this.id = _DEFAULT_PLAYER}) {
+  AssetsAudioPlayer._({this.id = _DEFAULT_PLAYER}) {
     _init();
   }
 
@@ -79,7 +79,9 @@ class AssetsAudioPlayer {
     if (_players.containsKey(id)) {
       return _players[id];
     } else {
-      final player = AssetsAudioPlayer._(id: id);
+      final player = AssetsAudioPlayer._(
+        id: id,
+      );
       _players[id] = player;
       return player;
     }
@@ -87,7 +89,7 @@ class AssetsAudioPlayer {
 
   factory AssetsAudioPlayer.newPlayer() => _getOrCreate(id: uuid.v4());
 
-  final AudioPlayerHandler audioPlayerHandler;
+  AudioPlayerHandler audioPlayerHandler;
 
   /// empty constructor now create a new player
   factory AssetsAudioPlayer() => AssetsAudioPlayer.newPlayer();
