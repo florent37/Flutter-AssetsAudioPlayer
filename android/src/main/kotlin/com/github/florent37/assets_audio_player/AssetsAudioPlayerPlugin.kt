@@ -2,6 +2,7 @@ package com.github.florent37.assets_audio_player
 
 import StopWhenCall
 import StopWhenCallAudioFocus
+import StopWhenCallPhoneState
 import android.app.RemoteAction
 import android.content.Context
 import androidx.annotation.NonNull
@@ -69,7 +70,7 @@ class AssetsAudioPlayer(
     private var lastPlayerIdWithNotificationEnabled: String? = null
 
     fun register() {
-        stopWhenCall = StopWhenCallAudioFocus(context)
+        stopWhenCall = StopWhenCallPhoneState(context)
         stopWhenCall?.register(stopWhenCallListener)
 
         mediaButtonsReciever = MediaButtonsReciever(context, onAction = {
