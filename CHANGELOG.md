@@ -1,4 +1,4 @@
-## 1.6.2+3
+## 1.6.2+4
 
 * Custom notification icon (android)
 * Custom notification actions

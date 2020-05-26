@@ -14,10 +14,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.AssetDataSource
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DataSpec
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
 import kotlin.math.max
@@ -149,7 +146,7 @@ class Player(
                         .createMediaSource(Uri.parse(assetAudioPath))
             } else if (audioType == AUDIO_TYPE_FILE) {
                 mediaSource = ProgressiveMediaSource
-                        .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
+                        .Factory(FileDataSource.Factory(), DefaultExtractorsFactory())
                         .createMediaSource(Uri.parse(assetAudioPath))
             } else { //asset
                 val path = if (assetAudioPackage.isNullOrBlank()) {
