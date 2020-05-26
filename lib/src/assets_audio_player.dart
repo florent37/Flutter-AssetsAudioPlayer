@@ -233,6 +233,7 @@ class AssetsAudioPlayer {
   ValueStream<double> get volume => _volume.stream;
 
   final BehaviorSubject<bool> _loop = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _shuffle = BehaviorSubject<bool>.seeded(false);
 
   /// Called when the looping state changes
   ///     _assetsAudioPlayer.isLooping.listen((looping){
@@ -240,6 +241,7 @@ class AssetsAudioPlayer {
   ///     })
   ///
   ValueStream<bool> get isLooping => _loop.stream;
+  ValueStream<bool> get isShuffling => _shuffle.stream;
 
   final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos =
       BehaviorSubject<RealtimePlayingInfos>();
@@ -259,6 +261,7 @@ class AssetsAudioPlayer {
 
   /// returns the looping state : true -> looping, false -> not looping
   bool get loop => _loop.value;
+  bool get shuffle => _shuffle.value;
 
   bool _respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE;
 
@@ -269,11 +272,24 @@ class AssetsAudioPlayer {
     _loop.value = value;
   }
 
+  /// assign the shuffling state : true -> shuffling, false -> not shuffling
+  set shuffle(value) {
+    _shuffle.value = value;
+  }
+
   /// toggle the looping state
   /// if it was looping -> stops this
   /// if it was'nt looping -> now it is
   void toggleLoop() {
     loop = !loop;
+  }
+
+  /// toggle the shuffling state
+  /// if it was shuffling -> stops this
+  /// if it was'nt shuffling -> now it is
+  void toggleShuffle() {
+    shuffle = !shuffle;
+    _playlist.clearPlayeAudio(shuffle);
   }
 
   /// Call it to dispose stream
@@ -287,12 +303,12 @@ class AssetsAudioPlayer {
     _current.close();
     _playlistAudioFinished.close();
     _loop.close();
+    _shuffle.close();
     _playSpeed.close();
     _isBuffering.close();
     _forwardRewindSpeed.close();
     _realtimePlayingInfos.close();
     _realTimeSubscription?.cancel();
-
     _players.remove(this.id);
   }
 
@@ -337,7 +353,9 @@ class AssetsAudioPlayer {
                 hasNext: _playlist.hasNext(),
                 playlist: ReadingPlaylist(
                     audios: _playlist.playlist.audios,
-                    currentIndex: _playlist.playlistIndex),
+                    currentIndex: _playlist.playlistIndex,
+                    nextIndex: _playlist.nextIndex(),
+                    previousIndex: _playlist.previousIndex()),
               );
               _current.value = current;
             }
@@ -384,6 +402,7 @@ class AssetsAudioPlayer {
       this.volume,
       this.isPlaying,
       this.isLooping,
+      this.isShuffling,
       this.current,
       this.currentPosition,
     ])
@@ -391,8 +410,9 @@ class AssetsAudioPlayer {
               volume: values[0],
               isPlaying: values[1],
               isLooping: values[2],
-              current: values[3],
-              currentPosition: values[4],
+              isShuffling: values[3],
+              current: values[4],
+              currentPosition: values[5],
               playerId: this.id,
             ))
         .listen((readingInfos) {
@@ -436,7 +456,9 @@ class AssetsAudioPlayer {
     }
   }
 
-  Future<bool> next({bool stopIfLast = false}) {
+  Future<bool> next({
+    bool stopIfLast = false,
+  }) {
     return _next(
       stopIfLast: stopIfLast,
       requestByUser: true,
@@ -589,6 +611,7 @@ class AssetsAudioPlayer {
         }
         _lastOpenedAssetsAudio = audio;
         /*final result = */
+
         await _sendChannel.invokeMethod('open', params);
 
         _playlistFinished.value = false;
@@ -619,6 +642,7 @@ class AssetsAudioPlayer {
         showNotification: showNotification,
         playSpeed: playSpeed,
         notificationSettings: notificationSettings);
+    _playlist.clearPlayeAudio(shuffle);
     _playlist.moveTo(playlist.startIndex);
     return _openPlaylistCurrent(autoStart: autoStart, seek: seek);
   }
@@ -869,18 +893,70 @@ class _CurrentPlaylist {
 
   int playlistIndex = 0;
 
-  int selectNext() {
-    if (hasNext()) {
-      playlistIndex += 1;
+  int nextIndex() {
+    int index = indexList.indexWhere((element) => playlistIndex == element);
+    if (index + 1 == indexList.length) {
+      return indexList.first;
+    } else {
+      return indexList[index + 1];
     }
-    return playlistIndex;
+  }
+
+  int previousIndex() {
+    int index = indexList.indexWhere((element) => playlistIndex == element);
+    if (index == 0) {
+      return indexList.last;
+    } else {
+      return indexList[index - 1];
+    }
+  }
+
+  selectNext() {
+    int index = indexList.indexWhere((element) => playlistIndex == element);
+    if (hasNext()) {
+      index = index + 1;
+    }
+    playlistIndex = index;
+  }
+
+  List<int> indexList = [];
+
+  sortAudios() {
+    for (var i = 0; i < this.playlist.audios.length; i++) {
+      indexList.add(i);
+    }
+  }
+
+  clearPlayeAudio(bool shuffle) {
+    indexList.clear();
+    if (shuffle) {
+      shuffleAudios();
+    } else {
+      sortAudios();
+    }
+  }
+
+  shuffleAudios() {
+    for (var i = 0; i < this.playlist.audios.length; i++) {
+      int index = _shuffleNumbers();
+      indexList.add(index);
+    }
+  }
+
+  int _shuffleNumbers() {
+    Random random = Random();
+    int index = random.nextInt(playlist.audios.length);
+    if (indexList.contains(index)) {
+      index = _shuffleNumbers();
+    }
+    return index;
   }
 
   int moveTo(int index) {
     if (index < 0) {
-      playlistIndex = 0;
+      playlistIndex = indexList.indexWhere((element) => element == 0);
     } else {
-      playlistIndex = index % playlist.numberOfItems;
+      playlistIndex = indexList.indexWhere((element) => element == index);
     }
     return playlistIndex;
   }
@@ -895,11 +971,12 @@ class _CurrentPlaylist {
   }
 
   Audio currentAudio() {
-    return audioAt(at: playlistIndex);
+    return audioAt(at: indexList[playlistIndex]);
   }
 
   bool hasNext() {
-    return playlistIndex + 1 < playlist.numberOfItems;
+    int index = indexList.indexWhere((element) => playlistIndex == element);
+    return index + 1 < indexList.length;
   }
 
   _CurrentPlaylist({
@@ -916,11 +993,14 @@ class _CurrentPlaylist {
   }
 
   bool hasPrev() {
-    return playlistIndex > 0;
+    int index = indexList.indexWhere((element) => playlistIndex == element);
+    return index > 0;
   }
 
   void selectPrev() {
-    playlistIndex--;
+    int index = indexList.indexWhere((element) => playlistIndex == element);
+    index = index - 1;
+    playlistIndex = index;
     if (playlistIndex < 0) {
       playlistIndex = 0;
     }
