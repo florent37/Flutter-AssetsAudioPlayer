@@ -10,9 +10,11 @@ import 'package:uuid/uuid.dart';
 
 import 'playable.dart';
 import 'playing.dart';
+import 'notification.dart';
 
 export 'playable.dart';
 export 'playing.dart';
+export 'notification.dart';
 
 const _DEFAULT_AUTO_START = true;
 const _DEFAULT_RESPECT_SILENT_MODE = false;
