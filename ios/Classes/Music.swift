@@ -3,6 +3,38 @@ import UIKit
 import AVFoundation
 import MediaPlayer
 
+struct NotificationSettings : Equatable {
+    let nextEnabled: Bool
+    let playPauseEnabled: Bool
+    let prevEnabled: Bool
+    
+    static func ==(lhs: NotificationSettings, rhs: NotificationSettings) -> Bool {
+        return
+            lhs.nextEnabled == rhs.nextEnabled &&
+                lhs.playPauseEnabled == rhs.playPauseEnabled &&
+                lhs.prevEnabled == rhs.prevEnabled
+    }
+    init() {
+        self.nextEnabled = true
+        self.playPauseEnabled = true
+        self.prevEnabled = true
+    }
+
+    init(nextEnabled: Bool, playPauseEnabled: Bool, prevEnabled: Bool) {
+        self.nextEnabled = nextEnabled
+        self.playPauseEnabled = playPauseEnabled
+        self.prevEnabled = prevEnabled
+    }
+}
+
+func notificationSettings(from: NSDictionary) -> NotificationSettings {
+    return NotificationSettings(
+        nextEnabled: from["notif.settings.nextEnabled"] as? Bool ?? true,
+        playPauseEnabled: from["notif.settings.playPauseEnabled"] as? Bool ?? true,
+        prevEnabled: from["notif.settings.prevEnabled"] as? Bool ?? true
+    )
+}
+
 struct AudioMetas : Equatable {
     var title: String?
     var artist: String?
@@ -41,6 +73,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     var displayMediaPlayerNotification = false
     var audioMetas : AudioMetas?
+    var notificationSettings: NotificationSettings?
     
     init(channel: FlutterMethodChannel, registrar: FlutterPluginRegistrar) {
         self.channel = channel
@@ -113,32 +146,32 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         
         self.setupNotificationView(currentSongDuration: currentSongDuration)
         
-        
+
         self.deinitMediaPlayerNotifEvent()
         // Add handler for Play Command
-        commandCenter.playCommand.isEnabled = true
+        commandCenter.playCommand.isEnabled = (self.notificationSettings ?? NotificationSettings()).playPauseEnabled
         self.targets["play"] = commandCenter.playCommand.addTarget { [unowned self] event in
-            self.play();
+            self.channel.invokeMethod(Music.METHOD_PLAY_OR_PAUSE, arguments: [])
             return .success
         }
         
         // Add handler for Pause Command
-        commandCenter.pauseCommand.isEnabled = true
+        commandCenter.pauseCommand.isEnabled = (self.notificationSettings ?? NotificationSettings()).playPauseEnabled
         self.targets["pause"] = commandCenter.pauseCommand.addTarget { [unowned self] event in
-            self.pause();
+            self.channel.invokeMethod(Music.METHOD_PLAY_OR_PAUSE, arguments: [])
             return .success
         }
         
         // Add handler for Pause Command
-        commandCenter.previousTrackCommand.isEnabled = true
+        commandCenter.previousTrackCommand.isEnabled = (self.notificationSettings ?? NotificationSettings()).prevEnabled
         self.targets["prev"] = commandCenter.previousTrackCommand.addTarget { [unowned self] event in
             self.channel.invokeMethod(Music.METHOD_PREV, arguments: [])
             
             return .success
         }
-        
+                
         // Add handler for Pause Command
-        commandCenter.nextTrackCommand.isEnabled = true
+        commandCenter.nextTrackCommand.isEnabled = (self.notificationSettings ?? NotificationSettings()).nextEnabled
         self.targets["next"] = commandCenter.nextTrackCommand.addTarget { [unowned self] event in
             self.channel.invokeMethod(Music.METHOD_NEXT, arguments: [])
             
@@ -304,6 +337,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
               respectSilentMode: Bool,
               audioMetas: AudioMetas,
               displayNotification: Bool,
+              notificationSettings: NotificationSettings,
               playSpeed: Double,
               result: @escaping FlutterResult
     ){
@@ -340,6 +374,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             self.player = AVPlayer(playerItem: item)
             
             self.displayMediaPlayerNotification = displayNotification
+            self.notificationSettings = notificationSettings
             self.audioMetas = audioMetas
             
             NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
@@ -584,7 +619,8 @@ class Music : NSObject, FlutterPlugin {
     static let METHOD_PLAY_SPEED = "player.playSpeed"
     static let METHOD_NEXT = "player.next"
     static let METHOD_PREV = "player.prev"
-    
+    static let METHOD_PLAY_OR_PAUSE = "player.playOrPause"
+
     var players = Dictionary<String, Player>()
     
     func getOrCreatePlayer(id: String) -> Player {
@@ -910,6 +946,8 @@ class Music : NSObject, FlutterPlugin {
                     imagePackage: songImagePackage
                 )
                 
+                let notifSettings = notificationSettings(from: args)
+                
                 self.getOrCreatePlayer(id: id)
                     .open(
                         assetPath: assetPath,
@@ -921,6 +959,7 @@ class Music : NSObject, FlutterPlugin {
                         respectSilentMode: respectSilentMode,
                         audioMetas: audioMetas,
                         displayNotification: displayNotification,
+                        notificationSettings: notifSettings,
                         playSpeed: playSpeed,
                         result: result
                 );

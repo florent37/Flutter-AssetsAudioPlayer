@@ -30,7 +30,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.6.1
+  assets_audio_player: ^1.6.2+4
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -41,7 +41,7 @@ dependencies:
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
-  assets_audio_player_web: ^1.6.1
+  assets_audio_player_web: ^1.6.2+4
 ```
 
 </details>
@@ -427,6 +427,39 @@ final audio = Audio("/assets/audio/country.mp3",
 
 ```dart
 _player.open(audio, showNotification: true)
+```
+
+## Custom notification
+
+Custom icon (android only)
+
+1. Add your icon into your android's `res` folder (android/app/src/main/res)
+
+2. Reference this icon into your AndroidManifest (android/app/src/main/AndroidManifest.xml)
+
+```xml
+<meta-data
+     android:name="assets.audio.player.notification.icon"
+     android:resource="@drawable/ic_music_custom"/>
+```
+
+## Custom actions
+
+You can enable/disable a notification action
+
+```dart
+open(AUDIO,
+   showNotification: true,
+   notificationSettings: NotificationSettings(
+       prevEnabled: false, //disable the previous button
+  
+       //and have a custom next action (will disable the default action)
+       customNextAction: (player) {
+         print("next");
+       }
+   )
+
+)
 ```
 
 ## Bluetooth Actions

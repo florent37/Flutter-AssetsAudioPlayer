@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
@@ -75,9 +76,21 @@ class NotificationService : Service() {
         }
     }
 
+    private fun getSmallIcon(context: Context) : Int {
+        try {
+            val appInfos = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+            val customIcon = appInfos.metaData.get("assets.audio.player.notification.icon") as? Int
+            return customIcon ?: R.drawable.exo_icon_circular_play
+        } catch (t : Throwable) {
+            return R.drawable.exo_icon_circular_play
+        }
+    }
+
     private fun displayNotification(action: NotificationAction.Show, bitmap: Bitmap?) {
         createNotificationChannel()
         val mediaSession = MediaSessionCompat(this, MEDIA_SESSION_TAG)
+
+        val notificationSettings = action.notificationSettings
 
         val toggleIntent = createReturnIntent(forAction = NotificationAction.ACTION_TOGGLE, forPlayer = action.playerId)
                 .putExtra(EXTRA_NOTIFICATION_ACTION, action.copyWith(
@@ -86,31 +99,56 @@ class NotificationService : Service() {
         val pendingToggleIntent = PendingIntent.getBroadcast(this, 0, toggleIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         MediaButtonReceiver.handleIntent(mediaSession, toggleIntent)
 
+        val context = this
+
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
                 //prev
-                .addAction(R.drawable.exo_icon_previous, "prev",
-                        PendingIntent.getBroadcast(this, 0, createReturnIntent(forAction = NotificationAction.ACTION_PREV, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
-                )
+                .apply {
+                    if(notificationSettings.prevEnabled) {
+                        addAction(R.drawable.exo_icon_previous, "prev",
+                                PendingIntent.getBroadcast(context, 0, createReturnIntent(forAction = NotificationAction.ACTION_PREV, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
+                        )
+                    }
+                }
                 //play/pause
-                .addAction(
-                        if (action.isPlaying) R.drawable.exo_icon_pause else R.drawable.exo_icon_play,
-                        if (action.isPlaying) "pause" else "play",
-                        pendingToggleIntent
-                )
+                .apply {
+                    if(notificationSettings.playPauseEnabled) {
+                        addAction(
+                                if (action.isPlaying) R.drawable.exo_icon_pause else R.drawable.exo_icon_play,
+                                if (action.isPlaying) "pause" else "play",
+                                pendingToggleIntent
+                        )
+                    }
+                }
                 //next
-                .addAction(R.drawable.exo_icon_next, "next", PendingIntent.getBroadcast(this, 0,
-                        createReturnIntent(forAction = NotificationAction.ACTION_NEXT, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
-                )
+                .apply {
+                    if(notificationSettings.nextEnabled) {
+                        addAction(R.drawable.exo_icon_next, "next", PendingIntent.getBroadcast(context, 0,
+                                createReturnIntent(forAction = NotificationAction.ACTION_NEXT, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
+                        )
+                    }
+                }
                 //stop
-                .addAction(R.drawable.exo_icon_stop, "stop", PendingIntent.getBroadcast(this, 0,
-                        createReturnIntent(forAction = NotificationAction.ACTION_STOP, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
-                )
+                .apply {
+                    if(notificationSettings.stopEnabled){
+                        addAction(R.drawable.exo_icon_stop, "stop", PendingIntent.getBroadcast(context, 0,
+                                createReturnIntent(forAction = NotificationAction.ACTION_STOP, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
+                        )
+                    }
+                }
                 .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(0, 1, 2)
+                        .also {
+                            when(notificationSettings.numberEnabled()){
+                                1 ->  it.setShowActionsInCompactView(0)
+                                2 ->  it.setShowActionsInCompactView(0, 1)
+                                3 ->  it.setShowActionsInCompactView(0, 1, 2)
+                                else -> it.setShowActionsInCompactView()
+                            }
+                        }
                         .setShowCancelButton(true)
                         .setMediaSession(mediaSession.sessionToken)
                 )
-                .setSmallIcon(R.drawable.exo_icon_circular_play)
+                .setSmallIcon(getSmallIcon(context))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setVibrate(longArrayOf(0L))
                 .setPriority(NotificationCompat.PRIORITY_MAX)

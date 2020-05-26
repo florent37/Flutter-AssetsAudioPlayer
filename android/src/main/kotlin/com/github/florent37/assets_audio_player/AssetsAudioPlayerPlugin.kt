@@ -5,9 +5,7 @@ import StopWhenCallAudioFocus
 import android.app.RemoteAction
 import android.content.Context
 import androidx.annotation.NonNull
-import com.github.florent37.assets_audio_player.notification.AudioMetas
-import com.github.florent37.assets_audio_player.notification.MediaButtonsReciever
-import com.github.florent37.assets_audio_player.notification.NotificationManager
+import com.github.florent37.assets_audio_player.notification.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
@@ -86,6 +84,7 @@ class AssetsAudioPlayer(
 
     fun unregister() {
         stopWhenCall?.stop()
+        notificationManager.hideNotification(definitively = true)
         stopWhenCall?.unregister(stopWhenCallListener)
         players.values.forEach {
             it.stop()
@@ -307,23 +306,8 @@ class AssetsAudioPlayer(
                     val respectSilentMode = args["respectSilentMode"] as? Boolean ?: false
                     val seek = args["seek"] as? Int?
 
-                    //region metas
-                    val songTitle = args["song.title"] as? String
-                    val songArtist = args["song.artist"] as? String
-                    val songAlbum = args["song.album"] as? String
-                    val songImage = args["song.image"] as? String
-                    val songImageType = args["song.imageType"] as? String
-                    val songImagePackage = args["song.imagePackage"] as? String
-                    //endregion metas
-
-                    val audioMetas = AudioMetas(
-                            title = songTitle,
-                            artist = songArtist,
-                            album = songAlbum,
-                            image = songImage,
-                            imageType = songImageType,
-                            imagePackage = songImagePackage
-                    )
+                    val notificationSettings = fetchNotificationSettings(args)
+                    val audioMetas = fetchAudioMetas(args)
 
                     getOrCreatePlayer(id).open(
                             assetAudioPath = path,
@@ -334,6 +318,7 @@ class AssetsAudioPlayer(
                             seek = seek,
                             respectSilentMode = respectSilentMode,
                             displayNotification = displayNotification,
+                            notificationSettings= notificationSettings,
                             result = result,
                             playSpeed = playSpeed,
                             audioMetas = audioMetas,

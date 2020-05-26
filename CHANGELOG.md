@@ -1,3 +1,9 @@
+## 1.6.2+4
+
+* Custom notification icon (android)
+* Custom notification actions
+* Fixed notification close on android
+
 ## 1.6.1
 
 * Playlist is now mutable, we can add audios after creation
