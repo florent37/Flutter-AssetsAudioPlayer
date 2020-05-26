@@ -10,3 +10,14 @@ class AudioMetas(
         val imageType: String?,
         val imagePackage: String?
 ) : Serializable
+
+fun fetchAudioMetas(from: Map<*, *>) : AudioMetas {
+    return AudioMetas(
+            title = from["song.title"] as? String,
+            artist = from["song.artist"] as? String,
+            album = from["song.album"] as? String,
+            image = from["song.image"] as? String,
+            imageType = from["song.imageType"] as? String,
+            imagePackage = from["song.imagePackage"] as? String
+    )
+}

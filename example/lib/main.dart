@@ -284,6 +284,14 @@ class _MyAppState extends State<MyApp> {
                               autoStart: true,
                               respectSilentMode: true,
                               showNotification: true,
+                              /*
+                              notificationSettings: NotificationSettings(
+                                  prevEnabled: false,
+                                  customNextAction: (player) {
+                                    print("next");
+                                  }
+                              )
+                               */
                             );
                           },
                           playing: playing,

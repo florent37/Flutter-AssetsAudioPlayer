@@ -443,6 +443,25 @@ Custom icon (android only)
      android:resource="@drawable/ic_music_custom"/>
 ```
 
+## Custom actions
+
+You can enable/disable a notification action
+
+```dart
+open(AUDIO,
+   showNotification: true,
+   notificationSettings: NotificationSettings(
+       prevEnabled: false, //disable the previous button
+  
+       //and have a custom next action (will disable the default action)
+       customNextAction: (player) {
+         print("next");
+       }
+   )
+
+)
+```
+
 ## Bluetooth Actions
  
 You have to enable notification to make them work

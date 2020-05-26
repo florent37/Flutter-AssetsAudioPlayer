@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Message
 import com.github.florent37.assets_audio_player.notification.AudioMetas
 import com.github.florent37.assets_audio_player.notification.NotificationManager
+import com.github.florent37.assets_audio_player.notification.NotificationSettings
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -77,6 +78,7 @@ class Player(
 
     private var displayNotification = false
     private var audioMetas: AudioMetas? = null
+    private var notificationSettings: NotificationSettings? = null
 
     private val updatePosition = object : Runnable {
         override fun run() {
@@ -124,6 +126,7 @@ class Player(
              seek: Int?,
              respectSilentMode: Boolean,
              displayNotification: Boolean,
+             notificationSettings: NotificationSettings,
              audioMetas: AudioMetas,
              playSpeed: Double,
              result: MethodChannel.Result,
@@ -134,6 +137,7 @@ class Player(
         this.mediaPlayer = SimpleExoPlayer.Builder(context).build();
         this.displayNotification = displayNotification
         this.audioMetas = audioMetas
+        this.notificationSettings = notificationSettings
         this.respectSilentMode = respectSilentMode
 
         lateinit var mediaSource: MediaSource
@@ -269,7 +273,14 @@ class Player(
 
     private fun updateNotif() {
         this.audioMetas?.takeIf { this.displayNotification }?.let { audioMetas ->
-            notificationManager.showNotification(playerId = id, audioMetas = audioMetas, isPlaying = this.isPlaying)
+            this.notificationSettings?.let { notificationSettings ->
+                notificationManager.showNotification(
+                        playerId = id,
+                        audioMetas = audioMetas,
+                        isPlaying = this.isPlaying,
+                        notificationSettings = notificationSettings
+                )
+            }
         }
     }
 
