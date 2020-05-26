@@ -1,7 +1,8 @@
-## 1.6.2+1
+## 1.6.2+2
 
 * Custom notification icon (android)
 * Custom notification actions
+* Fixed notification close on android
 
 ## 1.6.1
 
