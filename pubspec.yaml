@@ -32,6 +32,7 @@ flutter:
       android:
         package: com.github.florent37.assets_audio_player
         pluginClass: AssetsAudioPlayerPlugin
+        mainClass: AssetsAudioPlayerPlugin
       ios:
         pluginClass: AssetsAudioPlayerPlugin
       macos:
