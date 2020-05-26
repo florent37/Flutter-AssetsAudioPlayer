@@ -459,18 +459,6 @@ class AssetsAudioPlayer {
   Future<bool> _next(
       {bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
-      if (shuffle) {
-        if (this._current.value != null) {
-          _playlistAudioFinished.add(Playing(
-            audio: this._current.value.audio,
-            index: this._current.value.index,
-            hasNext: true,
-            playlist: this._current.value.playlist,
-          ));
-        }
-        await _openPlaylistCurrent();
-        return true;
-      }
       if (_playlist.hasNext()) {
         if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
@@ -889,59 +877,59 @@ class _CurrentPlaylist {
   int playlistIndex = 0;
 
   int nextIndex() {
-    int index = playedAudios.indexWhere((element) => playlistIndex == element);
-    if (index + 1 == playedAudios.length) {
-      return playedAudios.first;
+    int index = indexList.indexWhere((element) => playlistIndex == element);
+    if (index + 1 == indexList.length) {
+      return indexList.first;
     } else {
-      return playedAudios[index + 1];
+      return indexList[index + 1];
     }
   }
 
   int previousIndex() {
-    int index = playedAudios.indexWhere((element) => playlistIndex == element);
+    int index = indexList.indexWhere((element) => playlistIndex == element);
     if (index == 0) {
-      return playedAudios.last;
+      return indexList.last;
     } else {
-      return playedAudios[index - 1];
+      return indexList[index - 1];
     }
   }
 
   selectNext() {
-    int index = playedAudios.indexWhere((element) => playlistIndex == element);
+    int index = indexList.indexWhere((element) => playlistIndex == element);
     if (hasNext()) {
       index = index + 1;
     }
     playlistIndex = index;
   }
 
-  List<int> playedAudios = [];
+  List<int> indexList = [];
 
-  fillPlayedAudios() {
+  sortAudios() {
     for (var i = 0; i < this.playlist.audios.length; i++) {
-      playedAudios.add(i);
+      indexList.add(i);
     }
   }
 
   clearPlayeAudio(bool shuffle) {
-    playedAudios.clear();
+    indexList.clear();
     if (shuffle) {
       shuffleAudios();
     } else {
-      fillPlayedAudios();
+      sortAudios();
     }
   }
 
   shuffleAudios() {
     for (var i = 0; i < this.playlist.audios.length; i++) {
       int index = _shuffleNumbers();
-      playedAudios.add(index);
+      indexList.add(index);
     }
   }
 
   int _shuffleNumbers() {
     Random random = Random();
     int index = random.nextInt(playlist.audios.length);
-    if (playedAudios.contains(index)) {
+    if (indexList.contains(index)) {
       index = _shuffleNumbers();
     }
     return index;
@@ -949,9 +937,9 @@ class _CurrentPlaylist {
 
   int moveTo(int index) {
     if (index < 0) {
-      playlistIndex = playedAudios.indexWhere((element) => element == 0);
+      playlistIndex = indexList.indexWhere((element) => element == 0);
     } else {
-      playlistIndex = playedAudios.indexWhere((element) => element == index);
+      playlistIndex = indexList.indexWhere((element) => element == index);
     }
     return playlistIndex;
   }
@@ -966,12 +954,12 @@ class _CurrentPlaylist {
   }
 
   Audio currentAudio() {
-    return audioAt(at: playedAudios[playlistIndex]);
+    return audioAt(at: indexList[playlistIndex]);
   }
 
   bool hasNext() {
-    int index = playedAudios.indexWhere((element) => playlistIndex == element);
-    return index + 1 < playedAudios.length;
+    int index = indexList.indexWhere((element) => playlistIndex == element);
+    return index + 1 < indexList.length;
   }
 
   _CurrentPlaylist({
@@ -987,12 +975,14 @@ class _CurrentPlaylist {
   }
 
   bool hasPrev() {
-    int index = playedAudios.indexWhere((element) => playlistIndex == element);
+    int index = indexList.indexWhere((element) => playlistIndex == element);
     return index > 0;
   }
 
   void selectPrev() {
-    playlistIndex--;
+    int index = indexList.indexWhere((element) => playlistIndex == element);
+    index = index - 1;
+    playlistIndex = index;
     if (playlistIndex < 0) {
       playlistIndex = 0;
     }
