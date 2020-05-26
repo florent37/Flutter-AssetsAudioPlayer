@@ -28,7 +28,7 @@ const METHOD_IS_PLAYING = "player.isPlaying";
 const METHOD_IS_BUFFERING = "player.isBuffering";
 const METHOD_CURRENT = "player.current";
 const METHOD_FORWARD_REWIND_SPEED = "player.forwardRewind";
-const METHOD_NOTIFICATION_NEXT = "player.next"; 
+const METHOD_NOTIFICATION_NEXT = "player.next";
 const METHOD_NOTIFICATION_PREV = "player.prev";
 const METHOD_NOTIFICATION_STOP = "player.stop";
 const METHOD_NOTIFICATION_PLAY_OR_PAUSE = "player.playOrPause";
@@ -55,7 +55,8 @@ class AssetsAudioPlayer {
   static final double maxPlaySpeed = 16.0;
   static final double defaultVolume = maxVolume;
   static final double defaultPlaySpeed = 1.0;
-  static final NotificationSettings defaultNotificationSettings = const NotificationSettings();
+  static final NotificationSettings defaultNotificationSettings =
+      const NotificationSettings();
 
   static final uuid = Uuid();
 
@@ -419,7 +420,8 @@ class AssetsAudioPlayer {
     return false;
   }
 
-  Future<void> _openPlaylistCurrent({bool autoStart = true, Duration seek}) async {
+  Future<void> _openPlaylistCurrent(
+      {bool autoStart = true, Duration seek}) async {
     if (_playlist != null) {
       return _open(
         _playlist.currentAudio(),
@@ -517,28 +519,28 @@ class AssetsAudioPlayer {
     }
   }
 
-  void _notificationPrevious(){
-    if(_playlist?.notificationSettings?.customPrevAction != null){
+  void _notificationPrevious() {
+    if (_playlist?.notificationSettings?.customPrevAction != null) {
       _playlist?.notificationSettings?.customPrevAction(this);
     } else {
       previous();
     }
   }
 
-  void _notificationStop(){
+  void _notificationStop() {
     stop();
   }
 
-  void _notificationPlayPause(){
-    if(_playlist?.notificationSettings?.customPlayPauseAction != null){
+  void _notificationPlayPause() {
+    if (_playlist?.notificationSettings?.customPlayPauseAction != null) {
       _playlist?.notificationSettings?.customPlayPauseAction(this);
     } else {
       playOrPause();
     }
   }
 
-  void _notificationNext(){
-    if(_playlist?.notificationSettings?.customNextAction != null){
+  void _notificationNext() {
+    if (_playlist?.notificationSettings?.customNextAction != null) {
       _playlist?.notificationSettings?.customNextAction(this);
     } else {
       next();
@@ -578,7 +580,7 @@ class AssetsAudioPlayer {
         }
 
         //region notifs
-        final notifSettings = notificationSettings ??  NotificationSettings();
+        final notifSettings = notificationSettings ?? NotificationSettings();
         writeNotificationSettingsInto(params, notifSettings);
         //endregion
 
@@ -611,13 +613,12 @@ class AssetsAudioPlayer {
     _lastSeek = null;
     _replaceRealtimeSubscription();
     this._playlist = _CurrentPlaylist(
-      playlist: playlist,
-      volume: volume,
-      respectSilentMode: respectSilentMode,
-      showNotification: showNotification,
-      playSpeed: playSpeed,
-      notificationSettings: notificationSettings
-    );
+        playlist: playlist,
+        volume: volume,
+        respectSilentMode: respectSilentMode,
+        showNotification: showNotification,
+        playSpeed: playSpeed,
+        notificationSettings: notificationSettings);
     _playlist.moveTo(playlist.startIndex);
     return _openPlaylistCurrent(autoStart: autoStart, seek: seek);
   }
@@ -652,27 +653,25 @@ class AssetsAudioPlayer {
     if (playable is Playlist &&
         playable.audios != null &&
         playable.audios.length > 0) {
-      await _openPlaylist(
-        playable,
-        autoStart: autoStart,
-        volume: volume,
-        respectSilentMode: respectSilentMode,
-        showNotification: showNotification,
-        seek: seek,
-        playSpeed: playSpeed,
-        notificationSettings: notificationSettings ?? defaultNotificationSettings
-      );
+      await _openPlaylist(playable,
+          autoStart: autoStart,
+          volume: volume,
+          respectSilentMode: respectSilentMode,
+          showNotification: showNotification,
+          seek: seek,
+          playSpeed: playSpeed,
+          notificationSettings:
+              notificationSettings ?? defaultNotificationSettings);
     } else if (playable is Audio) {
-      await _openPlaylist(
-        Playlist(audios: [playable]),
-        autoStart: autoStart,
-        volume: volume,
-        respectSilentMode: respectSilentMode,
-        showNotification: showNotification,
-        seek: seek,
-        playSpeed: playSpeed,
-        notificationSettings: notificationSettings ?? defaultNotificationSettings
-      );
+      await _openPlaylist(Playlist(audios: [playable]),
+          autoStart: autoStart,
+          volume: volume,
+          respectSilentMode: respectSilentMode,
+          showNotification: showNotification,
+          seek: seek,
+          playSpeed: playSpeed,
+          notificationSettings:
+              notificationSettings ?? defaultNotificationSettings);
     } else {
       //do nothing
       //throw exception ?

@@ -9,8 +9,10 @@ class NotificationSettings {
   //region configs
   /// both android & ios
   final bool nextEnabled;
+
   /// both android & ios
   final bool playPauseEnabled;
+
   /// both android & ios
   final bool prevEnabled;
 
@@ -43,9 +45,11 @@ class NotificationSettings {
   });
 }
 
-void writeNotificationSettingsInto(Map<String, dynamic> params, NotificationSettings notificationSettings){
+void writeNotificationSettingsInto(
+    Map<String, dynamic> params, NotificationSettings notificationSettings) {
   params["notif.settings.nextEnabled"] = notificationSettings.nextEnabled;
   params["notif.settings.stopEnabled"] = notificationSettings.stopEnabled;
-  params["notif.settings.playPauseEnabled"] = notificationSettings.playPauseEnabled;
+  params["notif.settings.playPauseEnabled"] =
+      notificationSettings.playPauseEnabled;
   params["notif.settings.prevEnabled"] = notificationSettings.prevEnabled;
 }
