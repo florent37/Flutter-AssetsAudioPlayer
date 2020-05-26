@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:assets_audio_player/src/notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
@@ -25,9 +26,10 @@ const METHOD_IS_PLAYING = "player.isPlaying";
 const METHOD_IS_BUFFERING = "player.isBuffering";
 const METHOD_CURRENT = "player.current";
 const METHOD_FORWARD_REWIND_SPEED = "player.forwardRewind";
-const METHOD_NEXT = "player.next";
-const METHOD_PREV = "player.prev";
-const METHOD_PLAY_OR_PAUSE = "player.playOrPause";
+const METHOD_NOTIFICATION_NEXT = "player.next"; 
+const METHOD_NOTIFICATION_PREV = "player.prev";
+const METHOD_NOTIFICATION_STOP = "player.stop";
+const METHOD_NOTIFICATION_PLAY_OR_PAUSE = "player.playOrPause";
 const METHOD_PLAY_SPEED = "player.playSpeed";
 
 /// The AssetsAudioPlayer, playing audios from assets/
@@ -51,6 +53,7 @@ class AssetsAudioPlayer {
   static final double maxPlaySpeed = 16.0;
   static final double defaultVolume = maxVolume;
   static final double defaultPlaySpeed = 1.0;
+  static final NotificationSettings defaultNotificationSettings = const NotificationSettings();
 
   static final uuid = Uuid();
 
@@ -301,14 +304,17 @@ class AssetsAudioPlayer {
         case METHOD_FINISHED:
           _onFinished(call.arguments);
           break;
-        case METHOD_NEXT:
-          next();
+        case METHOD_NOTIFICATION_NEXT:
+          _notificationNext();
           break;
-        case METHOD_PREV:
-          previous();
+        case METHOD_NOTIFICATION_PREV:
+          _notificationPrevious();
           break;
-        case METHOD_PLAY_OR_PAUSE: //eg: from notification
-          playOrPause();
+        case METHOD_NOTIFICATION_STOP:
+          _notificationStop();
+          break;
+        case METHOD_NOTIFICATION_PLAY_OR_PAUSE: //eg: from notification
+          _notificationPlayPause();
           break;
         case METHOD_CURRENT:
           if (call.arguments == null) {
@@ -411,7 +417,7 @@ class AssetsAudioPlayer {
     return false;
   }
 
-  Future<void> _openPlaylistCurrent() async {
+  Future<void> _openPlaylistCurrent({bool autoStart = true, Duration seek}) async {
     if (_playlist != null) {
       return _open(
         _playlist.currentAudio(),
@@ -419,6 +425,9 @@ class AssetsAudioPlayer {
         respectSilentMode: _playlist.respectSilentMode,
         showNotification: _playlist.showNotification,
         playSpeed: _playlist.playSpeed,
+        notificationSettings: _playlist.notificationSettings,
+        autoStart: autoStart,
+        seek: seek,
       );
     }
   }
@@ -506,6 +515,34 @@ class AssetsAudioPlayer {
     }
   }
 
+  void _notificationPrevious(){
+    if(_playlist?.notificationSettings?.customPrevAction != null){
+      _playlist?.notificationSettings?.customPrevAction(this);
+    } else {
+      previous();
+    }
+  }
+
+  void _notificationStop(){
+    stop();
+  }
+
+  void _notificationPlayPause(){
+    if(_playlist?.notificationSettings?.customPlayPauseAction != null){
+      _playlist?.notificationSettings?.customPlayPauseAction(this);
+    } else {
+      playOrPause();
+    }
+  }
+
+  void _notificationNext(){
+    if(_playlist?.notificationSettings?.customNextAction != null){
+      _playlist?.notificationSettings?.customNextAction(this);
+    } else {
+      next();
+    }
+  }
+
   //private method, used in open(playlist) and open(path)
   Future<void> _open(
     Audio audio, {
@@ -515,6 +552,7 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
     double playSpeed,
+    NotificationSettings notificationSettings,
   }) async {
     final currentAudio = _lastOpenedAssetsAudio;
     if (audio != null) {
@@ -536,6 +574,15 @@ class AssetsAudioPlayer {
         if (audio.package != null) {
           params["package"] = audio.package;
         }
+
+        //region notifs
+        final notifSettings = notificationSettings ??  NotificationSettings();
+        params["notif.settings.nextEnabled"] = notifSettings.nextEnabled;
+        params["notif.settings.stopEnabled"] = notifSettings.stopEnabled;
+        params["notif.settings.playPauseEnabled"] = notifSettings.playPauseEnabled;
+        params["notif.settings.prevEnabled"] = notifSettings.prevEnabled;
+        //endregion
+
         if (audio.metas != null) {
           if (audio.metas.title != null)
             params["song.title"] = audio.metas.title;
@@ -571,6 +618,7 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
     double playSpeed,
+    NotificationSettings notificationSettings,
   }) async {
     _lastSeek = null;
     _replaceRealtimeSubscription();
@@ -580,17 +628,10 @@ class AssetsAudioPlayer {
       respectSilentMode: respectSilentMode,
       showNotification: showNotification,
       playSpeed: playSpeed,
+      notificationSettings: notificationSettings
     );
     _playlist.moveTo(playlist.startIndex);
-    return _open(
-      _playlist.currentAudio(),
-      autoStart: autoStart,
-      forcedVolume: volume,
-      playSpeed: playSpeed,
-      respectSilentMode: respectSilentMode,
-      showNotification: showNotification,
-      seek: seek,
-    );
+    return _openPlaylistCurrent(autoStart: autoStart, seek: seek);
   }
 
   bool get _isLiveStream {
@@ -618,6 +659,7 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
     double playSpeed,
+    NotificationSettings notificationSettings,
   }) async {
     if (playable is Playlist &&
         playable.audios != null &&
@@ -630,6 +672,7 @@ class AssetsAudioPlayer {
         showNotification: showNotification,
         seek: seek,
         playSpeed: playSpeed,
+        notificationSettings: notificationSettings ?? defaultNotificationSettings
       );
     } else if (playable is Audio) {
       await _openPlaylist(
@@ -640,6 +683,7 @@ class AssetsAudioPlayer {
         showNotification: showNotification,
         seek: seek,
         playSpeed: playSpeed,
+        notificationSettings: notificationSettings ?? defaultNotificationSettings
       );
     } else {
       //do nothing
@@ -834,6 +878,7 @@ class _CurrentPlaylist {
   final bool respectSilentMode;
   final bool showNotification;
   final double playSpeed;
+  final NotificationSettings notificationSettings;
 
   int playlistIndex = 0;
 
@@ -876,6 +921,7 @@ class _CurrentPlaylist {
     this.respectSilentMode,
     this.showNotification,
     this.playSpeed,
+    this.notificationSettings,
   });
 
   void returnToFirst() {
