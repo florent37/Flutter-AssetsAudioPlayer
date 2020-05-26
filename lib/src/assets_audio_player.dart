@@ -928,7 +928,7 @@ class _CurrentPlaylist {
 
   int _shuffleNumbers() {
     Random random = Random();
-    int index = random.nextInt(playlist.audios.length);
+    int index = random.nextInt(playlist.audios.length + 1) - 1;
     if (indexList.contains(index)) {
       index = _shuffleNumbers();
     }
