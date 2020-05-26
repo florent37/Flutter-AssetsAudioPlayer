@@ -27,6 +27,9 @@ class NotificationSettings {
 
   /// null for default behavior
   final NotificationAction customPrevAction;
+
+  //no custom action for stop
+
   //endregion
 
   const NotificationSettings({
@@ -38,4 +41,11 @@ class NotificationSettings {
     this.customPlayPauseAction,
     this.customPrevAction,
   });
+}
+
+void writeNotificationSettingsInto(Map<String, dynamic> params, NotificationSettings notificationSettings){
+  params["notif.settings.nextEnabled"] = notificationSettings.nextEnabled;
+  params["notif.settings.stopEnabled"] = notificationSettings.stopEnabled;
+  params["notif.settings.playPauseEnabled"] = notificationSettings.playPauseEnabled;
+  params["notif.settings.prevEnabled"] = notificationSettings.prevEnabled;
 }

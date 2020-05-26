@@ -577,25 +577,11 @@ class AssetsAudioPlayer {
 
         //region notifs
         final notifSettings = notificationSettings ??  NotificationSettings();
-        params["notif.settings.nextEnabled"] = notifSettings.nextEnabled;
-        params["notif.settings.stopEnabled"] = notifSettings.stopEnabled;
-        params["notif.settings.playPauseEnabled"] = notifSettings.playPauseEnabled;
-        params["notif.settings.prevEnabled"] = notifSettings.prevEnabled;
+        writeNotificationSettingsInto(params, notifSettings);
         //endregion
 
         if (audio.metas != null) {
-          if (audio.metas.title != null)
-            params["song.title"] = audio.metas.title;
-          if (audio.metas.artist != null)
-            params["song.artist"] = audio.metas.artist;
-          if (audio.metas.album != null)
-            params["song.album"] = audio.metas.album;
-          if (audio.metas.image != null) {
-            params["song.image"] = audio.metas.image.path;
-            params["song.imageType"] = audio.metas.image.type.description();
-            if (audio.metas.image.package != null)
-              params["song.imagePackage"] = audio.metas.image.package;
-          }
+          writeAudioMetasInto(params, audio.metas);
         }
         _lastOpenedAssetsAudio = audio;
         /*final result = */

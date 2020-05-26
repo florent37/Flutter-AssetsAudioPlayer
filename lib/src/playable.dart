@@ -178,3 +178,18 @@ class Playlist implements Playable {
   @override
   int get hashCode => audios.hashCode ^ startIndex.hashCode;
 }
+
+void writeAudioMetasInto(Map<String, dynamic> params, Metas metas){
+  if (metas.title != null)
+    params["song.title"] = metas.title;
+  if (metas.artist != null)
+    params["song.artist"] = metas.artist;
+  if (metas.album != null)
+    params["song.album"] = metas.album;
+  if (metas.image != null) {
+    params["song.image"] = metas.image.path;
+    params["song.imageType"] = metas.image.type.description();
+    if (metas.image.package != null)
+      params["song.imagePackage"] = metas.image.package;
+  }
+}

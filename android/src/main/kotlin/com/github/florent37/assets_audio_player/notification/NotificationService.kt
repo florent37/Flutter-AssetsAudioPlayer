@@ -90,6 +90,8 @@ class NotificationService : Service() {
         createNotificationChannel()
         val mediaSession = MediaSessionCompat(this, MEDIA_SESSION_TAG)
 
+        val notificationSettings = action.notificationSettings
+
         val toggleIntent = createReturnIntent(forAction = NotificationAction.ACTION_TOGGLE, forPlayer = action.playerId)
                 .putExtra(EXTRA_NOTIFICATION_ACTION, action.copyWith(
                         isPlaying = !action.isPlaying
@@ -97,31 +99,49 @@ class NotificationService : Service() {
         val pendingToggleIntent = PendingIntent.getBroadcast(this, 0, toggleIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         MediaButtonReceiver.handleIntent(mediaSession, toggleIntent)
 
+        val context = this
+
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
                 //prev
-                .addAction(R.drawable.exo_icon_previous, "prev",
-                        PendingIntent.getBroadcast(this, 0, createReturnIntent(forAction = NotificationAction.ACTION_PREV, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
-                )
+                .apply {
+                    if(notificationSettings.prevEnabled) {
+                        addAction(R.drawable.exo_icon_previous, "prev",
+                                PendingIntent.getBroadcast(context, 0, createReturnIntent(forAction = NotificationAction.ACTION_PREV, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
+                        )
+                    }
+                }
                 //play/pause
-                .addAction(
-                        if (action.isPlaying) R.drawable.exo_icon_pause else R.drawable.exo_icon_play,
-                        if (action.isPlaying) "pause" else "play",
-                        pendingToggleIntent
-                )
+                .apply {
+                    if(notificationSettings.playPauseEnabled) {
+                        addAction(
+                                if (action.isPlaying) R.drawable.exo_icon_pause else R.drawable.exo_icon_play,
+                                if (action.isPlaying) "pause" else "play",
+                                pendingToggleIntent
+                        )
+                    }
+                }
                 //next
-                .addAction(R.drawable.exo_icon_next, "next", PendingIntent.getBroadcast(this, 0,
-                        createReturnIntent(forAction = NotificationAction.ACTION_NEXT, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
-                )
+                .apply {
+                    if(notificationSettings.nextEnabled) {
+                        addAction(R.drawable.exo_icon_next, "next", PendingIntent.getBroadcast(context, 0,
+                                createReturnIntent(forAction = NotificationAction.ACTION_NEXT, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
+                        )
+                    }
+                }
                 //stop
-                .addAction(R.drawable.exo_icon_stop, "stop", PendingIntent.getBroadcast(this, 0,
-                        createReturnIntent(forAction = NotificationAction.ACTION_STOP, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
-                )
+                .apply {
+                    if(notificationSettings.stopEnabled){
+                        addAction(R.drawable.exo_icon_stop, "stop", PendingIntent.getBroadcast(context, 0,
+                                createReturnIntent(forAction = NotificationAction.ACTION_STOP, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
+                        )
+                    }
+                }
                 .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(0, 1, 2)
                         .setShowCancelButton(true)
                         .setMediaSession(mediaSession.sessionToken)
                 )
-                .setSmallIcon(getSmallIcon(applicationContext))
+                .setSmallIcon(getSmallIcon(context))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setVibrate(longArrayOf(0L))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
