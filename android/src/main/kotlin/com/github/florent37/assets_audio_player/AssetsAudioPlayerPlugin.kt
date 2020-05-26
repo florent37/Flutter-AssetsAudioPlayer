@@ -84,6 +84,7 @@ class AssetsAudioPlayer(
 
     fun unregister() {
         stopWhenCall?.stop()
+        notificationManager.hideNotification(definitively = true)
         stopWhenCall?.unregister(stopWhenCallListener)
         players.values.forEach {
             it.stop()
