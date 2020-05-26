@@ -9,7 +9,16 @@ class NotificationSettings(
 
         //android only
         val stopEnabled: Boolean
-) : Serializable
+) : Serializable {
+    fun numberEnabled() : Int {
+        var number = 0
+        if(nextEnabled) number++
+        if(playPauseEnabled) number++
+        if(prevEnabled) number++
+        if(stopEnabled) number++
+        return number
+    }
+}
 
 fun fetchNotificationSettings(from: Map<*, *>) : NotificationSettings {
     return NotificationSettings(

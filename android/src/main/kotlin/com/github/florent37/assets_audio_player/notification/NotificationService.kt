@@ -137,7 +137,14 @@ class NotificationService : Service() {
                     }
                 }
                 .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(0, 1, 2)
+                        .also {
+                            when(notificationSettings.numberEnabled()){
+                                1 ->  it.setShowActionsInCompactView(0)
+                                2 ->  it.setShowActionsInCompactView(0, 1)
+                                3 ->  it.setShowActionsInCompactView(0, 1, 2)
+                                else -> it.setShowActionsInCompactView()
+                            }
+                        }
                         .setShowCancelButton(true)
                         .setMediaSession(mediaSession.sessionToken)
                 )
