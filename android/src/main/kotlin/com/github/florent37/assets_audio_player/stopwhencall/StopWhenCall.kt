@@ -26,7 +26,7 @@ abstract class StopWhenCall {
         }
     }
 
-    abstract fun requestAudioFocus()
+    abstract fun requestAudioFocus() : StopWhenCall.AudioState 
     abstract fun stop()
 }
 

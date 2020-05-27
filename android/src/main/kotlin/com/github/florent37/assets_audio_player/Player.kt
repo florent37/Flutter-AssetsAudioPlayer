@@ -282,6 +282,15 @@ class Player(
     }
 
     fun play() {
+        val audioState = this.stopWhenCall.requestAudioFocus()
+        if(audioState == StopWhenCall.AudioState.AUTHORIZED_TO_PLAY){
+            this.isEnabledToPlayPause = true //this one must be called before play/pause()
+            this.isEnabledToChangeVolume = true //this one must be called before play/pause()
+            playerPlay()
+        } //else will wait until focus is enabled
+    }
+
+    private fun playerPlay(){ //the play
         if (isEnabledToPlayPause) { //can be disabled while recieving phone call
             mediaPlayer?.let { player ->
                 stopForward()
@@ -383,7 +392,7 @@ class Player(
                 wasPlayingBeforeEnablePlayChange?.let {
                     //phone call ended
                     if (it) {
-                        play()
+                        playerPlay()
                     } else {
                         pause()
                     }

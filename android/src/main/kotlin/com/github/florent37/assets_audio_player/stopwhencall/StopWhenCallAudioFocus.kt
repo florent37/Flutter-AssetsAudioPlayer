@@ -29,7 +29,10 @@ class StopWhenCallAudioFocus(private val context: Context) : StopWhenCall() {
         }
     }
 
-    override fun requestAudioFocus() {
+    override fun requestAudioFocus() : AudioState {
+        request?.let {
+            AudioManagerCompat.abandonAudioFocusRequest(audioManager, it)
+        }
         this.request = AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN).also {
             it.setAudioAttributes(AudioAttributesCompat.Builder().run {
                 setUsage(AudioAttributesCompat.USAGE_MEDIA)
@@ -41,6 +44,11 @@ class StopWhenCallAudioFocus(private val context: Context) : StopWhenCall() {
         val result: Int = AudioManagerCompat.requestAudioFocus(audioManager, request!!)
         synchronized(focusLock) {
             listener(result)
+        }
+        return when(result){
+            AudioManager.AUDIOFOCUS_GAIN -> AudioState.AUTHORIZED_TO_PLAY
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> AudioState.REDUCE_VOLUME
+            else -> AudioState.FORBIDDEN
         }
     }
 

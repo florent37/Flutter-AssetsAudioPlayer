@@ -55,7 +55,7 @@ class AssetsAudioPlayer(
         private val flutterAssets: FlutterPlugin.FlutterAssets
 ) : MethodCallHandler {
 
-    private var stopWhenCall: StopWhenCall? = null
+    private var stopWhenCall = StopWhenCallAudioFocus(context)
     private val notificationManager = NotificationManager(context)
     private var mediaButtonsReciever : MediaButtonsReciever? = null
     private val stopWhenCallListener = object : StopWhenCall.Listener {
@@ -69,8 +69,7 @@ class AssetsAudioPlayer(
     private var lastPlayerIdWithNotificationEnabled: String? = null
 
     fun register() {
-        stopWhenCall = StopWhenCallAudioFocus(context)
-        stopWhenCall?.register(stopWhenCallListener)
+        stopWhenCall.register(stopWhenCallListener)
 
         mediaButtonsReciever = MediaButtonsReciever(context, onAction = {
             onMediaButton(it)
@@ -79,7 +78,7 @@ class AssetsAudioPlayer(
         val channel = MethodChannel(messenger, "assets_audio_player")
         channel.setMethodCallHandler(this)
 
-        stopWhenCall?.requestAudioFocus()
+        //stopWhenCall?.requestAudioFocus()
     }
 
     fun unregister() {
