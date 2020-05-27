@@ -5,6 +5,7 @@
 * Fixed notification close on android
 * Fixed android auto-focus
 * Added playInBackground mode
+* Added shuffle
 
 ## 1.6.1
 
