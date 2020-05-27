@@ -251,6 +251,12 @@ You like the package ? buy me a kofi :)
           <td>✅</td>
         </tr>
         <tr>
+          <td>🔀 Shuffle</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+        </tr>
+        <tr>
           <td>🔊 get/set Volume</td>
           <td>✅</td>
           <td>✅</td>
