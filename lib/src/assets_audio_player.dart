@@ -645,7 +645,7 @@ class AssetsAudioPlayer {
           "playSpeed": playSpeed ?? this.playSpeed.value ?? defaultPlaySpeed,
         };
         if (seek != null) {
-          params["seek"] = seek.inSeconds.round();
+          params["seek"] = seek.inMilliseconds.round();
         }
         if (audio.package != null) {
           params["package"] = audio.package;
@@ -800,6 +800,7 @@ class AssetsAudioPlayer {
         "id": this.id,
       });
     }
+    _lastSeek = _currentPosition.value;
   }
 
   /// Change the current position of the song
@@ -812,7 +813,7 @@ class AssetsAudioPlayer {
       _lastSeek = to;
       await _sendChannel.invokeMethod('seek', {
         "id": this.id,
-        "to": to.inSeconds.round(),
+        "to": to.inMilliseconds.round(),
       });
     }
   }
