@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:assets_audio_player/src/notification.dart';
@@ -596,11 +595,7 @@ class AssetsAudioPlayer {
           "playSpeed": playSpeed ?? this.playSpeed.value ?? defaultPlaySpeed,
         };
         if (seek != null) {
-          if (Platform.isAndroid) {
-            params["seek"] = seek.inMilliseconds.round();
-          } else {
-            params["seek"] = seek.inSeconds.round();
-          }
+          params["seek"] = seek.inMilliseconds.round();
         }
         if (audio.package != null) {
           params["package"] = audio.package;
@@ -765,7 +760,7 @@ class AssetsAudioPlayer {
   Future<void> seek(Duration to) async {
     await _sendChannel.invokeMethod('seek', {
       "id": this.id,
-      "to": Platform.isAndroid ? to.inMilliseconds.round() : to.inSeconds.round(),
+      "to": to.inMilliseconds.round(),
     });
   }
 
