@@ -401,50 +401,47 @@ class AssetsAudioPlayer {
   }
 
   StreamSubscription _realTimeSubscription;
-  
+
   AppLifecycleObserver _lifecycleObserver;
 
   bool _wasPlayingBeforeEnterBackground; /* = null */
-  void _registerToAppLifecycle(){
-    _lifecycleObserver = AppLifecycleObserver(
-      onBackground: (){
-        if(_playlist != null){
-          switch(_playlist.playInBackground){
-            case PlayInBackground.enabled:
-              { /* do nothing */ }
-              break;
-            case PlayInBackground.disabledPause:
-              pause();
-              break;
-            case PlayInBackground.disabledRestoreOnForeground:
-              _wasPlayingBeforeEnterBackground = isPlaying.value ?? false;
-              pause();
-              break;
-          }
-        }
-      },
-      onForeground: (){
-        if(_playlist != null){
-          switch(_playlist.playInBackground){
-            case PlayInBackground.enabled:
-              { /* do nothing */ }
-              break;
-            case PlayInBackground.disabledPause:
-              { /* do nothing, keep the pause */ }
-              break;
-            case PlayInBackground.disabledRestoreOnForeground:
-              if(_wasPlayingBeforeEnterBackground != null){
-                if(_wasPlayingBeforeEnterBackground){
-                  play();
-                } else {
-                  /* do nothing, keep the pause */
-                }
-              }
-              break;
-          }
+  void _registerToAppLifecycle() {
+    _lifecycleObserver = AppLifecycleObserver(onBackground: () {
+      if (_playlist != null) {
+        switch (_playlist.playInBackground) {
+          case PlayInBackground.enabled:
+            {/* do nothing */}
+            break;
+          case PlayInBackground.disabledPause:
+            pause();
+            break;
+          case PlayInBackground.disabledRestoreOnForeground:
+            _wasPlayingBeforeEnterBackground = isPlaying.value ?? false;
+            pause();
+            break;
         }
       }
-    );
+    }, onForeground: () {
+      if (_playlist != null) {
+        switch (_playlist.playInBackground) {
+          case PlayInBackground.enabled:
+            {/* do nothing */}
+            break;
+          case PlayInBackground.disabledPause:
+            {/* do nothing, keep the pause */}
+            break;
+          case PlayInBackground.disabledRestoreOnForeground:
+            if (_wasPlayingBeforeEnterBackground != null) {
+              if (_wasPlayingBeforeEnterBackground) {
+                play();
+              } else {
+                /* do nothing, keep the pause */
+              }
+            }
+            break;
+        }
+      }
+    });
     WidgetsBinding.instance.addObserver(_lifecycleObserver);
   }
 
@@ -696,8 +693,7 @@ class AssetsAudioPlayer {
         showNotification: showNotification,
         playSpeed: playSpeed,
         notificationSettings: notificationSettings,
-        playInBackground: playInBackground
-    );
+        playInBackground: playInBackground);
     _playlist.clearPlayerAudio(shuffle);
     _playlist.moveTo(playlist.startIndex);
     return _openPlaylistCurrent(autoStart: autoStart, seek: seek);
@@ -740,16 +736,18 @@ class AssetsAudioPlayer {
       playlist = Playlist(audios: [playable]);
     }
 
-    if(playlist != null){
-      await _openPlaylist(playlist,
-          autoStart: autoStart,
-          volume: volume,
-          respectSilentMode: respectSilentMode,
-          showNotification: showNotification,
-          seek: seek,
-          playSpeed: playSpeed,
-          notificationSettings: notificationSettings ?? defaultNotificationSettings,
-          playInBackground: playInBackground,
+    if (playlist != null) {
+      await _openPlaylist(
+        playlist,
+        autoStart: autoStart,
+        volume: volume,
+        respectSilentMode: respectSilentMode,
+        showNotification: showNotification,
+        seek: seek,
+        playSpeed: playSpeed,
+        notificationSettings:
+            notificationSettings ?? defaultNotificationSettings,
+        playInBackground: playInBackground,
       );
     }
   }
@@ -923,7 +921,6 @@ class AssetsAudioPlayer {
           (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
     });
   }
-
 }
 
 class _CurrentPlaylist {

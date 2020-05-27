@@ -1,9 +1,10 @@
-## 1.6.2+5
+## 1.6.3
 
 * Custom notification icon (android)
 * Custom notification actions
 * Fixed notification close on android
 * Fixed android auto-focus
+* Added playInBackground mode
 
 ## 1.6.1
 

@@ -1,13 +1,8 @@
 import 'package:flutter/widgets.dart';
 
-enum PlayInBackground {
-  enabled,
-  disabledPause,
-  disabledRestoreOnForeground
-}
+enum PlayInBackground { enabled, disabledPause, disabledRestoreOnForeground }
 
 class AppLifecycleObserver with WidgetsBindingObserver {
-
   bool isActive;
   final Function() onForeground;
   final Function() onBackground;
@@ -19,13 +14,15 @@ class AppLifecycleObserver with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     var lastActive = isActive;
 
-    if(state == AppLifecycleState.resumed){
+    if (state == AppLifecycleState.resumed) {
       isActive = true;
-    } else if(state == AppLifecycleState.detached || state == AppLifecycleState.paused || state == AppLifecycleState.inactive  ){
+    } else if (state == AppLifecycleState.detached ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
       isActive = false;
     }
 
-    if(lastActive != isActive) {
+    if (lastActive != isActive) {
       if (onChanged != null) {
         onChanged(isActive);
       }
