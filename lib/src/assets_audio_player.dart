@@ -8,10 +8,12 @@ import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:uuid/uuid.dart';
 
+import 'applifecycle.dart';
 import 'playable.dart';
 import 'playing.dart';
 import 'notification.dart';
 
+export 'applifecycle.dart';
 export 'playable.dart';
 export 'playing.dart';
 export 'notification.dart';
@@ -19,6 +21,7 @@ export 'notification.dart';
 const _DEFAULT_AUTO_START = true;
 const _DEFAULT_RESPECT_SILENT_MODE = false;
 const _DEFAULT_SHOW_NOTIFICATION = false;
+const _DEFAULT_PLAY_IN_BACKGROUND = PlayInBackground.enabled;
 const _DEFAULT_PLAYER = "DEFAULT_PLAYER";
 
 const METHOD_POSITION = "player.position";
@@ -289,7 +292,7 @@ class AssetsAudioPlayer {
   /// if it was'nt shuffling -> now it is
   void toggleShuffle() {
     shuffle = !shuffle;
-    _playlist.clearPlayeAudio(shuffle);
+    _playlist.clearPlayerAudio(shuffle);
   }
 
   /// Call it to dispose stream
@@ -310,6 +313,9 @@ class AssetsAudioPlayer {
     _realtimePlayingInfos.close();
     _realTimeSubscription?.cancel();
     _players.remove(this.id);
+
+    WidgetsBinding.instance.removeObserver(_lifecycleObserver);
+    _lifecycleObserver = null;
   }
 
   _init() {
@@ -391,9 +397,56 @@ class AssetsAudioPlayer {
           print('[ERROR] Channel method ${call.method} not implemented.');
       }
     });
+    _registerToAppLifecycle();
   }
 
   StreamSubscription _realTimeSubscription;
+  
+  AppLifecycleObserver _lifecycleObserver;
+
+  bool _wasPlayingBeforeEnterBackground; /* = null */
+  void _registerToAppLifecycle(){
+    _lifecycleObserver = AppLifecycleObserver(
+      onBackground: (){
+        if(_playlist != null){
+          switch(_playlist.playInBackground){
+            case PlayInBackground.enabled:
+              { /* do nothing */ }
+              break;
+            case PlayInBackground.disabledPause:
+              pause();
+              break;
+            case PlayInBackground.disabledRestoreOnForeground:
+              _wasPlayingBeforeEnterBackground = isPlaying.value ?? false;
+              pause();
+              break;
+          }
+        }
+      },
+      onForeground: (){
+        if(_playlist != null){
+          switch(_playlist.playInBackground){
+            case PlayInBackground.enabled:
+              { /* do nothing */ }
+              break;
+            case PlayInBackground.disabledPause:
+              { /* do nothing, keep the pause */ }
+              break;
+            case PlayInBackground.disabledRestoreOnForeground:
+              if(_wasPlayingBeforeEnterBackground != null){
+                if(_wasPlayingBeforeEnterBackground){
+                  play();
+                } else {
+                  /* do nothing, keep the pause */
+                }
+              }
+              break;
+          }
+        }
+      }
+    );
+    WidgetsBinding.instance.addObserver(_lifecycleObserver);
+  }
 
   void _replaceRealtimeSubscription() {
     _realTimeSubscription?.cancel();
@@ -632,6 +685,7 @@ class AssetsAudioPlayer {
     Duration seek,
     double playSpeed,
     NotificationSettings notificationSettings,
+    PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
   }) async {
     _lastSeek = null;
     _replaceRealtimeSubscription();
@@ -641,8 +695,10 @@ class AssetsAudioPlayer {
         respectSilentMode: respectSilentMode,
         showNotification: showNotification,
         playSpeed: playSpeed,
-        notificationSettings: notificationSettings);
-    _playlist.clearPlayeAudio(shuffle);
+        notificationSettings: notificationSettings,
+        playInBackground: playInBackground
+    );
+    _playlist.clearPlayerAudio(shuffle);
     _playlist.moveTo(playlist.startIndex);
     return _openPlaylistCurrent(autoStart: autoStart, seek: seek);
   }
@@ -673,32 +729,28 @@ class AssetsAudioPlayer {
     Duration seek,
     double playSpeed,
     NotificationSettings notificationSettings,
+    PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
   }) async {
+    Playlist playlist;
     if (playable is Playlist &&
         playable.audios != null &&
         playable.audios.length > 0) {
-      await _openPlaylist(playable,
-          autoStart: autoStart,
-          volume: volume,
-          respectSilentMode: respectSilentMode,
-          showNotification: showNotification,
-          seek: seek,
-          playSpeed: playSpeed,
-          notificationSettings:
-              notificationSettings ?? defaultNotificationSettings);
+      playlist = playable;
     } else if (playable is Audio) {
-      await _openPlaylist(Playlist(audios: [playable]),
+      playlist = Playlist(audios: [playable]);
+    }
+
+    if(playlist != null){
+      await _openPlaylist(playlist,
           autoStart: autoStart,
           volume: volume,
           respectSilentMode: respectSilentMode,
           showNotification: showNotification,
           seek: seek,
           playSpeed: playSpeed,
-          notificationSettings:
-              notificationSettings ?? defaultNotificationSettings);
-    } else {
-      //do nothing
-      //throw exception ?
+          notificationSettings: notificationSettings ?? defaultNotificationSettings,
+          playInBackground: playInBackground,
+      );
     }
   }
 
@@ -872,14 +924,6 @@ class AssetsAudioPlayer {
     });
   }
 
-//void shufflePlaylist() {
-//  TODO()
-//}
-
-  /// TODO Playlist Loop / Loop 1
-//void playlistLoop(PlaylistLoop /* enum */ mode) {
-//  TODO()
-//}
 }
 
 class _CurrentPlaylist {
@@ -890,6 +934,7 @@ class _CurrentPlaylist {
   final bool showNotification;
   final double playSpeed;
   final NotificationSettings notificationSettings;
+  final PlayInBackground playInBackground;
 
   int playlistIndex = 0;
 
@@ -927,7 +972,7 @@ class _CurrentPlaylist {
     }
   }
 
-  clearPlayeAudio(bool shuffle) {
+  clearPlayerAudio(bool shuffle) {
     indexList.clear();
     if (shuffle) {
       shuffleAudios();
@@ -986,6 +1031,7 @@ class _CurrentPlaylist {
     this.showNotification,
     this.playSpeed,
     this.notificationSettings,
+    this.playInBackground,
   });
 
   void returnToFirst() {

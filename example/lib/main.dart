@@ -284,6 +284,7 @@ class _MyAppState extends State<MyApp> {
                               autoStart: true,
                               respectSilentMode: true,
                               showNotification: true,
+                              playInBackground: PlayInBackground.disabledRestoreOnForeground,
                               /*
                               notificationSettings: NotificationSettings(
                                   prevEnabled: false,
