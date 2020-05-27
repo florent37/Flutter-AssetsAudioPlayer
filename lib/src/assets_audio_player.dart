@@ -750,6 +750,7 @@ class AssetsAudioPlayer {
         "id": this.id,
       });
     }
+    _lastSeek = _currentPosition.value;
   }
 
   /// Change the current position of the song
@@ -758,10 +759,13 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.seek(Duration(minutes: 1, seconds: 34));
   ///
   Future<void> seek(Duration to) async {
-    await _sendChannel.invokeMethod('seek', {
-      "id": this.id,
-      "to": to.inMilliseconds.round(),
-    });
+    if (to != _lastSeek) {
+      _lastSeek = to;
+      await _sendChannel.invokeMethod('seek', {
+        "id": this.id,
+        "to": to.inMilliseconds.round(),
+      });
+    }
   }
 
   bool _wasPlayingBeforeForwardRewind;
