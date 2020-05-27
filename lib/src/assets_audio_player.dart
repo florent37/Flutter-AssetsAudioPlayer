@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:assets_audio_player/src/notification.dart';
@@ -595,7 +596,11 @@ class AssetsAudioPlayer {
           "playSpeed": playSpeed ?? this.playSpeed.value ?? defaultPlaySpeed,
         };
         if (seek != null) {
-          params["seek"] = seek.inSeconds.round();
+          if (Platform.isAndroid) {
+            params["seek"] = seek.inMilliseconds.round();
+          } else {
+            params["seek"] = seek.inSeconds.round();
+          }
         }
         if (audio.package != null) {
           params["package"] = audio.package;
@@ -758,13 +763,10 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.seek(Duration(minutes: 1, seconds: 34));
   ///
   Future<void> seek(Duration to) async {
-    if (to != _lastSeek) {
-      _lastSeek = to;
-      await _sendChannel.invokeMethod('seek', {
-        "id": this.id,
-        "to": to.inSeconds.round(),
-      });
-    }
+    await _sendChannel.invokeMethod('seek', {
+      "id": this.id,
+      "to": Platform.isAndroid ? to.inMilliseconds.round() : to.inSeconds.round(),
+    });
   }
 
   bool _wasPlayingBeforeForwardRewind;

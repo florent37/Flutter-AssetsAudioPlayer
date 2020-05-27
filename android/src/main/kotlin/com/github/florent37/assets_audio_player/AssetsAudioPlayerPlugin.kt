@@ -269,7 +269,7 @@ class AssetsAudioPlayer(
                         result.error("WRONG_FORMAT", "The specified argument(to) must be an int.", null)
                         return
                     }
-                    getOrCreatePlayer(id).seek(to * 1000L)
+                    getOrCreatePlayer(id).seek(to * 1L)
                     result.success(null)
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)

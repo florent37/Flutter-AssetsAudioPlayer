@@ -210,7 +210,7 @@ class Player(
                                 setPlaySpeed(playSpeed)
 
                                 seek?.let {
-                                    this@Player.seek(milliseconds = seek * 1000L)
+                                    this@Player.seek(milliseconds = seek * 1L)
                                 }
 
                                 result.success(null)
