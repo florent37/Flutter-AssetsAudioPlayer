@@ -656,9 +656,7 @@ class AssetsAudioPlayer {
         writeNotificationSettingsInto(params, notifSettings);
         //endregion
 
-        if (audio.metas != null) {
-          writeAudioMetasInto(params, audio.metas);
-        }
+        writeAudioMetasInto(params, audio.metas);
         _lastOpenedAssetsAudio = audio;
         /*final result = */
 
@@ -669,6 +667,21 @@ class AssetsAudioPlayer {
         _lastOpenedAssetsAudio = currentAudio; //revert to the previous audio
         print(e);
         return Future.error(e);
+      }
+    }
+  }
+
+  Future<void> onAudioUpdated(Audio audio) async {
+    if(_lastOpenedAssetsAudio != null) {
+      if (_lastOpenedAssetsAudio.path == audio.path) {
+        final Map<String, dynamic> params = {
+          "id": this.id,
+          "path": audio.path,
+        };
+
+        writeAudioMetasInto(params, audio.metas);
+
+        await _sendChannel.invokeMethod('onAudioUpdated', params);
       }
     }
   }
