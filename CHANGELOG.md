@@ -1,3 +1,7 @@
+## 1.6.3+1
+
+* Trying to fix bluetooth on android on some devices
+
 ## 1.6.3
 
 * Custom notification icon (android)
