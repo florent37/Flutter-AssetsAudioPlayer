@@ -15,8 +15,12 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.*
+import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
+import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
+import java.io.File
 import kotlin.math.max
 
 /**
@@ -131,7 +135,10 @@ class Player(
     ) {
         stop(pingListener = false)
 
-        this.mediaPlayer = SimpleExoPlayer.Builder(context).build();
+        val factory = DefaultRenderersFactory(context)
+        factory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)// for ffmpeg extension
+
+        this.mediaPlayer = SimpleExoPlayer.Builder(context, factory).build();
         this.displayNotification = displayNotification
         this.audioMetas = audioMetas
         this.notificationSettings = notificationSettings
@@ -146,7 +153,7 @@ class Player(
                         .createMediaSource(Uri.parse(assetAudioPath))
             } else if (audioType == AUDIO_TYPE_FILE) {
                 mediaSource = ProgressiveMediaSource
-                        .Factory(FileDataSource.Factory(), DefaultExtractorsFactory())
+                        .Factory(DefaultDataSourceFactory(context, "assets_audio_player"))
                         .createMediaSource(Uri.parse(assetAudioPath))
             } else { //asset
                 val path = if (assetAudioPackage.isNullOrBlank()) {

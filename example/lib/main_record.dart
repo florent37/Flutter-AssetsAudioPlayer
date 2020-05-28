@@ -45,7 +45,6 @@ class RecorderExample extends StatefulWidget {
 class RecorderExampleState extends State<RecorderExample> {
   FlutterAudioRecorder _recorder;
   Recording _current;
-  String _currentPath;
   RecordingStatus _currentStatus = RecordingStatus.Unset;
 
   @override
@@ -216,11 +215,6 @@ class RecorderExampleState extends State<RecorderExample> {
     print("Stop recording: ${result.duration}");
     File file = widget.localFileSystem.file(result.path);
     print("File length: ${await file.length()}");
-
-    final String newPath = (await getTemporaryDirectory()).path + "audio.wav" ;
-    await file.copy(newPath);
-    this._currentPath = newPath;
-
     setState(() {
       _current = result;
       _currentStatus = _current.status;
@@ -257,9 +251,7 @@ class RecorderExampleState extends State<RecorderExample> {
   }
 
   void onPlayAudio() async {
-    if(_currentPath != null) {
-      final AssetsAudioPlayer assetsAudioPlayer = AssetsAudioPlayer();
-      await assetsAudioPlayer.open(Audio.file(_currentPath));
-    }
+    final AssetsAudioPlayer assetsAudioPlayer = AssetsAudioPlayer();
+    await assetsAudioPlayer.open( Audio.file(_current.path));
   }
 }
