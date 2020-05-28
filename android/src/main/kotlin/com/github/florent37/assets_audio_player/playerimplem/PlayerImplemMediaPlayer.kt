@@ -53,7 +53,7 @@ class PlayerImplemMediaPlayer(
             }
             Player.AUDIO_TYPE_FILE-> {
                 mediaPlayer?.reset();
-                mediaPlayer?.setDataSource(context, Uri.parse(assetAudioPath))
+                mediaPlayer?.setDataSource(context, Uri.parse("file:///"+assetAudioPath))
             }
             else -> { //asset
                 context.assets.openFd("flutter_assets/$assetAudioPath").also {

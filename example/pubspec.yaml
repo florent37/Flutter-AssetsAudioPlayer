@@ -19,6 +19,9 @@ dependencies:
   http: ^0.12.1
   provider: ^4.1.2
 
+  file: ^5.0.4
+  flutter_audio_recorder: 0.5.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
