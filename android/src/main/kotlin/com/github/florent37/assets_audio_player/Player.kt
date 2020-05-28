@@ -73,6 +73,9 @@ class Player(
     private var lastRingerMode: Int? = null //see https://developer.android.com/reference/android/media/AudioManager.html?hl=fr#getRingerMode()
 
     private var displayNotification = false
+
+    private var _playingPath : String? = null
+    private var _lastOpenedPath : String? = null
     private var audioMetas: AudioMetas? = null
     private var notificationSettings: NotificationSettings? = null
 
@@ -114,6 +117,13 @@ class Player(
         this.onPrev?.invoke()
     }
 
+    fun onAudioUpdated(path: String, audioMetas: AudioMetas) {
+        if(_playingPath == path || (_playingPath == null && _lastOpenedPath == path)){
+            this.audioMetas = audioMetas
+            updateNotif()
+        }
+    }
+
     fun open(assetAudioPath: String?,
              assetAudioPackage: String?,
              audioType: String,
@@ -134,6 +144,8 @@ class Player(
         this.audioMetas = audioMetas
         this.notificationSettings = notificationSettings
         this.respectSilentMode = respectSilentMode
+
+        _lastOpenedPath = assetAudioPath
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
@@ -156,6 +168,8 @@ class Player(
 
                 //here one open succeed
                 onReadyToPlay?.invoke(duration)
+
+                _playingPath = assetAudioPath
 
                 updateNotif()
                 setVolume(volume)

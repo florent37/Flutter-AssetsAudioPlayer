@@ -1,3 +1,4 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
 
 class Playable {}
@@ -10,7 +11,7 @@ enum AudioType {
 }
 
 extension AudioTypeDescription on AudioType {
-  String description() {
+  String audioTypeDescription() {
     switch (this) {
       case AudioType.network:
         return "network";
@@ -32,7 +33,7 @@ enum ImageType {
 }
 
 extension ImageTypeDescription on ImageType {
-  String description() {
+  String imageTypeDescription() {
     switch (this) {
       case ImageType.network:
         return "network";
@@ -54,10 +55,12 @@ class MetasImage {
   const MetasImage.network(this.path)
       : type = ImageType.network,
         package = null;
+
   const MetasImage.asset(
     this.path, {
     this.package,
   }) : type = ImageType.asset;
+
   const MetasImage.file(this.path)
       : type = ImageType.file,
         package = null;
@@ -104,26 +107,49 @@ class Metas {
   @override
   int get hashCode =>
       title.hashCode ^ artist.hashCode ^ album.hashCode ^ image.hashCode;
+
+  Metas copyWith({
+    String title,
+    String artist,
+    String album,
+    Map<String, dynamic> extra,
+    MetasImage image,
+  }) {
+    return new Metas(
+      title: title ?? this.title,
+      artist: artist ?? this.artist,
+      album: album ?? this.album,
+      extra: extra ?? this.extra,
+      image: image ?? this.image,
+    );
+  }
 }
 
-@immutable
 class Audio implements Playable {
   final String path;
   final String package;
   final AudioType audioType;
-  final Metas metas;
+  Metas _metas;
 
-  const Audio(this.path, {this.metas, this.package})
-      : audioType = AudioType.asset;
-  const Audio.file(this.path, {this.metas})
+  Metas get metas => _metas;
+
+  Audio(this.path, {Metas metas, this.package})
+      : audioType = AudioType.asset,
+        _metas = metas;
+
+  Audio.file(this.path, {Metas metas})
       : audioType = AudioType.file,
         package = null;
-  const Audio.network(this.path, {this.metas})
+
+  Audio.network(this.path, {Metas metas})
       : audioType = AudioType.network,
-        package = null;
-  const Audio.liveStream(this.path, {this.metas})
+        package = null,
+        _metas = metas;
+
+  Audio.liveStream(this.path, {Metas metas})
       : audioType = AudioType.liveStream,
-        package = null;
+        package = null,
+        _metas = metas;
 
   @override
   bool operator ==(Object other) =>
@@ -138,6 +164,26 @@ class Audio implements Playable {
   @override
   int get hashCode =>
       path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode;
+
+  void updateMetas({
+    AssetsAudioPlayer player,
+    String title,
+    String artist,
+    String album,
+    Map<String, dynamic> extra,
+    MetasImage image,
+  }) {
+    this._metas = (_metas ?? Metas()).copyWith(
+      title: title,
+      artist: artist,
+      album: album,
+      extra: extra,
+      image: image,
+    );
+    if (player != null) {
+      player.onAudioUpdated(this);
+    }
+  }
 }
 
 class Playlist implements Playable {
@@ -179,14 +225,17 @@ class Playlist implements Playable {
   int get hashCode => audios.hashCode ^ startIndex.hashCode;
 }
 
-void writeAudioMetasInto(Map<String, dynamic> params, Metas metas) {
-  if (metas.title != null) params["song.title"] = metas.title;
-  if (metas.artist != null) params["song.artist"] = metas.artist;
-  if (metas.album != null) params["song.album"] = metas.album;
-  if (metas.image != null) {
-    params["song.image"] = metas.image.path;
-    params["song.imageType"] = metas.image.type.description();
-    if (metas.image.package != null)
-      params["song.imagePackage"] = metas.image.package;
+void writeAudioMetasInto(
+    Map<String, dynamic> params, /* nullable */ Metas metas) {
+  if (metas != null) {
+    if (metas.title != null) params["song.title"] = metas.title;
+    if (metas.artist != null) params["song.artist"] = metas.artist;
+    if (metas.album != null) params["song.album"] = metas.album;
+    if (metas.image != null) {
+      params["song.image"] = metas.image.path;
+      params["song.imageType"] = metas.image.type.imageTypeDescription();
+      if (metas.image.package != null)
+        params["song.imagePackage"] = metas.image.package;
+    }
   }
 }

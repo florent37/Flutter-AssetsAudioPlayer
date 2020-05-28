@@ -73,6 +73,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     var displayMediaPlayerNotification = false
     var audioMetas : AudioMetas?
+    var _playingPath: String?
+    var _lastOpenedPath: String?
     var notificationSettings: NotificationSettings?
     
     init(channel: FlutterMethodChannel, registrar: FlutterPluginRegistrar) {
@@ -140,11 +142,11 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     }
     
     var targets: [String:Any] = [:]
-    func setupMediaPlayerNotificationView(currentSongDuration: Any) {
+    func setupMediaPlayerNotificationView() {
         UIApplication.shared.beginReceivingRemoteControlEvents()
         let commandCenter = MPRemoteCommandCenter.shared()
         
-        self.setupNotificationView(currentSongDuration: currentSongDuration)
+        self.updateNotif()
         
 
         self.deinitMediaPlayerNotifEvent()
@@ -213,7 +215,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     var nowPlayingInfo = [String: Any]()
     
-    func setupNotificationView(currentSongDuration: Any) {
+    func updateNotif() {
         if(!self.displayMediaPlayerNotification){
             return
         }
@@ -241,7 +243,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
         
         
-        self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = currentSongDuration
+        self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = self.currentSongDuration
         self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
         self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0
         
@@ -328,6 +330,15 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
     }
     
+    func onAudioUpdated(path: String, audioMetas: AudioMetas) {
+        if(_playingPath == path || (_playingPath == nil && _lastOpenedPath == path)){
+            self.audioMetas = audioMetas
+            updateNotif()
+        }
+    }
+    
+    var currentSongDuration : Float64 = Float64(0.0)
+
     func open(assetPath: String,
               assetPackage: String?,
               audioType: String,
@@ -377,6 +388,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             self.notificationSettings = notificationSettings
             self.audioMetas = audioMetas
             
+            self._lastOpenedPath = assetPath
+            
             NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
             
             observerStatus.append( item.observe(\.isPlaybackBufferEmpty, options: [.new]) { [weak self] (_, _) in
@@ -404,13 +417,13 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                     
                     if(audioType == "liveStream"){
                         self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": 0.0])
-                        
-                        self?.setupMediaPlayerNotificationView(currentSongDuration: Float64(0.0))
+                        self?.currentSongDuration = Float64(0.0)
+                        self?.setupMediaPlayerNotificationView()
                     } else {
                         let audioDurationSeconds = CMTimeGetSeconds(item.duration) //CMTimeGetSeconds(asset.duration)
                         self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": audioDurationSeconds])
-                        
-                        self?.setupMediaPlayerNotificationView(currentSongDuration: audioDurationSeconds)
+                        self?.currentSongDuration = audioDurationSeconds
+                        self?.setupMediaPlayerNotificationView()
                     }
                     
                     if(autoStart == true){
@@ -423,6 +436,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                     if(seek != nil){
                         self?.seek(to: seek!)
                     }
+                    
+                    self?._playingPath = assetPath
                     
                     result(nil)
                 case .failed:
@@ -863,7 +878,54 @@ class Music : NSObject, FlutterPlugin {
                     .forwardRewind(speed: speed);
                 result(true);
                 break;
+            case "onAudioUpdated" :
+                guard let args = call.arguments as? NSDictionary else {
+                    result(FlutterError(
+                        code: "METHOD_CALL",
+                        message: call.method + " Arguments must be an NSDictionary",
+                        details: nil)
+                    );
+                    break;
+                }
+                guard let id = args["id"] as? String else {
+                    result(FlutterError(
+                        code: "METHOD_CALL",
+                        message: call.method + " Arguments[id] must be a String",
+                        details: nil)
+                    );
+                    break;
+                }
+                guard let path = args["path"] as? String else {
+                    result(FlutterError(
+                        code: "METHOD_CALL",
+                        message: call.method + " Arguments[path] must be a String",
+                        details: nil)
+                    );
+                    break;
+                }
                 
+                //metas
+                let songTitle = args["song.title"] as? String //can be null
+                let songArtist = args["song.artist"] as? String //can be null
+                let songAlbum = args["song.album"] as? String //can be null
+                let songImage = args["song.image"] as? String //can be null
+                let songImageType = args["song.imageType"] as? String //can be null
+                let songImagePackage = args["song.imagePackage"] as? String //can be null
+                
+                //end-metas
+                
+                let audioMetas = AudioMetas(
+                    title: songTitle,
+                    artist: songArtist,
+                    album: songAlbum,
+                    image: songImage,
+                    imageType: songImageType,
+                    imagePackage: songImagePackage
+                )
+
+                self.getOrCreatePlayer(id: id).onAudioUpdated(path: path, audioMetas: audioMetas)
+                result(true);
+                break;
             case "open" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(

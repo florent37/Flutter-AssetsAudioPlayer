@@ -275,6 +275,26 @@ class AssetsAudioPlayer(
                     return
                 }
             }
+            "onAudioUpdated" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    val path = args["path"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument(path) must be an String.", null)
+                        return
+                    }
+
+                    val audioMetas = fetchAudioMetas(args)
+
+                    getOrCreatePlayer(id).onAudioUpdated(path, audioMetas)
+                    result.success(null)
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
             "open" -> {
                 (call.arguments as? Map<*, *>)?.let { args ->
 

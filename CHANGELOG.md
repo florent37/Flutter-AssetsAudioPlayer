@@ -1,7 +1,8 @@
-## 1.6.3+2
+## 1.6.3+3
 
 * Trying to fix bluetooth on android on some devices
 * Fallback to android native MediaPlayer if exoplayer can't read the file
+* Added `audio.updateMetas` to update notification content after creation
 
 ## 1.6.3
 
