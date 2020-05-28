@@ -1,3 +1,8 @@
+## 1.6.3+2
+
+* Trying to fix bluetooth on android on some devices
+* Fallback to android native MediaPlayer if exoplayer can't read the file
+
 ## 1.6.3
 
 * Custom notification icon (android)

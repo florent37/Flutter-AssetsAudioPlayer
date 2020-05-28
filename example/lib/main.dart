@@ -129,146 +129,146 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         backgroundColor: NeumorphicTheme.baseColor(context),
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 48.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                SizedBox(
-                  height: 20,
-                ),
-                Stack(
-                  fit: StackFit.passthrough,
-                  children: <Widget>[
-                    _assetsAudioPlayer.builderCurrent(
-                      builder: (BuildContext context, Playing playing) {
-                        if (playing != null) {
-                          final myAudio = find(this.audios, playing.audio.assetAudioPath);
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Neumorphic(
-                              boxShape: NeumorphicBoxShape.circle(),
-                              style: NeumorphicStyle(depth: 8, surfaceIntensity: 1, shape: NeumorphicShape.concave),
-                              child: myAudio.metas.image.type == ImageType.network
-                                  ? Image.network(
-                                myAudio.metas.image.path,
-                                height: 150,
-                                width: 150,
-                                fit: BoxFit.contain,
-                              )
-                                  : Image.asset(
-                                myAudio.metas.image.path,
-                                height: 150,
-                                width: 150,
-                                fit: BoxFit.contain,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 48.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Stack(
+                    fit: StackFit.passthrough,
+                    children: <Widget>[
+                      _assetsAudioPlayer.builderCurrent(
+                        builder: (BuildContext context, Playing playing) {
+                          if (playing != null) {
+                            final myAudio = find(this.audios, playing.audio.assetAudioPath);
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Neumorphic(
+                                boxShape: NeumorphicBoxShape.circle(),
+                                style: NeumorphicStyle(depth: 8, surfaceIntensity: 1, shape: NeumorphicShape.concave),
+                                child: myAudio.metas.image.type == ImageType.network
+                                    ? Image.network(
+                                  myAudio.metas.image.path,
+                                  height: 150,
+                                  width: 150,
+                                  fit: BoxFit.contain,
+                                )
+                                    : Image.asset(
+                                  myAudio.metas.image.path,
+                                  height: 150,
+                                  width: 150,
+                                  fit: BoxFit.contain,
+                                ),
                               ),
-                            ),
-                          );
-                        }
-                        return SizedBox();
-                      },
-                    ),
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: NeumorphicButton(
-                        boxShape: NeumorphicBoxShape.circle(),
-                        padding: EdgeInsets.all(18),
-                        margin: EdgeInsets.all(18),
-                        onClick: () {
-                          AssetsAudioPlayer.playAndForget(Audio("assets/audios/horn.mp3"));
+                            );
+                          }
+                          return SizedBox();
                         },
-                        child: Icon(
-                          Icons.add_alert,
-                          color: Colors.grey[800],
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: NeumorphicButton(
+                          boxShape: NeumorphicBoxShape.circle(),
+                          padding: EdgeInsets.all(18),
+                          margin: EdgeInsets.all(18),
+                          onClick: () {
+                            AssetsAudioPlayer.playAndForget(Audio("assets/audios/horn.mp3"));
+                          },
+                          child: Icon(
+                            Icons.add_alert,
+                            color: Colors.grey[800],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                _assetsAudioPlayer.builderCurrent(
-                    builder: (context, playing) {
-                      if (playing == null) {
-                        return SizedBox();
-                      }
-                      return Column(
-                        children: <Widget>[
-                          _assetsAudioPlayer.builderIsLooping(
-                            builder: (context, isLooping) {
-                              return PlayerBuilder.isPlaying(
-                                  player: _assetsAudioPlayer,
-                                  builder: (context, isPlaying) {
-                                    return PlayingControls(
-                                      isLooping: isLooping,
-                                      isPlaying: isPlaying,
-                                      isPlaylist: true,
-                                      toggleLoop: () {
-                                        _assetsAudioPlayer.toggleLoop();
-                                      },
-                                      onPlay: () {
-                                        _assetsAudioPlayer.playOrPause();
-                                      },
-                                      onNext: () {
-                                        //_assetsAudioPlayer.forward(Duration(seconds: 10));
-                                        _assetsAudioPlayer.next();
-                                      },
-                                      onPrevious: () {
-                                        _assetsAudioPlayer.previous();
-                                      },
-                                    );
-                                  });
-                            },
-                          ),
-                          _assetsAudioPlayer.builderRealtimePlayingInfos(
-                              builder: (context, infos) {
-                                if (infos == null) {
-                                  return SizedBox();
-                                }
-                                //print("infos: $infos");
-                                return Column(
-                                  children: [
-                                    PositionSeekWidget(
-                                      currentPosition: infos.currentPosition,
-                                      duration: infos.duration,
-                                      seekTo: (to) {
-                                        _assetsAudioPlayer.seek(to);
-                                      },
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        NeumorphicButton(
-                                          child: Text("-10"),
-                                          onClick: (){
-                                            _assetsAudioPlayer.seekBy(Duration(seconds: -10));
-                                          },
-                                        ),
-                                        SizedBox(width: 12,),
-                                        NeumorphicButton(
-                                          child: Text("+10"),
-                                          onClick: (){
-                                            _assetsAudioPlayer.seekBy(Duration(seconds: 10));
-                                          },
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                );
-                              }),
-                        ],
-                      );
-                    }),
-                SizedBox(
-                  height: 20,
-                ),
-                Expanded(
-                  child: _assetsAudioPlayer.builderCurrent(
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  _assetsAudioPlayer.builderCurrent(
+                      builder: (context, playing) {
+                        if (playing == null) {
+                          return SizedBox();
+                        }
+                        return Column(
+                          children: <Widget>[
+                            _assetsAudioPlayer.builderIsLooping(
+                              builder: (context, isLooping) {
+                                return PlayerBuilder.isPlaying(
+                                    player: _assetsAudioPlayer,
+                                    builder: (context, isPlaying) {
+                                      return PlayingControls(
+                                        isLooping: isLooping,
+                                        isPlaying: isPlaying,
+                                        isPlaylist: true,
+                                        toggleLoop: () {
+                                          _assetsAudioPlayer.toggleLoop();
+                                        },
+                                        onPlay: () {
+                                          _assetsAudioPlayer.playOrPause();
+                                        },
+                                        onNext: () {
+                                          //_assetsAudioPlayer.forward(Duration(seconds: 10));
+                                          _assetsAudioPlayer.next();
+                                        },
+                                        onPrevious: () {
+                                          _assetsAudioPlayer.previous();
+                                        },
+                                      );
+                                    });
+                              },
+                            ),
+                            _assetsAudioPlayer.builderRealtimePlayingInfos(
+                                builder: (context, infos) {
+                                  if (infos == null) {
+                                    return SizedBox();
+                                  }
+                                  //print("infos: $infos");
+                                  return Column(
+                                    children: [
+                                      PositionSeekWidget(
+                                        currentPosition: infos.currentPosition,
+                                        duration: infos.duration,
+                                        seekTo: (to) {
+                                          _assetsAudioPlayer.seek(to);
+                                        },
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          NeumorphicButton(
+                                            child: Text("-10"),
+                                            onClick: (){
+                                              _assetsAudioPlayer.seekBy(Duration(seconds: -10));
+                                            },
+                                          ),
+                                          SizedBox(width: 12,),
+                                          NeumorphicButton(
+                                            child: Text("+10"),
+                                            onClick: (){
+                                              _assetsAudioPlayer.seekBy(Duration(seconds: 10));
+                                            },
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  );
+                                }),
+                          ],
+                        );
+                      }),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  _assetsAudioPlayer.builderCurrent(
                       builder: (BuildContext context, Playing playing) {
                         return SongsSelector(
                           audios: this.audios,
@@ -298,44 +298,44 @@ class _MyAppState extends State<MyApp> {
                           playing: playing,
                         );
                       }),
-                ),
-                /*
-                PlayerBuilder.volume(
-                    player: _assetsAudioPlayer,
-                    builder: (context, volume) {
-                      return VolumeSelector(
-                        volume: volume,
-                        onChange: (v) {
-                          _assetsAudioPlayer.setVolume(v);
-                        },
-                      );
-                    }),
-                 */
-                /*
-                PlayerBuilder.forwardRewindSpeed(
-                    player: _assetsAudioPlayer,
-                    builder: (context, speed) {
-                      return ForwardRewindSelector(
-                        speed: speed,
-                        onChange: (v) {
-                          _assetsAudioPlayer.forwardOrRewind(v);
-                        },
-                      );
-                    }),
-                 */
-                /*
-                PlayerBuilder.playSpeed(
-                    player: _assetsAudioPlayer,
-                    builder: (context, playSpeed) {
-                      return PlaySpeedSelector(
-                        playSpeed: playSpeed,
-                        onChange: (v) {
-                          _assetsAudioPlayer.setPlaySpeed(v);
-                        },
-                      );
-                    }),
-                 */
-              ],
+                  /*
+                  PlayerBuilder.volume(
+                      player: _assetsAudioPlayer,
+                      builder: (context, volume) {
+                        return VolumeSelector(
+                          volume: volume,
+                          onChange: (v) {
+                            _assetsAudioPlayer.setVolume(v);
+                          },
+                        );
+                      }),
+                   */
+                  /*
+                  PlayerBuilder.forwardRewindSpeed(
+                      player: _assetsAudioPlayer,
+                      builder: (context, speed) {
+                        return ForwardRewindSelector(
+                          speed: speed,
+                          onChange: (v) {
+                            _assetsAudioPlayer.forwardOrRewind(v);
+                          },
+                        );
+                      }),
+                   */
+                  /*
+                  PlayerBuilder.playSpeed(
+                      player: _assetsAudioPlayer,
+                      builder: (context, playSpeed) {
+                        return PlaySpeedSelector(
+                          playSpeed: playSpeed,
+                          onChange: (v) {
+                            _assetsAudioPlayer.setPlaySpeed(v);
+                          },
+                        );
+                      }),
+                   */
+                ],
+              ),
             ),
           ),
         ),
