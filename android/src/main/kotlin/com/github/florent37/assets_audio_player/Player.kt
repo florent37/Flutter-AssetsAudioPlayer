@@ -3,20 +3,19 @@ package com.github.florent37.assets_audio_player
 import StopWhenCall
 import android.content.Context
 import android.media.AudioManager
-import android.net.Uri
 import android.os.Handler
 import android.os.Message
 import com.github.florent37.assets_audio_player.notification.AudioMetas
 import com.github.florent37.assets_audio_player.notification.NotificationManager
 import com.github.florent37.assets_audio_player.notification.NotificationSettings
-import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.*
+import com.github.florent37.assets_audio_player.playerimplem.PlayerImplem
+import com.github.florent37.assets_audio_player.playerimplem.PlayerImplemExoPlayer
+import com.github.florent37.assets_audio_player.playerimplem.PlayerImplemMediaPlayer
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlin.math.max
 
 /**
@@ -44,7 +43,7 @@ class Player(
     // To handle position updates.
     private val handler = Handler()
 
-    private var mediaPlayer: ExoPlayer? = null
+    private var mediaPlayer: PlayerImplem? = null
 
     //region outputs
     var onVolumeChanged: ((Double) -> Unit)? = null
@@ -85,7 +84,7 @@ class Player(
                         handler.removeCallbacks(this)
                     }
 
-                    val position = mediaPlayer.currentPosition / 1000L
+                    val position = mediaPlayer.currentPositionMs / 1000L
 
                     // Send position (seconds) to the application.
                     onPositionChanged?.invoke(position)
@@ -131,100 +130,105 @@ class Player(
     ) {
         stop(pingListener = false)
 
-        this.mediaPlayer = SimpleExoPlayer.Builder(context).build();
         this.displayNotification = displayNotification
         this.audioMetas = audioMetas
         this.notificationSettings = notificationSettings
         this.respectSilentMode = respectSilentMode
 
-        lateinit var mediaSource: MediaSource
-        try {
-            mediaPlayer?.stop()
-            if (audioType == AUDIO_TYPE_NETWORK || audioType == AUDIO_TYPE_LIVESTREAM) {
-                mediaSource = ProgressiveMediaSource
-                        .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
-                        .createMediaSource(Uri.parse(assetAudioPath))
-            } else if (audioType == AUDIO_TYPE_FILE) {
-                mediaSource = ProgressiveMediaSource
-                        .Factory(FileDataSource.Factory(), DefaultExtractorsFactory())
-                        .createMediaSource(Uri.parse(assetAudioPath))
-            } else { //asset
-                val path = if (assetAudioPackage.isNullOrBlank()) {
-                    flutterAssets.getAssetFilePathByName(assetAudioPath!!)
-                } else {
-                    flutterAssets.getAssetFilePathByName(assetAudioPath!!, assetAudioPackage)
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val duration = try {
+                    openExoPlayer(
+                            assetAudioPath = assetAudioPath,
+                            assetAudioPackage = assetAudioPackage,
+                            audioType = audioType,
+                            context = context
+                    )
+                } catch (t: Throwable){
+                    //fallback to mediaPlayer if error while opening
+                    openMediaPlayer(
+                            assetAudioPath = assetAudioPath,
+                            assetAudioPackage = assetAudioPackage,
+                            audioType = audioType,
+                            context = context
+                    )
                 }
-                val assetDataSource = AssetDataSource(context)
-                assetDataSource.open(DataSpec(Uri.parse(path)))
 
-                val factory = DataSource.Factory { assetDataSource }
-                mediaSource = ProgressiveMediaSource
-                        .Factory(factory, DefaultExtractorsFactory())
-                        .createMediaSource(assetDataSource.uri)
+                //here one open succeed
+                onReadyToPlay?.invoke(duration)
+
+                updateNotif()
+                setVolume(volume)
+                setPlaySpeed(playSpeed)
+
+                seek?.let {
+                    this@Player.seek(milliseconds = seek * 1L)
+                }
+
+                if (autoStart) {
+                    play()
+                }
+            } catch (t: Throwable){
+                //if one error while opening, result.error
+                onPositionChanged?.invoke(0)
+                t.printStackTrace()
+                result.error("OPEN", t.message, null)
             }
-        } catch (e: Exception) {
-            onPositionChanged?.invoke(0)
-            e.printStackTrace()
-            result.error("OPEN", e.message, null)
-            return
         }
+    }
 
-        var onThisMediaReady = false
-        var lastState : Int? = null
-        this.mediaPlayer?.addListener(object : Player.EventListener {
-
-            override fun onPlayerError(error: ExoPlaybackException) {
-                result.error("OPEN", error.message, null)
-            }
-
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                if(lastState != playbackState) {
-                    when (playbackState) {
-                        ExoPlayer.STATE_ENDED -> {
-                            pause()
-                            this@Player.onFinished?.invoke()
-                            this@Player.onBuffering?.invoke(false)
-                        }
-                        ExoPlayer.STATE_BUFFERING -> {
-                            this@Player.onBuffering?.invoke(true)
-                        }
-                        ExoPlayer.STATE_READY -> {
-                            this@Player.onBuffering?.invoke(false)
-                            if (!onThisMediaReady) {
-                                onThisMediaReady = true
-                                //retrieve duration in seconds
-                                if (audioType == AUDIO_TYPE_LIVESTREAM) {
-                                    onReadyToPlay?.invoke(0) //no duration for livestream
-                                } else {
-                                    val duration = mediaPlayer?.duration ?: 0
-                                    val totalDurationSeconds = (duration.toLong() / 1000)
-
-                                    onReadyToPlay?.invoke(totalDurationSeconds)
-                                }
-
-                                if (autoStart) {
-                                    play()
-                                }
-                                updateNotif()
-                                setVolume(volume)
-                                setPlaySpeed(playSpeed)
-
-                                seek?.let {
-                                    this@Player.seek(milliseconds = seek * 1L)
-                                }
-
-                                result.success(null)
-                            }
-                        }
-                        else -> {
-                        }
-                    }
+    private suspend fun openExoPlayer(assetAudioPath: String?,
+                                      assetAudioPackage: String?,
+                                      audioType: String,
+                                      context: Context
+    ) : Long {
+        mediaPlayer = PlayerImplemExoPlayer(
+                onFinished = {
+                    onFinished?.invoke()
+                    stop(pingListener = false)
+                },
+                onBuffering = {
+                    onBuffering?.invoke(it)
+                },
+                onError = { t ->
+                    //TODO, handle errors after opened
                 }
-                lastState = playbackState
-            }
-        })
+        )
 
-        mediaPlayer?.prepare(mediaSource)
+        return mediaPlayer!!.open(
+                context = context, 
+                assetAudioPath = assetAudioPath, 
+                audioType = audioType,
+                assetAudioPackage = assetAudioPackage,
+                flutterAssets = flutterAssets
+        )
+    }
+
+    private suspend fun openMediaPlayer(
+            assetAudioPath: String?,
+            assetAudioPackage: String?,
+            audioType: String,
+            context: Context
+    ) : Long {
+        mediaPlayer = PlayerImplemMediaPlayer(
+                onFinished = {
+                    onFinished?.invoke()
+                    stop(pingListener = false)
+                },
+                onBuffering = {
+                    onBuffering?.invoke(it)
+                },
+                onError = { t ->
+                    //TODO, handle errors after opened
+                }
+        )
+        return mediaPlayer!!.open(
+                context = context,
+                assetAudioPath = assetAudioPath,
+                audioType = audioType,
+                assetAudioPackage = assetAudioPackage,
+                flutterAssets = flutterAssets
+        )
     }
 
     fun stop(pingListener: Boolean = true) {
@@ -283,18 +287,18 @@ class Player(
 
     fun play() {
         val audioState = this.stopWhenCall.requestAudioFocus()
-        if(audioState == StopWhenCall.AudioState.AUTHORIZED_TO_PLAY){
+        if (audioState == StopWhenCall.AudioState.AUTHORIZED_TO_PLAY) {
             this.isEnabledToPlayPause = true //this one must be called before play/pause()
             this.isEnabledToChangeVolume = true //this one must be called before play/pause()
             playerPlay()
         } //else will wait until focus is enabled
     }
 
-    private fun playerPlay(){ //the play
+    private fun playerPlay() { //the play
         if (isEnabledToPlayPause) { //can be disabled while recieving phone call
             mediaPlayer?.let { player ->
                 stopForward()
-                player.playWhenReady = true
+                player.play()
                 handler.post(updatePosition)
                 onPlaying?.invoke(true)
                 updateNotif()
@@ -307,7 +311,7 @@ class Player(
     fun pause() {
         if (isEnabledToPlayPause) {
             mediaPlayer?.let {
-                it.playWhenReady = false
+                it.pause()
                 handler.removeCallbacks(updatePosition)
 
                 stopForward()
@@ -321,13 +325,13 @@ class Player(
         mediaPlayer?.apply {
             val to = max(milliseconds, 0L)
             seekTo(to)
-            onPositionChanged?.invoke(currentPosition / 1000L)
+            onPositionChanged?.invoke(currentPositionMs / 1000L)
         }
     }
 
     fun seekBy(milliseconds: Long) {
         mediaPlayer?.let {
-            val to = it.currentPosition + milliseconds;
+            val to = it.currentPositionMs + milliseconds;
             seek(to)
         }
     }
@@ -344,7 +348,7 @@ class Player(
                     }
                 }
 
-                it.audioComponent?.volume = v.toFloat();
+                it.setVolume(v.toFloat())
 
                 onVolumeChanged?.invoke(this.volume) //only notify the setted volume, not the silent mode one
             }
@@ -361,7 +365,7 @@ class Player(
             }
             this.playSpeed = playSpeed
             mediaPlayer?.let {
-                it.setPlaybackParameters(PlaybackParameters(playSpeed.toFloat()))
+                it.setPlaySpeed(playSpeed.toFloat())
                 onPlaySpeedChanged?.invoke(this.playSpeed)
             }
         }
@@ -373,7 +377,7 @@ class Player(
         }
 
         mediaPlayer?.let {
-            it.playWhenReady = false
+            it.pause()
             //handler.removeCallbacks(updatePosition)
             //onPlaying?.invoke(false)
         }

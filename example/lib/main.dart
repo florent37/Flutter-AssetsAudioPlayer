@@ -29,6 +29,15 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final audios = <Audio>[
     Audio.network(
+      "https://firebasestorage.googleapis.com/v0/b/heylol-b41f2.appspot.com/o/Chats%2Fsound_file%2F1590428125470.aac?alt=media&token=88cbc7b2-cf24-4e86-9c07-a2072dcd43d6",
+      metas: Metas(
+        title: "Try",
+        artist: "Florent Champigny",
+        album: "OnlineAlbum",
+        image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+      ),
+    ),
+    Audio.network(
       "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3",
       metas: Metas(
         title: "Online",
