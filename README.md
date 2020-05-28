@@ -30,7 +30,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^1.6.3+2
+  assets_audio_player: ^1.6.3+3
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -41,7 +41,7 @@ dependencies:
 And if you wan [web support, enable web](https://flutter.dev/web) then add
 ```yaml
 dependencies:
-  assets_audio_player_web: ^1.6.3+2
+  assets_audio_player_web: ^1.6.3+3
 ```
 
 </details>
@@ -466,6 +466,22 @@ open(AUDIO,
    )
 
 )
+```
+
+## Update audio's metas / notification content
+
+After your audio creation, just call 
+
+```dart
+audio.updateMetas(
+       player: _assetsAudioPlayer, //add the player if the audio is actually played
+       title: "My new title",
+       artist: "My new artist",
+       //if I not provide a new album, it keep the old one
+       image: MetasImage.network(
+         //my new image url
+       ),
+);
 ```
 
 ## Bluetooth Actions

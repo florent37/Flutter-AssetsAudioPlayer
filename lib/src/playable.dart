@@ -56,7 +56,8 @@ class MetasImage {
       : type = ImageType.network,
         package = null;
 
-  const MetasImage.asset(this.path, {
+  const MetasImage.asset(
+    this.path, {
     this.package,
   }) : type = ImageType.asset;
 
@@ -67,11 +68,11 @@ class MetasImage {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is MetasImage &&
-              runtimeType == other.runtimeType &&
-              path == other.path &&
-              package == other.package &&
-              type == other.type;
+      other is MetasImage &&
+          runtimeType == other.runtimeType &&
+          path == other.path &&
+          package == other.package &&
+          type == other.type;
 
   @override
   int get hashCode => path.hashCode ^ package.hashCode ^ type.hashCode;
@@ -96,12 +97,12 @@ class Metas {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Metas &&
-              runtimeType == other.runtimeType &&
-              title == other.title &&
-              artist == other.artist &&
-              album == other.album &&
-              image == other.image;
+      other is Metas &&
+          runtimeType == other.runtimeType &&
+          title == other.title &&
+          artist == other.artist &&
+          album == other.album &&
+          image == other.image;
 
   @override
   int get hashCode =>
@@ -122,7 +123,6 @@ class Metas {
       image: image ?? this.image,
     );
   }
-
 }
 
 class Audio implements Playable {
@@ -154,12 +154,12 @@ class Audio implements Playable {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Audio &&
-              runtimeType == other.runtimeType &&
-              path == other.path &&
-              package == other.package &&
-              audioType == other.audioType &&
-              metas == other.metas;
+      other is Audio &&
+          runtimeType == other.runtimeType &&
+          path == other.path &&
+          package == other.package &&
+          audioType == other.audioType &&
+          metas == other.metas;
 
   @override
   int get hashCode =>
@@ -173,18 +173,17 @@ class Audio implements Playable {
     Map<String, dynamic> extra,
     MetasImage image,
   }) {
-    this._metas = (_metas ?? Metas()).copyWith(title: title,
+    this._metas = (_metas ?? Metas()).copyWith(
+      title: title,
       artist: artist,
       album: album,
       extra: extra,
       image: image,
     );
-    if(player != null){
+    if (player != null) {
       player.onAudioUpdated(this);
     }
   }
-
-
 }
 
 class Playlist implements Playable {
@@ -217,16 +216,17 @@ class Playlist implements Playable {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Playlist &&
-              runtimeType == other.runtimeType &&
-              audios == other.audios &&
-              startIndex == other.startIndex;
+      other is Playlist &&
+          runtimeType == other.runtimeType &&
+          audios == other.audios &&
+          startIndex == other.startIndex;
 
   @override
   int get hashCode => audios.hashCode ^ startIndex.hashCode;
 }
 
-void writeAudioMetasInto(Map<String, dynamic> params, /* nullable */ Metas metas) {
+void writeAudioMetasInto(
+    Map<String, dynamic> params, /* nullable */ Metas metas) {
   if (metas != null) {
     if (metas.title != null) params["song.title"] = metas.title;
     if (metas.artist != null) params["song.artist"] = metas.artist;

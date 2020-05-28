@@ -672,7 +672,7 @@ class AssetsAudioPlayer {
   }
 
   Future<void> onAudioUpdated(Audio audio) async {
-    if(_lastOpenedAssetsAudio != null) {
+    if (_lastOpenedAssetsAudio != null) {
       if (_lastOpenedAssetsAudio.path == audio.path) {
         final Map<String, dynamic> params = {
           "id": this.id,
