@@ -636,7 +636,7 @@ class AssetsAudioPlayer {
       try {
         Map<String, dynamic> params = {
           "id": this.id,
-          "audioType": audio.audioType.description(),
+          "audioType": audio.audioType.audioTypeDescription(),
           "path": audio.path,
           "autoStart": autoStart,
           "respectSilentMode": respectSilentMode,

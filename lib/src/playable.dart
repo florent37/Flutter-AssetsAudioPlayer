@@ -11,7 +11,7 @@ enum AudioType {
 }
 
 extension AudioTypeDescription on AudioType {
-  String description() {
+  String audioTypeDescription() {
     switch (this) {
       case AudioType.network:
         return "network";
@@ -33,7 +33,7 @@ enum ImageType {
 }
 
 extension ImageTypeDescription on ImageType {
-  String description() {
+  String imageTypeDescription() {
     switch (this) {
       case ImageType.network:
         return "network";
@@ -233,7 +233,7 @@ void writeAudioMetasInto(Map<String, dynamic> params, /* nullable */ Metas metas
     if (metas.album != null) params["song.album"] = metas.album;
     if (metas.image != null) {
       params["song.image"] = metas.image.path;
-      params["song.imageType"] = metas.image.type.description();
+      params["song.imageType"] = metas.image.type.imageTypeDescription();
       if (metas.image.package != null)
         params["song.imagePackage"] = metas.image.package;
     }
