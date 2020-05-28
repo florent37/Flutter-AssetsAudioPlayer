@@ -144,7 +144,7 @@ class Player(
                             audioType = audioType,
                             context = context
                     )
-                } catch (t: Throwable){
+                } catch (t: Throwable) {
                     //fallback to mediaPlayer if error while opening
                     openMediaPlayer(
                             assetAudioPath = assetAudioPath,
@@ -168,7 +168,7 @@ class Player(
                 if (autoStart) {
                     play()
                 }
-            } catch (t: Throwable){
+            } catch (t: Throwable) {
                 //if one error while opening, result.error
                 onPositionChanged?.invoke(0)
                 t.printStackTrace()
@@ -181,7 +181,7 @@ class Player(
                                       assetAudioPackage: String?,
                                       audioType: String,
                                       context: Context
-    ) : Long {
+    ): Long {
         mediaPlayer = PlayerImplemExoPlayer(
                 onFinished = {
                     onFinished?.invoke()
@@ -195,13 +195,18 @@ class Player(
                 }
         )
 
-        return mediaPlayer!!.open(
-                context = context, 
-                assetAudioPath = assetAudioPath, 
-                audioType = audioType,
-                assetAudioPackage = assetAudioPackage,
-                flutterAssets = flutterAssets
-        )
+        try {
+            return mediaPlayer!!.open(
+                    context = context,
+                    assetAudioPath = assetAudioPath,
+                    audioType = audioType,
+                    assetAudioPackage = assetAudioPackage,
+                    flutterAssets = flutterAssets
+            )
+        } catch (t: Throwable) {
+            mediaPlayer?.release()
+            throw  t
+        }
     }
 
     private suspend fun openMediaPlayer(
@@ -209,7 +214,7 @@ class Player(
             assetAudioPackage: String?,
             audioType: String,
             context: Context
-    ) : Long {
+    ): Long {
         mediaPlayer = PlayerImplemMediaPlayer(
                 onFinished = {
                     onFinished?.invoke()
@@ -222,13 +227,18 @@ class Player(
                     //TODO, handle errors after opened
                 }
         )
-        return mediaPlayer!!.open(
-                context = context,
-                assetAudioPath = assetAudioPath,
-                audioType = audioType,
-                assetAudioPackage = assetAudioPackage,
-                flutterAssets = flutterAssets
-        )
+        try {
+            return mediaPlayer!!.open(
+                    context = context,
+                    assetAudioPath = assetAudioPath,
+                    audioType = audioType,
+                    assetAudioPackage = assetAudioPackage,
+                    flutterAssets = flutterAssets
+            )
+        } catch (t: Throwable) {
+            mediaPlayer?.release()
+            throw  t
+        }
     }
 
     fun stop(pingListener: Boolean = true) {
