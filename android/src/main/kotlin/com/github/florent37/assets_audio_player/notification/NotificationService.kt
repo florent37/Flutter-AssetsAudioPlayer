@@ -43,6 +43,11 @@ class NotificationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        if(intent.action == Intent.ACTION_MEDIA_BUTTON){
+            MediaButtonsReciever.getMediaSessionCompat(applicationContext).let {
+                MediaButtonReceiver.handleIntent(it, intent)
+            }
+        }
         when (val notificationAction = intent.getSerializableExtra(EXTRA_NOTIFICATION_ACTION)) {
             is NotificationAction.Show -> {
                 displayNotification(notificationAction)
@@ -88,7 +93,7 @@ class NotificationService : Service() {
 
     private fun displayNotification(action: NotificationAction.Show, bitmap: Bitmap?) {
         createNotificationChannel()
-        val mediaSession = MediaSessionCompat(this, MEDIA_SESSION_TAG)
+        val mediaSession = MediaButtonsReciever.getMediaSessionCompat(applicationContext)
 
         val notificationSettings = action.notificationSettings
 
