@@ -1,257 +1,345 @@
 import 'dart:async';
-import 'dart:io' as io;
 
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:file/file.dart';
-import 'package:file/local.dart';
+import 'package:assets_audio_player_example/player/PlaySpeedSelector.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_audio_recorder/flutter_audio_recorder.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
-void main() {
-  SystemChrome.setEnabledSystemUIOverlays([]);
-  return runApp(new MyApp());
-}
+import 'player/ForwardRewindSelector.dart';
+import 'player/PlayingControls.dart';
+import 'player/PositionSeekWidget.dart';
+import 'player/SongsSelector.dart';
+import 'player/VolumeSelector.dart';
+
+void main() => runApp(
+  NeumorphicTheme(
+    theme: NeumorphicThemeData(
+      intensity: 0.8,
+      lightSource: LightSource.topLeft,
+    ),
+    child: MyApp(),
+  ),
+);
 
 class MyApp extends StatefulWidget {
   @override
-  _MyAppState createState() => new _MyAppState();
+  _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new Scaffold(
-        body: SafeArea(
-          child: new RecorderExample(),
-        ),
+  final audios = <Audio>[
+    Audio.network(
+      "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3",
+      metas: Metas(
+        title: "Online",
+        artist: "Florent Champigny",
+        album: "OnlineAlbum",
+        image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
       ),
-    );
-  }
-}
+    ),
+    Audio(
+      "assets/audios/rock.mp3",
+      metas: Metas(
+        title: "Rock",
+        artist: "Florent Champigny",
+        album: "RockAlbum",
+        image: MetasImage.network("https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+      ),
+    ),
+    Audio(
+      "assets/audios/country.mp3",
+      metas: Metas(
+        title: "Country",
+        artist: "Florent Champigny",
+        album: "CountryAlbum",
+        image: MetasImage.asset("assets/images/country.jpg"),
+      ),
+    ),
+    Audio(
+      "assets/audios/electronic.mp3",
+      metas: Metas(
+        title: "Electronic",
+        artist: "Florent Champigny",
+        album: "ElectronicAlbum",
+        image: MetasImage.network("https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
+      ),
+    ),
+    Audio(
+      "assets/audios/hiphop.mp3",
+      metas: Metas(
+        title: "HipHop",
+        artist: "Florent Champigny",
+        album: "HipHopAlbum",
+        image: MetasImage.network("https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg"),
+      ),
+    ),
+    Audio(
+      "assets/audios/pop.mp3",
+      metas: Metas(
+        title: "Pop",
+        artist: "Florent Champigny",
+        album: "PopAlbum",
+        image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+      ),
+    ),
+    Audio(
+      "assets/audios/instrumental.mp3",
+      metas: Metas(
+        title: "Instrumental",
+        artist: "Florent Champigny",
+        album: "InstrumentalAlbum",
+        image: MetasImage.network("https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
+      ),
+    ),
+  ];
 
-class RecorderExample extends StatefulWidget {
-  final LocalFileSystem localFileSystem;
-
-  RecorderExample({localFileSystem})
-      : this.localFileSystem = localFileSystem ?? LocalFileSystem();
-
-  @override
-  State<StatefulWidget> createState() => new RecorderExampleState();
-}
-
-class RecorderExampleState extends State<RecorderExample> {
-  FlutterAudioRecorder _recorder;
-  Recording _current;
-  RecordingStatus _currentStatus = RecordingStatus.Unset;
+  final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
+  final List<StreamSubscription> _subscriptions = [];
 
   @override
   void initState() {
-    // TODO: implement initState
+    _subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
+      print("finished : $data");
+    }));
+    _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
+      print("playlistAudioFinished : $data");
+    }));
+    _subscriptions.add(_assetsAudioPlayer.current.listen((data) {
+      print("current : $data");
+    }));
+    _subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
+      print("onRedayToPlay : $audio");
+    }));
     super.initState();
-    _init();
+  }
+
+  @override
+  void dispose() {
+    _assetsAudioPlayer.dispose();
+    super.dispose();
+  }
+
+  Audio find(List<Audio> source, String fromPath) {
+    return source.firstWhere((element) => element.path == fromPath);
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Center(
-      child: new Padding(
-        padding: new EdgeInsets.all(8.0),
-        child: new Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: NeumorphicTheme.baseColor(context),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 48.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: new FlatButton(
-                      onPressed: () {
-                        switch (_currentStatus) {
-                          case RecordingStatus.Initialized:
-                            {
-                              _start();
-                              break;
-                            }
-                          case RecordingStatus.Recording:
-                            {
-                              _pause();
-                              break;
-                            }
-                          case RecordingStatus.Paused:
-                            {
-                              _resume();
-                              break;
-                            }
-                          case RecordingStatus.Stopped:
-                            {
-                              _init();
-                              break;
-                            }
-                          default:
-                            break;
-                        }
-                      },
-                      child: _buildText(_currentStatus),
-                      color: Colors.lightBlue,
-                    ),
+                  SizedBox(
+                    height: 20,
                   ),
-                  new FlatButton(
-                    onPressed:
-                    _currentStatus != RecordingStatus.Unset ? _stop : null,
-                    child:
-                    new Text("Stop", style: TextStyle(color: Colors.white)),
-                    color: Colors.blueAccent.withOpacity(0.5),
+                  Stack(
+                    fit: StackFit.passthrough,
+                    children: <Widget>[
+                      _assetsAudioPlayer.builderCurrent(
+                        builder: (BuildContext context, Playing playing) {
+                          if (playing != null) {
+                            final myAudio = find(this.audios, playing.audio.assetAudioPath);
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Neumorphic(
+                                boxShape: NeumorphicBoxShape.circle(),
+                                style: NeumorphicStyle(depth: 8, surfaceIntensity: 1, shape: NeumorphicShape.concave),
+                                child: myAudio.metas.image.type == ImageType.network
+                                    ? Image.network(
+                                  myAudio.metas.image.path,
+                                  height: 150,
+                                  width: 150,
+                                  fit: BoxFit.contain,
+                                )
+                                    : Image.asset(
+                                  myAudio.metas.image.path,
+                                  height: 150,
+                                  width: 150,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            );
+                          }
+                          return SizedBox();
+                        },
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: NeumorphicButton(
+                          boxShape: NeumorphicBoxShape.circle(),
+                          padding: EdgeInsets.all(18),
+                          margin: EdgeInsets.all(18),
+                          onClick: () {
+                            AssetsAudioPlayer.playAndForget(Audio("assets/audios/horn.mp3"));
+                          },
+                          child: Icon(
+                            Icons.add_alert,
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(
-                    width: 8,
+                    height: 20,
                   ),
-                  new FlatButton(
-                    onPressed: onPlayAudio,
-                    child:
-                    new Text("Play", style: TextStyle(color: Colors.white)),
-                    color: Colors.blueAccent.withOpacity(0.5),
+                  SizedBox(
+                    height: 20,
                   ),
+                  _assetsAudioPlayer.builderCurrent(
+                      builder: (context, playing) {
+                        if (playing == null) {
+                          return SizedBox();
+                        }
+                        return Column(
+                          children: <Widget>[
+                            _assetsAudioPlayer.builderIsLooping(
+                              builder: (context, isLooping) {
+                                return PlayerBuilder.isPlaying(
+                                    player: _assetsAudioPlayer,
+                                    builder: (context, isPlaying) {
+                                      return PlayingControls(
+                                        isLooping: isLooping,
+                                        isPlaying: isPlaying,
+                                        isPlaylist: true,
+                                        toggleLoop: () {
+                                          _assetsAudioPlayer.toggleLoop();
+                                        },
+                                        onPlay: () {
+                                          _assetsAudioPlayer.playOrPause();
+                                        },
+                                        onNext: () {
+                                          //_assetsAudioPlayer.forward(Duration(seconds: 10));
+                                          _assetsAudioPlayer.next();
+                                        },
+                                        onPrevious: () {
+                                          _assetsAudioPlayer.previous();
+                                        },
+                                      );
+                                    });
+                              },
+                            ),
+                            _assetsAudioPlayer.builderRealtimePlayingInfos(
+                                builder: (context, infos) {
+                                  if (infos == null) {
+                                    return SizedBox();
+                                  }
+                                  //print("infos: $infos");
+                                  return Column(
+                                    children: [
+                                      PositionSeekWidget(
+                                        currentPosition: infos.currentPosition,
+                                        duration: infos.duration,
+                                        seekTo: (to) {
+                                          _assetsAudioPlayer.seek(to);
+                                        },
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          NeumorphicButton(
+                                            child: Text("-10"),
+                                            onClick: (){
+                                              _assetsAudioPlayer.seekBy(Duration(seconds: -10));
+                                            },
+                                          ),
+                                          SizedBox(width: 12,),
+                                          NeumorphicButton(
+                                            child: Text("+10"),
+                                            onClick: (){
+                                              _assetsAudioPlayer.seekBy(Duration(seconds: 10));
+                                            },
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  );
+                                }),
+                          ],
+                        );
+                      }),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  _assetsAudioPlayer.builderCurrent(
+                      builder: (BuildContext context, Playing playing) {
+                        return SongsSelector(
+                          audios: this.audios,
+                          onPlaylistSelected: (myAudios) {
+                            _assetsAudioPlayer.open(
+                              Playlist(audios: myAudios),
+                              showNotification: true,
+                            );
+                          },
+                          onSelected: (myAudio) {
+                            _assetsAudioPlayer.open(
+                              myAudio,
+                              autoStart: true,
+                              respectSilentMode: true,
+                              showNotification: true,
+                              playInBackground: PlayInBackground.enabled,
+                              /*
+                              notificationSettings: NotificationSettings(
+                                  prevEnabled: false,
+                                  customNextAction: (player) {
+                                    print("next");
+                                  }
+                              )
+                               */
+                            );
+                          },
+                          playing: playing,
+                        );
+                      }),
+                  /*
+                  PlayerBuilder.volume(
+                      player: _assetsAudioPlayer,
+                      builder: (context, volume) {
+                        return VolumeSelector(
+                          volume: volume,
+                          onChange: (v) {
+                            _assetsAudioPlayer.setVolume(v);
+                          },
+                        );
+                      }),
+                   */
+                  /*
+                  PlayerBuilder.forwardRewindSpeed(
+                      player: _assetsAudioPlayer,
+                      builder: (context, speed) {
+                        return ForwardRewindSelector(
+                          speed: speed,
+                          onChange: (v) {
+                            _assetsAudioPlayer.forwardOrRewind(v);
+                          },
+                        );
+                      }),
+                   */
+                  /*
+                  PlayerBuilder.playSpeed(
+                      player: _assetsAudioPlayer,
+                      builder: (context, playSpeed) {
+                        return PlaySpeedSelector(
+                          playSpeed: playSpeed,
+                          onChange: (v) {
+                            _assetsAudioPlayer.setPlaySpeed(v);
+                          },
+                        );
+                      }),
+                   */
                 ],
               ),
-              new Text("Status : $_currentStatus"),
-              new Text('Avg Power: ${_current?.metering?.averagePower}'),
-              new Text('Peak Power: ${_current?.metering?.peakPower}'),
-              new Text("File path of the record: ${_current?.path}"),
-              new Text("Format: ${_current?.audioFormat}"),
-              new Text(
-                  "isMeteringEnabled: ${_current?.metering?.isMeteringEnabled}"),
-              new Text("Extension : ${_current?.extension}"),
-              new Text(
-                  "Audio recording duration : ${_current?.duration.toString()}")
-            ]),
+            ),
+          ),
+        ),
       ),
     );
-  }
-
-  _init() async {
-    try {
-      if (await FlutterAudioRecorder.hasPermissions) {
-        String customPath = '/flutter_audio_recorder_';
-        io.Directory appDocDirectory;
-//        io.Directory appDocDirectory = await getApplicationDocumentsDirectory();
-        if (io.Platform.isIOS) {
-          appDocDirectory = await getApplicationDocumentsDirectory();
-        } else {
-          appDocDirectory = await getExternalStorageDirectory();
-        }
-
-        // can add extension like ".mp4" ".wav" ".m4a" ".aac"
-        customPath = appDocDirectory.path +
-            customPath +
-            DateTime.now().millisecondsSinceEpoch.toString();
-
-        // .wav <---> AudioFormat.WAV
-        // .mp4 .m4a .aac <---> AudioFormat.AAC
-        // AudioFormat is optional, if given value, will overwrite path extension when there is conflicts.
-        _recorder =
-            FlutterAudioRecorder(customPath, audioFormat: AudioFormat.WAV);
-
-        await _recorder.initialized;
-        // after initialization
-        var current = await _recorder.current(channel: 0);
-        print(current);
-        // should be "Initialized", if all working fine
-        setState(() {
-          _current = current;
-          _currentStatus = current.status;
-          print(_currentStatus);
-        });
-      } else {
-        Scaffold.of(context).showSnackBar(
-            new SnackBar(content: new Text("You must accept permissions")));
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  _start() async {
-    try {
-      await _recorder.start();
-      var recording = await _recorder.current(channel: 0);
-      setState(() {
-        _current = recording;
-      });
-
-      const tick = const Duration(milliseconds: 50);
-      new Timer.periodic(tick, (Timer t) async {
-        if (_currentStatus == RecordingStatus.Stopped) {
-          t.cancel();
-        }
-
-        var current = await _recorder.current(channel: 0);
-        // print(current.status);
-        setState(() {
-          _current = current;
-          _currentStatus = _current.status;
-        });
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  _resume() async {
-    await _recorder.resume();
-    setState(() {});
-  }
-
-  _pause() async {
-    await _recorder.pause();
-    setState(() {});
-  }
-
-  _stop() async {
-    var result = await _recorder.stop();
-    print("Stop recording: ${result.path}");
-    print("Stop recording: ${result.duration}");
-    File file = widget.localFileSystem.file(result.path);
-    print("File length: ${await file.length()}");
-    setState(() {
-      _current = result;
-      _currentStatus = _current.status;
-    });
-  }
-
-  Widget _buildText(RecordingStatus status) {
-    var text = "";
-    switch (_currentStatus) {
-      case RecordingStatus.Initialized:
-        {
-          text = 'Start';
-          break;
-        }
-      case RecordingStatus.Recording:
-        {
-          text = 'Pause';
-          break;
-        }
-      case RecordingStatus.Paused:
-        {
-          text = 'Resume';
-          break;
-        }
-      case RecordingStatus.Stopped:
-        {
-          text = 'Init';
-          break;
-        }
-      default:
-        break;
-    }
-    return Text(text, style: TextStyle(color: Colors.white));
-  }
-
-  void onPlayAudio() async {
-    final AssetsAudioPlayer assetsAudioPlayer = AssetsAudioPlayer();
-    await assetsAudioPlayer.open( Audio.file(_current.path));
   }
 }

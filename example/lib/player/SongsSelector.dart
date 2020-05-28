@@ -21,9 +21,22 @@ class SongsSelector extends StatelessWidget {
       margin: EdgeInsets.all(8),
       padding: EdgeInsets.all(8),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Expanded(
+          FractionallySizedBox(
+            widthFactor: 1,
+            child: NeumorphicButton(
+              onClick: () {
+                this.onPlaylistSelected(this.audios);
+              },
+              child: Center(child: Text("All as playlist")),
+            ),
+          ),
+          SizedBox(height: 10,),
+          Flexible(
             child: ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, position) {
                 final item = this.audios[position];
                 final isPlaying = item.path == this.playing?.audio?.assetAudioPath;
@@ -63,15 +76,6 @@ class SongsSelector extends StatelessWidget {
               itemCount: this.audios.length,
             ),
           ),
-          FractionallySizedBox(
-            widthFactor: 1,
-            child: NeumorphicButton(
-              onClick: () {
-                this.onPlaylistSelected(this.audios);
-              },
-              child: Center(child: Text("All as playlist")),
-            ),
-          )
         ],
       ),
     );
