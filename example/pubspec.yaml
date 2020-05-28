@@ -1,7 +1,7 @@
 name: assets_audio_player_example
 description: Demonstrates how to use the assets_audio_player plugin.
 publish_to: 'none'
-version: 1.6.3+1
+version: 1.6.3+2
 
 environment:
   sdk: ">=2.6.0 <3.0.0"
