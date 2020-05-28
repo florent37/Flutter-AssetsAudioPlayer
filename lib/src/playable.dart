@@ -10,20 +10,18 @@ enum AudioType {
   asset,
 }
 
-extension AudioTypeDescription on AudioType {
-  String audioTypeDescription() {
-    switch (this) {
-      case AudioType.network:
-        return "network";
-      case AudioType.liveStream:
-        return "liveStream";
-      case AudioType.file:
-        return "file";
-      case AudioType.asset:
-        return "asset";
-    }
-    return null;
+String audioTypeDescription(AudioType audioType) {
+  switch (audioType) {
+    case AudioType.network:
+      return "network";
+    case AudioType.liveStream:
+      return "liveStream";
+    case AudioType.file:
+      return "file";
+    case AudioType.asset:
+      return "asset";
   }
+  return null;
 }
 
 enum ImageType {
@@ -32,18 +30,16 @@ enum ImageType {
   asset,
 }
 
-extension ImageTypeDescription on ImageType {
-  String imageTypeDescription() {
-    switch (this) {
-      case ImageType.network:
-        return "network";
-      case ImageType.file:
-        return "file";
-      case ImageType.asset:
-        return "asset";
-    }
-    return null;
+String imageTypeDescription(ImageType imageType) {
+  switch (imageType) {
+    case ImageType.network:
+      return "network";
+    case ImageType.file:
+      return "file";
+    case ImageType.asset:
+      return "asset";
   }
+  return null;
 }
 
 @immutable
@@ -233,7 +229,7 @@ void writeAudioMetasInto(
     if (metas.album != null) params["song.album"] = metas.album;
     if (metas.image != null) {
       params["song.image"] = metas.image.path;
-      params["song.imageType"] = metas.image.type.imageTypeDescription();
+      params["song.imageType"] = imageTypeDescription(metas.image.type);
       if (metas.image.package != null)
         params["song.imagePackage"] = metas.image.package;
     }
