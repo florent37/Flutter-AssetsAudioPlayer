@@ -170,9 +170,10 @@ class NotificationService : Service() {
                 .build()
         startForeground(NOTIFICATION_ID, notification)
 
-        if (!action.isPlaying) {
-            stopForeground(false)
-        }
+        //fix for https://github.com/florent37/Flutter-AssetsAudioPlayer/issues/139
+        //if (!action.isPlaying) {
+        //    stopForeground(false)
+        //}
     }
 
     private fun createNotificationChannel() {
