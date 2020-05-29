@@ -182,6 +182,7 @@ class Player(
                 if (autoStart) {
                     play()
                 }
+                result.success(null)
             } catch (t: Throwable) {
                 //if one error while opening, result.error
                 onPositionChanged?.invoke(0)
