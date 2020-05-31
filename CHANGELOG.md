@@ -1,4 +1,4 @@
-## 1.6.4+3
+## 1.6.4+4
 
 * Fixed bluetooth on android on some devices
 * Fallback to android native MediaPlayer if exoplayer can't read the file

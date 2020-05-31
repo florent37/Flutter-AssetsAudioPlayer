@@ -58,7 +58,7 @@ class PlayerImplemExoPlayer(
                         .createMediaSource(Uri.parse(assetAudioPath))
             } else if (audioType == Player.AUDIO_TYPE_FILE) {
                 return ProgressiveMediaSource
-                        .Factory(FileDataSource.Factory(), DefaultExtractorsFactory())
+                        .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
                         .createMediaSource(Uri.parse(assetAudioPath))
             } else { //asset
                 val path = if (assetAudioPackage.isNullOrBlank()) {
