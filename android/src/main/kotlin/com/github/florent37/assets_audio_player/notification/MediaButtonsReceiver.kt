@@ -6,16 +6,16 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
 import android.view.KeyEvent
 
-class MediaButtonsReciever(context: Context, private val onAction: (MediaButtonAction) -> Unit) {
+class MediaButtonsReceiver(context: Context, private val onAction: (MediaButtonAction) -> Unit) {
 
     companion object {
-        var instance: MediaButtonsReciever? = null
+        var instance: MediaButtonsReceiver? = null
 
 
         private var mediaSessionCompat : MediaSessionCompat? = null
         fun getMediaSessionCompat(context: Context) : MediaSessionCompat {
             if(mediaSessionCompat == null) {
-                mediaSessionCompat = MediaSessionCompat(context, "MediaButtonsReciever", null, null).apply {
+                mediaSessionCompat = MediaSessionCompat(context, "MediaButtonsReceiver", null, null).apply {
                     setFlags(FLAG_HANDLES_MEDIA_BUTTONS)
                     isActive = true
                 }

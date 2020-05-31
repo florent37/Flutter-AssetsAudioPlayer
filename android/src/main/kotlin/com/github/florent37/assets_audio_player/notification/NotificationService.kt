@@ -8,28 +8,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import android.os.IBinder
-import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.media.session.MediaButtonReceiver
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.github.florent37.assets_audio_player.R
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 class NotificationService : Service() {
 
@@ -44,7 +32,7 @@ class NotificationService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         if(intent.action == Intent.ACTION_MEDIA_BUTTON){
-            MediaButtonsReciever.getMediaSessionCompat(applicationContext).let {
+            MediaButtonsReceiver.getMediaSessionCompat(applicationContext).let {
                 MediaButtonReceiver.handleIntent(it, intent)
             }
         }
@@ -60,7 +48,7 @@ class NotificationService : Service() {
     }
 
     private fun createReturnIntent(forAction: String, forPlayer: String): Intent {
-        return Intent(this, NotificationActionReciever::class.java)
+        return Intent(this, NotificationActionReceiver::class.java)
                 .setAction(forAction)
                 .putExtra(EXTRA_PLAYER_ID, forPlayer)
     }
@@ -93,7 +81,7 @@ class NotificationService : Service() {
 
     private fun displayNotification(action: NotificationAction.Show, bitmap: Bitmap?) {
         createNotificationChannel()
-        val mediaSession = MediaButtonsReciever.getMediaSessionCompat(applicationContext)
+        val mediaSession = MediaButtonsReceiver.getMediaSessionCompat(applicationContext)
 
         val notificationSettings = action.notificationSettings
 
