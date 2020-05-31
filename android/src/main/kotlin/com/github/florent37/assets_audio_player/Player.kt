@@ -58,6 +58,7 @@ class Player(
     var onPrev: (() -> Unit)? = null
     var onStop: (() -> Unit)? = null
     var onNotificationPlayOrPause: (() -> Unit)? = null
+    var onNotificationStop: (() -> Unit)? = null
     //endregion
 
     private var respectSilentMode: Boolean = false
@@ -447,6 +448,10 @@ class Player(
 
     fun askPlayOrPause() {
         this.onNotificationPlayOrPause?.invoke()
+    }
+
+    fun askStop() {
+        this.onNotificationStop?.invoke()
     }
 }
 

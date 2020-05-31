@@ -13,7 +13,7 @@ class NotificationActionReciever : BroadcastReceiver() {
         when (intent.action) {
              NotificationAction.ACTION_PREV -> player.prev()
              NotificationAction.ACTION_STOP -> {
-                 player.stop()
+                 player.askStop()
                  NotificationManager(context).hideNotification()
              }
              NotificationAction.ACTION_NEXT -> player.next()
