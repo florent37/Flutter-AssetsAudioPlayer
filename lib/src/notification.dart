@@ -30,6 +30,9 @@ class NotificationSettings {
   /// null for default behavior
   final NotificationAction customPrevAction;
 
+  /// null for default behavior
+  final NotificationAction customStopAction;
+
   //no custom action for stop
 
   //endregion
@@ -42,6 +45,7 @@ class NotificationSettings {
     this.customNextAction,
     this.customPlayPauseAction,
     this.customPrevAction,
+    this.customStopAction,
   });
 }
 

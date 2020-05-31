@@ -600,7 +600,11 @@ class AssetsAudioPlayer {
   }
 
   void _notificationStop() {
-    stop();
+    if (_playlist?.notificationSettings?.customStopAction != null) {
+      _playlist?.notificationSettings?.customStopAction(this);
+    } else {
+      stop();
+    }
   }
 
   void _notificationPlayPause() {
