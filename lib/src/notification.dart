@@ -18,6 +18,7 @@ class NotificationSettings {
 
   /// android only
   final bool stopEnabled;
+  final bool seekBarEnabled;
   //endregion
 
   //region customizers
@@ -42,6 +43,7 @@ class NotificationSettings {
     this.nextEnabled = true,
     this.prevEnabled = true,
     this.stopEnabled = true,
+    this.seekBarEnabled = true,
     this.customNextAction,
     this.customPlayPauseAction,
     this.customPrevAction,
@@ -56,4 +58,5 @@ void writeNotificationSettingsInto(
   params["notif.settings.playPauseEnabled"] =
       notificationSettings.playPauseEnabled;
   params["notif.settings.prevEnabled"] = notificationSettings.prevEnabled;
+  params["notif.settings.seekBarEnabled"] = notificationSettings.seekBarEnabled;
 }

@@ -8,12 +8,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.media.MediaMetadata
 import android.os.Build
 import android.os.IBinder
+import android.support.v4.media.MediaMetadataCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.media.session.MediaButtonReceiver
 import com.github.florent37.assets_audio_player.R
+import com.google.android.exoplayer2.C
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -84,6 +87,14 @@ class NotificationService : Service() {
         val mediaSession = MediaButtonsReceiver.getMediaSessionCompat(applicationContext)
 
         val notificationSettings = action.notificationSettings
+        
+        if(!notificationSettings.seekBarEnabled) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mediaSession.setMetadata(MediaMetadataCompat.Builder()
+                        .putLong(MediaMetadata.METADATA_KEY_DURATION, C.TIME_UNSET)
+                        .build())
+            }
+        }
 
         val toggleIntent = createReturnIntent(forAction = NotificationAction.ACTION_TOGGLE, forPlayer = action.playerId)
                 .putExtra(EXTRA_NOTIFICATION_ACTION, action.copyWith(
