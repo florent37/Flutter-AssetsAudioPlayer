@@ -59,17 +59,17 @@ class WebPlayerHtml extends WebPlayer {
 
   var __listenPosition = false;
 
-  double _duration;
+  double _durationMs;
   double _position;
 
   void _listenPosition() async {
     __listenPosition = true;
     Future.doWhile(() {
-      final duration = _audioElement.duration;
-      if (duration != _duration) {
-        _duration = duration;
+      final durationMs = _audioElement.duration * 1000;
+      if (durationMs != _durationMs) {
+        _durationMs = durationMs;
         channel
-            .invokeMethod(WebPlayer.methodCurrent, {"totalDuration": duration});
+            .invokeMethod(WebPlayer.methodCurrent, {"totalDurationMs": durationMs});
       }
 
       if (_position != currentPosition) {
@@ -128,7 +128,7 @@ class WebPlayerHtml extends WebPlayer {
       bool autoStart,
       double playSpeed}) async {
     stop();
-    _duration = null;
+    _durationMs = null;
     _position = null;
     _audioElement = html.AudioElement(findAssetPath(path, audioType));
 
@@ -141,11 +141,11 @@ class WebPlayerHtml extends WebPlayer {
       }
       this.volume = volume;
 
-      final duration = _audioElement.duration;
-      if (duration != _duration) {
-        _duration = duration;
+      final durationMs = _audioElement.duration * 1000;
+      if (durationMs != _durationMs) {
+        _durationMs = durationMs;
         channel
-            .invokeMethod(WebPlayer.methodCurrent, {"totalDuration": duration});
+            .invokeMethod(WebPlayer.methodCurrent, {"totalDurationMs": durationMs});
       }
 
       if (seek != null) {

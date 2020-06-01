@@ -345,11 +345,11 @@ class AssetsAudioPlayer {
           if (call.arguments == null) {
             _current.value = null;
           } else {
-            final totalDuration = _toDuration(call.arguments["totalDuration"]);
+            final totalDurationMs = _toDuration(call.arguments["totalDurationMs"]);
 
             final playingAudio = PlayingAudio(
               audio: _lastOpenedAssetsAudio,
-              duration: totalDuration,
+              duration: totalDurationMs,
             );
 
             if (_playlist != null) {
@@ -581,11 +581,11 @@ class AssetsAudioPlayer {
   /// Converts a number to duration
   Duration _toDuration(num value) {
     if (value.isNaN) {
-      return Duration(seconds: 0);
+      return Duration(milliseconds: 0);
     } else if (value is int) {
-      return Duration(seconds: value);
+      return Duration(milliseconds: value);
     } else if (value is double) {
-      return Duration(seconds: value.round());
+      return Duration(milliseconds: value.round());
     } else {
       return Duration();
     }

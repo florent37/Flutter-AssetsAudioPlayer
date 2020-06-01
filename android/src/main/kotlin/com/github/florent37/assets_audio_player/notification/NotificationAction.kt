@@ -16,15 +16,21 @@ sealed class NotificationAction(val playerId: String) : Serializable {
             val isPlaying: Boolean,
             val audioMetas: AudioMetas,
             playerId: String,
-            val notificationSettings: NotificationSettings
+            val notificationSettings: NotificationSettings,
+            val durationMs: Long
     ) : NotificationAction(playerId= playerId) {
-        fun copyWith(isPlaying: Boolean? = null, audioMetas: AudioMetas? = null,
-                     playerId: String? = null, notificationSettings: NotificationSettings? = null) : Show{
+        fun copyWith(isPlaying: Boolean? = null,
+                     audioMetas: AudioMetas? = null,
+                     playerId: String? = null,
+                     notificationSettings: NotificationSettings? = null,
+                     durationMs: Long? = null
+        ) : Show{
             return Show(
                     isPlaying= isPlaying ?: this.isPlaying,
                     audioMetas = audioMetas ?: this.audioMetas,
                     playerId = playerId ?: this.playerId,
-                    notificationSettings = notificationSettings ?: this.notificationSettings
+                    notificationSettings = notificationSettings ?: this.notificationSettings,
+                    durationMs = durationMs ?: this.durationMs
             )
         }
     }

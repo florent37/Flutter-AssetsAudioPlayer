@@ -3,6 +3,8 @@ package com.github.florent37.assets_audio_player.playerimplem
 import android.content.Context
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 
+typealias DurationMS = Long
+
 abstract class PlayerImplem(
         val onFinished: (() -> Unit),
         val onBuffering: ((Boolean) -> Unit),
@@ -18,7 +20,7 @@ abstract class PlayerImplem(
                      assetAudioPath: String?,
                      audioType: String,
                      assetAudioPackage: String?
-    ) : Long
+    ) : DurationMS
     abstract fun release()
     abstract fun seekTo(to: Long)
     abstract fun setVolume(volume: Float)

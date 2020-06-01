@@ -416,12 +416,13 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                     debugPrint("status: ready to play")
                     
                     if(audioType == "liveStream"){
-                        self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": 0.0])
+                        self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDurationMs": 0.0])
                         self?.currentSongDuration = Float64(0.0)
                         self?.setupMediaPlayerNotificationView()
                     } else {
-                        let audioDurationSeconds = CMTimeGetSeconds(item.duration) //CMTimeGetSeconds(asset.duration)
-                        self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDuration": audioDurationSeconds])
+                        let audioDurationSeconds = CMTimeGetSeconds(item.duration)
+                        let audioDurationMS = audioDurationSeconds * 1000
+                        self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDurationMs": audioDurationMS])
                         self?.currentSongDuration = audioDurationSeconds
                         self?.setupMediaPlayerNotificationView()
                     }

@@ -85,7 +85,7 @@ class PlayerImplemExoPlayer(
             assetAudioPath: String?,
             audioType: String,
             assetAudioPackage: String?
-    ) = suspendCoroutine<Long> { continuation ->
+    ) = suspendCoroutine<DurationMS> { continuation ->
         var onThisMediaReady = false
 
         try {
@@ -125,9 +125,9 @@ class PlayerImplemExoPlayer(
                                         continuation.resume(0) //no duration for livestream
                                     } else {
                                         val duration = mediaPlayer?.duration ?: 0
-                                        val totalDurationSeconds = (duration.toLong() / 1000)
+                                        val totalDurationMs = (duration.toLong())
 
-                                        continuation.resume(totalDurationSeconds)
+                                        continuation.resume(totalDurationMs)
                                     }
                                 }
                             }

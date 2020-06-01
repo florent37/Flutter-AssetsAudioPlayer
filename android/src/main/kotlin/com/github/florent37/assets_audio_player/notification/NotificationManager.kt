@@ -8,7 +8,7 @@ class NotificationManager(private val context: Context) {
 
     var closed = false
 
-    fun showNotification(playerId: String, audioMetas: AudioMetas, isPlaying: Boolean, notificationSettings: NotificationSettings, stop: Boolean) {
+    fun showNotification(playerId: String, audioMetas: AudioMetas, isPlaying: Boolean, notificationSettings: NotificationSettings, stop: Boolean, durationMs: Long) {
         if(closed)
             return
         if(stop){
@@ -23,7 +23,8 @@ class NotificationManager(private val context: Context) {
                         isPlaying = isPlaying,
                         audioMetas = audioMetas,
                         playerId = playerId,
-                        notificationSettings = notificationSettings
+                        notificationSettings = notificationSettings,
+                        durationMs= durationMs
                 ))
             })
         }

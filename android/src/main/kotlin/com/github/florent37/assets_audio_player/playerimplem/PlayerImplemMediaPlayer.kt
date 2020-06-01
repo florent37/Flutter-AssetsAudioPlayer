@@ -43,7 +43,7 @@ class PlayerImplemMediaPlayer(
             assetAudioPath: String?,
             audioType: String,
             assetAudioPackage: String?
-    ): Long = suspendCoroutine { continuation ->
+    ): DurationMS = suspendCoroutine { continuation ->
         this.mediaPlayer = MediaPlayer()
         
         when (audioType) {
@@ -71,9 +71,9 @@ class PlayerImplemMediaPlayer(
             mediaPlayer?.setOnPreparedListener {
                 //retrieve duration in seconds
                 val duration = mediaPlayer?.duration ?: 0
-                val totalDurationSeconds = (duration.toLong() / 1000)
+                val totalDurationMs = duration.toLong()
 
-                continuation.resume(totalDurationSeconds)
+                continuation.resume(totalDurationMs)
             }
             mediaPlayer?.prepare()
         } catch (t: Throwable){

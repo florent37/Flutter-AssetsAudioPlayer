@@ -120,9 +120,9 @@ class AssetsAudioPlayer(
                 onPositionChanged = { position ->
                     channel.invokeMethod(METHOD_POSITION, position)
                 }
-                onReadyToPlay = { totalDurationSeconds ->
+                onReadyToPlay = { totalDurationMs ->
                     channel.invokeMethod(METHOD_CURRENT, mapOf(
-                            "totalDuration" to totalDurationSeconds)
+                            "totalDurationMs" to totalDurationMs)
                     )
                 }
                 onPlaying = {

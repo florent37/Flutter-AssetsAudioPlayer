@@ -12,6 +12,7 @@ import android.media.MediaMetadata
 import android.os.Build
 import android.os.IBinder
 import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.media.session.MediaButtonReceiver
@@ -31,8 +32,33 @@ class NotificationService : Service() {
 
         const val EXTRA_PLAYER_ID = "playerId"
         const val EXTRA_NOTIFICATION_ACTION = "notificationAction"
-    }
 
+        fun updatePosition(context: Context, isPlaying: Boolean, currentPositionMs: Long, speed: Float){
+            MediaButtonsReceiver.getMediaSessionCompat(context).let { mediaSession ->
+                val state = if (isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED;
+                mediaSession.setPlaybackState(PlaybackStateCompat.Builder ()
+                        .setState(state, currentPositionMs, speed)
+                        .build());
+            }
+        }
+        
+        fun displaySeekBar(context: Context, display: Boolean, durationMs: Long){
+            val mediaSession = MediaButtonsReceiver.getMediaSessionCompat(context)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (!display || durationMs == 0L /* livestream */) {
+                    mediaSession.setMetadata(MediaMetadataCompat.Builder()
+                            .putLong(MediaMetadata.METADATA_KEY_DURATION, C.TIME_UNSET)
+                            .build())
+                } else {
+                    mediaSession.setMetadata(MediaMetadataCompat.Builder()
+                            .putLong(MediaMetadata.METADATA_KEY_DURATION, durationMs)
+                            .build())
+                }
+            }
+        }
+    }
+    
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         if(intent.action == Intent.ACTION_MEDIA_BUTTON){
             MediaButtonsReceiver.getMediaSessionCompat(applicationContext).let {
@@ -87,14 +113,12 @@ class NotificationService : Service() {
         val mediaSession = MediaButtonsReceiver.getMediaSessionCompat(applicationContext)
 
         val notificationSettings = action.notificationSettings
-        
-        if(!notificationSettings.seekBarEnabled) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mediaSession.setMetadata(MediaMetadataCompat.Builder()
-                        .putLong(MediaMetadata.METADATA_KEY_DURATION, C.TIME_UNSET)
-                        .build())
-            }
-        }
+
+        displaySeekBar(
+                context = applicationContext, 
+                display = notificationSettings.seekBarEnabled, 
+                durationMs = action.durationMs
+        )
 
         val toggleIntent = createReturnIntent(forAction = NotificationAction.ACTION_TOGGLE, forPlayer = action.playerId)
                 .putExtra(EXTRA_NOTIFICATION_ACTION, action.copyWith(

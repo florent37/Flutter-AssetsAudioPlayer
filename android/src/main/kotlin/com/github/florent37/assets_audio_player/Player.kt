@@ -7,7 +7,9 @@ import android.os.Handler
 import android.os.Message
 import com.github.florent37.assets_audio_player.notification.AudioMetas
 import com.github.florent37.assets_audio_player.notification.NotificationManager
+import com.github.florent37.assets_audio_player.notification.NotificationService
 import com.github.florent37.assets_audio_player.notification.NotificationSettings
+import com.github.florent37.assets_audio_player.playerimplem.DurationMS
 import com.github.florent37.assets_audio_player.playerimplem.PlayerImplem
 import com.github.florent37.assets_audio_player.playerimplem.PlayerImplemExoPlayer
 import com.github.florent37.assets_audio_player.playerimplem.PlayerImplemMediaPlayer
@@ -23,7 +25,7 @@ import kotlin.math.max
  */
 class Player(
         val id: String,
-        context: Context,
+        private val context: Context,
         private val stopWhenCall: StopWhenCall,
         private val notificationManager: NotificationManager,
         private val flutterAssets: FlutterPlugin.FlutterAssets
@@ -49,7 +51,7 @@ class Player(
     var onVolumeChanged: ((Double) -> Unit)? = null
     var onPlaySpeedChanged: ((Double) -> Unit)? = null
     var onForwardRewind: ((Double) -> Unit)? = null
-    var onReadyToPlay: ((Long) -> Unit)? = null
+    var onReadyToPlay: ((DurationMS) -> Unit)? = null
     var onPositionChanged: ((Long) -> Unit)? = null
     var onFinished: (() -> Unit)? = null
     var onPlaying: ((Boolean) -> Unit)? = null
@@ -76,6 +78,7 @@ class Player(
     private var displayNotification = false
 
     private var _playingPath : String? = null
+    private var _durationMs : DurationMS = 0
     private var _lastOpenedPath : String? = null
     private var audioMetas: AudioMetas? = null
     private var notificationSettings: NotificationSettings? = null
@@ -88,7 +91,8 @@ class Player(
                         handler.removeCallbacks(this)
                     }
 
-                    val position = mediaPlayer.currentPositionMs / 1000L
+                    val positionMs : Long = mediaPlayer.currentPositionMs
+                    val position = positionMs / 1000L
 
                     // Send position (seconds) to the application.
                     onPositionChanged?.invoke(position)
@@ -100,6 +104,8 @@ class Player(
                             setVolume(volume) //re-apply volume if changed
                         }
                     }
+                    
+                    updateNotifPosition(positionMs)
 
                     // Update every 300ms.
                     handler.postDelayed(this, 300)
@@ -150,7 +156,7 @@ class Player(
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val duration = try {
+                val durationMs = try {
                     openExoPlayer(
                             assetAudioPath = assetAudioPath,
                             assetAudioPackage = assetAudioPackage,
@@ -168,9 +174,10 @@ class Player(
                 }
 
                 //here one open succeed
-                onReadyToPlay?.invoke(duration)
+                onReadyToPlay?.invoke(durationMs)
 
                 _playingPath = assetAudioPath
+                _durationMs = durationMs
 
                 setVolume(volume)
                 setPlaySpeed(playSpeed)
@@ -198,7 +205,7 @@ class Player(
                                       assetAudioPackage: String?,
                                       audioType: String,
                                       context: Context
-    ): Long {
+    ): DurationMS {
         mediaPlayer = PlayerImplemExoPlayer(
                 onFinished = {
                     onFinished?.invoke()
@@ -231,7 +238,7 @@ class Player(
             assetAudioPackage: String?,
             audioType: String,
             context: Context
-    ): Long {
+    ): DurationMS {
         mediaPlayer = PlayerImplemMediaPlayer(
                 onFinished = {
                     onFinished?.invoke()
@@ -299,6 +306,20 @@ class Player(
         onForwardRewind?.invoke(0.0)
     }
 
+    private fun updateNotifPosition(positionMs: Long) {
+        this.audioMetas
+                ?.takeIf { this.displayNotification }
+                ?.takeIf { notificationSettings?.seekBarEnabled ?: true }
+                ?.let { audioMetas ->
+                    NotificationService.updatePosition(
+                            context = context,
+                            isPlaying = isPlaying,
+                            speed = this.playSpeed.toFloat(),
+                            currentPositionMs = positionMs
+                    )
+        }
+    }
+    
     private fun updateNotif() {
         this.audioMetas?.takeIf { this.displayNotification }?.let { audioMetas ->
             this.notificationSettings?.let { notificationSettings ->
@@ -307,7 +328,8 @@ class Player(
                         audioMetas = audioMetas,
                         isPlaying = this.isPlaying,
                         notificationSettings = notificationSettings,
-                        stop = (mediaPlayer == null)
+                        stop = (mediaPlayer == null),
+                        durationMs = this._durationMs
                 )
             }
         }
