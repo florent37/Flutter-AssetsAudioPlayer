@@ -3,6 +3,8 @@
 * Fixed bluetooth on android on some devices
 * Fallback to android native MediaPlayer if exoplayer can't read the file
 * Added `audio.updateMetas` to update notification content after creation
+* Android Seekbar notification is now optional
+* Added stop custom notification action
 
 ## 1.6.3
 
