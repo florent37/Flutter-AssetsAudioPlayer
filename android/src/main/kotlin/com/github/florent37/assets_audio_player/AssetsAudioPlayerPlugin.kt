@@ -2,7 +2,6 @@ package com.github.florent37.assets_audio_player
 
 import StopWhenCall
 import StopWhenCallAudioFocus
-import android.app.RemoteAction
 import android.content.Context
 import androidx.annotation.NonNull
 import com.github.florent37.assets_audio_player.notification.*
@@ -58,7 +57,7 @@ class AssetsAudioPlayer(
 
     private var stopWhenCall = StopWhenCallAudioFocus(context)
     private val notificationManager = NotificationManager(context)
-    private var mediaButtonsReciever : MediaButtonsReciever? = null
+    private var mediaButtonsReceiver : MediaButtonsReceiver? = null
     private val stopWhenCallListener = object : StopWhenCall.Listener {
         override fun onPhoneStateChanged(audioState: StopWhenCall.AudioState) {
             players.values.forEach {
@@ -72,7 +71,7 @@ class AssetsAudioPlayer(
     fun register() {
         stopWhenCall.register(stopWhenCallListener)
 
-        mediaButtonsReciever = MediaButtonsReciever(context, onAction = {
+        mediaButtonsReceiver = MediaButtonsReceiver(context, onAction = {
             onMediaButton(it)
         })
 
@@ -360,18 +359,18 @@ class AssetsAudioPlayer(
         this.lastPlayerIdWithNotificationEnabled = playerId
     }
 
-    fun onMediaButton(action: MediaButtonsReciever.MediaButtonAction) {
+    fun onMediaButton(action: MediaButtonsReceiver.MediaButtonAction) {
         lastPlayerIdWithNotificationEnabled
                 ?.let {
                     getPlayer(it)
                 }?.let { player ->
                     when(action) {
-                        MediaButtonsReciever.MediaButtonAction.play -> player.askPlayOrPause()
-                        MediaButtonsReciever.MediaButtonAction.pause -> player.askPlayOrPause()
-                        MediaButtonsReciever.MediaButtonAction.playOrPause -> player.askPlayOrPause()
-                        MediaButtonsReciever.MediaButtonAction.next -> player.next()
-                        MediaButtonsReciever.MediaButtonAction.prev -> player.prev()
-                        MediaButtonsReciever.MediaButtonAction.stop -> player.stop()
+                        MediaButtonsReceiver.MediaButtonAction.play -> player.askPlayOrPause()
+                        MediaButtonsReceiver.MediaButtonAction.pause -> player.askPlayOrPause()
+                        MediaButtonsReceiver.MediaButtonAction.playOrPause -> player.askPlayOrPause()
+                        MediaButtonsReceiver.MediaButtonAction.next -> player.next()
+                        MediaButtonsReceiver.MediaButtonAction.prev -> player.prev()
+                        MediaButtonsReceiver.MediaButtonAction.stop -> player.stop()
                     }
                 }
     }

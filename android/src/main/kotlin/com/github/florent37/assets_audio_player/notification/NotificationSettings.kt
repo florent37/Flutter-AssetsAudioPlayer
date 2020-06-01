@@ -8,7 +8,8 @@ class NotificationSettings(
         val prevEnabled: Boolean,
 
         //android only
-        val stopEnabled: Boolean
+        val stopEnabled: Boolean,
+        val seekBarEnabled: Boolean
 ) : Serializable {
     fun numberEnabled() : Int {
         var number = 0
@@ -25,6 +26,7 @@ fun fetchNotificationSettings(from: Map<*, *>) : NotificationSettings {
             nextEnabled= from["notif.settings.nextEnabled"] as? Boolean ?: true,
             stopEnabled= from["notif.settings.stopEnabled"] as? Boolean ?: true,
             playPauseEnabled = from["notif.settings.playPauseEnabled"] as? Boolean ?: true,
-            prevEnabled = from["notif.settings.prevEnabled"] as? Boolean ?: true
+            prevEnabled = from["notif.settings.prevEnabled"] as? Boolean ?: true,
+            seekBarEnabled = from["notif.settings.seekBarEnabled"] as? Boolean ?: true
     )
 }
