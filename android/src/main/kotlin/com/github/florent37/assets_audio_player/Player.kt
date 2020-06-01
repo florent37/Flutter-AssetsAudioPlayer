@@ -172,7 +172,6 @@ class Player(
 
                 _playingPath = assetAudioPath
 
-                updateNotif()
                 setVolume(volume)
                 setPlaySpeed(playSpeed)
 
@@ -181,7 +180,9 @@ class Player(
                 }
 
                 if (autoStart) {
-                    play()
+                    play() //display notif inside
+                } else {
+                    updateNotif() //if pause, we need to display the notif
                 }
                 result.success(null)
             } catch (t: Throwable) {
@@ -266,7 +267,6 @@ class Player(
 
             mediaPlayer?.stop()
             mediaPlayer?.release()
-            updateNotif()
             onPlaying?.invoke(false)
             handler.removeCallbacks(updatePosition)
         }
@@ -274,10 +274,11 @@ class Player(
             forwardHandler!!.stop()
             forwardHandler = null
         }
-        onForwardRewind?.invoke(0.0)
         mediaPlayer = null
-        if (pingListener) {
+        onForwardRewind?.invoke(0.0)
+        if (pingListener) { //action from user
             onStop?.invoke()
+            updateNotif()
         }
     }
 
@@ -305,7 +306,8 @@ class Player(
                         playerId = id,
                         audioMetas = audioMetas,
                         isPlaying = this.isPlaying,
-                        notificationSettings = notificationSettings
+                        notificationSettings = notificationSettings,
+                        stop = (mediaPlayer == null)
                 )
             }
         }

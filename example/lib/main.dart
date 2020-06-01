@@ -285,14 +285,17 @@ class _MyAppState extends State<MyApp> {
                               respectSilentMode: true,
                               showNotification: true,
                               playInBackground: PlayInBackground.enabled,
-                              /*
                               notificationSettings: NotificationSettings(
-                                  prevEnabled: false,
-                                  customNextAction: (player) {
-                                    print("next");
-                                  }
+                                  //seekBarEnabled: false,
+                                  //stopEnabled: true,
+                                  //customStopAction: (player){
+                                  //  player.stop();
+                                  //}
+                                  //prevEnabled: false,
+                                  //customNextAction: (player) {
+                                  //  print("next");
+                                  //}
                               )
-                               */
                             );
                           },
                           playing: playing,

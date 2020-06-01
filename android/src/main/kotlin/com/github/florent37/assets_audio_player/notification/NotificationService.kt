@@ -44,7 +44,7 @@ class NotificationService : Service() {
                 displayNotification(notificationAction)
             }
             is NotificationAction.Hide -> {
-                stopForeground(false)
+                hideNotif()
             }
         }
         return START_NOT_STICKY
@@ -193,8 +193,14 @@ class NotificationService : Service() {
         }
     }
 
-    override fun onTaskRemoved(rootIntent: Intent) {
+    private fun hideNotif(){
+        NotificationManagerCompat.from(applicationContext).cancel(NOTIFICATION_ID)
         stopForeground(true)
+        stopSelf()
+    }
+    
+    override fun onTaskRemoved(rootIntent: Intent) {
+        hideNotif()
     }
 
     override fun onCreate() {

@@ -14,7 +14,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
              NotificationAction.ACTION_PREV -> player.prev()
              NotificationAction.ACTION_STOP -> {
                  player.askStop()
-                 NotificationManager(context).hideNotification()
+                 //NotificationManager(context).hideNotification()
              }
              NotificationAction.ACTION_NEXT -> player.next()
              NotificationAction.ACTION_TOGGLE -> {
