@@ -2,11 +2,14 @@ package com.github.florent37.assets_audio_player.notification
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
+import android.support.v4.media.session.PlaybackStateCompat
 import android.view.KeyEvent
 
-class MediaButtonsReceiver(context: Context, private val onAction: (MediaButtonAction) -> Unit) {
+class MediaButtonsReceiver(context: Context, private val onAction: (MediaButtonAction) -> Unit, private val onNotifSeek: (Long) -> Unit) {
 
     companion object {
         var instance: MediaButtonsReceiver? = null
@@ -42,11 +45,15 @@ class MediaButtonsReceiver(context: Context, private val onAction: (MediaButtonA
             onIntentReceive(mediaButtonEvent)
             return super.onMediaButtonEvent(mediaButtonEvent)
         }
+
+        override fun onSeekTo(pos: Long) {
+            super.onSeekTo(pos)
+            seekPlayerTo(pos)
+        }
     }
 
     init {
         getMediaSessionCompat(context).setCallback(mediaSessionCallback)
-
     }
 
     private fun getAdjustedKeyCode(keyEvent: KeyEvent): Int {
@@ -83,6 +90,10 @@ class MediaButtonsReceiver(context: Context, private val onAction: (MediaButtonA
                     handleMediaButton(action)
                 }
 
+    }
+
+    private fun seekPlayerTo(pos: Long) {
+        this.onNotifSeek(pos)
     }
 
     private fun handleMediaButton(action: MediaButtonAction) {

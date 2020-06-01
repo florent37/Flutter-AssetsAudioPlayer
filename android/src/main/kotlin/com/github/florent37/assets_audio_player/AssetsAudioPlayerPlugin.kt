@@ -4,7 +4,10 @@ import StopWhenCall
 import StopWhenCallAudioFocus
 import android.content.Context
 import androidx.annotation.NonNull
-import com.github.florent37.assets_audio_player.notification.*
+import com.github.florent37.assets_audio_player.notification.MediaButtonsReceiver
+import com.github.florent37.assets_audio_player.notification.NotificationManager
+import com.github.florent37.assets_audio_player.notification.fetchAudioMetas
+import com.github.florent37.assets_audio_player.notification.fetchNotificationSettings
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
@@ -57,7 +60,7 @@ class AssetsAudioPlayer(
 
     private var stopWhenCall = StopWhenCallAudioFocus(context)
     private val notificationManager = NotificationManager(context)
-    private var mediaButtonsReceiver : MediaButtonsReceiver? = null
+    private var mediaButtonsReceiver: MediaButtonsReceiver? = null
     private val stopWhenCallListener = object : StopWhenCall.Listener {
         override fun onPhoneStateChanged(audioState: StopWhenCall.AudioState) {
             players.values.forEach {
@@ -71,9 +74,14 @@ class AssetsAudioPlayer(
     fun register() {
         stopWhenCall.register(stopWhenCallListener)
 
-        mediaButtonsReceiver = MediaButtonsReceiver(context, onAction = {
-            onMediaButton(it)
-        })
+        mediaButtonsReceiver = MediaButtonsReceiver(context,
+                onAction = {
+                    onMediaButton(it)
+                },
+                onNotifSeek = { position ->
+                    onNotifSeekPlayer(position)
+                }
+        )
 
         val channel = MethodChannel(messenger, "assets_audio_player")
         channel.setMethodCallHandler(this)
@@ -340,7 +348,7 @@ class AssetsAudioPlayer(
                             seek = seek,
                             respectSilentMode = respectSilentMode,
                             displayNotification = displayNotification,
-                            notificationSettings= notificationSettings,
+                            notificationSettings = notificationSettings,
                             result = result,
                             playSpeed = playSpeed,
                             audioMetas = audioMetas,
@@ -364,7 +372,7 @@ class AssetsAudioPlayer(
                 ?.let {
                     getPlayer(it)
                 }?.let { player ->
-                    when(action) {
+                    when (action) {
                         MediaButtonsReceiver.MediaButtonAction.play -> player.askPlayOrPause()
                         MediaButtonsReceiver.MediaButtonAction.pause -> player.askPlayOrPause()
                         MediaButtonsReceiver.MediaButtonAction.playOrPause -> player.askPlayOrPause()
@@ -372,6 +380,15 @@ class AssetsAudioPlayer(
                         MediaButtonsReceiver.MediaButtonAction.prev -> player.prev()
                         MediaButtonsReceiver.MediaButtonAction.stop -> player.stop()
                     }
+                }
+    }
+
+    fun onNotifSeekPlayer(toMs: Long) {
+        lastPlayerIdWithNotificationEnabled
+                ?.let {
+                    getPlayer(it)
+                }?.let { player ->
+                    player.seek(toMs)
                 }
     }
 }

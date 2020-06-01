@@ -79,6 +79,7 @@ class Player(
 
     private var _playingPath : String? = null
     private var _durationMs : DurationMS = 0
+    private var _positionMs : DurationMS = 0
     private var _lastOpenedPath : String? = null
     private var audioMetas: AudioMetas? = null
     private var notificationSettings: NotificationSettings? = null
@@ -104,8 +105,9 @@ class Player(
                             setVolume(volume) //re-apply volume if changed
                         }
                     }
-                    
-                    updateNotifPosition(positionMs)
+
+                    _positionMs = positionMs
+                    updateNotifPosition()
 
                     // Update every 300ms.
                     handler.postDelayed(this, 300)
@@ -306,7 +308,7 @@ class Player(
         onForwardRewind?.invoke(0.0)
     }
 
-    private fun updateNotifPosition(positionMs: Long) {
+    private fun updateNotifPosition() {
         this.audioMetas
                 ?.takeIf { this.displayNotification }
                 ?.takeIf { notificationSettings?.seekBarEnabled ?: true }
@@ -315,7 +317,7 @@ class Player(
                             context = context,
                             isPlaying = isPlaying,
                             speed = this.playSpeed.toFloat(),
-                            currentPositionMs = positionMs
+                            currentPositionMs = _positionMs
                     )
         }
     }
@@ -323,6 +325,7 @@ class Player(
     private fun updateNotif() {
         this.audioMetas?.takeIf { this.displayNotification }?.let { audioMetas ->
             this.notificationSettings?.let { notificationSettings ->
+                updateNotifPosition()
                 notificationManager.showNotification(
                         playerId = id,
                         audioMetas = audioMetas,

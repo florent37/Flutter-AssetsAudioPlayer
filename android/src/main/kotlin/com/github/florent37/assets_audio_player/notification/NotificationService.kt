@@ -13,6 +13,8 @@ import android.os.Build
 import android.os.IBinder
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.media.session.PlaybackStateCompat.ACTION_PLAY_PAUSE
+import android.support.v4.media.session.PlaybackStateCompat.ACTION_SEEK_TO
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.media.session.MediaButtonReceiver
@@ -37,7 +39,8 @@ class NotificationService : Service() {
             MediaButtonsReceiver.getMediaSessionCompat(context).let { mediaSession ->
                 val state = if (isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED;
                 mediaSession.setPlaybackState(PlaybackStateCompat.Builder ()
-                        .setState(state, currentPositionMs, speed)
+                        .setActions(ACTION_SEEK_TO)
+                        .setState(state, currentPositionMs, if(isPlaying) speed else 0f)
                         .build());
             }
         }
