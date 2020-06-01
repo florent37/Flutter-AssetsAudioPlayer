@@ -345,7 +345,8 @@ class AssetsAudioPlayer {
           if (call.arguments == null) {
             _current.value = null;
           } else {
-            final totalDurationMs = _toDuration(call.arguments["totalDurationMs"]);
+            final totalDurationMs =
+                _toDuration(call.arguments["totalDurationMs"]);
 
             final playingAudio = PlayingAudio(
               audio: _lastOpenedAssetsAudio,

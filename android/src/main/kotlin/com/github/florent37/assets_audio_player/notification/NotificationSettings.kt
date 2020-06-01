@@ -9,7 +9,7 @@ class NotificationSettings(
         val seekBarEnabled: Boolean,
 
         //android only
-        val stopEnabled: Boolean,
+        val stopEnabled: Boolean
 ) : Serializable {
     fun numberEnabled() : Int {
         var number = 0
