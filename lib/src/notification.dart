@@ -16,9 +16,11 @@ class NotificationSettings {
   /// both android & ios
   final bool prevEnabled;
 
+  /// both android & ios
+  final bool seekBarEnabled;
+
   /// android only
   final bool stopEnabled;
-  final bool seekBarEnabled;
   //endregion
 
   //region customizers

@@ -7,23 +7,27 @@ struct NotificationSettings : Equatable {
     let nextEnabled: Bool
     let playPauseEnabled: Bool
     let prevEnabled: Bool
+    let seekBarEnabled: Bool
     
     static func ==(lhs: NotificationSettings, rhs: NotificationSettings) -> Bool {
         return
             lhs.nextEnabled == rhs.nextEnabled &&
                 lhs.playPauseEnabled == rhs.playPauseEnabled &&
-                lhs.prevEnabled == rhs.prevEnabled
+                lhs.prevEnabled == rhs.prevEnabled &&
+                lhs.seekBarEnabled == rhs.seekBarEnabled
     }
     init() {
         self.nextEnabled = true
         self.playPauseEnabled = true
         self.prevEnabled = true
+        self.seekBarEnabled = true
     }
 
-    init(nextEnabled: Bool, playPauseEnabled: Bool, prevEnabled: Bool) {
+    init(nextEnabled: Bool, playPauseEnabled: Bool, prevEnabled: Bool, seekBarEnabled: Bool) {
         self.nextEnabled = nextEnabled
         self.playPauseEnabled = playPauseEnabled
         self.prevEnabled = prevEnabled
+        self.seekBarEnabled = seekBarEnabled
     }
 }
 
@@ -31,7 +35,8 @@ func notificationSettings(from: NSDictionary) -> NotificationSettings {
     return NotificationSettings(
         nextEnabled: from["notif.settings.nextEnabled"] as? Bool ?? true,
         playPauseEnabled: from["notif.settings.playPauseEnabled"] as? Bool ?? true,
-        prevEnabled: from["notif.settings.prevEnabled"] as? Bool ?? true
+        prevEnabled: from["notif.settings.prevEnabled"] as? Bool ?? true,
+        seekBarEnabled: from["notif.settings.seekBarEnabled"] as? Bool ?? true
     )
 }
 
@@ -241,10 +246,15 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         } else {
             nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = ""
         }
-        
-        
-        self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = self.currentSongDuration
-        self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
+
+        if ((self.notificationSettings ?? NotificationSettings()).seekBarEnabled) {
+            self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = self.currentSongDuration
+            self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
+        } else {
+            self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = 0
+            self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = 0
+        }
+
         self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0
         
         

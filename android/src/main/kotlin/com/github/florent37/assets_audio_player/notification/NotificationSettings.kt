@@ -6,10 +6,10 @@ class NotificationSettings(
         val nextEnabled: Boolean,
         val playPauseEnabled: Boolean,
         val prevEnabled: Boolean,
+        val seekBarEnabled: Boolean,
 
         //android only
         val stopEnabled: Boolean,
-        val seekBarEnabled: Boolean
 ) : Serializable {
     fun numberEnabled() : Int {
         var number = 0
