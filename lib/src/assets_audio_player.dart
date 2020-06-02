@@ -641,9 +641,9 @@ class AssetsAudioPlayer {
     final currentAudio = _lastOpenedAssetsAudio;
     if (audioInput != null) {
       _respectSilentMode = respectSilentMode;
-      
+
       final audio = await _handlePlatformAsset(audioInput);
-      
+
       try {
         Map<String, dynamic> params = {
           "id": this.id,
@@ -946,14 +946,14 @@ class AssetsAudioPlayer {
           (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
     });
   }
-  
+
   Future<Audio> _handlePlatformAsset(Audio input) async {
-    if(defaultTargetPlatform == TargetPlatform.macOS && input.audioType == AudioType.asset){ //on macos assets are not available from native
-      final String path = await _copyToTmpMemory(package: input.package, assetSource: input.path);
-      return input.copyWith(
-        audioType: AudioType.file,
-        path: path
-      );
+    if (defaultTargetPlatform == TargetPlatform.macOS &&
+        input.audioType == AudioType.asset) {
+      //on macos assets are not available from native
+      final String path = await _copyToTmpMemory(
+          package: input.package, assetSource: input.path);
+      return input.copyWith(audioType: AudioType.file, path: path);
     }
     return input;
   }
@@ -963,7 +963,7 @@ class AssetsAudioPlayer {
     final String fileName = "${package ?? ""}$assetSource";
     final completePath = '${(await getTemporaryDirectory()).path}/$fileName';
     final file = File(completePath);
-    if(await file.exists()){
+    if (await file.exists()) {
       return file.path;
     } else {
       await file.create(recursive: true);
