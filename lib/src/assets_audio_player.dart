@@ -668,7 +668,7 @@ class AssetsAudioPlayer {
         //endregion
 
         writeAudioMetasInto(params, audio.metas);
-        _lastOpenedAssetsAudio = audio;
+        _lastOpenedAssetsAudio = audioInput;
         /*final result = */
 
         await _sendChannel.invokeMethod('open', params);
@@ -961,7 +961,7 @@ class AssetsAudioPlayer {
   //returns the file path
   Future<String> _copyToTmpMemory({String package, String assetSource}) async {
     final String fileName = "${package ?? ""}$assetSource";
-    final completePath = '${(await getTemporaryDirectory()).path}/$fileName'
+    final completePath = '${(await getTemporaryDirectory()).path}/$fileName';
     final file = File(completePath);
     if(await file.exists()){
       return file.path;
