@@ -961,19 +961,24 @@ class AssetsAudioPlayer {
   //returns the file path
   Future<String> _copyToTmpMemory({String package, String assetSource}) async {
     final String fileName = "${package ?? ""}$assetSource";
-    final file = File('${(await getTemporaryDirectory()).path}/$fileName');
-    await file.create(recursive: true);
-
-    ByteData assetContent;
-    if(package == null){
-      assetContent = await rootBundle.load('$assetSource');
+    final completePath = '${(await getTemporaryDirectory()).path}/$fileName'
+    final file = File(completePath);
+    if(await file.exists()){
+      return file.path;
     } else {
-      assetContent = await rootBundle.load('$package/$assetSource');
+      await file.create(recursive: true);
+
+      ByteData assetContent;
+      if (package == null) {
+        assetContent = await rootBundle.load('$assetSource');
+      } else {
+        assetContent = await rootBundle.load('$package/$assetSource');
+      }
+
+      await file.writeAsBytes(assetContent.buffer.asUint8List());
+
+      return file.path;
     }
-
-    await file.writeAsBytes(assetContent.buffer.asUint8List());
-
-    return file.path;
   }
 }
 
