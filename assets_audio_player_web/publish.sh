@@ -1,2 +1,2 @@
-flutter format lib/
+dart format lib/
 pub publish --force
