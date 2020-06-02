@@ -1,3 +1,7 @@
+## 2.0.0
+
+* Added MacOS support
+
 ## 1.7.0
 
 * Fixed bluetooth on android on some devices
