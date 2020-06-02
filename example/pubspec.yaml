@@ -34,8 +34,8 @@ dev_dependencies:
   # uncomment to match local repos
   assets_audio_player:
    path: ../
-  assets_audio_player_web:
-    path: ../assets_audio_player_web
+  #assets_audio_player_web:
+  #  path: ../assets_audio_player_web
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
