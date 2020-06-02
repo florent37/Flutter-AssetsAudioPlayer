@@ -125,6 +125,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 return nil
             }
         }  else { //asset
+            #if os(iOS) //for now it's not available on mac, we will make a copy from flutter of the asset to tmp file
             var assetKey: String
             if(assetPackage != nil && !assetPackage!.isEmpty){
                 assetKey = self.registrar.lookupKey(forAsset: path, fromPackage: assetPackage!)
@@ -138,9 +139,13 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             url = URL(fileURLWithPath: path)
             return url
+            #else
+            return nil
+            #endif
         }
     }
     
+    #if os(iOS)
     func getAudioCategory(respectSilentMode: Bool, showNotification: Bool) ->  AVAudioSession.Category {
         if(showNotification) {
             return AVAudioSession.Category.playback
@@ -150,11 +155,18 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             return AVAudioSession.Category.playback
         }
     }
+    #endif
     
+    #if os(iOS)
     var targets: [String:Any] = [:]
+    
     func setupMediaPlayerNotificationView() {
+         
         UIApplication.shared.beginReceivingRemoteControlEvents()
         let commandCenter = MPRemoteCommandCenter.shared()
+        
+            // Fallback on earlier versions
+        
         
         self.updateNotif()
         
@@ -224,7 +236,9 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     }
     
     var nowPlayingInfo = [String: Any]()
+    #endif
     
+    #if os(iOS)
     func updateNotif() {
         if(!self.displayMediaPlayerNotification){
             return
@@ -319,8 +333,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 }
             }
         }
-        
     }
+    #endif
     
     class SlowMoPlayerItem: AVPlayerItem {
         
@@ -348,7 +362,9 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     func onAudioUpdated(path: String, audioMetas: AudioMetas) {
         if(_playingPath == path || (_playingPath == nil && _lastOpenedPath == path)){
             self.audioMetas = audioMetas
+            #if os(iOS)
             updateNotif()
+            #endif
         }
     }
     
@@ -375,6 +391,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
         
         do {
+            #if os(iOS)
             let category = getAudioCategory(respectSilentMode: respectSilentMode, showNotification: displayNotification)
             let mode = AVAudioSession.Mode.default
             
@@ -395,6 +412,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 try AVAudioSession.sharedInstance().setActive(true)
                 
             }
+            #endif
             
             let item = SlowMoPlayerItem(url: url)
             self.player = AVPlayer(playerItem: item)
@@ -433,13 +451,17 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                     if(audioType == "liveStream"){
                         self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDurationMs": 0.0])
                         self?.currentSongDuration = Float64(0.0)
+                        #if os(iOS)
                         self?.setupMediaPlayerNotificationView()
+                        #endif
                     } else {
                         let audioDurationSeconds = CMTimeGetSeconds(item.duration)
                         let audioDurationMS = audioDurationSeconds * 1000
                         self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDurationMs": audioDurationMS])
                         self?.currentSongDuration = audioDurationSeconds
+                        #if os(iOS)
                         self?.setupMediaPlayerNotificationView()
+                        #endif
                     }
                     
                     if(autoStart == true){
@@ -534,23 +556,29 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.player?.pause()
         self.player?.rate = 0.0
         if(self.displayMediaPlayerNotification){
+            #if os(iOS)
             if #available(iOS 13.0, *) {
                 MPNowPlayingInfoCenter.default().playbackState = .stopped
             }
             self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.player?.rate
             MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
+            #endif
         }
         self.player?.seek(to: CMTime.zero)
         self.player = nil   
         self.playing = false
         self.currentTimeTimer?.invalidate()
+        #if os(iOS)
         self.deinitMediaPlayerNotifEvent()
+        #endif
         NotificationCenter.default.removeObserver(self)
         self.observerStatus.forEach {
             $0.invalidate()
         }
         self.observerStatus.removeAll()
+        #if os(iOS)
         self.nowPlayingInfo.removeAll()
+        #endif
     }
     
     func play(){
@@ -561,11 +589,13 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.playing = true
         
         if(self.displayMediaPlayerNotification){
+            #if os(iOS)
             if #available(iOS 13.0, *) {
                 MPNowPlayingInfoCenter.default().playbackState = .playing
             }
             self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.player?.rate
             MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
+            #endif
         }
     }
     
@@ -580,9 +610,11 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 self.channel.invokeMethod(Music.METHOD_POSITION, arguments: self._currentTime)
                 
                 if(self.displayMediaPlayerNotification){
+                    #if os(iOS)
                     self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
                     self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.player!.rate
                     MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+                    #endif
                 }
             }
         }
@@ -610,19 +642,23 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             $0.invalidate()
         }
         self.observerStatus.removeAll()
+        #if os(iOS)
         self.deinitMediaPlayerNotifEvent()
+        #endif
         NotificationCenter.default.removeObserver(self)
     }
     
     func pause(){
         self.player?.pause()
         if(self.displayMediaPlayerNotification){
+            #if os(iOS)
             self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0
             MPNowPlayingInfoCenter.default().nowPlayingInfo = self.nowPlayingInfo
             
             if #available(iOS 13.0, *) {
                 MPNowPlayingInfoCenter.default().playbackState = .paused
             }
+            #endif
         }
         self.playing = false
         self.currentTimeTimer?.invalidate()
@@ -658,10 +694,17 @@ class Music : NSObject, FlutterPlugin {
         if let player = players[id] {
             return player
         } else {
+            #if os(iOS)
             let newPlayer = Player(
                 channel: FlutterMethodChannel(name: "assets_audio_player/"+id, binaryMessenger: registrar.messenger()),
                 registrar: self.registrar
             )
+            #else
+            let newPlayer = Player(
+                channel: FlutterMethodChannel(name: "assets_audio_player/"+id, binaryMessenger: registrar.messenger),
+                registrar: self.registrar
+            )
+            #endif
             players[id] = newPlayer
             return newPlayer
         }
@@ -685,7 +728,9 @@ class Music : NSObject, FlutterPlugin {
     }
     
     func start(){
+        #if os(iOS)
         self.registrar.addApplicationDelegate(self)
+        #endif
         
         channel.setMethodCallHandler({(call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
             //self.log(call.method + call.arguments.debugDescription)
