@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:assets_audio_player/src/notification.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
@@ -628,7 +629,7 @@ class AssetsAudioPlayer {
 
   //private method, used in open(playlist) and open(path)
   Future<void> _open(
-    Audio audio, {
+    Audio audioInput, {
     bool autoStart = _DEFAULT_AUTO_START,
     double forcedVolume,
     bool respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
@@ -638,8 +639,11 @@ class AssetsAudioPlayer {
     NotificationSettings notificationSettings,
   }) async {
     final currentAudio = _lastOpenedAssetsAudio;
-    if (audio != null) {
+    if (audioInput != null) {
       _respectSilentMode = respectSilentMode;
+      
+      final audio = await _handlePlatformAsset(audioInput);
+      
       try {
         Map<String, dynamic> params = {
           "id": this.id,
@@ -942,17 +946,32 @@ class AssetsAudioPlayer {
           (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
     });
   }
+  
+  Future<Audio> _handlePlatformAsset(Audio input) async {
+    if(defaultTargetPlatform == TargetPlatform.macOS && input.audioType == AudioType.asset){ //on macos assets are not available from native
+      final String path = await _copyToTmpMemory(package: input.package, assetSource: input.path);
+      return input.copyWith(
+        audioType: AudioType.file,
+        path: path
+      );
+    }
+    return input;
+  }
 
   //returns the file path
-  Future<String> _copyToTmpMemory(String package, String assetSource) async {
-    final String fileName = uuid.v4();
+  Future<String> _copyToTmpMemory({String package, String assetSource}) async {
+    final String fileName = "${package ?? ""}$assetSource";
     final file = File('${(await getTemporaryDirectory()).path}/$fileName');
     await file.create(recursive: true);
 
-    final ByteData assetContent = await rootBundle.load('assets/$assetSource');
+    ByteData assetContent;
+    if(package == null){
+      assetContent = await rootBundle.load('$assetSource');
+    } else {
+      assetContent = await rootBundle.load('$package/$assetSource');
+    }
 
-    await file
-        .writeAsBytes(assetContent.buffer.asUint8List());
+    await file.writeAsBytes(assetContent.buffer.asUint8List());
 
     return file.path;
   }

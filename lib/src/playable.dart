@@ -62,13 +62,7 @@ class MetasImage {
         package = null;
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MetasImage &&
-          runtimeType == other.runtimeType &&
-          path == other.path &&
-          package == other.package &&
-          type == other.type;
+  bool operator ==(Object other) => identical(this, other) || other is MetasImage && runtimeType == other.runtimeType && path == other.path && package == other.package && type == other.type;
 
   @override
   int get hashCode => path.hashCode ^ package.hashCode ^ type.hashCode;
@@ -92,17 +86,10 @@ class Metas {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Metas &&
-          runtimeType == other.runtimeType &&
-          title == other.title &&
-          artist == other.artist &&
-          album == other.album &&
-          image == other.image;
+      identical(this, other) || other is Metas && runtimeType == other.runtimeType && title == other.title && artist == other.artist && album == other.album && image == other.image;
 
   @override
-  int get hashCode =>
-      title.hashCode ^ artist.hashCode ^ album.hashCode ^ image.hashCode;
+  int get hashCode => title.hashCode ^ artist.hashCode ^ album.hashCode ^ image.hashCode;
 
   Metas copyWith({
     String title,
@@ -129,6 +116,13 @@ class Audio implements Playable {
 
   Metas get metas => _metas;
 
+  Audio._({
+    this.path,
+    this.package,
+    this.audioType,
+    Metas metas,
+  }) : _metas = metas;
+
   Audio(this.path, {Metas metas, this.package})
       : audioType = AudioType.asset,
         _metas = metas;
@@ -149,17 +143,10 @@ class Audio implements Playable {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Audio &&
-          runtimeType == other.runtimeType &&
-          path == other.path &&
-          package == other.package &&
-          audioType == other.audioType &&
-          metas == other.metas;
+      identical(this, other) || other is Audio && runtimeType == other.runtimeType && path == other.path && package == other.package && audioType == other.audioType && metas == other.metas;
 
   @override
-  int get hashCode =>
-      path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode;
+  int get hashCode => path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode;
 
   void updateMetas({
     AssetsAudioPlayer player,
@@ -179,6 +166,20 @@ class Audio implements Playable {
     if (player != null) {
       player.onAudioUpdated(this);
     }
+  }
+
+  Audio copyWith({
+    String path,
+    String package,
+    AudioType audioType,
+    Metas metas,
+  }) {
+    return Audio._(
+      path: path ?? this.path,
+      package: package ?? this.package,
+      audioType: audioType ?? this.audioType,
+      metas: metas ?? this._metas,
+    );
   }
 }
 
@@ -210,19 +211,13 @@ class Playlist implements Playable {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Playlist &&
-          runtimeType == other.runtimeType &&
-          audios == other.audios &&
-          startIndex == other.startIndex;
+  bool operator ==(Object other) => identical(this, other) || other is Playlist && runtimeType == other.runtimeType && audios == other.audios && startIndex == other.startIndex;
 
   @override
   int get hashCode => audios.hashCode ^ startIndex.hashCode;
 }
 
-void writeAudioMetasInto(
-    Map<String, dynamic> params, /* nullable */ Metas metas) {
+void writeAudioMetasInto(Map<String, dynamic> params, /* nullable */ Metas metas) {
   if (metas != null) {
     if (metas.title != null) params["song.title"] = metas.title;
     if (metas.artist != null) params["song.artist"] = metas.artist;
@@ -230,8 +225,7 @@ void writeAudioMetasInto(
     if (metas.image != null) {
       params["song.image"] = metas.image.path;
       params["song.imageType"] = imageTypeDescription(metas.image.type);
-      if (metas.image.package != null)
-        params["song.imagePackage"] = metas.image.package;
+      if (metas.image.package != null) params["song.imagePackage"] = metas.image.package;
     }
   }
 }

@@ -38,5 +38,7 @@
         <string>audio</string>
         <string>fetch</string>
     </array>
+    <key>com.apple.security.network.client</key>
+    <true/>
 </dict>
 </plist>
