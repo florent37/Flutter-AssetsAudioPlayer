@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:uuid/uuid.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 import 'applifecycle.dart';
 import 'playable.dart';
@@ -939,6 +941,20 @@ class AssetsAudioPlayer {
       "playSpeed":
           (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
     });
+  }
+
+  //returns the file path
+  Future<String> _copyToTmpMemory(String package, String assetSource) async {
+    final String fileName = uuid.v4();
+    final file = File('${(await getTemporaryDirectory()).path}/$fileName');
+    await file.create(recursive: true);
+
+    final ByteData assetContent = await rootBundle.load('assets/$assetSource');
+
+    await file
+        .writeAsBytes(assetContent.buffer.asUint8List());
+
+    return file.path;
   }
 }
 
