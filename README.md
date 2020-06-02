@@ -346,6 +346,7 @@ You like the package ? buy me a kofi :)
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
+          <td>✅</td>
         </tr>
         <tr>
           <td>🦻Listener Play Speed</td>
