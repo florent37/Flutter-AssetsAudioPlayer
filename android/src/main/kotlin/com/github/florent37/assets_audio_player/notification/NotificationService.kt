@@ -185,7 +185,11 @@ class NotificationService : Service() {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentTitle(action.audioMetas.title)
                 .setContentText(action.audioMetas.artist)
-                .setSubText(action.audioMetas.album)
+                .also {
+                    if(!action.audioMetas.album.isNullOrEmpty()) {
+                        it.setSubText(action.audioMetas.album)
+                    }
+                }
                 .setContentIntent(PendingIntent.getBroadcast(this, 0,
                         createReturnIntent(forAction = NotificationAction.ACTION_SELECT, forPlayer = action.playerId), PendingIntent.FLAG_CANCEL_CURRENT))
                 .also {
