@@ -3,8 +3,15 @@
 [![pub package](https://img.shields.io/pub/v/assets_audio_player.svg)](
 https://pub.dartlang.org/packages/assets_audio_player)
 <a href="https://github.com/Solido/awesome-flutter">
-   <img alt="Awesome Flutter" src="https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat-square" />
+   <img alt="Awesome Flutter" src="https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat" />
 </a>
+<img src="https://img.shields.io/badge/platform-
+android%20%7C%20
+ios%20%7C%20
+macos%20%7C%20
+web%20
+-%23989898" />
+
 
 Play music/audio stored in assets files (simultaneously) directly from Flutter (android / ios / web / macos). 
 
