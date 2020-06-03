@@ -197,6 +197,7 @@ class NotificationService : Service() {
                         it.setLargeIcon(bitmap)
                     }
                 }
+                .setShowWhen(false)
                 .build()
         startForeground(NOTIFICATION_ID, notification)
 
