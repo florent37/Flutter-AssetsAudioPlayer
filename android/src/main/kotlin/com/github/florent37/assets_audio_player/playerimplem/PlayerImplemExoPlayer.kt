@@ -6,6 +6,8 @@ import com.github.florent37.assets_audio_player.Player
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackParameters
+import com.google.android.exoplayer2.Player.REPEAT_MODE_ALL
+import com.google.android.exoplayer2.Player.REPEAT_MODE_OFF
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.MediaSource
@@ -27,6 +29,12 @@ class PlayerImplemExoPlayer(
 ) {
 
     private var mediaPlayer: ExoPlayer? = null
+    
+    override var loopSingleAudio: Boolean
+        get() = mediaPlayer?.repeatMode == REPEAT_MODE_ALL
+        set(value) {
+            mediaPlayer?.repeatMode = if(value) REPEAT_MODE_ALL else REPEAT_MODE_OFF
+        }
 
     override val isPlaying: Boolean
         get() = mediaPlayer?.isPlaying ?: false

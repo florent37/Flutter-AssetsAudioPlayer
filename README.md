@@ -2,6 +2,13 @@
 
 [![pub package](https://img.shields.io/pub/v/assets_audio_player.svg)](
 https://pub.dartlang.org/packages/assets_audio_player)
+<a href="https://github.com/Solido/awesome-flutter">
+   <img alt="Awesome Flutter" src="https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat" />
+</a>
+<img src="https://img.shields.io/badge/platform-android%20%7C%20ios%20%7C%20macos%20%7C%20web%20-%23989898" />
+
+
+[![Codemagic build status](https://api.codemagic.io/apps/5ed8002fe1907b001c67db52/5ed8002fe1907b001c67db51/status_badge.svg)](https://codemagic.io/apps/5ed8002fe1907b001c67db52/5ed8002fe1907b001c67db51/latest_build)
 
 Play music/audio stored in assets files (simultaneously) directly from Flutter (android / ios / web / macos). 
 
