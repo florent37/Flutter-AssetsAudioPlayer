@@ -171,6 +171,11 @@ class WebPlayerHtml extends WebPlayer {
     }
   }
 
+  @override
+  void loopSingleAudio(bool loop){
+    _audioElement?.loop = loop;
+  }
+
   void seekBy({double by}) {
     final current = currentPosition;
     final to = current + by;

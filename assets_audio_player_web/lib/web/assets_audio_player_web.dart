@@ -86,6 +86,12 @@ class AssetsAudioPlayerWebPlugin {
         _getOrCreate(id).forwardRewind(speed);
         return Future.value(true);
         break;
+      case "loopSingleAudio":
+        final String id = call.arguments["id"];
+        final bool loop = call.arguments["loop"];
+        _getOrCreate(id).loopSingleAudio(loop);
+        return Future.value(true);
+        break;
       case "seek":
         final String id = call.arguments["id"];
         final double to = call.arguments["to"];

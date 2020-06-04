@@ -67,4 +67,6 @@ abstract class WebPlayer {
   void seek({double to});
 
   void forwardRewind(double speed);
+
+  void loopSingleAudio(bool loop);
 }

@@ -25,6 +25,12 @@ class PlayerImplemMediaPlayer(
     override val currentPositionMs: Long
         get() = try { mediaPlayer?.currentPosition?.toLong() ?: 0 } catch (t: Throwable) { 0 }
 
+    override var loopSingleAudio: Boolean
+        get() = mediaPlayer?.isLooping ?: false
+        set(value) {
+            mediaPlayer?.isLooping = value
+        }
+    
     override fun stop() {
         mediaPlayer?.stop()
     }

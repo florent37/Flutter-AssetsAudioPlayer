@@ -280,12 +280,12 @@ class _MyAppState extends State<MyApp> {
                           },
                           onSelected: (myAudio) {
                             _assetsAudioPlayer.open(
-                              myAudio,
-                              autoStart: true,
-                              respectSilentMode: true,
-                              showNotification: true,
-                              playInBackground: PlayInBackground.enabled,
-                              notificationSettings: NotificationSettings(
+                                myAudio,
+                                autoStart: true,
+                                respectSilentMode: true,
+                                showNotification: true,
+                                playInBackground: PlayInBackground.enabled,
+                                notificationSettings: NotificationSettings(
                                   //seekBarEnabled: false,
                                   //stopEnabled: true,
                                   //customStopAction: (player){
@@ -295,7 +295,7 @@ class _MyAppState extends State<MyApp> {
                                   //customNextAction: (player) {
                                   //  print("next");
                                   //}
-                              )
+                                )
                             );
                           },
                           playing: playing,
