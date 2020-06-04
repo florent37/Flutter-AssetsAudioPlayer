@@ -293,7 +293,7 @@ class AssetsAudioPlayer(
                         return
                     }
                     val loop = args["loop"] as? Boolean ?: run {
-                        result.error("WRONG_FORMAT", "The specified argument(to) must be an loop.", null)
+                        result.error("WRONG_FORMAT", "The specified argument(loop) must be an Boolean.", null)
                         return
                     }
                     getOrCreatePlayer(id).loopSingleAudio(loop)

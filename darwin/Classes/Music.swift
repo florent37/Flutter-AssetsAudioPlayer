@@ -77,7 +77,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     let channel: FlutterMethodChannel
     let registrar: FlutterPluginRegistrar
-    var player: AVPlayer?
+    var player: AVQueuePlayer?
     
     var observerStatus: [NSKeyValueObservation] = []
     
@@ -86,6 +86,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     var _playingPath: String?
     var _lastOpenedPath: String?
     var notificationSettings: NotificationSettings?
+
+    var _loopSingleAudio = false
     
     init(channel: FlutterMethodChannel, registrar: FlutterPluginRegistrar) {
         self.channel = channel
@@ -415,7 +417,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             #endif
             
             let item = SlowMoPlayerItem(url: url)
-            self.player = AVPlayer(playerItem: item)
+            self.player = AVQueuePlayer(playerItem: item)
+
             
             self.displayMediaPlayerNotification = displayNotification
             self.notificationSettings = notificationSettings
@@ -598,6 +601,36 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             #endif
         }
     }
+
+    private var looper: Any?
+
+    func loopSingleAudio(loop: Bool) {
+        _loopSingleAudio = loop
+        
+        if(loop){
+            #if os(iOS)
+            if #available(iOS 10.0, *) {
+                self.looper = AVPlayerLooper(player: self.player!, templateItem: self.player!.items()[0])
+            }
+            #elseif os(OSX)
+            if #available(OSX 10.12, *) {
+                self.looper = AVPlayerLooper(player: self.player!, templateItem: self.player!.items()[0])
+            }
+            #endif
+        } else {
+            #if os(iOS)
+            if #available(iOS 10.0, *) {
+                (self.looper as? AVPlayerLooper)?.disableLooping()
+                self.looper = nil
+            }
+            #elseif os(OSX)
+            if #available(OSX 10.12, *) {
+                (self.looper as? AVPlayerLooper)?.disableLooping()
+                self.looper = nil
+            }
+            #endif
+        }
+    }
     
     var _currentTime : TimeInterval = 0
     private var currentTime : TimeInterval {
@@ -634,7 +667,12 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     var currentTimeTimer: Timer?
     
     @objc public func playerDidFinishPlaying(note: NSNotification){
-        self.channel.invokeMethod(Music.METHOD_FINISHED, arguments: true)
+        if(self._loopSingleAudio){
+            self.player?.seek(to: CMTime.zero)
+            self.player?.play()
+        } else {
+            self.channel.invokeMethod(Music.METHOD_FINISHED, arguments: true)
+        }
     }
     
     deinit {
@@ -909,7 +947,35 @@ class Music : NSObject, FlutterPlugin {
                     .setPlaySpeed(playSpeed: playSpeed);
                 result(true);
                 break;
-                
+            case "loopSingleAudio" :
+                guard let args = call.arguments as? NSDictionary else {
+                      result(FlutterError(
+                          code: "METHOD_CALL",
+                          message: call.method + " Arguments must be an NSDictionary",
+                          details: nil)
+                      );
+                      break;
+                }
+                guard let id = args["id"] as? String else {
+                    result(FlutterError(
+                        code: "METHOD_CALL",
+                        message: call.method + " Arguments[id] must be a String",
+                        details: nil)
+                    );
+                    break;
+                }
+                 guard let loop = args["loop"] as? Bool else {
+                     result(FlutterError(
+                         code: "METHOD_CALL",
+                         message: call.method + " Arguments[loop] must be a Bool",
+                         details: nil)
+                     );
+                     break;
+                 }
+                 self.getOrCreatePlayer(id: id)
+                    .loopSingleAudio(loop: loop);
+                 result(true);
+                 break;
             case "forwardRewind" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
