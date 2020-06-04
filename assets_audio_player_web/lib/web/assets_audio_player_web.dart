@@ -88,7 +88,7 @@ class AssetsAudioPlayerWebPlugin {
         break;
       case "loopSingleAudio":
         final String id = call.arguments["id"];
-        final bool speed = call.arguments["loop"];
+        final bool loop = call.arguments["loop"];
         _getOrCreate(id).loopSingleAudio(loop);
         return Future.value(true);
         break;
