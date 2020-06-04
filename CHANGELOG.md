@@ -1,6 +1,7 @@
-## 2.0.0+3
+## 2.0.0+5
 
 * Added MacOS support
+* Fixed gapeless loop (single audio)
 
 ## 1.7.0
 
