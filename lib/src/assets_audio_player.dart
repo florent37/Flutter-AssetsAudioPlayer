@@ -275,7 +275,17 @@ class AssetsAudioPlayer {
 
   /// assign the looping state : true -> looping, false -> not looping
   set loop(value) {
+    setLoop(value);
+  }
+
+  Future<void> setLoop(bool value) async {
+    _playlist.loop = value;
     _loop.value = value;
+    if(_playlist.isSingleAudio){
+      _loopSingleAudio(value);
+    } else {
+      _loopSingleAudio(false);
+    }
   }
 
   /// assign the shuffling state : true -> shuffling, false -> not shuffling
@@ -505,6 +515,7 @@ class AssetsAudioPlayer {
         playSpeed: _playlist.playSpeed,
         notificationSettings: _playlist.notificationSettings,
         autoStart: autoStart,
+        loop: _playlist.loop,
         seek: seek,
       );
     }
@@ -636,6 +647,7 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
     double playSpeed,
+    bool loop,
     NotificationSettings notificationSettings,
   }) async {
     final currentAudio = _lastOpenedAssetsAudio;
@@ -673,6 +685,8 @@ class AssetsAudioPlayer {
 
         await _sendChannel.invokeMethod('open', params);
 
+        await setLoop(loop);
+
         _playlistFinished.value = false;
       } catch (e) {
         _lastOpenedAssetsAudio = currentAudio; //revert to the previous audio
@@ -705,6 +719,7 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
     double playSpeed,
+    bool loop,
     NotificationSettings notificationSettings,
     PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
   }) async {
@@ -716,6 +731,7 @@ class AssetsAudioPlayer {
         respectSilentMode: respectSilentMode,
         showNotification: showNotification,
         playSpeed: playSpeed,
+        loop: loop,
         notificationSettings: notificationSettings,
         playInBackground: playInBackground);
     _playlist.clearPlayerAudio(shuffle);
@@ -749,6 +765,7 @@ class AssetsAudioPlayer {
     Duration seek,
     double playSpeed,
     NotificationSettings notificationSettings,
+    bool loop = false,
     PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
   }) async {
     Playlist playlist;
@@ -768,6 +785,7 @@ class AssetsAudioPlayer {
         respectSilentMode: respectSilentMode,
         showNotification: showNotification,
         seek: seek,
+        loop: loop,
         playSpeed: playSpeed,
         notificationSettings:
             notificationSettings ?? defaultNotificationSettings,
@@ -809,6 +827,13 @@ class AssetsAudioPlayer {
   Future<void> _play() async {
     await _sendChannel.invokeMethod('play', {
       "id": this.id,
+    });
+  }
+
+  Future<void> _loopSingleAudio(bool loop) async {
+    await _sendChannel.invokeMethod('loopSingleAudio', {
+      "id": this.id,
+      "loop": loop
     });
   }
 
@@ -988,6 +1013,7 @@ class _CurrentPlaylist {
   final double volume;
   final bool respectSilentMode;
   final bool showNotification;
+  bool loop;
   final double playSpeed;
   final NotificationSettings notificationSettings;
   final PlayInBackground playInBackground;
@@ -1080,6 +1106,8 @@ class _CurrentPlaylist {
     return index + 1 < indexList.length;
   }
 
+  bool get isSingleAudio => playlist.audios.length == 1;
+
   _CurrentPlaylist({
     @required this.playlist,
     this.volume,
@@ -1088,6 +1116,7 @@ class _CurrentPlaylist {
     this.playSpeed,
     this.notificationSettings,
     this.playInBackground,
+    this.loop,
   });
 
   void returnToFirst() {

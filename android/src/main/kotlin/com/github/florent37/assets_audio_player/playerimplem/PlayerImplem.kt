@@ -10,6 +10,7 @@ abstract class PlayerImplem(
         val onBuffering: ((Boolean) -> Unit),
         val onError: ((Throwable) -> Unit)
 ) {
+    abstract var loopSingleAudio: Boolean
     abstract val isPlaying: Boolean
     abstract val currentPositionMs: Long
     abstract fun stop()

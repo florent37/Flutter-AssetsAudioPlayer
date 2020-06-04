@@ -211,7 +211,7 @@ class Player(
         mediaPlayer = PlayerImplemExoPlayer(
                 onFinished = {
                     onFinished?.invoke()
-                    stop(pingListener = false)
+                    //stop(pingListener = false)
                 },
                 onBuffering = {
                     onBuffering?.invoke(it)
@@ -244,7 +244,7 @@ class Player(
         mediaPlayer = PlayerImplemMediaPlayer(
                 onFinished = {
                     onFinished?.invoke()
-                    stop(pingListener = false)
+                    //stop(pingListener = false)
                 },
                 onBuffering = {
                     onBuffering?.invoke(it)
@@ -372,6 +372,10 @@ class Player(
                 updateNotif()
             }
         }
+    }
+
+    fun loopSingleAudio(loop: Boolean){
+        mediaPlayer?.loopSingleAudio = loop
     }
 
     fun seek(milliseconds: Long) {

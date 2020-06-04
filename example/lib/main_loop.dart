@@ -28,9 +28,9 @@ class _MyAppState extends State {
       print("onRedayToPlay : $audio");
     });
     _assetsAudioPlayer.open(Audio(
-      "assets/audios/small_song.mp3",
-    ));
-    _assetsAudioPlayer.loop = true;
+      "assets/audios/water.mp3",
+    ), loop: true
+    );
     super.initState();
   }
 
