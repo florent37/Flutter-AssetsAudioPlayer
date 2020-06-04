@@ -281,7 +281,7 @@ class AssetsAudioPlayer {
   Future<void> setLoop(bool value) async {
     _playlist.loop = value;
     _loop.value = value;
-    if(_playlist.isSingleAudio){
+    if (_playlist.isSingleAudio) {
       _loopSingleAudio(value);
     } else {
       _loopSingleAudio(false);
@@ -831,10 +831,8 @@ class AssetsAudioPlayer {
   }
 
   Future<void> _loopSingleAudio(bool loop) async {
-    await _sendChannel.invokeMethod('loopSingleAudio', {
-      "id": this.id,
-      "loop": loop
-    });
+    await _sendChannel
+        .invokeMethod('loopSingleAudio', {"id": this.id, "loop": loop});
   }
 
   /// Tells the media player to play the current song

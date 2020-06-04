@@ -172,7 +172,7 @@ class WebPlayerHtml extends WebPlayer {
   }
 
   @override
-  void loopSingleAudio(bool loop){
+  void loopSingleAudio(bool loop) {
     _audioElement?.loop = loop;
   }
 
