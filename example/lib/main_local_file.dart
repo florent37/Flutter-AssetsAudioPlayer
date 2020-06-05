@@ -109,7 +109,11 @@ class _PlayerState extends State<Player> {
   @override
   void initState() {
     super.initState();
-    _player.open(Audio.file(this.widget.localPath), autoStart: false);
+    _player.open(
+        Audio.file(this.widget.localPath, metas: Metas(title: 'hello world')),
+        autoStart: false,
+        showNotification: true
+    );
   }
 
   @override

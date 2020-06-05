@@ -142,7 +142,8 @@ class Audio implements Playable {
 
   Audio.file(this.path, {Metas metas})
       : audioType = AudioType.file,
-        package = null;
+        package = null,
+        _metas = metas;
 
   Audio.network(this.path, {Metas metas})
       : audioType = AudioType.network,
