@@ -27,36 +27,13 @@ class _MyAppState extends State<MyApp> {
         name: "Online",
         audio: Audio.network(
             "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3"),
-        imageUrl:
-            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
-    MyAudio(
-        name: "Rock",
-        audio: Audio("assets/audios/rock.mp3"),
-        imageUrl:
-            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
-    MyAudio(
-        name: "Country",
-        audio: Audio("assets/audios/country.mp3"),
-        imageUrl:
-            "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
-    MyAudio(
-        name: "Electronic",
-        audio: Audio("assets/audios/electronic.mp3"),
-        imageUrl: "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
-    MyAudio(
-        name: "HipHop",
-        audio: Audio("assets/audios/hiphop.mp3"),
-        imageUrl:
-            "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg "),
-    MyAudio(
-        name: "Pop",
-        audio: Audio("assets/audios/pop.mp3"),
-        imageUrl:
-            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
-    MyAudio(
-        name: "Instrumental",
-        audio: Audio("assets/audios/instrumental.mp3"),
-        imageUrl: "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
+        imageUrl: "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+    MyAudio(name: "Rock", audio: Audio("assets/audios/rock.mp3"), imageUrl: "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+    MyAudio(name: "Country", audio: Audio("assets/audios/country.mp3"), imageUrl: "https://images-na.ssl-images-amazon.com/images/I/81M1U6GPKEL._SL1500_.jpg"),
+    MyAudio(name: "Electronic", audio: Audio("assets/audios/electronic.mp3"), imageUrl: "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
+    MyAudio(name: "HipHop", audio: Audio("assets/audios/hiphop.mp3"), imageUrl: "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg "),
+    MyAudio(name: "Pop", audio: Audio("assets/audios/pop.mp3"), imageUrl: "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+    MyAudio(name: "Instrumental", audio: Audio("assets/audios/instrumental.mp3"), imageUrl: "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
   ];
 
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
@@ -140,8 +117,10 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                 final isPlaying = snapshotPlaying.data;
                 return Neumorphic(
                   margin: EdgeInsets.all(8),
+                  style: NeumorphicStyle(
+                    boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
+                  ),
                   padding: const EdgeInsets.all(12.0),
-                  boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
                   child: Column(
                     children: <Widget>[
                       Row(
@@ -153,11 +132,12 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Neumorphic(
-                                    boxShape: NeumorphicBoxShape.circle(),
                                     style: NeumorphicStyle(
-                                        depth: 8,
-                                        surfaceIntensity: 1,
-                                        shape: NeumorphicShape.concave),
+                                      boxShape: NeumorphicBoxShape.circle(),
+                                      depth: 8,
+                                      surfaceIntensity: 1,
+                                      shape: NeumorphicShape.concave,
+                                    ),
                                     child: Image.network(
                                       widget.myAudio.imageUrl,
                                       height: 50,
@@ -185,8 +165,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                               },
                               onPlay: () {
                                 if (_assetsAudioPlayer.current.value == null) {
-                                  _assetsAudioPlayer.open(widget.myAudio.audio,
-                                      autoStart: true);
+                                  _assetsAudioPlayer.open(widget.myAudio.audio, autoStart: true);
                                 } else {
                                   _assetsAudioPlayer.playOrPause();
                                 }

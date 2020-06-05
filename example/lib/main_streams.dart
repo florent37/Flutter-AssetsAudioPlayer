@@ -150,8 +150,12 @@ class _MyAppState extends State<MyApp> {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Neumorphic(
-                              boxShape: NeumorphicBoxShape.circle(),
-                              style: NeumorphicStyle(depth: 8, surfaceIntensity: 1, shape: NeumorphicShape.concave),
+                              style: NeumorphicStyle(
+                                depth: 8,
+                                surfaceIntensity: 1,
+                                shape: NeumorphicShape.concave,
+                                boxShape: NeumorphicBoxShape.circle(),
+                              ),
                               child: myAudio.metas.image.type == ImageType.network
                                   ? Image.network(
                                       myAudio.metas.image.path,
@@ -174,10 +178,12 @@ class _MyAppState extends State<MyApp> {
                     Align(
                       alignment: Alignment.topRight,
                       child: NeumorphicButton(
-                        boxShape: NeumorphicBoxShape.circle(),
+                        style: NeumorphicStyle(
+                          boxShape: NeumorphicBoxShape.circle(),
+                        ),
                         padding: EdgeInsets.all(18),
                         margin: EdgeInsets.all(18),
-                        onClick: () {
+                        onPressed: () {
                           AssetsAudioPlayer.playAndForget(Audio("assets/audios/horn.mp3"));
                         },
                         child: Icon(
