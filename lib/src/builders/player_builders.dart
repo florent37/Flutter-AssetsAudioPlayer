@@ -11,6 +11,7 @@ enum _PlayingBuilderType {
   isLooping,
   isBuffering,
   realtimePlayingInfos,
+  playerState,
 }
 
 typedef PlayingWidgetBuilder = Widget Function(
@@ -31,6 +32,8 @@ typedef IsBufferingWidgetBuilder = Widget Function(
     BuildContext context, bool isBuffering);
 typedef RealtimeWidgetBuilder = Widget Function(
     BuildContext context, RealtimePlayingInfos realtimePlayingInfos);
+typedef PlayerStateBuilder = Widget Function(
+    BuildContext context, PlayerState playerState);
 
 class PlayerBuilder extends StatefulWidget {
   final AssetsAudioPlayer player;
@@ -93,6 +96,12 @@ class PlayerBuilder extends StatefulWidget {
       {Key key, @required this.player, @required CurrentWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.current,
+        super(key: key);
+
+  const PlayerBuilder.playerState(
+      {Key key, @required this.player, @required PlayerStateBuilder builder})
+      : this.builder = builder,
+        this.builderType = _PlayingBuilderType.playerState,
         super(key: key);
 
   @override
@@ -179,6 +188,15 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
         return StreamBuilder(
           stream: widget.player.realtimePlayingInfos,
           initialData: null,
+          builder: (context, snap) {
+            return this.widget.builder(context, snap.data);
+          },
+        );
+        break;
+      case _PlayingBuilderType.playerState:
+        return StreamBuilder(
+          stream: widget.player.playerState,
+          initialData: PlayerState.stop,
           builder: (context, snap) {
             return this.widget.builder(context, snap.data);
           },

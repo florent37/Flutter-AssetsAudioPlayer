@@ -40,6 +40,12 @@ const METHOD_NOTIFICATION_STOP = "player.stop";
 const METHOD_NOTIFICATION_PLAY_OR_PAUSE = "player.playOrPause";
 const METHOD_PLAY_SPEED = "player.playSpeed";
 
+enum PlayerState {
+  play,
+  pause,
+  stop,
+}
+
 /// The AssetsAudioPlayer, playing audios from assets/
 /// Example :
 ///
@@ -161,6 +167,9 @@ class AssetsAudioPlayer {
   ///             return Text(isPlaying ? "Pause" : "Play");
   ///         }),
   ValueStream<bool> get isPlaying => _isPlaying.stream;
+
+  final BehaviorSubject<PlayerState> _playerState = BehaviorSubject<PlayerState>.seeded(PlayerState.stop);
+  ValueStream<PlayerState> get playerState => _playerState.stream;
 
   /// Then mediaplayer playing audio (mutable)
   final BehaviorSubject<Playing> _current = BehaviorSubject();
@@ -321,6 +330,7 @@ class AssetsAudioPlayer {
     _loop.close();
     _shuffle.close();
     _playSpeed.close();
+    _playerState.close();
     _isBuffering.close();
     _forwardRewindSpeed.close();
     _realtimePlayingInfos.close();
@@ -356,7 +366,15 @@ class AssetsAudioPlayer {
           break;
         case METHOD_CURRENT:
           if (call.arguments == null) {
+            _playlistAudioFinished.add(Playing(
+              audio: this._current.value.audio,
+              index: this._current.value.index,
+              hasNext: false,
+              playlist: this._current.value.playlist,
+            ));
+            _playlistFinished.value = true;
             _current.value = null;
+            _playerState.value = PlayerState.stop;
           } else {
             final totalDurationMs =
                 _toDuration(call.arguments["totalDurationMs"]);
@@ -390,7 +408,9 @@ class AssetsAudioPlayer {
           }
           break;
         case METHOD_IS_PLAYING:
-          _isPlaying.value = call.arguments;
+          final bool playing = call.arguments;
+          _isPlaying.value = playing;
+          _playerState.value = playing ? PlayerState.play : PlayerState.pause;
           break;
         case METHOD_VOLUME:
           _volume.value = call.arguments;
@@ -589,7 +609,7 @@ class AssetsAudioPlayer {
     if (nextDone) {
       _playlistFinished.value = false; //continue playing the playlist
     } else {
-      _playlistFinished.value = true; // no next elements -> finished
+        _playlistFinished.value = true; // no next elements -> finished
     }
   }
 

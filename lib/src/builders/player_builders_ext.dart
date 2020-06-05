@@ -91,4 +91,14 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
         player: this,
         builder: builder,
       );
+
+  PlayerBuilder builderPlayerState({
+    Key key,
+    @required PlayerStateBuilder builder,
+  }) =>
+      PlayerBuilder.playerState(
+        key: key,
+        player: this,
+        builder: builder,
+      );
 }

@@ -395,7 +395,7 @@ class AssetsAudioPlayer(
                         MediaButtonsReceiver.MediaButtonAction.playOrPause -> player.askPlayOrPause()
                         MediaButtonsReceiver.MediaButtonAction.next -> player.next()
                         MediaButtonsReceiver.MediaButtonAction.prev -> player.prev()
-                        MediaButtonsReceiver.MediaButtonAction.stop -> player.stop()
+                        MediaButtonsReceiver.MediaButtonAction.stop -> player.askStop()
                     }
                 }
     }
