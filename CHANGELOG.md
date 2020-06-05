@@ -1,3 +1,8 @@
+## 2.0.1
+
+* Added `.playerState` (play/pause/stop)
+* Stop now ping finish listeners
+
 ## 2.0.0+6
 
 * Added MacOS support

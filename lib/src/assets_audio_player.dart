@@ -168,7 +168,8 @@ class AssetsAudioPlayer {
   ///         }),
   ValueStream<bool> get isPlaying => _isPlaying.stream;
 
-  final BehaviorSubject<PlayerState> _playerState = BehaviorSubject<PlayerState>.seeded(PlayerState.stop);
+  final BehaviorSubject<PlayerState> _playerState =
+      BehaviorSubject<PlayerState>.seeded(PlayerState.stop);
   ValueStream<PlayerState> get playerState => _playerState.stream;
 
   /// Then mediaplayer playing audio (mutable)
@@ -609,7 +610,7 @@ class AssetsAudioPlayer {
     if (nextDone) {
       _playlistFinished.value = false; //continue playing the playlist
     } else {
-        _playlistFinished.value = true; // no next elements -> finished
+      _playlistFinished.value = true; // no next elements -> finished
     }
   }
 
