@@ -51,7 +51,12 @@ class _MyAppState extends State {
     _assetsAudioPlayer.onReadyToPlay.listen((audio) {
       print("onRedayToPlay : $audio");
     });
-    _assetsAudioPlayer.open(Playlist(audios: audios), showNotification: true, autoStart: true);
+    _assetsAudioPlayer.open(
+        Playlist(audios: audios),
+        showNotification: false,
+        playInBackground: PlayInBackground.enabled,
+        respectSilentMode: true
+    );
     super.initState();
   }
 
