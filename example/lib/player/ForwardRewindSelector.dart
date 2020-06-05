@@ -30,7 +30,9 @@ class ForwardRewindSelector extends StatelessWidget {
         groupValue: this.speed,
         padding: EdgeInsets.all(12.0),
         value: value,
-        boxShape: NeumorphicBoxShape.circle(),
+        style: NeumorphicRadioStyle(
+          boxShape: NeumorphicBoxShape.circle(),
+        ),
         child: Text("x$value"),
         onChanged: (v) {
           this.onChange(v);

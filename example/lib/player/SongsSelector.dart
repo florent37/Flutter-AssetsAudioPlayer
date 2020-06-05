@@ -14,9 +14,9 @@ class SongsSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Neumorphic(
-      boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(9)),
       style: NeumorphicStyle(
         depth: -8,
+        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(9)),
       ),
       margin: EdgeInsets.all(8),
       padding: EdgeInsets.all(8),
@@ -26,7 +26,7 @@ class SongsSelector extends StatelessWidget {
           FractionallySizedBox(
             widthFactor: 1,
             child: NeumorphicButton(
-              onClick: () {
+              onPressed: () {
                 this.onPlaylistSelected(this.audios);
               },
               child: Center(child: Text("All as playlist")),
@@ -42,9 +42,9 @@ class SongsSelector extends StatelessWidget {
                 final isPlaying = item.path == this.playing?.audio?.assetAudioPath;
                 return Neumorphic(
                   margin: EdgeInsets.all(4),
-                  boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
                   style: NeumorphicStyle(
                     depth: isPlaying ? -4 : 0,
+                    boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
                   ),
                   child: ListTile(
                       leading: Material(

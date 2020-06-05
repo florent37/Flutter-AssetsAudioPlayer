@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_neumorphic: ^1.0.5+1
+  flutter_neumorphic: ^3.0.0
 
   # for local file test
   dio: 3.0.9

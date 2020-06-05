@@ -29,7 +29,9 @@ class PlayingControls extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       children: [
         NeumorphicRadio(
-          boxShape: NeumorphicBoxShape.circle(),
+          style: NeumorphicRadioStyle(
+            boxShape: NeumorphicBoxShape.circle(),
+          ),
           padding: EdgeInsets.all(12),
           value: true,
           groupValue: this.isLooping,
@@ -45,19 +47,22 @@ class PlayingControls extends StatelessWidget {
           width: 12,
         ),
         NeumorphicButton(
-          isEnabled: isPlaylist,
-          boxShape: NeumorphicBoxShape.circle(),
+          style: NeumorphicStyle(
+            boxShape: NeumorphicBoxShape.circle(),
+          ),
           padding: EdgeInsets.all(18),
-          onClick: this.onPrevious,
+          onPressed: isPlaylist ? this.onPrevious : null,
           child: Icon(AssetAudioPlayerIcons.to_start),
         ),
         SizedBox(
           width: 12,
         ),
         NeumorphicButton(
-          boxShape: NeumorphicBoxShape.circle(),
+          style: NeumorphicStyle(
+            boxShape: NeumorphicBoxShape.circle(),
+          ),
           padding: EdgeInsets.all(24),
-          onClick: this.onPlay,
+          onPressed: this.onPlay,
           child: Icon(
             isPlaying
                 ? AssetAudioPlayerIcons.pause
@@ -69,11 +74,12 @@ class PlayingControls extends StatelessWidget {
           width: 12,
         ),
         NeumorphicButton(
-          isEnabled: isPlaylist,
-          boxShape: NeumorphicBoxShape.circle(),
+          style: NeumorphicStyle(
+            boxShape: NeumorphicBoxShape.circle(),
+          ),
           padding: EdgeInsets.all(18),
           child: Icon(AssetAudioPlayerIcons.to_end),
-          onClick: this.onNext,
+          onPressed: isPlaylist ? this.onNext : null,
         ),
         SizedBox(
           width: 45,
