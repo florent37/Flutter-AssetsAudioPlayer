@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
 
@@ -23,8 +25,9 @@ const _DEFAULT_PLAY_IN_BACKGROUND = PlayInBackground.enabled;
 
 class AssetAudioPlayerGroup {
   final bool showNotification;
-  final bool respectSilentMode ;
-  final PlayInBackground playInBackground ;
+  final bool respectSilentMode;
+
+  final PlayInBackground playInBackground;
 
   final PlayerGroupMetasCallback updateNotification;
 
@@ -34,7 +37,11 @@ class AssetAudioPlayerGroup {
   final PlayerGroupCallback onNotificationPaused;
   final PlayerGroupCallback onNotificationStop;
 
-  const AssetAudioPlayerGroup({
+  final List<AssetsAudioPlayer> _players = [];
+
+  final List<StreamSubscription> _subscriptions = [];
+
+  AssetAudioPlayerGroup({
     this.showNotification = _DEFAULT_SHOW_NOTIFICATION,
 
     this.updateNotification,
@@ -45,7 +52,6 @@ class AssetAudioPlayerGroup {
 
     this.respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
     this.playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
-
   });
 
   Future<void> add(Audio audio, {
@@ -54,11 +60,61 @@ class AssetAudioPlayerGroup {
     double volume,
     Duration seek,
     double playSpeed,
-  }){
-    //TODO
+  }) {
+    final player = AssetsAudioPlayer.newPlayer();
+    player.open(audio, showNotification: false,
+      seek: seek,
+      autoStart: autoStart,
+      volume: volume,
+      loop: loop,
+      respectSilentMode: respectSilentMode,
+      playInBackground: playInBackground,
+      playSpeed: playSpeed
+    );
+    addPlayer(player);
   }
 
-  void dispose(){
-    //TODO
+  Future<void> addPlayer(AssetsAudioPlayer player) {
+    StreamSubscription finishedSubscription;
+    finishedSubscription = player.playlistFinished.listen((event) {
+      finishedSubscription.cancel();
+      _subscriptions.remove(finishedSubscription);
+    });
+    _subscriptions.add(finishedSubscription);
+    _players.add(player);
+  }
+
+  Future<void> play(){
+    return Future.wait(
+        _players.map(
+                (e) => e.play()
+        ).toList()
+    );
+  }
+
+  Future<void> pause(){
+    return Future.wait(
+        _players.map(
+                (e) => e.pause()
+        ).toList()
+    );
+  }
+
+  Future<void> stop(){
+    return Future.wait(
+        _players.map(
+                (e) => e.stop()
+        ).toList()
+    );
+  }
+
+  void dispose() {
+    _subscriptions.forEach((element) {
+      element.cancel();
+    });
+    _subscriptions.clear();
+    _players.forEach((element) {
+      element.dispose();
+    });
   }
 }
