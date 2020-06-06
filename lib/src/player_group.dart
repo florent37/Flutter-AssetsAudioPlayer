@@ -99,7 +99,10 @@ class AssetAudioPlayerGroup {
 
   ///Called when an audio is added or removed (/finished)
   void _onPlayersChanged() async {
-    final metas = updateNotification();
+    if(updateNotification != null) {
+      final metas = await updateNotification(this, playingAudios);
+      //TODO
+    }
   }
 
   Future<void> play(){
