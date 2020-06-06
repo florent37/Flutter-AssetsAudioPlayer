@@ -74,14 +74,28 @@ class AssetAudioPlayerGroup {
     addPlayer(player);
   }
 
+  Future<void> removePlayer(AssetsAudioPlayer player) {
+    bool removed = _players.remove(player);
+    if(removed) {
+      _onPlayersChanged();
+    }
+  }
+
   Future<void> addPlayer(AssetsAudioPlayer player) {
     StreamSubscription finishedSubscription;
     finishedSubscription = player.playlistFinished.listen((event) {
       finishedSubscription.cancel();
       _subscriptions.remove(finishedSubscription);
+      removePlayer(player);
     });
     _subscriptions.add(finishedSubscription);
     _players.add(player);
+    _onPlayersChanged();
+  }
+
+  ///Called when an audio is added or removed (/finished)
+  void _onPlayersChanged(){
+
   }
 
   Future<void> play(){
