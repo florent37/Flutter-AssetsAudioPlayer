@@ -54,6 +54,10 @@ class AssetAudioPlayerGroup {
     this.playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
   });
 
+  List<PlayingAudio> get playingAudios => _players.map((e) =>
+    e.current.value.audio
+  ).toList();
+
   Future<void> add(Audio audio, {
     bool autoStart = _DEFAULT_AUTO_START,
     bool loop = false,
@@ -94,8 +98,8 @@ class AssetAudioPlayerGroup {
   }
 
   ///Called when an audio is added or removed (/finished)
-  void _onPlayersChanged(){
-
+  void _onPlayersChanged() async {
+    final metas = updateNotification();
   }
 
   Future<void> play(){
