@@ -843,6 +843,36 @@ To enable http calls on macOs, you have to add input/output calls capabilities i
 <true/>
 ```
 
+and in your
+
+`Runner/DebugProfile.entitlements`
+
+add 
+
+```
+<key>com.apple.security.network.client</key>
+<true/>
+```
+
+Complete `Runner/DebugProfile.entitlements`
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<key>com.apple.security.cs.allow-jit</key>
+	<true/>
+	<key>com.apple.security.network.server</key>
+	<true/>
+	<key>com.apple.security.network.client</key>
+	<true/>
+</dict>
+</plist>
+```
+
 # 🌐 Web Support
 
 Web support is using [import_js_library](https://pub.dev/packages/import_js_library) to import the [Howler.js library](https://howlerjs.com/)
