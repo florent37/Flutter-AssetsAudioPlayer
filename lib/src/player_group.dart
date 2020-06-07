@@ -129,22 +129,12 @@ class AssetsAudioPlayerGroup {
     await _addPlayer(player);
   }
 
-  /*
-  Future<void> addAll(
-    List<Audio> audios, {
-    bool loop = false,
-    double volume,
-    double playSpeed,
-  }) async {
+  Future<void> addAll(List<Audio> audios) async {
     for (Audio audio in audios)
       (await this.add(
         audio,
-        volume: volume,
-        loop: loop,
-        playSpeed: playSpeed,
       ));
   }
-   */
 
   Future<void> removeAudio(Audio audio) async {
     for (AssetsAudioPlayer player in _players) {
