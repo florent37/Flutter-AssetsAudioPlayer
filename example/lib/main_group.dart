@@ -59,7 +59,15 @@ class _MyAppState extends State<MyApp> {
     ),
   ];
 
-  final AssetsAudioPlayerGroup _assetsAudioPlayerGroup = AssetsAudioPlayerGroup();
+  final AssetsAudioPlayerGroup _assetsAudioPlayerGroup = AssetsAudioPlayerGroup(
+    updateNotification: (player, playing) async {
+      return PlayerGroupMetas(
+        title: "title",
+        subTitle: "subtitle ${playing.length}",
+        image: MetasImage.asset("assets/images/country.jpg"),
+      );
+    }
+  );
   //final List<StreamSubscription> _subscriptions = [];
 
   @override
@@ -81,6 +89,7 @@ class _MyAppState extends State<MyApp> {
       print("playerState : $playerState");
     }));
     */
+    _assetsAudioPlayerGroup.addAll(audios);
     super.initState();
   }
 

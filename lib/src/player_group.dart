@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 
 typedef PlayerGroupCallback = void Function(AssetsAudioPlayerGroup playerGroup, List<PlayingAudio> audios);
@@ -8,6 +9,7 @@ typedef PlayerGroupMetasCallback = Future<PlayerGroupMetas> Function(AssetsAudio
 
 const _DEFAULT_RESPECT_SILENT_MODE = false;
 const _DEFAULT_SHOW_NOTIFICATION = false;
+const _DEFAULT_NOTIFICATION_STOP_ENABLED = true;
 const _DEFAULT_PLAY_IN_BACKGROUND = PlayInBackground.enabled;
 
 class AudioFinished {
@@ -18,9 +20,10 @@ class AudioFinished {
 }
 
 class AssetsAudioPlayerGroup {
-
   final bool showNotification;
   final bool respectSilentMode;
+
+  final bool notificationStopEnabled;
 
   final PlayInBackground playInBackground;
 
@@ -37,44 +40,53 @@ class AssetsAudioPlayerGroup {
   final List<StreamSubscription> _subscriptions = [];
 
   final BehaviorSubject<bool> _isPlaying = BehaviorSubject<bool>.seeded(false);
+
   ValueStream<bool> get isPlaying => _isPlaying.stream;
 
   //TODO add streams for audio finished
 
   AssetsAudioPlayerGroup({
     this.showNotification = _DEFAULT_SHOW_NOTIFICATION,
-
-    this.updateNotification,
+    @required this.updateNotification,
+    this.notificationStopEnabled = _DEFAULT_NOTIFICATION_STOP_ENABLED,
     this.onNotificationOpened,
     this.onNotificationPlay,
     this.onNotificationPause,
     this.onNotificationStop,
-
     this.respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
     this.playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
   });
 
-  List<PlayingAudio> get playingAudios =>
-      _players.map((e) =>
-      e.current.value.audio
-      ).toList();
+  List<PlayingAudio> get playingAudios {
+    final List<PlayingAudio> audios = <PlayingAudio>[];
+    for (final player in _players) {
+      final audio = player.current?.value?.audio;
+      if (audio != null) {
+        audios.add(audio);
+      }
+    }
+    return audios;
+  }
 
   NotificationSettings __notificationSettings;
+
   //intialize the first time
   NotificationSettings get _notificationSettings {
     if (__notificationSettings == null) {
       __notificationSettings = NotificationSettings(
-          stopEnabled: true,
+          stopEnabled: this.notificationStopEnabled,
           seekBarEnabled: false,
+          nextEnabled: false,
+          prevEnabled: false,
           customPlayPauseAction: (player) {
             if (player.isPlaying.value) {
-              if(this.onNotificationPause != null){
+              if (this.onNotificationPause != null) {
                 this.onNotificationPause(this, playingAudios);
               } else {
                 _pause();
               }
             } else {
-              if(this.onNotificationPlay != null){
+              if (this.onNotificationPlay != null) {
                 this.onNotificationPlay(this, playingAudios);
               } else {
                 _play();
@@ -82,28 +94,31 @@ class AssetsAudioPlayerGroup {
             }
           },
           customStopAction: (player) {
-            if(this.onNotificationStop != null){
+            if (this.onNotificationStop != null) {
               this.onNotificationStop(this, playingAudios);
             } else {
               _stop();
             }
-          }
-      );
+          });
     }
     return __notificationSettings;
   }
 
-  Future<void> add(Audio audio, {
+  Future<void> add(
+    Audio audio, {
     bool loop = false,
     double volume,
     Duration seek,
     double playSpeed,
   }) async {
     final player = AssetsAudioPlayer.newPlayer();
-    player.open(audio,
-      showNotification: false, //not need here, we'll call another method `changeNotificationForGroup`
+    player.open(
+      audio,
+      showNotification: false,
+      //not need here, we'll call another method `changeNotificationForGroup`
       seek: seek,
-      autoStart: isPlaying.value, //need to play() for player group
+      autoStart: isPlaying.value,
+      //need to play() for player group
       volume: volume,
       loop: loop,
       respectSilentMode: respectSilentMode,
@@ -114,25 +129,26 @@ class AssetsAudioPlayerGroup {
     await _addPlayer(player);
   }
 
-  Future<void> addAll(List<Audio> audios, {
+  /*
+  Future<void> addAll(
+    List<Audio> audios, {
     bool loop = false,
     double volume,
-    Duration seek,
     double playSpeed,
   }) async {
-    for(Audio audio in audios)(
-      await this.add(audio,
-        seek: seek,
+    for (Audio audio in audios)
+      (await this.add(
+        audio,
         volume: volume,
         loop: loop,
         playSpeed: playSpeed,
-      )
-    );
+      ));
   }
+   */
 
   Future<void> removeAudio(Audio audio) async {
-    for(AssetsAudioPlayer player in _players){
-      if(player.current?.value?.audio?.audio == audio){
+    for (AssetsAudioPlayer player in _players) {
+      if (player.current?.value?.audio?.audio == audio) {
         await _removePlayer(player);
       }
     }
@@ -147,10 +163,12 @@ class AssetsAudioPlayerGroup {
 
   Future<void> _addPlayer(AssetsAudioPlayer player) async {
     StreamSubscription finishedSubscription;
-    finishedSubscription = player.playlistFinished.listen((event) {
-      finishedSubscription.cancel();
-      _subscriptions.remove(finishedSubscription);
-      _removePlayer(player);
+    finishedSubscription = player.playlistFinished.listen((finished) {
+      if (finished) {
+        finishedSubscription.cancel();
+        _subscriptions.remove(finishedSubscription);
+        _removePlayer(player);
+      }
     });
     _subscriptions.add(finishedSubscription);
     _players.add(player);
@@ -164,13 +182,15 @@ class AssetsAudioPlayerGroup {
       final newNotificationsMetas = await updateNotification(this, playingAudios);
       if (_players.isNotEmpty) {
         final firstPlayer = _players.first;
-        firstPlayer.changeNotificationForGroup( //TODO find a way to protect it
+        firstPlayer.changeNotificationForGroup(
+          //TODO find a way to protect it
           this,
           isPlaying: isPlaying,
+          notificationSettings: this._notificationSettings,
           metas: Metas(
-              title: newNotificationsMetas.title,
-              artist: newNotificationsMetas.subTitle,
-              image: newNotificationsMetas.image
+            title: newNotificationsMetas.title,
+            artist: newNotificationsMetas.subTitle,
+            image: newNotificationsMetas.image,
           ),
         );
       }
@@ -188,6 +208,7 @@ class AssetsAudioPlayerGroup {
       }
     }
     _isPlaying.value = true;
+    await _onPlayersChanged();
   }
 
   Future<void> pause() {
@@ -229,7 +250,7 @@ class AssetsAudioPlayerGroup {
   }
 
   Future<void> playOrPause() async {
-    if(isPlaying.value){
+    if (isPlaying.value) {
       await pause();
     } else {
       await play();
