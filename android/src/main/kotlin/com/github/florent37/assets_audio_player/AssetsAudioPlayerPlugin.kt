@@ -323,6 +323,27 @@ class AssetsAudioPlayer(
                     return
                 }
             }
+            "forceNotificationForGroup" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    val isPlaying = args["isPlaying"] as? Boolean ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument(isPlaying) must be an Boolean.", null)
+                        return
+                    }
+
+                    val audioMetas = fetchAudioMetas(args)
+                    val notificationSettings = fetchNotificationSettings(args)
+
+                    getOrCreatePlayer(id).forceNotificationForGroup(audioMetas = audioMetas, isPlaying = isPlaying, notificationSettings= notificationSettings)
+                    result.success(null)
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
             "open" -> {
                 (call.arguments as? Map<*, *>)?.let { args ->
 

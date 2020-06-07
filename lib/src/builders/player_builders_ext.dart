@@ -102,3 +102,15 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
         builder: builder,
       );
 }
+
+extension AssetAudioPlayerGroupBuilder on AssetsAudioPlayerGroup {
+  PlayerGroupBuilder builderIsPlaying({
+    Key key,
+    @required PlayingWidgetBuilder builder,
+  }) =>
+      PlayerGroupBuilder.isPlaying(
+        key: key,
+        player: this,
+        builder: builder,
+      );
+}

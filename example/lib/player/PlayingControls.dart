@@ -15,7 +15,7 @@ class PlayingControls extends StatelessWidget {
   PlayingControls({
     @required this.isPlaying,
     this.isPlaylist = false,
-    @required this.isLooping,
+    this.isLooping,
     this.toggleLoop,
     this.onPrevious,
     @required this.onPlay,

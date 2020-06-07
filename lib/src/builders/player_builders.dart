@@ -206,3 +206,37 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
     return SizedBox();
   }
 }
+
+class PlayerGroupBuilder extends StatefulWidget {
+  final AssetsAudioPlayerGroup player;
+  final dynamic builder;
+  final _PlayingBuilderType builderType;
+
+  const PlayerGroupBuilder.isPlaying(
+      {Key key, @required this.player, @required PlayingWidgetBuilder builder})
+      : this.builder = builder,
+        this.builderType = _PlayingBuilderType.isPlaying,
+        super(key: key);
+
+  @override
+  createState() => _PlayerBuilderGroupState();
+}
+
+class _PlayerBuilderGroupState extends State<PlayerGroupBuilder> {
+  @override
+  Widget build(BuildContext context) {
+    switch (widget.builderType) {
+      case _PlayingBuilderType.isPlaying:
+        return StreamBuilder(
+          stream: widget.player.isPlaying,
+          initialData: false,
+          builder: (context, snap) {
+            return this.widget.builder(context, snap.data);
+          },
+        );
+        break;
+      default: /* do nothing */
+    }
+    return SizedBox();
+  }
+}

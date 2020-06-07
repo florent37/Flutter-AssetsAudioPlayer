@@ -257,3 +257,15 @@ void writeAudioMetasInto(
     }
   }
 }
+
+class PlayerGroupMetas {
+  final String title;
+  final String subTitle;
+  final MetasImage image;
+
+  PlayerGroupMetas({
+    this.title,
+    this.subTitle,
+    this.image,
+  });
+}
