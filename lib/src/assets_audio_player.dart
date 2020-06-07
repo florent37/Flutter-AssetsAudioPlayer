@@ -741,25 +741,6 @@ class AssetsAudioPlayer {
     }
   }
 
-  Future<void> changeNotificationForGroup(
-    AssetsAudioPlayerGroup playerGroup, {
-    Metas metas,
-    NotificationSettings notificationSettings,
-    bool isPlaying = true,
-  }) async {
-    if (playerGroup != null) {
-      final Map<String, dynamic> params = {
-        "id": id,
-        "isPlaying": isPlaying,
-      };
-
-      writeAudioMetasInto(params, metas);
-      writeNotificationSettingsInto(params, notificationSettings);
-
-      await _sendChannel.invokeMethod('forceNotificationForGroup', params);
-    }
-  }
-
   Future<void> _openPlaylist(
     Playlist playlist, {
     bool autoStart = _DEFAULT_AUTO_START,

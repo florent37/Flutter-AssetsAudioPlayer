@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 
 typedef PlayerGroupCallback = void Function(AssetsAudioPlayerGroup playerGroup, List<PlayingAudio> audios);
@@ -20,6 +21,9 @@ class AudioFinished {
 }
 
 class AssetsAudioPlayerGroup {
+
+  final MethodChannel _sendChannel = const MethodChannel('assets_audio_player');
+
   final bool showNotification;
   final bool respectSilentMode;
 
@@ -35,7 +39,13 @@ class AssetsAudioPlayerGroup {
   final PlayerGroupCallback onNotificationPause;
   final PlayerGroupCallback onNotificationStop;
 
-  final List<AssetsAudioPlayer> _players = [];
+  final Map<Audio, AssetsAudioPlayer> _audiosWithPlayers = {};
+
+  //copy of _audiosWithPlayers
+  Map<Audio, AssetsAudioPlayer> get audiosWithPlayers => Map.from(_audiosWithPlayers);
+
+  List<Audio> get audios => _audiosWithPlayers.keys.toList();
+  List<AssetsAudioPlayer> get players => _audiosWithPlayers.values.toList();
 
   final List<StreamSubscription> _subscriptions = [];
 
@@ -59,7 +69,7 @@ class AssetsAudioPlayerGroup {
 
   List<PlayingAudio> get playingAudios {
     final List<PlayingAudio> audios = <PlayingAudio>[];
-    for (final player in _players) {
+    for (final player in players) {
       final audio = player.current?.value?.audio;
       if (audio != null) {
         audios.add(audio);
@@ -126,7 +136,7 @@ class AssetsAudioPlayerGroup {
       playSpeed: playSpeed,
       notificationSettings: _notificationSettings,
     );
-    await _addPlayer(player);
+    await _addPlayer(audio, player);
   }
 
   Future<void> addAll(List<Audio> audios) async {
@@ -137,21 +147,16 @@ class AssetsAudioPlayerGroup {
   }
 
   Future<void> removeAudio(Audio audio) async {
-    for (AssetsAudioPlayer player in _players) {
-      if (player.current?.value?.audio?.audio == audio) {
-        await _removePlayer(player);
-      }
-    }
+    _audiosWithPlayers.remove(audio);
+    await _onPlayersChanged();
   }
 
   Future<void> _removePlayer(AssetsAudioPlayer player) async {
-    bool removed = _players.remove(player);
-    if (removed) {
-      await _onPlayersChanged();
-    }
+    _audiosWithPlayers.removeWhere((audio, p) => player == p);
+    await _onPlayersChanged();
   }
 
-  Future<void> _addPlayer(AssetsAudioPlayer player) async {
+  Future<void> _addPlayer(Audio audio, AssetsAudioPlayer player) async {
     StreamSubscription finishedSubscription;
     finishedSubscription = player.playlistFinished.listen((finished) {
       if (finished) {
@@ -161,7 +166,7 @@ class AssetsAudioPlayerGroup {
       }
     });
     _subscriptions.add(finishedSubscription);
-    _players.add(player);
+    _audiosWithPlayers[audio] = player;
     await _onPlayersChanged();
   }
 
@@ -170,20 +175,47 @@ class AssetsAudioPlayerGroup {
     if (updateNotification != null) {
       final bool isPlaying = this.isPlaying.value;
       final newNotificationsMetas = await updateNotification(this, playingAudios);
-      if (_players.isNotEmpty) {
-        final firstPlayer = _players.first;
-        firstPlayer.changeNotificationForGroup(
-          //TODO find a way to protect it
-          this,
-          isPlaying: isPlaying,
-          notificationSettings: this._notificationSettings,
-          metas: Metas(
-            title: newNotificationsMetas.title,
-            artist: newNotificationsMetas.subTitle,
-            image: newNotificationsMetas.image,
-          ),
-        );
+
+      String firstPlayerId;
+      if(audios.isNotEmpty) {
+        firstPlayerId = players.first?.id;
       }
+
+      changeNotificationForGroup(
+        //TODO find a way to protect it
+        this,
+        isPlaying: isPlaying,
+        firstPlayerId: firstPlayerId,
+        display: playingAudios.isNotEmpty,
+        notificationSettings: this._notificationSettings,
+        metas: Metas(
+          title: newNotificationsMetas.title,
+          artist: newNotificationsMetas.subTitle,
+          image: newNotificationsMetas.image,
+        ),
+      );
+    }
+  }
+
+  Future<void> changeNotificationForGroup(
+      AssetsAudioPlayerGroup playerGroup, {
+        Metas metas,
+        bool display,
+        String firstPlayerId,
+        NotificationSettings notificationSettings,
+        bool isPlaying = true,
+      }) async {
+    if (playerGroup != null) {
+      final Map<String, dynamic> params = {
+        "id": firstPlayerId,
+        "isPlaying": isPlaying,
+        "display": display,
+      };
+
+      writeAudioMetasInto(params, metas);
+      writeNotificationSettingsInto(params, notificationSettings);
+
+      await _sendChannel.invokeMethod('forceNotificationForGroup', params);
     }
   }
 
@@ -192,7 +224,7 @@ class AssetsAudioPlayerGroup {
   }
 
   Future<void> _play({AssetsAudioPlayer except}) async {
-    for (AssetsAudioPlayer player in _players) {
+    for (AssetsAudioPlayer player in players) {
       if (player != except) {
         await player.play();
       }
@@ -206,7 +238,7 @@ class AssetsAudioPlayerGroup {
   }
 
   Future<void> _pause({AssetsAudioPlayer except}) async {
-    for (AssetsAudioPlayer player in _players) {
+    for (AssetsAudioPlayer player in players) {
       if (player != except) {
         await player.pause();
       }
@@ -220,7 +252,9 @@ class AssetsAudioPlayerGroup {
   }
 
   Future<void> _stop({AssetsAudioPlayer except}) async {
-    for (AssetsAudioPlayer player in _players) {
+    //copy _players because _stop remove the player from the list
+    final List<AssetsAudioPlayer> copyList = List.from(players);
+    for (AssetsAudioPlayer player in copyList) {
       if (player != except) {
         await player.stop();
       }
@@ -234,7 +268,7 @@ class AssetsAudioPlayerGroup {
       element.cancel();
     });
     _subscriptions.clear();
-    _players.forEach((element) {
+    players.forEach((element) {
       element.dispose();
     });
   }

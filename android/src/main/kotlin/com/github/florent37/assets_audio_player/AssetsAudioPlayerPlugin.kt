@@ -325,19 +325,30 @@ class AssetsAudioPlayer(
             }
             "forceNotificationForGroup" -> {
                 (call.arguments as? Map<*, *>)?.let { args ->
-                    val id = args["id"] as? String ?: run {
-                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
-                        return
-                    }
+                    val id = args["id"] as? String
                     val isPlaying = args["isPlaying"] as? Boolean ?: run {
                         result.error("WRONG_FORMAT", "The specified argument(isPlaying) must be an Boolean.", null)
+                        return
+                    }
+                    val display = args["display"] as? Boolean ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument(display) must be an Boolean.", null)
                         return
                     }
 
                     val audioMetas = fetchAudioMetas(args)
                     val notificationSettings = fetchNotificationSettings(args)
-
-                    getOrCreatePlayer(id).forceNotificationForGroup(audioMetas = audioMetas, isPlaying = isPlaying, notificationSettings= notificationSettings)
+                    
+                    if(!display){
+                        notificationManager.stopNotification()
+                    } else if(id != null) {
+                        getOrCreatePlayer(id).forceNotificationForGroup(
+                            audioMetas = audioMetas,
+                            isPlaying = isPlaying,
+                            display = display,
+                            notificationSettings= notificationSettings
+                        )
+                    }
+                   
                     result.success(null)
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)

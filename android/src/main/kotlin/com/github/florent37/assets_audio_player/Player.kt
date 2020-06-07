@@ -322,13 +322,18 @@ class Player(
         }
     }
 
-    fun forceNotificationForGroup(audioMetas: AudioMetas, isPlaying: Boolean, notificationSettings: NotificationSettings) {
+    fun forceNotificationForGroup(
+            audioMetas: AudioMetas,
+            isPlaying: Boolean,
+            display: Boolean,
+            notificationSettings: NotificationSettings
+    ) {
         notificationManager.showNotification(
                 playerId = id,
                 audioMetas = audioMetas,
                 isPlaying = isPlaying,
                 notificationSettings = notificationSettings,
-                stop = false,
+                stop = !display,
                 durationMs = 0
         )
     }
