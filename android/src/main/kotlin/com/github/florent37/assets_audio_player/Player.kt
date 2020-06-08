@@ -321,6 +321,22 @@ class Player(
                     )
         }
     }
+
+    fun forceNotificationForGroup(
+            audioMetas: AudioMetas,
+            isPlaying: Boolean,
+            display: Boolean,
+            notificationSettings: NotificationSettings
+    ) {
+        notificationManager.showNotification(
+                playerId = id,
+                audioMetas = audioMetas,
+                isPlaying = isPlaying,
+                notificationSettings = notificationSettings,
+                stop = !display,
+                durationMs = 0
+        )
+    }
     
     private fun updateNotif() {
         this.audioMetas?.takeIf { this.displayNotification }?.let { audioMetas ->

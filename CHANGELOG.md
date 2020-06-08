@@ -1,3 +1,7 @@
+## 2.0.1+1
+
+* Added AssetsAudioPlayerGroup (beta)
+
 ## 2.0.1
 
 * Added `.playerState` (play/pause/stop)

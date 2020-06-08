@@ -1,25 +1,26 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:assets_audio_player/src/notification.dart';
+import 'package:assets_audio_player/src/player_group.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:uuid/uuid.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 import 'applifecycle.dart';
+import 'notification.dart';
 import 'playable.dart';
 import 'playing.dart';
-import 'notification.dart';
 
 export 'applifecycle.dart';
+export 'notification.dart';
 export 'playable.dart';
 export 'playing.dart';
-export 'notification.dart';
 
 const _DEFAULT_AUTO_START = true;
 const _DEFAULT_RESPECT_SILENT_MODE = false;
@@ -170,6 +171,7 @@ class AssetsAudioPlayer {
 
   final BehaviorSubject<PlayerState> _playerState =
       BehaviorSubject<PlayerState>.seeded(PlayerState.stop);
+
   ValueStream<PlayerState> get playerState => _playerState.stream;
 
   /// Then mediaplayer playing audio (mutable)
@@ -257,6 +259,7 @@ class AssetsAudioPlayer {
   ///     })
   ///
   ValueStream<bool> get isLooping => _loop.stream;
+
   ValueStream<bool> get isShuffling => _shuffle.stream;
 
   final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos =
@@ -277,6 +280,7 @@ class AssetsAudioPlayer {
 
   /// returns the looping state : true -> looping, false -> not looping
   bool get loop => _loop.value;
+
   bool get shuffle => _shuffle.value;
 
   bool _respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE;
@@ -439,13 +443,17 @@ class AssetsAudioPlayer {
 
   AppLifecycleObserver _lifecycleObserver;
 
-  bool _wasPlayingBeforeEnterBackground; /* = null */
+  bool _wasPlayingBeforeEnterBackground;
+
+  /* = null */
   void _registerToAppLifecycle() {
     _lifecycleObserver = AppLifecycleObserver(onBackground: () {
       if (_playlist != null) {
         switch (_playlist.playInBackground) {
           case PlayInBackground.enabled:
-            {/* do nothing */}
+            {
+              /* do nothing */
+            }
             break;
           case PlayInBackground.disabledPause:
             pause();
@@ -460,10 +468,14 @@ class AssetsAudioPlayer {
       if (_playlist != null) {
         switch (_playlist.playInBackground) {
           case PlayInBackground.enabled:
-            {/* do nothing */}
+            {
+              /* do nothing */
+            }
             break;
           case PlayInBackground.disabledPause:
-            {/* do nothing, keep the pause */}
+            {
+              /* do nothing, keep the pause */
+            }
             break;
           case PlayInBackground.disabledRestoreOnForeground:
             if (_wasPlayingBeforeEnterBackground != null) {
@@ -729,6 +741,21 @@ class AssetsAudioPlayer {
 
         await _sendChannel.invokeMethod('onAudioUpdated', params);
       }
+    }
+  }
+
+  Future<void> updateCurrentAudioNotification(
+      {Metas metas, bool showNotifications = true}) async {
+    if (_lastOpenedAssetsAudio != null) {
+      final Map<String, dynamic> params = {
+        "id": this.id,
+        "path": _lastOpenedAssetsAudio,
+        "showNotification": showNotifications,
+      };
+
+      writeAudioMetasInto(params, metas);
+
+      await _sendChannel.invokeMethod('onAudioUpdated', params);
     }
   }
 

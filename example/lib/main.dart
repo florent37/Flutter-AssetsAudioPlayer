@@ -153,10 +153,10 @@ class _MyAppState extends State<MyApp> {
                               padding: const EdgeInsets.all(8.0),
                               child: Neumorphic(
                                 style: NeumorphicStyle(
-                                    depth: 8,
-                                    surfaceIntensity: 1,
-                                    shape: NeumorphicShape.concave,
-                                    boxShape: NeumorphicBoxShape.circle(),
+                                  depth: 8,
+                                  surfaceIntensity: 1,
+                                  shape: NeumorphicShape.concave,
+                                  boxShape: NeumorphicBoxShape.circle(),
                                 ),
                                 child: myAudio.metas.image.type == ImageType.network
                                     ? Image.network(

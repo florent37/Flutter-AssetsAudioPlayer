@@ -1,9 +1,5 @@
-import 'dart:io';
-
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
 final streamUrl = "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p";
 

@@ -2,7 +2,7 @@ package com.github.florent37.assets_audio_player.notification
 
 import java.io.Serializable
 
-sealed class NotificationAction(val playerId: String) : Serializable {
+sealed class NotificationAction : Serializable {
     
     companion object {
         const val ACTION_STOP = "stop"
@@ -15,10 +15,10 @@ sealed class NotificationAction(val playerId: String) : Serializable {
     class Show(
             val isPlaying: Boolean,
             val audioMetas: AudioMetas,
-            playerId: String,
+            val playerId: String,
             val notificationSettings: NotificationSettings,
             val durationMs: Long
-    ) : NotificationAction(playerId= playerId) {
+    ) : NotificationAction() {
         fun copyWith(isPlaying: Boolean? = null,
                      audioMetas: AudioMetas? = null,
                      playerId: String? = null,
@@ -35,5 +35,5 @@ sealed class NotificationAction(val playerId: String) : Serializable {
         }
     }
 
-    class Hide(playerId: String) : NotificationAction(playerId= playerId)
+    class Hide() : NotificationAction()
 }
