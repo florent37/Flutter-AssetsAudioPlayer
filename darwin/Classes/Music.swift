@@ -441,6 +441,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
               displayNotification: Bool,
               notificationSettings: NotificationSettings,
               playSpeed: Double,
+              networkHeaders: NSDictionary?,
               result: @escaping FlutterResult
     ){
         self.stop();
@@ -474,7 +475,15 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             }
             #endif
             
-            let item = SlowMoPlayerItem(url: url)
+            var item : SlowMoPlayerItem
+            if let headers = networkHeaders {
+                let asset = AVURLAsset(url: url, options: [
+                    "AVURLAssetHTTPHeaderFieldsKey": headers
+                ])
+                item = SlowMoPlayerItem(asset: asset)
+            } else {
+                item = SlowMoPlayerItem(url: url)
+            }
             self.player = AVQueuePlayer(playerItem: item)
 
             
@@ -1179,7 +1188,9 @@ class Music : NSObject, FlutterPlugin {
                     );
                     break;
                 }
-
+                
+                let networkHeaders = args["networkHeaders"] as? NSDictionary
+                
                 let respectSilentMode = args["respectSilentMode"] as? Bool ?? false
                 let displayNotification = args["displayNotification"] as? Bool ?? false
                 
@@ -1200,6 +1211,7 @@ class Music : NSObject, FlutterPlugin {
                         displayNotification: displayNotification,
                         notificationSettings: notifSettings,
                         playSpeed: playSpeed,
+                        networkHeaders: networkHeaders,
                         result: result
                 );
                 break;

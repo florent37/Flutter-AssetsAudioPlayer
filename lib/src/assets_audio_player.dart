@@ -706,6 +706,9 @@ class AssetsAudioPlayer {
         if (audio.package != null) {
           params["package"] = audio.package;
         }
+        if (audio.networkHeaders != null) {
+          params["networkHeaders"] = audio.networkHeaders;
+        }
 
         //region notifs
         final notifSettings = notificationSettings ?? NotificationSettings();

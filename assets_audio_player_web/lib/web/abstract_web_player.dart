@@ -56,13 +56,15 @@ abstract class WebPlayer {
     return path;
   }
 
-  Future<void> open(
-      {String path,
-      String audioType,
-      double volume,
-      double seek,
-      bool autoStart,
-      double playSpeed});
+  Future<void> open({
+    String path,
+    String audioType,
+    double volume,
+    double seek,
+    bool autoStart,
+    double playSpeed,
+    Map networkHeaders,
+  });
 
   void seek({double to});
 

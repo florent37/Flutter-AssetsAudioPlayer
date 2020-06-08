@@ -57,13 +57,30 @@ class PlayerImplemExoPlayer(
                                flutterAssets: FlutterPlugin.FlutterAssets,
                                assetAudioPath: String?,
                                audioType: String,
+                               networkHeaders: Map<*, *>?,
                                assetAudioPackage: String?) : MediaSource {
         try {
             mediaPlayer?.stop()
             if (audioType == Player.AUDIO_TYPE_NETWORK || audioType == Player.AUDIO_TYPE_LIVESTREAM) {
-                return ProgressiveMediaSource
-                        .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
-                        .createMediaSource(Uri.parse(assetAudioPath))
+                val uri = Uri.parse(assetAudioPath)
+                val userAgent = "assets_audio_player"
+                if(networkHeaders == null) {
+                    return ProgressiveMediaSource
+                            .Factory(DefaultDataSourceFactory(context, userAgent), DefaultExtractorsFactory())
+                            .createMediaSource(uri)
+                } else {
+                    return ProgressiveMediaSource.Factory(DataSource.Factory {
+                        val dataSource = DefaultHttpDataSource(userAgent)
+                        networkHeaders.forEach {
+                            it.key?.let { key ->
+                                it.value?.let { value ->
+                                    dataSource.setRequestProperty(key.toString(), value.toString())
+                                }
+                            }
+                        }
+                        dataSource;
+                    }).createMediaSource(uri)
+                }
             } else if (audioType == Player.AUDIO_TYPE_FILE) {
                 return ProgressiveMediaSource
                         .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
@@ -92,6 +109,7 @@ class PlayerImplemExoPlayer(
             flutterAssets: FlutterPlugin.FlutterAssets,
             assetAudioPath: String?,
             audioType: String,
+            networkHeaders: Map<*, *>?,
             assetAudioPackage: String?
     ) = suspendCoroutine<DurationMS> { continuation ->
         var onThisMediaReady = false
@@ -99,7 +117,14 @@ class PlayerImplemExoPlayer(
         try {
             mediaPlayer = SimpleExoPlayer.Builder(context).build();
 
-            val mediaSource = getDataSource(context, flutterAssets, assetAudioPath, audioType, assetAudioPackage)
+            val mediaSource = getDataSource(
+                    context=context,
+                    flutterAssets=flutterAssets,
+                    assetAudioPath=assetAudioPath,
+                    audioType= audioType,
+                    networkHeaders = networkHeaders,
+                    assetAudioPackage= assetAudioPackage
+            )
 
             var lastState : Int? = null
 

@@ -144,6 +144,7 @@ class Player(
              notificationSettings: NotificationSettings,
              audioMetas: AudioMetas,
              playSpeed: Double,
+             networkHeaders: Map<*, *>?,
              result: MethodChannel.Result,
              context: Context
     ) {
@@ -163,6 +164,7 @@ class Player(
                             assetAudioPath = assetAudioPath,
                             assetAudioPackage = assetAudioPackage,
                             audioType = audioType,
+                            networkHeaders= networkHeaders,
                             context = context
                     )
                 } catch (t: Throwable) {
@@ -171,6 +173,7 @@ class Player(
                             assetAudioPath = assetAudioPath,
                             assetAudioPackage = assetAudioPackage,
                             audioType = audioType,
+                            networkHeaders= networkHeaders,
                             context = context
                     )
                 }
@@ -206,6 +209,7 @@ class Player(
     private suspend fun openExoPlayer(assetAudioPath: String?,
                                       assetAudioPackage: String?,
                                       audioType: String,
+                                      networkHeaders: Map<*, *>?,
                                       context: Context
     ): DurationMS {
         mediaPlayer = PlayerImplemExoPlayer(
@@ -227,6 +231,7 @@ class Player(
                     assetAudioPath = assetAudioPath,
                     audioType = audioType,
                     assetAudioPackage = assetAudioPackage,
+                    networkHeaders= networkHeaders,
                     flutterAssets = flutterAssets
             )
         } catch (t: Throwable) {
@@ -239,6 +244,7 @@ class Player(
             assetAudioPath: String?,
             assetAudioPackage: String?,
             audioType: String,
+            networkHeaders: Map<*, *>?,
             context: Context
     ): DurationMS {
         mediaPlayer = PlayerImplemMediaPlayer(
@@ -259,6 +265,7 @@ class Player(
                     assetAudioPath = assetAudioPath,
                     audioType = audioType,
                     assetAudioPackage = assetAudioPackage,
+                    networkHeaders= networkHeaders,
                     flutterAssets = flutterAssets
             )
         } catch (t: Throwable) {

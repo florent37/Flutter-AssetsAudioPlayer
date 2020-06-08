@@ -107,12 +107,14 @@ class AssetsAudioPlayerWebPlugin {
         final double volume = call.arguments["volume"];
         final double seek = call.arguments["seek"];
         final bool autoStart = call.arguments["autoStart"] ?? true;
+        final Map networkHeaders = call.arguments["networkHeaders"];
         return _getOrCreate(id).open(
           path: path,
           audioType: audioType,
           volume: volume,
           seek: seek,
           autoStart: autoStart,
+          networkHeaders: networkHeaders,
         );
         break;
     }
