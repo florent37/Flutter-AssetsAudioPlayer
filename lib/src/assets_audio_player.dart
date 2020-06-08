@@ -68,7 +68,8 @@ class AssetsAudioPlayer {
   static final double maxPlaySpeed = 16.0;
   static final double defaultVolume = maxVolume;
   static final double defaultPlaySpeed = 1.0;
-  static final NotificationSettings defaultNotificationSettings = const NotificationSettings();
+  static final NotificationSettings defaultNotificationSettings =
+      const NotificationSettings();
 
   static final uuid = Uuid();
 
@@ -108,7 +109,8 @@ class AssetsAudioPlayer {
   /// empty constructor now create a new player
   factory AssetsAudioPlayer() => AssetsAudioPlayer.newPlayer();
 
-  factory AssetsAudioPlayer.withId(String id) => _getOrCreate(id: id ?? uuid.v4());
+  factory AssetsAudioPlayer.withId(String id) =>
+      _getOrCreate(id: id ?? uuid.v4());
 
   /// Create a new player for this audio, play it, and dispose it automatically
   static void playAndForget(
@@ -167,7 +169,8 @@ class AssetsAudioPlayer {
   ///         }),
   ValueStream<bool> get isPlaying => _isPlaying.stream;
 
-  final BehaviorSubject<PlayerState> _playerState = BehaviorSubject<PlayerState>.seeded(PlayerState.stop);
+  final BehaviorSubject<PlayerState> _playerState =
+      BehaviorSubject<PlayerState>.seeded(PlayerState.stop);
 
   ValueStream<PlayerState> get playerState => _playerState.stream;
 
@@ -188,10 +191,12 @@ class AssetsAudioPlayer {
   ///
   ValueStream<Playing> get current => _current.stream;
 
-  Stream<PlayingAudio> get onReadyToPlay => current.map((playing) => playing?.audio); //another comprehensible name
+  Stream<PlayingAudio> get onReadyToPlay =>
+      current.map((playing) => playing?.audio); //another comprehensible name
 
   /// Called when the the complete playlist finished to play (mutable)
-  final BehaviorSubject<bool> _playlistFinished = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _playlistFinished =
+      BehaviorSubject<bool>.seeded(false);
 
   /// Called when the complete playlist has finished to play
   ///     _assetsAudioPlayer.finished.listen((finished){
@@ -212,7 +217,8 @@ class AssetsAudioPlayer {
   Stream<Playing> get playlistAudioFinished => _playlistAudioFinished.stream;
 
   /// Then current playing song position (in seconds) (mutable)
-  final BehaviorSubject<Duration> _currentPosition = BehaviorSubject<Duration>.seeded(const Duration());
+  final BehaviorSubject<Duration> _currentPosition =
+      BehaviorSubject<Duration>.seeded(const Duration());
 
   /// Retrieve directly the current song position (in seconds)
   ///     final Duration position = _assetsAudioPlayer.currentPosition.value;
@@ -226,10 +232,12 @@ class AssetsAudioPlayer {
   ValueStream<Duration> get currentPosition => _currentPosition.stream;
 
   /// The volume of the media Player (min: 0, max: 1)
-  final BehaviorSubject<double> _volume = BehaviorSubject<double>.seeded(defaultVolume);
+  final BehaviorSubject<double> _volume =
+      BehaviorSubject<double>.seeded(defaultVolume);
 
   ValueStream<bool> get isBuffering => _isBuffering.stream;
-  final BehaviorSubject<bool> _isBuffering = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _isBuffering =
+      BehaviorSubject<bool>.seeded(false);
 
   /// Streams the volume of the media Player (min: 0, max: 1)
   ///     final double volume = _assetsAudioPlayer.volume.value;
@@ -254,9 +262,11 @@ class AssetsAudioPlayer {
 
   ValueStream<bool> get isShuffling => _shuffle.stream;
 
-  final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos = BehaviorSubject<RealtimePlayingInfos>();
+  final BehaviorSubject<RealtimePlayingInfos> _realtimePlayingInfos =
+      BehaviorSubject<RealtimePlayingInfos>();
 
-  ValueStream<RealtimePlayingInfos> get realtimePlayingInfos => _realtimePlayingInfos.stream;
+  ValueStream<RealtimePlayingInfos> get realtimePlayingInfos =>
+      _realtimePlayingInfos.stream;
 
   BehaviorSubject<double> _playSpeed = BehaviorSubject.seeded(1.0);
 
@@ -371,7 +381,8 @@ class AssetsAudioPlayer {
             _current.value = null;
             _playerState.value = PlayerState.stop;
           } else {
-            final totalDurationMs = _toDuration(call.arguments["totalDurationMs"]);
+            final totalDurationMs =
+                _toDuration(call.arguments["totalDurationMs"]);
 
             final playingAudio = PlayingAudio(
               audio: _lastOpenedAssetsAudio,
@@ -383,7 +394,11 @@ class AssetsAudioPlayer {
                 audio: playingAudio,
                 index: _playlist.playlistIndex,
                 hasNext: _playlist.hasNext(),
-                playlist: ReadingPlaylist(audios: _playlist.playlist.audios, currentIndex: _playlist.playlistIndex, nextIndex: _playlist.nextIndex(), previousIndex: _playlist.previousIndex()),
+                playlist: ReadingPlaylist(
+                    audios: _playlist.playlist.audios,
+                    currentIndex: _playlist.playlistIndex,
+                    nextIndex: _playlist.nextIndex(),
+                    previousIndex: _playlist.previousIndex()),
               );
               _current.value = current;
             }
@@ -522,7 +537,8 @@ class AssetsAudioPlayer {
     return false;
   }
 
-  Future<void> _openPlaylistCurrent({bool autoStart = true, Duration seek}) async {
+  Future<void> _openPlaylistCurrent(
+      {bool autoStart = true, Duration seek}) async {
     if (_playlist != null) {
       return _open(
         _playlist.currentAudio(),
@@ -547,7 +563,8 @@ class AssetsAudioPlayer {
     );
   }
 
-  Future<bool> _next({bool stopIfLast = false, bool requestByUser = false}) async {
+  Future<bool> _next(
+      {bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
       if (_playlist.hasNext()) {
         if (this._current.value != null) {
@@ -727,7 +744,8 @@ class AssetsAudioPlayer {
     }
   }
 
-  Future<void> updateCurrentAudioNotification({Metas metas, bool showNotifications = true}) async {
+  Future<void> updateCurrentAudioNotification(
+      {Metas metas, bool showNotifications = true}) async {
     if (_lastOpenedAssetsAudio != null) {
       final Map<String, dynamic> params = {
         "id": this.id,
@@ -799,7 +817,9 @@ class AssetsAudioPlayer {
     PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
   }) async {
     Playlist playlist;
-    if (playable is Playlist && playable.audios != null && playable.audios.length > 0) {
+    if (playable is Playlist &&
+        playable.audios != null &&
+        playable.audios.length > 0) {
       playlist = playable;
     } else if (playable is Audio) {
       playlist = Playlist(audios: [playable]);
@@ -815,7 +835,8 @@ class AssetsAudioPlayer {
         seek: seek,
         loop: loop,
         playSpeed: playSpeed,
-        notificationSettings: notificationSettings ?? defaultNotificationSettings,
+        notificationSettings:
+            notificationSettings ?? defaultNotificationSettings,
         playInBackground: playInBackground,
       );
     }
@@ -858,7 +879,8 @@ class AssetsAudioPlayer {
   }
 
   Future<void> _loopSingleAudio(bool loop) async {
-    await _sendChannel.invokeMethod('loopSingleAudio', {"id": this.id, "loop": loop});
+    await _sendChannel
+        .invokeMethod('loopSingleAudio', {"id": this.id, "loop": loop});
   }
 
   /// Tells the media player to play the current song
@@ -936,7 +958,8 @@ class AssetsAudioPlayer {
 
         //don't seek more that song duration
         final currentPositionCapped = Duration(
-          milliseconds: min(totalDuration.inMilliseconds, nextPosition.inMilliseconds),
+          milliseconds:
+              min(totalDuration.inMilliseconds, nextPosition.inMilliseconds),
         );
 
         await seek(currentPositionCapped);
@@ -990,14 +1013,17 @@ class AssetsAudioPlayer {
   Future<void> setPlaySpeed(double playSpeed) async {
     await _sendChannel.invokeMethod('playSpeed', {
       "id": this.id,
-      "playSpeed": (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
+      "playSpeed":
+          (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
     });
   }
 
   Future<Audio> _handlePlatformAsset(Audio input) async {
-    if (defaultTargetPlatform == TargetPlatform.macOS && input.audioType == AudioType.asset) {
+    if (defaultTargetPlatform == TargetPlatform.macOS &&
+        input.audioType == AudioType.asset) {
       //on macos assets are not available from native
-      final String path = await _copyToTmpMemory(package: input.package, assetSource: input.path);
+      final String path = await _copyToTmpMemory(
+          package: input.package, assetSource: input.path);
       return input.copyWith(audioType: AudioType.file, path: path);
     }
     return input;

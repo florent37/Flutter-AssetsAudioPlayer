@@ -5,8 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 
-typedef PlayerGroupCallback = void Function(AssetsAudioPlayerGroup playerGroup, List<PlayingAudio> audios);
-typedef PlayerGroupMetasCallback = Future<PlayerGroupMetas> Function(AssetsAudioPlayerGroup playerGroup, List<PlayingAudio> audios);
+typedef PlayerGroupCallback = void Function(
+    AssetsAudioPlayerGroup playerGroup, List<PlayingAudio> audios);
+typedef PlayerGroupMetasCallback = Future<PlayerGroupMetas> Function(
+    AssetsAudioPlayerGroup playerGroup, List<PlayingAudio> audios);
 
 const _DEFAULT_RESPECT_SILENT_MODE = false;
 const _DEFAULT_SHOW_NOTIFICATION = false;
@@ -21,7 +23,6 @@ class AudioFinished {
 }
 
 class AssetsAudioPlayerGroup {
-
   final MethodChannel _sendChannel = const MethodChannel('assets_audio_player');
 
   final bool showNotification;
@@ -42,7 +43,8 @@ class AssetsAudioPlayerGroup {
   final Map<Audio, AssetsAudioPlayer> _audiosWithPlayers = {};
 
   //copy of _audiosWithPlayers
-  Map<Audio, AssetsAudioPlayer> get audiosWithPlayers => Map.from(_audiosWithPlayers);
+  Map<Audio, AssetsAudioPlayer> get audiosWithPlayers =>
+      Map.from(_audiosWithPlayers);
 
   List<Audio> get audios => _audiosWithPlayers.keys.toList();
   List<AssetsAudioPlayer> get players => _audiosWithPlayers.values.toList();
@@ -174,10 +176,11 @@ class AssetsAudioPlayerGroup {
   Future<void> _onPlayersChanged() async {
     if (updateNotification != null) {
       final bool isPlaying = this.isPlaying.value;
-      final newNotificationsMetas = await updateNotification(this, playingAudios);
+      final newNotificationsMetas =
+          await updateNotification(this, playingAudios);
 
       String firstPlayerId;
-      if(audios.isNotEmpty) {
+      if (audios.isNotEmpty) {
         firstPlayerId = players.first?.id;
       }
 
@@ -198,13 +201,13 @@ class AssetsAudioPlayerGroup {
   }
 
   Future<void> changeNotificationForGroup(
-      AssetsAudioPlayerGroup playerGroup, {
-        Metas metas,
-        bool display,
-        String firstPlayerId,
-        NotificationSettings notificationSettings,
-        bool isPlaying = true,
-      }) async {
+    AssetsAudioPlayerGroup playerGroup, {
+    Metas metas,
+    bool display,
+    String firstPlayerId,
+    NotificationSettings notificationSettings,
+    bool isPlaying = true,
+  }) async {
     if (playerGroup != null) {
       final Map<String, dynamic> params = {
         "id": firstPlayerId,

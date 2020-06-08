@@ -1,12 +1,15 @@
 import 'dart:async';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:assets_audio_player_example/player/PlaySpeedSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
+import 'player/ForwardRewindSelector.dart';
 import 'player/PlayingControls.dart';
 import 'player/PositionSeekWidget.dart';
 import 'player/SongsSelector.dart';
+import 'player/VolumeSelector.dart';
 
 void main() => runApp(
   NeumorphicTheme(
@@ -150,10 +153,10 @@ class _MyAppState extends State<MyApp> {
                               padding: const EdgeInsets.all(8.0),
                               child: Neumorphic(
                                 style: NeumorphicStyle(
-                                    depth: 8,
-                                    surfaceIntensity: 1,
-                                    shape: NeumorphicShape.concave,
-                                    boxShape: NeumorphicBoxShape.circle(),
+                                  depth: 8,
+                                  surfaceIntensity: 1,
+                                  shape: NeumorphicShape.concave,
+                                  boxShape: NeumorphicBoxShape.circle(),
                                 ),
                                 child: myAudio.metas.image.type == ImageType.network
                                     ? Image.network(
