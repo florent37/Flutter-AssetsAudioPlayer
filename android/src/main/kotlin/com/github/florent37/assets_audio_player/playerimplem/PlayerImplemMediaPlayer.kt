@@ -48,14 +48,20 @@ class PlayerImplemMediaPlayer(
             flutterAssets: FlutterPlugin.FlutterAssets,
             assetAudioPath: String?,
             audioType: String,
+            networkHeaders: Map<*, *>?,
             assetAudioPackage: String?
     ): DurationMS = suspendCoroutine { continuation ->
         this.mediaPlayer = MediaPlayer()
         
         when (audioType) {
             Player.AUDIO_TYPE_NETWORK, Player.AUDIO_TYPE_LIVESTREAM -> {
-                mediaPlayer?.reset();
-                mediaPlayer?.setDataSource(assetAudioPath)
+                mediaPlayer?.reset()
+                networkHeaders?.toMapString()?.let {
+                    mediaPlayer?.setDataSource(context, Uri.parse(assetAudioPath), it)
+                } ?: run {
+                    //without headers
+                    mediaPlayer?.setDataSource(assetAudioPath)
+                }
             }
             Player.AUDIO_TYPE_FILE-> {
                 mediaPlayer?.reset();
@@ -103,4 +109,16 @@ class PlayerImplemMediaPlayer(
         //not possible
     }
 
+}
+
+fun Map<*,*>.toMapString() : Map<String, String> {
+    val result = mutableMapOf<String, String>()
+    this.forEach {
+        it.key?.let { key ->
+            it.value?.let { value ->
+                result[key.toString()] = value.toString()
+            }
+        }
+    }
+    return result
 }

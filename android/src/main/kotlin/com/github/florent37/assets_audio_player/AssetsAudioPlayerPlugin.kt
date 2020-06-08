@@ -384,6 +384,7 @@ class AssetsAudioPlayer(
                     val displayNotification = args["displayNotification"] as? Boolean ?: false
                     val respectSilentMode = args["respectSilentMode"] as? Boolean ?: false
                     val seek = args["seek"] as? Int?
+                    val networkHeaders = args["networkHeaders"] as? Map<*, *>?
 
                     val notificationSettings = fetchNotificationSettings(args)
                     val audioMetas = fetchAudioMetas(args)
@@ -401,6 +402,7 @@ class AssetsAudioPlayer(
                             result = result,
                             playSpeed = playSpeed,
                             audioMetas = audioMetas,
+                            networkHeaders= networkHeaders,
                             context = context
                     )
                 } ?: run {

@@ -20,6 +20,7 @@ abstract class PlayerImplem(
                      flutterAssets: FlutterPlugin.FlutterAssets,
                      assetAudioPath: String?,
                      audioType: String,
+                     networkHeaders: Map<*, *>?,
                      assetAudioPackage: String?
     ) : DurationMS
     abstract fun release()

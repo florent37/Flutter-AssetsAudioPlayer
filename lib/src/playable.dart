@@ -126,33 +126,40 @@ class Audio implements Playable {
   final String package;
   final AudioType audioType;
   Metas _metas;
+  Map _networkHeaders;
 
   Metas get metas => _metas;
+  Map get networkHeaders => _networkHeaders;
 
   Audio._({
     this.path,
     this.package,
     this.audioType,
+    Map headers,
     Metas metas,
-  }) : _metas = metas;
+  }) : _metas = metas, _networkHeaders = headers;
 
   Audio(this.path, {Metas metas, this.package})
       : audioType = AudioType.asset,
+        _networkHeaders = null,
         _metas = metas;
 
   Audio.file(this.path, {Metas metas})
       : audioType = AudioType.file,
         package = null,
+        _networkHeaders = null,
         _metas = metas;
 
-  Audio.network(this.path, {Metas metas})
+  Audio.network(this.path, {Metas metas, Map headers})
       : audioType = AudioType.network,
         package = null,
+        _networkHeaders = headers,
         _metas = metas;
 
-  Audio.liveStream(this.path, {Metas metas})
+  Audio.liveStream(this.path, {Metas metas, Map headers})
       : audioType = AudioType.liveStream,
         package = null,
+        _networkHeaders = headers,
         _metas = metas;
 
   @override
@@ -194,12 +201,14 @@ class Audio implements Playable {
     String package,
     AudioType audioType,
     Metas metas,
+    Map headers,
   }) {
     return Audio._(
       path: path ?? this.path,
       package: package ?? this.package,
       audioType: audioType ?? this.audioType,
       metas: metas ?? this._metas,
+      headers: headers ?? this._networkHeaders,
     );
   }
 }

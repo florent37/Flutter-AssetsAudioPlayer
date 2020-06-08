@@ -62,7 +62,9 @@ abstract class WebPlayer {
       double volume,
       double seek,
       bool autoStart,
-      double playSpeed});
+      double playSpeed,
+      Map networkHeaders,
+  });
 
   void seek({double to});
 

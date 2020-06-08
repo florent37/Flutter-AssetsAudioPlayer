@@ -126,11 +126,15 @@ class WebPlayerHtml extends WebPlayer {
       double volume,
       double seek,
       bool autoStart,
-      double playSpeed}) async {
+      double playSpeed,
+      Map networkHeaders,
+    }) async {
     stop();
     _durationMs = null;
     _position = null;
     _audioElement = html.AudioElement(findAssetPath(path, audioType));
+
+    //it seems html audielement cannot take networkHeaders :'(
 
     _onEndListener = _audioElement.onEnded.listen((event) {
       channel.invokeMethod(WebPlayer.methodFinished, true);
