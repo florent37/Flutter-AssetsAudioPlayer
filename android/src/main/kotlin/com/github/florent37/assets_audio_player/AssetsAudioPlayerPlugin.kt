@@ -252,6 +252,23 @@ class AssetsAudioPlayer(
                     return
                 }
             }
+            "showNotification" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    val show = args["show"] as? Boolean ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (show) must be an Boolean.", null)
+                        return
+                    }
+                    getOrCreatePlayer(id).showNotification(show)
+                    result.success(null)
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
             "forwardRewind" -> {
                 (call.arguments as? Map<*, *>)?.let { args ->
                     val id = args["id"] as? String ?: run {
