@@ -142,8 +142,7 @@ class AssetsAudioPlayerGroup {
   }
 
   Future<void> addAll(List<Audio> audios) async {
-    for (Audio audio in audios)
-      await add(audio);
+    for (Audio audio in audios) await add(audio);
   }
 
   Future<void> removeAudio(Audio audio) async {
