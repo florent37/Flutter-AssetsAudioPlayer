@@ -98,20 +98,23 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    _subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
-      print("finished : $data");
-    }));
-    _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
-      print("playlistAudioFinished : $data");
-    }));
-    _subscriptions.add(_assetsAudioPlayer.current.listen((data) {
-      print("current : $data");
-    }));
-    _subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
-      print("onRedayToPlay : $audio");
-    }));
-    _subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
-      print("playerState : $playerState");
+   //_subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
+   //  print("finished : $data");
+   //}));
+   //_subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
+   //  print("playlistAudioFinished : $data");
+   //}));
+   //_subscriptions.add(_assetsAudioPlayer.current.listen((data) {
+   //  print("current : $data");
+   //}));
+   //_subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
+   //  print("onRedayToPlay : $audio");
+   //}));
+   //_subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
+   //  print("playerState : $playerState");
+   //}));
+    _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
+      print("isplaying : $isplaying");
     }));
     super.initState();
   }

@@ -1,4 +1,4 @@
-## 2.0.1+2
+## 2.0.1+3
 
 * Added `AssetsAudioPlayerGroup` (beta)
 * Added Headers in `Audio.network` & `Audio.liveStream`

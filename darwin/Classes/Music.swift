@@ -724,11 +724,14 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             self.player?.seek(to: CMTime.zero)
             self.player?.play()
         } else {
+            playing = false
             self.channel.invokeMethod(Music.METHOD_FINISHED, arguments: true)
+            self._deinit()
         }
     }
     
-    deinit {
+    func _deinit(){
+        NotificationCenter.default.removeObserver(self)
         self.observerStatus.forEach {
             $0.invalidate()
         }
@@ -736,7 +739,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         #if os(iOS)
         self.deinitMediaPlayerNotifEvent()
         #endif
-        NotificationCenter.default.removeObserver(self)
+    }
+    
+    deinit {
+        self._deinit()
     }
     
     func pause(){
