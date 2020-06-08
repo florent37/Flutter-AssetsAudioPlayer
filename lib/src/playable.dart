@@ -137,7 +137,8 @@ class Audio implements Playable {
     this.audioType,
     Map headers,
     Metas metas,
-  }) : _metas = metas, _networkHeaders = headers;
+  })  : _metas = metas,
+        _networkHeaders = headers;
 
   Audio(this.path, {Metas metas, this.package})
       : audioType = AudioType.asset,
