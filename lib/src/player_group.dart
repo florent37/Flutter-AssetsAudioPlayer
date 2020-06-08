@@ -143,9 +143,7 @@ class AssetsAudioPlayerGroup {
 
   Future<void> addAll(List<Audio> audios) async {
     for (Audio audio in audios)
-      (await this.add(
-        audio,
-      ));
+      await add(audio);
   }
 
   Future<void> removeAudio(Audio audio) async {
@@ -274,6 +272,8 @@ class AssetsAudioPlayerGroup {
     players.forEach((element) {
       element.dispose();
     });
+
+    _isPlaying.close();
   }
 
   Future<void> playOrPause() async {

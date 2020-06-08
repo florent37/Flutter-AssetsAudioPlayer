@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:assets_audio_player/src/notification.dart';
-import 'package:assets_audio_player/src/player_group.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
