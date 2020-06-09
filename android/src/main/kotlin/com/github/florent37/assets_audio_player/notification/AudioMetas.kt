@@ -8,7 +8,8 @@ class AudioMetas(
         val album: String?,
         val image: String?,
         val imageType: String?,
-        val imagePackage: String?
+        val imagePackage: String?,
+        val trackID: String?
 ) : Serializable
 
 fun fetchAudioMetas(from: Map<*, *>) : AudioMetas {
@@ -18,6 +19,7 @@ fun fetchAudioMetas(from: Map<*, *>) : AudioMetas {
             album = from["song.album"] as? String,
             image = from["song.image"] as? String,
             imageType = from["song.imageType"] as? String,
-            imagePackage = from["song.imagePackage"] as? String
+            imagePackage = from["song.imagePackage"] as? String,
+            trackID = from["song.trackID"] as? String
     )
 }

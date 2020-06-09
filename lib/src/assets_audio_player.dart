@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:assets_audio_player/src/notification.dart';
+import 'package:assets_audio_player/src/typedef.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -71,6 +72,7 @@ class AssetsAudioPlayer {
       const NotificationSettings();
 
   static final uuid = Uuid();
+  SelectNotificationCallback _onSelectNotification;
 
   /// The channel between the native and Dart
   final MethodChannel _sendChannel = const MethodChannel('assets_audio_player');
@@ -104,6 +106,18 @@ class AssetsAudioPlayer {
   }
 
   factory AssetsAudioPlayer.newPlayer() => _getOrCreate(id: uuid.v4());
+
+  void initNotification(SelectNotificationCallback selectNotificationCallback) {
+    _onSelectNotification = selectNotificationCallback;
+    _sendChannel.setMethodCallHandler((call) {
+      switch (call.method) {
+        case 'selectNotification':
+          return _onSelectNotification(call.arguments);
+        default:
+          return Future.error('method not defined');
+      }
+    });
+  }
 
   /// empty constructor now create a new player
   factory AssetsAudioPlayer() => AssetsAudioPlayer.newPlayer();
