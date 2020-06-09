@@ -1,3 +1,7 @@
+### 2.0.1+4
+
+* Added `isBuffering` to `RealtimePlayingInfos`
+
 ## 2.0.1+3
 
 * Added `AssetsAudioPlayerGroup` (beta)
