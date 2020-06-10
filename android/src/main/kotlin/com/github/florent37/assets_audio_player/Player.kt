@@ -344,6 +344,17 @@ class Player(
                 durationMs = 0
         )
     }
+
+    fun showNotification(show: Boolean){
+        val oldValue = this.displayNotification
+        this.displayNotification = show
+        if(oldValue) { //if was showing a notification
+            notificationManager.stopNotification()
+            //hide it
+        } else {
+            updateNotif()
+        }
+    }
     
     private fun updateNotif() {
         this.audioMetas?.takeIf { this.displayNotification }?.let { audioMetas ->

@@ -34,7 +34,7 @@ class NotificationManager(private val context: Context) {
         })
     }
 
-    fun hideNotification(definitively: Boolean = false) {
+    fun hideNotificationService(definitively: Boolean = false) {
         //if remainingNotif == 0, stop
         context.stopService(Intent(context, NotificationService::class.java))
         closed = definitively
