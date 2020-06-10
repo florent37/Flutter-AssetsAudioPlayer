@@ -1,4 +1,8 @@
-### 2.0.1+4
+## 2.0.1+5
+
+* Added `.showNotification = true/false` to hide dynamically displayed notification
+
+## 2.0.1+4
 
 * Added `isBuffering` to `RealtimePlayingInfos`
 
