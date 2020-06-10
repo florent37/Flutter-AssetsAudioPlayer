@@ -291,10 +291,8 @@ class AssetsAudioPlayer {
   set showNotification(bool newValue) {
     _showNotification = newValue;
 
-    /* await */ _sendChannel.invokeMethod('showNotification', {
-      "id": this.id,
-      "show": _showNotification
-    });
+    /* await */ _sendChannel.invokeMethod(
+        'showNotification', {"id": this.id, "show": _showNotification});
   }
 
   /// assign the looping state : true -> looping, false -> not looping
