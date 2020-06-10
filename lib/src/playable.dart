@@ -1,5 +1,6 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
 
 class Playable {}
 
@@ -74,23 +75,26 @@ class MetasImage {
   int get hashCode => path.hashCode ^ package.hashCode ^ type.hashCode;
 }
 
-@immutable
 class Metas {
-  final String id;
+  String id;
   final String title;
   final String artist;
   final String album;
   final Map<String, dynamic> extra;
   final MetasImage image;
 
-  const Metas({
+  Metas({
     this.id,
     this.title,
     this.artist,
     this.album,
     this.image,
     this.extra,
-  });
+  }) {
+    if(this.id == null){
+      this.id = Uuid().v4();
+    }
+  }
 
   @override
   bool operator ==(Object other) =>

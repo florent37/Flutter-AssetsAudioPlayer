@@ -42,7 +42,7 @@ class AssetsAudioPlayerPlugin : FlutterPlugin,PluginRegistry.NewIntentListener, 
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         instance = this
-        notificationChannel = MethodChannel(flutterPluginBinding.binaryMessenger, "assets_audio_player")
+        notificationChannel = MethodChannel(flutterPluginBinding.binaryMessenger, "assets_audio_player_notification")
         assetsAudioPlayer = AssetsAudioPlayer(
                 flutterAssets = flutterPluginBinding.flutterAssets,
                 context = flutterPluginBinding.applicationContext,
@@ -57,9 +57,9 @@ class AssetsAudioPlayerPlugin : FlutterPlugin,PluginRegistry.NewIntentListener, 
     }
 
     private fun sendNotificationPayloadMessage(intent: Intent): Boolean? {
-        if (NotificationAction.ACTION_SELECT.equals(intent.action)) {
-            val payload = intent.getStringExtra(NotificationService.TRACK_ID)
-            notificationChannel?.invokeMethod("selectNotification", payload)
+        if (NotificationAction.ACTION_SELECT == intent.action) {
+            val trackId = intent.getStringExtra(NotificationService.TRACK_ID)
+            notificationChannel?.invokeMethod("selectNotification", trackId)
             return true
         }
         return false

@@ -62,3 +62,18 @@ void writeNotificationSettingsInto(
   params["notif.settings.prevEnabled"] = notificationSettings.prevEnabled;
   params["notif.settings.seekBarEnabled"] = notificationSettings.seekBarEnabled;
 }
+
+class ClickedNotification {
+  final String audioId;
+
+  ClickedNotification({this.audioId});
+}
+
+class ClickedNotificationWrapper {
+  final ClickedNotification clickedNotification;
+  bool handled = false;
+
+  ClickedNotificationWrapper(this.clickedNotification);
+}
+
+typedef NotificationOpenAction = bool Function(ClickedNotification notification);

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:assets_audio_player/src/notification.dart';
-import 'package:assets_audio_player/src/typedef.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -68,11 +67,41 @@ class AssetsAudioPlayer {
   static final double maxPlaySpeed = 16.0;
   static final double defaultVolume = maxVolume;
   static final double defaultPlaySpeed = 1.0;
-  static final NotificationSettings defaultNotificationSettings =
-      const NotificationSettings();
+  static final NotificationSettings defaultNotificationSettings = const NotificationSettings();
+
+  //region notification click
+  static MethodChannel _notificationOpenChannel = const MethodChannel('assets_audio_player_notification');
+  static final BehaviorSubject<ClickedNotificationWrapper> __onNotificationClicked = BehaviorSubject<ClickedNotificationWrapper>();
+  static final Stream<ClickedNotificationWrapper> _onNotificationClicked = __onNotificationClicked.stream;
+
+  static void setupNotificationsOpenAction(NotificationOpenAction action){
+    WidgetsFlutterBinding.ensureInitialized();
+    _notificationOpenChannel = const MethodChannel('assets_audio_player_notification');
+    _notificationOpenChannel.setMethodCallHandler((call) async {
+      switch(call.method){
+        case "selectNotification" : {
+          final String audioId = call.arguments;
+          __onNotificationClicked.value = ClickedNotificationWrapper(ClickedNotification(
+            audioId: audioId,
+          ));
+          break;
+        }
+      }
+    });
+    addNotificationOpenAction(action);
+  }
+
+  static StreamSubscription addNotificationOpenAction(NotificationOpenAction action){
+    return _onNotificationClicked.listen((ClickedNotificationWrapper clicked) {
+      if(action != null && !clicked.handled) {
+        bool handled = action(clicked.clickedNotification);
+        clicked.handled = handled;
+      }
+    });
+  }
+  //endregion
 
   static final uuid = Uuid();
-  SelectNotificationCallback _onSelectNotification;
 
   /// The channel between the native and Dart
   final MethodChannel _sendChannel = const MethodChannel('assets_audio_player');
@@ -106,18 +135,6 @@ class AssetsAudioPlayer {
   }
 
   factory AssetsAudioPlayer.newPlayer() => _getOrCreate(id: uuid.v4());
-
-  void initNotification(SelectNotificationCallback selectNotificationCallback) {
-    _onSelectNotification = selectNotificationCallback;
-    _sendChannel.setMethodCallHandler((call) {
-      switch (call.method) {
-        case 'selectNotification':
-          return _onSelectNotification(call.arguments);
-        default:
-          return Future.error('method not defined');
-      }
-    });
-  }
 
   /// empty constructor now create a new player
   factory AssetsAudioPlayer() => AssetsAudioPlayer.newPlayer();

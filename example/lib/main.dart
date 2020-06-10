@@ -12,18 +12,10 @@ import 'player/PositionSeekWidget.dart';
 import 'player/SongsSelector.dart';
 import 'player/VolumeSelector.dart';
 
-final BehaviorSubject<String> selectNotificationSubject =
-    BehaviorSubject<String>();
-
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  AssetsAudioPlayer assetsAudioPlayer = AssetsAudioPlayer();
-  //Should be initialized before run so that it can trigger the notification when app is opened by notification
-  assetsAudioPlayer.initNotification((payload) {
-    if (payload != null) {
-      debugPrint('notification payload: ' + payload);
-    }
-    selectNotificationSubject.add(payload);
+  AssetsAudioPlayer.setupNotificationsOpenAction((notification) {
+    print(notification.audioId);
+    return true;
   });
 
   runApp(
@@ -145,16 +137,10 @@ class _MyAppState extends State<MyApp> {
     _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
       print("isplaying : $isplaying");
     }));
-    _configureSelectNotificationSubject();
+    _subscriptions.add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
+      return false;
+    }));
     super.initState();
-  }
-
-  void _configureSelectNotificationSubject() {
-    //Custom Action Can be written here. It return the track id from metas
-    selectNotificationSubject.stream.listen((String payload) async {
-      print("--------------------------------");
-      print(payload);
-    });
   }
 
   @override
