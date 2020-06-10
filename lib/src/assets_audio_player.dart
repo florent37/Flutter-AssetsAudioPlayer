@@ -300,6 +300,15 @@ class AssetsAudioPlayer {
 
   bool get respectSilentMode => _respectSilentMode;
 
+  bool _showNotification = false;
+  bool get showNotification => _showNotification;
+  set showNotification(bool newValue) {
+    _showNotification = newValue;
+
+    /* await */ _sendChannel.invokeMethod(
+        'showNotification', {"id": this.id, "show": _showNotification});
+  }
+
   /// assign the looping state : true -> looping, false -> not looping
   set loop(value) {
     setLoop(value);
@@ -362,7 +371,7 @@ class AssetsAudioPlayer {
   _init() {
     _recieveChannel = MethodChannel('assets_audio_player/$id');
     _recieveChannel.setMethodCallHandler((MethodCall call) async {
-      print("received call ${call.method} with arguments ${call.arguments}");
+      //print("received call ${call.method} with arguments ${call.arguments}");
       switch (call.method) {
         case 'log':
           print("log: " + call.arguments);
@@ -515,6 +524,7 @@ class AssetsAudioPlayer {
       this.isShuffling,
       this.current,
       this.currentPosition,
+      this.isBuffering
     ])
         .map((values) => RealtimePlayingInfos(
               volume: values[0],
@@ -523,6 +533,7 @@ class AssetsAudioPlayer {
               isShuffling: values[3],
               current: values[4],
               currentPosition: values[5],
+              isBuffering: values[6],
               playerId: this.id,
             ))
         .listen((readingInfos) {
@@ -699,6 +710,7 @@ class AssetsAudioPlayer {
     final currentAudio = _lastOpenedAssetsAudio;
     if (audioInput != null) {
       _respectSilentMode = respectSilentMode;
+      _showNotification = showNotification;
 
       final audio = await _handlePlatformAsset(audioInput);
 

@@ -186,9 +186,33 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     #if os(iOS)
     var targets: [String:Any] = [:]
     
+    func showNotification(show: Bool) {
+        #if os(iOS)
+           let wasShowing = self.displayMediaPlayerNotification
+           self.displayMediaPlayerNotification = show
+           if(wasShowing){
+               //hide
+                self.hideNotification()
+           } else {
+            if let metas = self.audioMetas, let notificationSettings = self.notificationSettings {
+               //show
+               self.setupMediaPlayerNotificationView(notificationSettings: notificationSettings, audioMetas: metas, isPlaying: self.playing)
+            }
+        }
+        #endif
+    }
+
+    func hideNotification() {
+        #if os(iOS)
+        self.deinitMediaPlayerNotifEvent()
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = [:] //empty
+        #endif
+    }
+
     func setupMediaPlayerNotificationView(notificationSettings: NotificationSettings, audioMetas: AudioMetas, isPlaying: Bool) {
         self.notificationSettings = notificationSettings
-        
+        self.audioMetas = audioMetas
+
         UIApplication.shared.beginReceivingRemoteControlEvents()
         let commandCenter = MPRemoteCommandCenter.shared()
         
@@ -999,6 +1023,35 @@ class Music : NSObject, FlutterPlugin {
                     .setPlaySpeed(playSpeed: playSpeed);
                 result(true);
                 break;
+            case "showNotification" :
+                guard let args = call.arguments as? NSDictionary else {
+                      result(FlutterError(
+                          code: "METHOD_CALL",
+                          message: call.method + " Arguments must be an NSDictionary",
+                          details: nil)
+                      );
+                      break;
+                }
+                guard let id = args["id"] as? String else {
+                    result(FlutterError(
+                        code: "METHOD_CALL",
+                        message: call.method + " Arguments[id] must be a String",
+                        details: nil)
+                    );
+                    break;
+                }
+                 guard let show = args["show"] as? Bool else {
+                     result(FlutterError(
+                         code: "METHOD_CALL",
+                         message: call.method + " Arguments[show] must be a Bool",
+                         details: nil)
+                     );
+                     break;
+                 }
+                 self.getOrCreatePlayer(id: id)
+                    .showNotification(show: show);
+                 result(true);
+                 break;
             case "loopSingleAudio" :
                 guard let args = call.arguments as? NSDictionary else {
                       result(FlutterError(

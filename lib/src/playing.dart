@@ -133,6 +133,7 @@ class RealtimePlayingInfos {
   final double volume;
   final bool isPlaying;
   final bool isLooping;
+  final bool isBuffering;
   final bool isShuffling;
 
   RealtimePlayingInfos({
@@ -142,6 +143,7 @@ class RealtimePlayingInfos {
     @required this.volume,
     @required this.isPlaying,
     @required this.isLooping,
+    @required this.isBuffering,
     this.isShuffling,
   }) : this.duration = current?.audio?.duration ?? Duration();
 
@@ -161,6 +163,7 @@ class RealtimePlayingInfos {
           volume == other.volume &&
           isPlaying == other.isPlaying &&
           isLooping == other.isLooping &&
+          isBuffering == other.isBuffering &&
           isShuffling == other.isShuffling;
 
   @override
@@ -172,10 +175,11 @@ class RealtimePlayingInfos {
       volume.hashCode ^
       isPlaying.hashCode ^
       isLooping.hashCode ^
+      isBuffering.hashCode ^
       isShuffling.hashCode;
 
   @override
   String toString() {
-    return 'RealtimePlayingInfos{playerId: $playerId, current: $current, duration: $duration, currentPosition: $currentPosition, volume: $volume, isPlaying: $isPlaying, isLooping: $isLooping, isShuffling: $isShuffling}';
+    return 'RealtimePlayingInfos{playerId: $playerId, current: $current, duration: $duration, currentPosition: $currentPosition, volume: $volume, isPlaying: $isPlaying, isLooping: $isLooping, isBuffering: $isBuffering, isShuffling: $isShuffling}';
   }
 }
