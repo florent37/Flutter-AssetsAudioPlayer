@@ -22,11 +22,11 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
         builder: builder,
       );
 
-  PlayerBuilder builderIsLooping({
+  PlayerBuilder builderLoopMode({
     Key key,
-    @required IsLoopingWidgetBuilder builder,
+    @required LoopModeWidgetBuilder builder,
   }) =>
-      PlayerBuilder.isLooping(
+      PlayerBuilder.loopMode(
         key: key,
         player: this,
         builder: builder,

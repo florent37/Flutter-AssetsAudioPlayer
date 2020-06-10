@@ -15,11 +15,13 @@ import 'applifecycle.dart';
 import 'notification.dart';
 import 'playable.dart';
 import 'playing.dart';
+import 'loop.dart';
 
 export 'applifecycle.dart';
 export 'notification.dart';
 export 'playable.dart';
 export 'playing.dart';
+export 'loop.dart';
 
 const _DEFAULT_AUTO_START = true;
 const _DEFAULT_RESPECT_SILENT_MODE = false;
@@ -288,7 +290,7 @@ class AssetsAudioPlayer {
   ///         }),
   ValueStream<double> get volume => _volume.stream;
 
-  final BehaviorSubject<bool> _loop = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<LoopMode> _loopMode = BehaviorSubject<LoopMode>.seeded(LoopMode.none);
   final BehaviorSubject<bool> _shuffle = BehaviorSubject<bool>.seeded(false);
 
   /// Called when the looping state changes
@@ -296,7 +298,7 @@ class AssetsAudioPlayer {
   ///
   ///     })
   ///
-  ValueStream<bool> get isLooping => _loop.stream;
+  ValueStream<LoopMode> get loopMode => _loopMode.stream;
 
   ValueStream<bool> get isShuffling => _shuffle.stream;
 
@@ -317,7 +319,7 @@ class AssetsAudioPlayer {
   Duration _lastSeek;
 
   /// returns the looping state : true -> looping, false -> not looping
-  bool get loop => _loop.value;
+  LoopMode get loop => _loopMode.value;
 
   bool get shuffle => _shuffle.value;
 
@@ -336,14 +338,14 @@ class AssetsAudioPlayer {
 
   /// assign the looping state : true -> looping, false -> not looping
   set loop(value) {
-    setLoop(value);
+    setLoopMode(value);
   }
 
-  Future<void> setLoop(bool value) async {
-    _playlist.loop = value;
-    _loop.value = value;
+  Future<void> setLoopMode(LoopMode value) async {
+    _playlist.loopMode = value;
+    _loopMode.value = value;
     if (_playlist.isSingleAudio) {
-      _loopSingleAudio(value);
+      _loopSingleAudio(value != LoopMode.none);
     } else {
       _loopSingleAudio(false);
     }
@@ -358,7 +360,21 @@ class AssetsAudioPlayer {
   /// if it was looping -> stops this
   /// if it was'nt looping -> now it is
   void toggleLoop() {
-    loop = !loop;
+    if(_playlist.isSingleAudio){
+      if(loop == LoopMode.none) {
+        loop = LoopMode.single;
+      } else {
+        loop = LoopMode.none;
+      }
+    } else {
+      if(loop == LoopMode.none){
+        loop = LoopMode.playlist;
+      } else if(loop == LoopMode.playlist){
+        loop = LoopMode.single;
+      } else {
+        loop = LoopMode.none;
+      }
+    }
   }
 
   /// toggle the shuffling state
@@ -379,7 +395,7 @@ class AssetsAudioPlayer {
     _playlistFinished.close();
     _current.close();
     _playlistAudioFinished.close();
-    _loop.close();
+    _loopMode.close();
     _shuffle.close();
     _playSpeed.close();
     _playerState.close();
@@ -545,7 +561,7 @@ class AssetsAudioPlayer {
     _realTimeSubscription = CombineLatestStream.list<dynamic>([
       this.volume,
       this.isPlaying,
-      this.isLooping,
+      this.loopMode,
       this.isShuffling,
       this.current,
       this.currentPosition,
@@ -554,7 +570,7 @@ class AssetsAudioPlayer {
         .map((values) => RealtimePlayingInfos(
               volume: values[0],
               isPlaying: values[1],
-              isLooping: values[2],
+              loopMode: values[2],
               isShuffling: values[3],
               current: values[4],
               currentPosition: values[5],
@@ -597,7 +613,7 @@ class AssetsAudioPlayer {
         playSpeed: _playlist.playSpeed,
         notificationSettings: _playlist.notificationSettings,
         autoStart: autoStart,
-        loop: _playlist.loop,
+        loopMode: _playlist.loopMode,
         seek: seek,
       );
     }
@@ -615,7 +631,10 @@ class AssetsAudioPlayer {
   Future<bool> _next(
       {bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
-      if (_playlist.hasNext()) {
+      if(loop == LoopMode.single) {
+        await seek(Duration.zero);
+        return true;
+      } else if (_playlist.hasNext()) {
         if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
             audio: this._current.value.audio,
@@ -628,7 +647,7 @@ class AssetsAudioPlayer {
         await _openPlaylistCurrent();
 
         return true;
-      } else if (loop) {
+      } else if (loop == LoopMode.playlist) {
         //last element
         if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
@@ -729,7 +748,7 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
     double playSpeed,
-    bool loop,
+    LoopMode loopMode,
     NotificationSettings notificationSettings,
   }) async {
     final currentAudio = _lastOpenedAssetsAudio;
@@ -771,7 +790,7 @@ class AssetsAudioPlayer {
 
         await _sendChannel.invokeMethod('open', params);
 
-        await setLoop(loop);
+        await setLoopMode(loop);
 
         _playlistFinished.value = false;
       } catch (e) {
@@ -820,7 +839,7 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
     double playSpeed,
-    bool loop,
+    LoopMode loopMode,
     NotificationSettings notificationSettings,
     PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
   }) async {
@@ -832,7 +851,7 @@ class AssetsAudioPlayer {
         respectSilentMode: respectSilentMode,
         showNotification: showNotification,
         playSpeed: playSpeed,
-        loop: loop,
+        loopMode: loopMode,
         notificationSettings: notificationSettings,
         playInBackground: playInBackground);
     _playlist.clearPlayerAudio(shuffle);
@@ -866,7 +885,7 @@ class AssetsAudioPlayer {
     Duration seek,
     double playSpeed,
     NotificationSettings notificationSettings,
-    bool loop = false,
+    LoopMode loopMode = LoopMode.none,
     PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
   }) async {
     Playlist playlist;
@@ -886,7 +905,7 @@ class AssetsAudioPlayer {
         respectSilentMode: respectSilentMode,
         showNotification: showNotification,
         seek: seek,
-        loop: loop,
+        loopMode: loopMode,
         playSpeed: playSpeed,
         notificationSettings:
             notificationSettings ?? defaultNotificationSettings,
@@ -1112,7 +1131,7 @@ class _CurrentPlaylist {
   final double volume;
   final bool respectSilentMode;
   final bool showNotification;
-  bool loop;
+  LoopMode loopMode;
   final double playSpeed;
   final NotificationSettings notificationSettings;
   final PlayInBackground playInBackground;
@@ -1215,7 +1234,7 @@ class _CurrentPlaylist {
     this.playSpeed,
     this.notificationSettings,
     this.playInBackground,
-    this.loop,
+    this.loopMode,
   });
 
   void returnToFirst() {

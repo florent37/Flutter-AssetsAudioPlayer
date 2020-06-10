@@ -95,12 +95,12 @@ class _MyAppState extends State<MyApp> {
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   StreamBuilder(
-                    stream: _assetsAudioPlayer.isLooping,
-                    initialData: false,
+                    stream: _assetsAudioPlayer.loopMode,
+                    initialData: LoopMode.none,
                     builder:
-                        (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                        (BuildContext context, AsyncSnapshot<LoopMode> snapshot) {
                       return RaisedButton(
-                        child: Text(snapshot.data ? "Looping" : "Not looping"),
+                        child: Text(snapshot.data != LoopMode.none ? "Looping" : "Not looping"),
                         onPressed: () {
                           _assetsAudioPlayer.toggleLoop();
                         },
