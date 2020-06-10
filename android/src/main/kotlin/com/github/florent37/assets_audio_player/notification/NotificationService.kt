@@ -107,9 +107,9 @@ class NotificationService : Service() {
         try {
             val appInfos = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
             val customIcon = appInfos.metaData.get("assets.audio.player.notification.icon") as? Int
-            return customIcon ?: R.drawable.ic_action_play_arrow
+            return customIcon ?: R.drawable.exo_icon_circular_play
         } catch (t : Throwable) {
-            return R.drawable.ic_action_play_arrow
+            return R.drawable.exo_icon_circular_play
         }
     }
 
