@@ -286,6 +286,17 @@ class AssetsAudioPlayer {
 
   bool get respectSilentMode => _respectSilentMode;
 
+  bool _showNotification = false;
+  bool get showNotification => _showNotification;
+  set showNotification(bool newValue) {
+    _showNotification = newValue;
+
+    /* await */ _sendChannel.invokeMethod('showNotification', {
+      "id": this.id,
+      "show": _showNotification
+    });
+  }
+
   /// assign the looping state : true -> looping, false -> not looping
   set loop(value) {
     setLoop(value);
@@ -687,6 +698,7 @@ class AssetsAudioPlayer {
     final currentAudio = _lastOpenedAssetsAudio;
     if (audioInput != null) {
       _respectSilentMode = respectSilentMode;
+      _showNotification = showNotification;
 
       final audio = await _handlePlatformAsset(audioInput);
 

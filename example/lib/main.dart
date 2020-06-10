@@ -189,7 +189,8 @@ class _MyAppState extends State<MyApp> {
                           padding: EdgeInsets.all(18),
                           margin: EdgeInsets.all(18),
                           onPressed: () {
-                            AssetsAudioPlayer.playAndForget(Audio("assets/audios/horn.mp3"));
+                            _assetsAudioPlayer.showNotification = !_assetsAudioPlayer.showNotification;
+                            //AssetsAudioPlayer.playAndForget(Audio("assets/audios/horn.mp3"));
                           },
                           child: Icon(
                             Icons.add_alert,
