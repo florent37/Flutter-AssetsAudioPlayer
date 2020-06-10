@@ -76,6 +76,7 @@ class MetasImage {
 
 @immutable
 class Metas {
+  final String id;
   final String title;
   final String artist;
   final String album;
@@ -83,6 +84,7 @@ class Metas {
   final MetasImage image;
 
   const Metas({
+    this.id,
     this.title,
     this.artist,
     this.album,
@@ -105,6 +107,7 @@ class Metas {
       title.hashCode ^ artist.hashCode ^ album.hashCode ^ image.hashCode;
 
   Metas copyWith({
+    String id,
     String title,
     String artist,
     String album,
@@ -112,6 +115,7 @@ class Metas {
     MetasImage image,
   }) {
     return new Metas(
+      id: id ?? this.id,
       title: title ?? this.title,
       artist: artist ?? this.artist,
       album: album ?? this.album,
@@ -264,6 +268,9 @@ void writeAudioMetasInto(
       params["song.imageType"] = imageTypeDescription(metas.image.type);
       if (metas.image.package != null)
         params["song.imagePackage"] = metas.image.package;
+    }
+    if (metas.id != null) {
+      params["song.trackID"] = metas.id;
     }
   }
 }

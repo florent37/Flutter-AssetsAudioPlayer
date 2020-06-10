@@ -34,6 +34,7 @@ class NotificationService : Service() {
 
         const val EXTRA_PLAYER_ID = "playerId"
         const val EXTRA_NOTIFICATION_ACTION = "notificationAction"
+        const val TRACK_ID = "trackID";
 
         fun updatePosition(context: Context, isPlaying: Boolean, currentPositionMs: Long, speed: Float){
             MediaButtonsReceiver.getMediaSessionCompat(context).let { mediaSession ->
@@ -79,10 +80,11 @@ class NotificationService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun createReturnIntent(forAction: String, forPlayer: String): Intent {
+    private fun createReturnIntent(forAction: String, forPlayer: String,audioMetas: AudioMetas): Intent {
         return Intent(this, NotificationActionReceiver::class.java)
                 .setAction(forAction)
                 .putExtra(EXTRA_PLAYER_ID, forPlayer)
+                .putExtra(TRACK_ID,audioMetas.trackID)
     }
     
     private fun displayNotification(action: NotificationAction.Show) {
@@ -123,7 +125,7 @@ class NotificationService : Service() {
                 durationMs = action.durationMs
         )
 
-        val toggleIntent = createReturnIntent(forAction = NotificationAction.ACTION_TOGGLE, forPlayer = action.playerId)
+        val toggleIntent = createReturnIntent(forAction = NotificationAction.ACTION_TOGGLE, forPlayer = action.playerId,audioMetas = action.audioMetas)
                 .putExtra(EXTRA_NOTIFICATION_ACTION, action.copyWith(
                         isPlaying = !action.isPlaying
                 ))
@@ -137,7 +139,7 @@ class NotificationService : Service() {
                 .apply {
                     if(notificationSettings.prevEnabled) {
                         addAction(R.drawable.exo_icon_previous, "prev",
-                                PendingIntent.getBroadcast(context, 0, createReturnIntent(forAction = NotificationAction.ACTION_PREV, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
+                                PendingIntent.getBroadcast(context, 0, createReturnIntent(forAction = NotificationAction.ACTION_PREV, forPlayer = action.playerId,audioMetas = action.audioMetas), PendingIntent.FLAG_UPDATE_CURRENT)
                         )
                     }
                 }
@@ -155,7 +157,7 @@ class NotificationService : Service() {
                 .apply {
                     if(notificationSettings.nextEnabled) {
                         addAction(R.drawable.exo_icon_next, "next", PendingIntent.getBroadcast(context, 0,
-                                createReturnIntent(forAction = NotificationAction.ACTION_NEXT, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
+                                createReturnIntent(forAction = NotificationAction.ACTION_NEXT, forPlayer = action.playerId,audioMetas = action.audioMetas), PendingIntent.FLAG_UPDATE_CURRENT)
                         )
                     }
                 }
@@ -163,7 +165,7 @@ class NotificationService : Service() {
                 .apply {
                     if(notificationSettings.stopEnabled){
                         addAction(R.drawable.exo_icon_stop, "stop", PendingIntent.getBroadcast(context, 0,
-                                createReturnIntent(forAction = NotificationAction.ACTION_STOP, forPlayer = action.playerId), PendingIntent.FLAG_UPDATE_CURRENT)
+                                createReturnIntent(forAction = NotificationAction.ACTION_STOP, forPlayer = action.playerId,audioMetas = action.audioMetas), PendingIntent.FLAG_UPDATE_CURRENT)
                         )
                     }
                 }
@@ -191,7 +193,7 @@ class NotificationService : Service() {
                     }
                 }
                 .setContentIntent(PendingIntent.getBroadcast(this, 0,
-                        createReturnIntent(forAction = NotificationAction.ACTION_SELECT, forPlayer = action.playerId), PendingIntent.FLAG_CANCEL_CURRENT))
+                        createReturnIntent(forAction = NotificationAction.ACTION_SELECT, forPlayer = action.playerId,audioMetas = action.audioMetas), PendingIntent.FLAG_CANCEL_CURRENT))
                 .also {
                     if(bitmap != null){
                         it.setLargeIcon(bitmap)
