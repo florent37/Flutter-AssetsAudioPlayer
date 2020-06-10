@@ -91,7 +91,7 @@ class Metas {
     this.image,
     this.extra,
   }) {
-    if(this.id == null){
+    if (this.id == null) {
       this.id = Uuid().v4();
     }
   }

@@ -1,6 +1,7 @@
-## 2.0.1+6
+## 2.0.1+8
 
 * Added `.showNotification = true/false` to hide dynamically displayed notification
+* Added custom action on notif click(android)
 
 ## 2.0.1+4
 

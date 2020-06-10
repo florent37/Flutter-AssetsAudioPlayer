@@ -76,4 +76,5 @@ class ClickedNotificationWrapper {
   ClickedNotificationWrapper(this.clickedNotification);
 }
 
-typedef NotificationOpenAction = bool Function(ClickedNotification notification);
+typedef NotificationOpenAction = bool Function(
+    ClickedNotification notification);
