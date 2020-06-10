@@ -357,7 +357,7 @@ class AssetsAudioPlayer {
   _init() {
     _recieveChannel = MethodChannel('assets_audio_player/$id');
     _recieveChannel.setMethodCallHandler((MethodCall call) async {
-      print("received call ${call.method} with arguments ${call.arguments}");
+      //print("received call ${call.method} with arguments ${call.arguments}");
       switch (call.method) {
         case 'log':
           print("log: " + call.arguments);
