@@ -687,11 +687,19 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         if(loop){
             #if os(iOS)
             if #available(iOS 10.0, *) {
-                self.looper = AVPlayerLooper(player: self.player!, templateItem: self.player!.items()[0])
+                if let player = self.player {
+                    if(player.items().count > 0){
+                        self.looper = AVPlayerLooper(player: player, templateItem: player.items()[0])
+                    }
+                }
             }
             #elseif os(OSX)
             if #available(OSX 10.12, *) {
-                self.looper = AVPlayerLooper(player: self.player!, templateItem: self.player!.items()[0])
+                if let player = self.player {
+                    if(player.items().count > 0){
+                        self.looper = AVPlayerLooper(player: player, templateItem: player.items()[0])
+                    }
+                }
             }
             #endif
         } else {
