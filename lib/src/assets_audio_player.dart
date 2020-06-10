@@ -501,6 +501,7 @@ class AssetsAudioPlayer {
       this.isShuffling,
       this.current,
       this.currentPosition,
+      this.isBuffering
     ])
         .map((values) => RealtimePlayingInfos(
               volume: values[0],
@@ -509,6 +510,7 @@ class AssetsAudioPlayer {
               isShuffling: values[3],
               current: values[4],
               currentPosition: values[5],
+              isBuffering: values[6],
               playerId: this.id,
             ))
         .listen((readingInfos) {
