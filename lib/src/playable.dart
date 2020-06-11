@@ -2,7 +2,16 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
-class Playable {}
+class Playable {
+  final Set<PlayerEditor> _currentlyOpenedIn = Set();
+  Set<PlayerEditor> get currentlyOpenedIn => Set.from(_currentlyOpenedIn);
+  void setCurrentlyOpenedIn(PlayerEditor player){
+    _currentlyOpenedIn.add(player);
+  }
+  void removeCurrentlyOpenedIn(PlayerEditor player){
+    _currentlyOpenedIn.remove(player);
+  }
+}
 
 enum AudioType {
   network,
@@ -129,7 +138,7 @@ class Metas {
   }
 }
 
-class Audio implements Playable {
+class Audio extends Playable {
   final String path;
   final String package;
   final AudioType audioType;
@@ -191,7 +200,6 @@ class Audio implements Playable {
   }
 
   void updateMetas({
-    AssetsAudioPlayer player,
     String title,
     String artist,
     String album,
@@ -205,9 +213,9 @@ class Audio implements Playable {
       extra: extra,
       image: image,
     );
-    if (player != null) {
-      player.onAudioUpdated(this);
-    }
+    super.currentlyOpenedIn.forEach((playerEditor) {
+      playerEditor.onAudioMetasUpdated(this);
+    });
   }
 
   Audio copyWith({
@@ -227,7 +235,7 @@ class Audio implements Playable {
   }
 }
 
-class Playlist implements Playable {
+class Playlist extends Playable {
   final List<Audio> audios = [];
 
   int _startIndex = 0;
@@ -258,7 +266,9 @@ class Playlist implements Playable {
     if (audio != null) {
       this.audios.insert(index, audio);
     }
-    //here maybe stop/open the new song if playing this index
+    super.currentlyOpenedIn.forEach((playerEditor) {
+      playerEditor.onAudioAddedAt(index);
+    });
     return this;
   }
 
@@ -271,14 +281,20 @@ class Playlist implements Playable {
 
   bool remove(Audio audio) {
     if (audio == null) return false;
+    final index = this.audios.indexOf(audio);
     final bool removed = this.audios.remove(audio);
+    super.currentlyOpenedIn.forEach((playerEditor) {
+      playerEditor.onAudioRemovedAt(index);
+    });
     //here maybe stop the player if playing this index
     return removed;
   }
 
   Audio removeAtIndex(int index) {
     Audio removedAudio = this.audios.removeAt(index);
-    //here maybe stop the player if playing this index
+    super.currentlyOpenedIn.forEach((playerEditor) {
+      playerEditor.onAudioRemovedAt(index);
+    });
     return removedAudio;
   }
 

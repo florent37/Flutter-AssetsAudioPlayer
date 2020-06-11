@@ -48,6 +48,27 @@ enum PlayerState {
   stop,
 }
 
+class PlayerEditor{
+  final AssetsAudioPlayer assetsAudioPlayer;
+  PlayerEditor._(this.assetsAudioPlayer);
+
+  void onAudioRemovedAt(int index) {
+    if(assetsAudioPlayer._playlist.playlistIndex == index){
+      assetsAudioPlayer._openPlaylistCurrent();
+    }
+  }
+
+  void onAudioAddedAt(int index) {
+    if(assetsAudioPlayer._playlist.playlistIndex == index){
+      assetsAudioPlayer._openPlaylistCurrent();
+    }
+  }
+
+  void onAudioMetasUpdated(Audio audio) {
+    assetsAudioPlayer._onAudioUpdated(audio);
+  }
+}
+
 /// The AssetsAudioPlayer, playing audios from assets/
 /// Example :
 ///
@@ -63,6 +84,9 @@ enum PlayerState {
 ///       assets:
 ///         - assets/audios/
 class AssetsAudioPlayer {
+
+  PlayerEditor _playerEditor;
+
   static final double minVolume = 0.0;
   static final double maxVolume = 1.0;
   static final double minPlaySpeed = 0.0;
@@ -388,6 +412,8 @@ class AssetsAudioPlayer {
   void dispose() {
     stop();
 
+    playlist?.removeCurrentlyOpenedIn(_playerEditor);
+
     _currentPosition.close();
     _isPlaying.close();
     _volume.close();
@@ -404,11 +430,15 @@ class AssetsAudioPlayer {
     _realTimeSubscription?.cancel();
     _players.remove(this.id);
 
+    _playerEditor = null;
+
     WidgetsBinding.instance.removeObserver(_lifecycleObserver);
     _lifecycleObserver = null;
   }
 
   _init() {
+    _playerEditor = PlayerEditor._(this);
+
     _recieveChannel = MethodChannel('assets_audio_player/$id');
     _recieveChannel.setMethodCallHandler((MethodCall call) async {
       //print("received call ${call.method} with arguments ${call.arguments}");
@@ -757,6 +787,8 @@ class AssetsAudioPlayer {
 
       final audio = await _handlePlatformAsset(audioInput);
 
+      audio.setCurrentlyOpenedIn(_playerEditor);
+
       try {
         Map<String, dynamic> params = {
           "id": this.id,
@@ -800,7 +832,7 @@ class AssetsAudioPlayer {
     }
   }
 
-  Future<void> onAudioUpdated(Audio audio) async {
+  Future<void> _onAudioUpdated(Audio audio) async {
     if (_lastOpenedAssetsAudio != null) {
       if (_lastOpenedAssetsAudio.path == audio.path) {
         final Map<String, dynamic> params = {
@@ -855,6 +887,9 @@ class AssetsAudioPlayer {
         playInBackground: playInBackground);
     _playlist.clearPlayerAudio(shuffle);
     _playlist.moveTo(playlist.startIndex);
+
+    playlist.setCurrentlyOpenedIn(_playerEditor);
+
     return _openPlaylistCurrent(autoStart: autoStart, seek: seek);
   }
 
