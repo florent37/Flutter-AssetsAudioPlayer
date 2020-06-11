@@ -38,6 +38,18 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
+  String loopModeText(LoopMode loopMode){
+    switch(loopMode){
+      case LoopMode.none:
+        return "Not looping";
+      case LoopMode.single:
+        return "Looping single";
+      case LoopMode.playlist:
+        return "Looping playlist";
+    }
+    return "";
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -100,7 +112,7 @@ class _MyAppState extends State<MyApp> {
                     builder:
                         (BuildContext context, AsyncSnapshot<LoopMode> snapshot) {
                       return RaisedButton(
-                        child: Text(snapshot.data != LoopMode.none ? "Looping" : "Not looping"),
+                        child: Text(loopModeText(snapshot.data)),
                         onPressed: () {
                           _assetsAudioPlayer.toggleLoop();
                         },
