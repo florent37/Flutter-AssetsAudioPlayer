@@ -319,7 +319,7 @@ class AssetsAudioPlayer {
   Duration _lastSeek;
 
   /// returns the looping state : true -> looping, false -> not looping
-  LoopMode get loop => _loopMode.value;
+  LoopMode get currentLoopMode => _loopMode.value;
 
   bool get shuffle => _shuffle.value;
 
@@ -334,11 +334,6 @@ class AssetsAudioPlayer {
 
     /* await */ _sendChannel.invokeMethod(
         'showNotification', {"id": this.id, "show": _showNotification});
-  }
-
-  /// assign the looping state : true -> looping, false -> not looping
-  set loop(value) {
-    setLoopMode(value);
   }
 
   Future<void> setLoopMode(LoopMode value) async {
@@ -359,20 +354,21 @@ class AssetsAudioPlayer {
   /// toggle the looping state
   /// if it was looping -> stops this
   /// if it was'nt looping -> now it is
-  void toggleLoop() {
+  Future<void> toggleLoop() async {
+    final currentMode = loopMode.value;
     if(_playlist.isSingleAudio){
-      if(loop == LoopMode.none) {
-        loop = LoopMode.single;
+      if(currentMode == LoopMode.none) {
+        await setLoopMode(LoopMode.single);
       } else {
-        loop = LoopMode.none;
+        await setLoopMode(LoopMode.none);
       }
     } else {
-      if(loop == LoopMode.none){
-        loop = LoopMode.playlist;
-      } else if(loop == LoopMode.playlist){
-        loop = LoopMode.single;
+      if(currentMode == LoopMode.none){
+        await setLoopMode(LoopMode.playlist);
+      } else if(currentMode == LoopMode.playlist){
+        await setLoopMode(LoopMode.single);
       } else {
-        loop = LoopMode.none;
+        await setLoopMode(LoopMode.none);
       }
     }
   }
@@ -631,7 +627,7 @@ class AssetsAudioPlayer {
   Future<bool> _next(
       {bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
-      if(loop == LoopMode.single) {
+      if(loopMode.value == LoopMode.single) {
         await seek(Duration.zero);
         return true;
       } else if (_playlist.hasNext()) {
@@ -647,7 +643,7 @@ class AssetsAudioPlayer {
         await _openPlaylistCurrent();
 
         return true;
-      } else if (loop == LoopMode.playlist) {
+      } else if (loopMode.value == LoopMode.playlist) {
         //last element
         if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
@@ -790,7 +786,7 @@ class AssetsAudioPlayer {
 
         await _sendChannel.invokeMethod('open', params);
 
-        await setLoopMode(loop);
+        await setLoopMode(loopMode);
 
         _playlistFinished.value = false;
       } catch (e) {
