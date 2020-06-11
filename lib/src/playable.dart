@@ -254,11 +254,37 @@ class Playlist implements Playable {
     return this;
   }
 
+  Playlist insert(int index, Audio audio) {
+    if (audio != null) {
+      this.audios.insert(index, audio );
+    }
+    //here maybe stop/open the new song if playing this index
+    return this;
+  }
+
   Playlist addAll(List<Audio> audios) {
     if (audios != null) {
       this.audios.addAll(audios);
     }
     return this;
+  }
+
+  bool remove(Audio audio){
+    if(audio == null)
+      return false;
+    final bool removed = this.audios.remove(audio);
+    //here maybe stop the player if playing this index
+    return removed;
+  }
+
+  Audio removeAtIndex(int index){
+    Audio removedAudio = this.audios.removeAt(index);
+    //here maybe stop the player if playing this index
+    return removedAudio;
+  }
+
+  bool contains(Audio audio){
+    return this.audios.contains(audio);
   }
 
   @override
