@@ -1,3 +1,7 @@
+## 2.0.2+2
+
+* Added custom notification icons for Android (in AndroidManifest.xml)
+
 ## 2.0.2+1
 
 * Fixed `seek` and `seekBy` not working on the web
