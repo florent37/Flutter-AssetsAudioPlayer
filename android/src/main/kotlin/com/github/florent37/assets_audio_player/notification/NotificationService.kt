@@ -15,6 +15,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.ACTION_PLAY_PAUSE
 import android.support.v4.media.session.PlaybackStateCompat.ACTION_SEEK_TO
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.media.session.MediaButtonReceiver
@@ -138,7 +139,7 @@ class NotificationService : Service() {
                 //prev
                 .apply {
                     if(notificationSettings.prevEnabled) {
-                        addAction(R.drawable.exo_icon_previous, "prev",
+                        addAction(if(getResourceID(action.notificationSettings.previousIcon) == 0) R.drawable.exo_icon_previous else getResourceID(action.notificationSettings.previousIcon), "prev",
                                 PendingIntent.getBroadcast(context, 0, createReturnIntent(forAction = NotificationAction.ACTION_PREV, forPlayer = action.playerId,audioMetas = action.audioMetas), PendingIntent.FLAG_UPDATE_CURRENT)
                         )
                     }
@@ -147,7 +148,7 @@ class NotificationService : Service() {
                 .apply {
                     if(notificationSettings.playPauseEnabled) {
                         addAction(
-                                if (action.isPlaying) R.drawable.exo_icon_pause else R.drawable.exo_icon_play,
+                                if (action.isPlaying) if(getResourceID(action.notificationSettings.pauseIcon) == 0) R.drawable.exo_icon_pause else getResourceID(action.notificationSettings.pauseIcon) else if(getResourceID(action.notificationSettings.playIcon) == 0) R.drawable.exo_icon_play else getResourceID(action.notificationSettings.playIcon),
                                 if (action.isPlaying) "pause" else "play",
                                 pendingToggleIntent
                         )
@@ -156,7 +157,7 @@ class NotificationService : Service() {
                 //next
                 .apply {
                     if(notificationSettings.nextEnabled) {
-                        addAction(R.drawable.exo_icon_next, "next", PendingIntent.getBroadcast(context, 0,
+                        addAction(if(getResourceID(action.notificationSettings.nextIcon) == 0) R.drawable.exo_icon_next else getResourceID(action.notificationSettings.nextIcon), "next", PendingIntent.getBroadcast(context, 0,
                                 createReturnIntent(forAction = NotificationAction.ACTION_NEXT, forPlayer = action.playerId,audioMetas = action.audioMetas), PendingIntent.FLAG_UPDATE_CURRENT)
                         )
                     }
@@ -164,7 +165,7 @@ class NotificationService : Service() {
                 //stop
                 .apply {
                     if(notificationSettings.stopEnabled){
-                        addAction(R.drawable.exo_icon_stop, "stop", PendingIntent.getBroadcast(context, 0,
+                        addAction(if(getResourceID(action.notificationSettings.stopIcon) == 0) R.drawable.exo_icon_stop else getResourceID(action.notificationSettings.stopIcon), "stop", PendingIntent.getBroadcast(context, 0,
                                 createReturnIntent(forAction = NotificationAction.ACTION_STOP, forPlayer = action.playerId,audioMetas = action.audioMetas), PendingIntent.FLAG_UPDATE_CURRENT)
                         )
                     }
@@ -235,6 +236,12 @@ class NotificationService : Service() {
     
     override fun onTaskRemoved(rootIntent: Intent) {
         hideNotif()
+    }
+
+    private fun getResourceID(iconName : String) : Int{
+        if(iconName == null) return 0
+        val id : Int = resources.getIdentifier(iconName,"drawable",applicationContext.packageName)
+        return id
     }
 
     override fun onCreate() {

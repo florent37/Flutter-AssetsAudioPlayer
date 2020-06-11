@@ -137,7 +137,8 @@ class _MyAppState extends State<MyApp> {
     _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
       print("isplaying : $isplaying");
     }));
-    _subscriptions.add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
+    _subscriptions
+        .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
       return false;
     }));
     super.initState();
@@ -328,16 +329,21 @@ class _MyAppState extends State<MyApp> {
                             showNotification: true,
                             playInBackground: PlayInBackground.enabled,
                             notificationSettings: NotificationSettings(
-                                //seekBarEnabled: false,
-                                //stopEnabled: true,
-                                //customStopAction: (player){
-                                //  player.stop();
-                                //}
-                                //prevEnabled: false,
-                                //customNextAction: (player) {
-                                //  print("next");
-                                //}
-                                ));
+                              //seekBarEnabled: false,
+                              //stopEnabled: true,
+                              //customStopAction: (player){
+                              //  player.stop();
+                              //}
+                              //prevEnabled: false,
+                              //customNextAction: (player) {
+                              //  print("next");
+                              //}
+                              customNextIcon: "next",
+                              customPauseIcon: "pause",
+                              customPlayIcon: "play",
+                              customPreviousIcon: "previous",
+                              customStopIcon: "stop",
+                            ));
                       },
                       playing: playing,
                     );
