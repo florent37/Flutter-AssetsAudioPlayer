@@ -1246,7 +1246,7 @@ class _CurrentPlaylist {
   });
 
   void returnToFirst() {
-    playlistIndex = 0;
+    playlistIndex = playlist.startIndex;
   }
 
   bool hasPrev() {

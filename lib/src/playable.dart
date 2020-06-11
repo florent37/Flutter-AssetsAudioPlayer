@@ -230,12 +230,19 @@ class Audio implements Playable {
 class Playlist implements Playable {
   final List<Audio> audios = [];
 
-  final int startIndex;
+  int _startIndex = 0;
+  int get startIndex => _startIndex;
+  set startIndex(int newValue) {
+    if(newValue < this.audios.length) {
+      _startIndex = newValue;
+    }
+  }
 
-  Playlist({List<Audio> audios, this.startIndex = 0}) {
+  Playlist({List<Audio> audios, int startIndex = 0}) {
     if (audios != null) {
       this.audios.addAll(audios);
     }
+    this.startIndex = startIndex;
   }
 
   int get numberOfItems => audios.length;
