@@ -1,3 +1,7 @@
+## 2.0.1+10
+
+* Fixed `seek` and `seekBy` not working on the web
+
 ## 2.0.1+9
 
 * Added `.showNotification = true/false` to hide dynamically displayed notification
