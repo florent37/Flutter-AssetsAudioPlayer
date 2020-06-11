@@ -324,6 +324,8 @@ class AssetsAudioPlayer {
 
   bool get shuffle => _shuffle.value;
 
+  bool _stopped = false;
+
   bool _respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE;
 
   bool get respectSilentMode => _respectSilentMode;
@@ -933,11 +935,16 @@ class AssetsAudioPlayer {
     if (_isLiveStream) {
       //on livestream, it re-open the media to be live and not on buffer
       await _openPlaylistCurrent();
-    } else if (_playlistFinished.value == true) {
-      //open the last
-      await _openPlaylistCurrent();
     } else {
-      await _play();
+      if (_stopped) {
+        _stopped = false;
+        _lastOpenedAssetsAudio = null; //to force open again
+        //open the last
+        _playlist?.returnToFirst();
+        await _openPlaylistCurrent();
+      } else {
+        await _play();
+      }
     }
   }
 
@@ -960,11 +967,13 @@ class AssetsAudioPlayer {
       //on livestream, we stop
       await stop();
     } else {
-      await _sendChannel.invokeMethod('pause', {
-        "id": this.id,
-      });
+      if(!_stopped) {
+        await _sendChannel.invokeMethod('pause', {
+          "id": this.id,
+        });
+        _lastSeek = _currentPosition.value;
+      }
     }
-    _lastSeek = _currentPosition.value;
   }
 
   /// Change the current position of the song
@@ -1068,6 +1077,8 @@ class AssetsAudioPlayer {
     await _sendChannel.invokeMethod('stop', {
       "id": this.id,
     });
+    _stopped = true;
+    _current.value = null;
   }
 
   /// Change the current play speed (rate) of the MediaPlayer

@@ -12,6 +12,7 @@ class PlayingControls extends StatelessWidget {
   final Function() onPlay;
   final Function() onNext;
   final Function() toggleLoop;
+  final Function() onStop;
 
   PlayingControls({
     @required this.isPlaying,
@@ -21,6 +22,7 @@ class PlayingControls extends StatelessWidget {
     this.onPrevious,
     @required this.onPlay,
     this.onNext,
+    this.onStop,
   });
 
   Widget _loopIcon(BuildContext context) {
@@ -120,7 +122,19 @@ class PlayingControls extends StatelessWidget {
         ),
         SizedBox(
           width: 45,
-        )
+        ),
+        if(onStop != null)
+          NeumorphicButton(
+            style: NeumorphicStyle(
+              boxShape: NeumorphicBoxShape.circle(),
+            ),
+            padding: EdgeInsets.all(16),
+            onPressed: this.onStop,
+            child: Icon(
+              AssetAudioPlayerIcons.stop,
+              size: 32,
+            ),
+          ),
       ],
     );
   }

@@ -248,6 +248,9 @@ class _MyAppState extends State<MyApp> {
                                     loopMode: loopMode,
                                     isPlaying: isPlaying,
                                     isPlaylist: true,
+                                    onStop: (){
+                                      _assetsAudioPlayer.stop();
+                                    },
                                     toggleLoop: () {
                                       _assetsAudioPlayer.toggleLoop();
                                     },

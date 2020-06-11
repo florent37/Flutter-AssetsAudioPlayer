@@ -8,6 +8,7 @@ class PlayingControlsSmall extends StatelessWidget {
   final bool isPlaying;
   final LoopMode loopMode;
   final Function() onPlay;
+  final Function() onStop;
   final Function() toggleLoop;
 
   PlayingControlsSmall({
@@ -15,6 +16,7 @@ class PlayingControlsSmall extends StatelessWidget {
     @required this.loopMode,
     this.toggleLoop,
     @required this.onPlay,
+    this.onStop,
   });
 
   @override
@@ -54,6 +56,18 @@ class PlayingControlsSmall extends StatelessWidget {
             size: 32,
           ),
         ),
+        if(onStop != null)
+          NeumorphicButton(
+            style: NeumorphicStyle(
+              boxShape: NeumorphicBoxShape.circle(),
+            ),
+            padding: EdgeInsets.all(16),
+            onPressed: this.onPlay,
+            child: Icon(
+              AssetAudioPlayerIcons.stop,
+              size: 32,
+            ),
+          ),
       ],
     );
   }
