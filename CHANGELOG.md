@@ -1,10 +1,9 @@
-## 2.0.2+2
+## 2.0.2+3
 
 * Added custom notification icons for Android (in AndroidManifest.xml)
-
-## 2.0.2+1
-
 * Fixed `seek` and `seekBy` not working on the web
+* `PlayList.startIndex` is now mutable
+* Stop player then call `play` reopen it at `playlist.startIndex`
 
 ## 2.0.2
 

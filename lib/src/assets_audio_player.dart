@@ -967,7 +967,7 @@ class AssetsAudioPlayer {
       //on livestream, we stop
       await stop();
     } else {
-      if(!_stopped) {
+      if (!_stopped) {
         await _sendChannel.invokeMethod('pause', {
           "id": this.id,
         });

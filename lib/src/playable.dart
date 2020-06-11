@@ -233,7 +233,7 @@ class Playlist implements Playable {
   int _startIndex = 0;
   int get startIndex => _startIndex;
   set startIndex(int newValue) {
-    if(newValue < this.audios.length) {
+    if (newValue < this.audios.length) {
       _startIndex = newValue;
     }
   }
