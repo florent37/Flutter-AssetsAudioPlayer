@@ -1,5 +1,1 @@
-enum LoopMode{
-  none,
-  single,
-  playlist
-}
+enum LoopMode { none, single, playlist }

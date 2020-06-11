@@ -53,9 +53,7 @@ class PlayerBuilder extends StatefulWidget {
         super(key: key);
 
   const PlayerBuilder.loopMode(
-      {Key key,
-      @required this.player,
-      @required LoopModeWidgetBuilder builder})
+      {Key key, @required this.player, @required LoopModeWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.loopMode,
         super(key: key);

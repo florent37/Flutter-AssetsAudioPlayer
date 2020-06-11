@@ -290,7 +290,8 @@ class AssetsAudioPlayer {
   ///         }),
   ValueStream<double> get volume => _volume.stream;
 
-  final BehaviorSubject<LoopMode> _loopMode = BehaviorSubject<LoopMode>.seeded(LoopMode.none);
+  final BehaviorSubject<LoopMode> _loopMode =
+      BehaviorSubject<LoopMode>.seeded(LoopMode.none);
   final BehaviorSubject<bool> _shuffle = BehaviorSubject<bool>.seeded(false);
 
   /// Called when the looping state changes
@@ -356,16 +357,16 @@ class AssetsAudioPlayer {
   /// if it was'nt looping -> now it is
   Future<void> toggleLoop() async {
     final currentMode = loopMode.value;
-    if(_playlist.isSingleAudio){
-      if(currentMode == LoopMode.none) {
+    if (_playlist.isSingleAudio) {
+      if (currentMode == LoopMode.none) {
         await setLoopMode(LoopMode.single);
       } else {
         await setLoopMode(LoopMode.none);
       }
     } else {
-      if(currentMode == LoopMode.none){
+      if (currentMode == LoopMode.none) {
         await setLoopMode(LoopMode.playlist);
-      } else if(currentMode == LoopMode.playlist){
+      } else if (currentMode == LoopMode.playlist) {
         await setLoopMode(LoopMode.single);
       } else {
         await setLoopMode(LoopMode.none);
@@ -627,7 +628,7 @@ class AssetsAudioPlayer {
   Future<bool> _next(
       {bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
-      if(loopMode.value == LoopMode.single) {
+      if (loopMode.value == LoopMode.single) {
         await seek(Duration.zero);
         return true;
       } else if (_playlist.hasNext()) {

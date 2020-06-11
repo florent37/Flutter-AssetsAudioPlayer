@@ -119,14 +119,11 @@ class _AudioWidgetState extends State<AudioWidget> {
   }
 
   void _open() {
-
-    _player.open(
-      widget.audio,
-      autoStart: widget.play,
-      volume: widget.volume,
-      seek: widget.initialPosition,
-      loopMode: widget.loopMode
-    );
+    _player.open(widget.audio,
+        autoStart: widget.play,
+        volume: widget.volume,
+        seek: widget.initialPosition,
+        loopMode: widget.loopMode);
 
     _onReadyToPlaySubscription?.cancel();
     _onReadyToPlaySubscription = null;
