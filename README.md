@@ -37,7 +37,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^2.0.2
+  assets_audio_player: ^2.0.2+2
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -481,6 +481,26 @@ Custom icon (android only)
 <meta-data
      android:name="assets.audio.player.notification.icon"
      android:resource="@drawable/ic_music_custom"/>
+```
+
+You can also change actions icons 
+
+```
+<meta-data
+    android:name="assets.audio.player.notification.icon.play"
+    android:resource="@drawable/ic_play_custom"/>
+<meta-data
+    android:name="assets.audio.player.notification.icon.pause"
+    android:resource="@drawable/ic_pause_custom"/>
+<meta-data
+    android:name="assets.audio.player.notification.icon.stop"
+    android:resource="@drawable/ic_stop_custom"/>
+<meta-data
+    android:name="assets.audio.player.notification.icon.next"
+    android:resource="@drawable/ic_next_custom"/>
+<meta-data
+    android:name="assets.audio.player.notification.icon.prev"
+    android:resource="@drawable/ic_prev_custom"/>
 ```
 
 ## Custom actions
