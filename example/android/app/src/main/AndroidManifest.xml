@@ -49,6 +49,21 @@
         <meta-data
             android:name="assets.audio.player.notification.icon"
             android:resource="@drawable/ic_music_custom"/>
+        <meta-data
+            android:name="assets.audio.player.notification.icon.play"
+            android:resource="@drawable/ic_music_custom"/>
+        <meta-data
+            android:name="assets.audio.player.notification.icon.pause"
+            android:resource="@drawable/ic_music_custom"/>
+        <meta-data
+            android:name="assets.audio.player.notification.icon.stop"
+            android:resource="@drawable/ic_music_custom"/>
+        <meta-data
+            android:name="assets.audio.player.notification.icon.next"
+            android:resource="@drawable/ic_music_custom"/>
+        <meta-data
+            android:name="assets.audio.player.notification.icon.prev"
+            android:resource="@drawable/ic_music_custom"/>
 
     </application>
 
