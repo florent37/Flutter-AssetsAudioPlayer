@@ -29,8 +29,7 @@ class _MyAppState extends State {
     });
     _assetsAudioPlayer.open(Audio(
       "assets/audios/water.mp3",
-    ), loop: true
-    );
+    ), loopMode: LoopMode.playlist);
     super.initState();
   }
 

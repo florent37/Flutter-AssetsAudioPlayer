@@ -684,6 +684,9 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     func loopSingleAudio(loop: Bool) {
         _loopSingleAudio = loop
         
+        let currentPos = self._currentTime
+        let currentPosMillis = Int(currentPos * 1000) //
+        
         if(loop){
             #if os(iOS)
             if #available(iOS 10.0, *) {
@@ -715,6 +718,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             }
             #endif
         }
+        seek(to: currentPosMillis)
     }
     
     var _currentTime : TimeInterval = 0

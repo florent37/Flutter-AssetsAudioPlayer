@@ -1,3 +1,7 @@
+## 2.0.2
+
+* Breaking change : `loop` boolean now enumerate 3 values : `none`, `single` and `playlist`
+
 ## 2.0.1+9
 
 * Added `.showNotification = true/false` to hide dynamically displayed notification

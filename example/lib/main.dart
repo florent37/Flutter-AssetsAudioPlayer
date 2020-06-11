@@ -128,9 +128,9 @@ class _MyAppState extends State<MyApp> {
     //_subscriptions.add(_assetsAudioPlayer.current.listen((data) {
     //  print("current : $data");
     //}));
-    //_subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
-    //  print("onRedayToPlay : $audio");
-    //}));
+    _subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
+      print("onReadyToPlay : $audio");
+    }));
     //_subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
     //  print("playerState : $playerState");
     //}));
@@ -239,13 +239,13 @@ class _MyAppState extends State<MyApp> {
                     }
                     return Column(
                       children: <Widget>[
-                        _assetsAudioPlayer.builderIsLooping(
-                          builder: (context, isLooping) {
+                        _assetsAudioPlayer.builderLoopMode(
+                          builder: (context, loopMode) {
                             return PlayerBuilder.isPlaying(
                                 player: _assetsAudioPlayer,
                                 builder: (context, isPlaying) {
                                   return PlayingControls(
-                                    isLooping: isLooping,
+                                    loopMode: loopMode,
                                     isPlaying: isPlaying,
                                     isPlaylist: true,
                                     toggleLoop: () {

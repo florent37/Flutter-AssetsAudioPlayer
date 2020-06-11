@@ -106,10 +106,10 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: _assetsAudioPlayer.isLooping,
+        stream: _assetsAudioPlayer.loopMode,
         initialData: false,
         builder: (context, snapshotLooping) {
-          final bool isLooping = snapshotLooping.data;
+          final LoopMode loopMode = snapshotLooping.data;
           return StreamBuilder(
               stream: _assetsAudioPlayer.isPlaying,
               initialData: false,
@@ -158,7 +158,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                           Expanded(
                             flex: 2,
                             child: PlayingControlsSmall(
-                              isLooping: isLooping,
+                              loopMode: loopMode,
                               isPlaying: isPlaying,
                               toggleLoop: () {
                                 _assetsAudioPlayer.toggleLoop();
