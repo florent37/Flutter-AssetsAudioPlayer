@@ -11,7 +11,7 @@ class AudioWidget extends StatefulWidget {
 
   final double volume;
   final bool play;
-  final bool loop;
+  final LoopMode loopMode;
   final Function(Duration current, Duration total) onPositionChanged;
 
   final Function(Duration totalDuration) onReadyToPlay;
@@ -24,7 +24,7 @@ class AudioWidget extends StatefulWidget {
     this.child,
     this.volume = 1.0,
     this.play = true,
-    this.loop = false,
+    this.loopMode = LoopMode.none,
     this.onPositionChanged,
     this.initialPosition,
     this.onReadyToPlay,
@@ -38,7 +38,7 @@ class AudioWidget extends StatefulWidget {
     String package,
     this.volume = 1.0,
     this.play = true,
-    this.loop = false,
+    this.loopMode = LoopMode.none,
     this.onPositionChanged,
     this.initialPosition,
     this.onReadyToPlay,
@@ -52,7 +52,7 @@ class AudioWidget extends StatefulWidget {
     @required String url,
     this.volume = 1.0,
     this.play = true,
-    this.loop = false,
+    this.loopMode = LoopMode.none,
     this.onPositionChanged,
     this.initialPosition,
     this.onReadyToPlay,
@@ -66,7 +66,7 @@ class AudioWidget extends StatefulWidget {
     @required String path,
     this.volume = 1.0,
     this.play = true,
-    this.loop = false,
+    this.loopMode = LoopMode.none,
     this.onPositionChanged,
     this.initialPosition,
     this.onReadyToPlay,
@@ -82,7 +82,7 @@ class AudioWidget extends StatefulWidget {
     Audio audio,
     double volume,
     bool play,
-    bool loop,
+    LoopMode loopMode,
     Function(Duration current, Duration total) onPositionChanged,
     Function(Duration totalDuration) onReadyToPlay,
     Function() onFinished,
@@ -92,7 +92,7 @@ class AudioWidget extends StatefulWidget {
     return AudioWidget(
       child: child ?? this.child,
       audio: audio ?? this.audio,
-      loop: loop ?? this.loop,
+      loopMode: loopMode ?? this.loopMode,
       volume: volume ?? this.volume,
       play: play ?? this.play,
       onPositionChanged: onPositionChanged ?? this.onPositionChanged,
@@ -119,14 +119,11 @@ class _AudioWidgetState extends State<AudioWidget> {
   }
 
   void _open() {
-    _player.loop = widget.loop;
-
-    _player.open(
-      widget.audio,
-      autoStart: widget.play,
-      volume: widget.volume,
-      seek: widget.initialPosition,
-    );
+    _player.open(widget.audio,
+        autoStart: widget.play,
+        volume: widget.volume,
+        seek: widget.initialPosition,
+        loopMode: widget.loopMode);
 
     _onReadyToPlaySubscription?.cancel();
     _onReadyToPlaySubscription = null;
@@ -178,8 +175,8 @@ class _AudioWidgetState extends State<AudioWidget> {
       }
 
       //handle loop
-      if (widget.loop != oldWidget.loop) {
-        _player.loop = widget.loop;
+      if (widget.loopMode != oldWidget.loopMode) {
+        _player.setLoopMode(widget.loopMode);
       }
 
       //handle seek

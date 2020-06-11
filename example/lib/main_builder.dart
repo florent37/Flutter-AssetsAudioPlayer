@@ -201,13 +201,13 @@ class _MyAppState extends State<MyApp> {
                   }
                   return Column(
                     children: <Widget>[
-                      _assetsAudioPlayer.builderIsLooping(
-                        builder: (context, isLooping) {
+                      _assetsAudioPlayer.builderLoopMode(
+                        builder: (context, loopMode) {
                           return PlayerBuilder.isPlaying(
                               player: _assetsAudioPlayer,
                               builder: (context, isPlaying) {
                                 return PlayingControls(
-                                  isLooping: isLooping,
+                                  loopMode: loopMode,
                                   isPlaying: isPlaying,
                                   isPlaylist: true,
                                   toggleLoop: () {

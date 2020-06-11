@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 import '../asset_audio_player_icons.dart';
 
 class PlayingControlsSmall extends StatelessWidget {
   final bool isPlaying;
-  final bool isLooping;
+  final LoopMode loopMode;
   final Function() onPlay;
   final Function() toggleLoop;
 
   PlayingControlsSmall({
     @required this.isPlaying,
-    @required this.isLooping,
+    @required this.loopMode,
     this.toggleLoop,
     @required this.onPlay,
   });
@@ -27,8 +28,8 @@ class PlayingControlsSmall extends StatelessWidget {
             boxShape: NeumorphicBoxShape.circle(),
           ),
           padding: EdgeInsets.all(12),
-          value: true,
-          groupValue: this.isLooping,
+          value: LoopMode.playlist,
+          groupValue: this.loopMode,
           child: Icon(
             Icons.loop,
             size: 18,

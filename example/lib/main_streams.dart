@@ -210,17 +210,17 @@ class _MyAppState extends State<MyApp> {
                       return Column(
                         children: <Widget>[
                           StreamBuilder(
-                            stream: _assetsAudioPlayer.isLooping,
-                            initialData: false,
+                            stream: _assetsAudioPlayer.loopMode,
+                            initialData: LoopMode.none,
                             builder: (context, snapshotLooping) {
-                              final bool isLooping = snapshotLooping.data;
+                              final LoopMode loopMode = snapshotLooping.data;
                               return StreamBuilder(
                                   stream: _assetsAudioPlayer.isPlaying,
                                   initialData: false,
                                   builder: (context, snapshotPlaying) {
                                     final isPlaying = snapshotPlaying.data;
                                     return PlayingControls(
-                                      isLooping: isLooping,
+                                      loopMode: loopMode,
                                       isPlaying: isPlaying,
                                       isPlaylist: playing.playlist.audios.length > 1,
                                       toggleLoop: () {

@@ -185,6 +185,11 @@ class Audio implements Playable {
   int get hashCode =>
       path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode;
 
+  @override
+  String toString() {
+    return 'Audio{path: $path, package: $package, audioType: $audioType, _metas: $_metas, _networkHeaders: $_networkHeaders}';
+  }
+
   void updateMetas({
     AssetsAudioPlayer player,
     String title,

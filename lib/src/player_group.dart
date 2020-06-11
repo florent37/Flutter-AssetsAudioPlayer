@@ -118,7 +118,7 @@ class AssetsAudioPlayerGroup {
 
   Future<void> add(
     Audio audio, {
-    bool loop = false,
+    LoopMode loopMode = LoopMode.none,
     double volume,
     Duration seek,
     double playSpeed,
@@ -132,7 +132,7 @@ class AssetsAudioPlayerGroup {
       autoStart: isPlaying.value,
       //need to play() for player group
       volume: volume,
-      loop: loop,
+      loopMode: loopMode,
       respectSilentMode: respectSilentMode,
       playInBackground: playInBackground,
       playSpeed: playSpeed,
