@@ -213,7 +213,8 @@ class _MyAppState extends State<MyApp> {
                             stream: _assetsAudioPlayer.loopMode,
                             initialData: LoopMode.none,
                             builder: (context, snapshotLooping) {
-                              final LoopMode loopMode = snapshotLooping.data;
+                              final Loo
+                              pMode loopMode = snapshotLooping.data;
                               return StreamBuilder(
                                   stream: _assetsAudioPlayer.isPlaying,
                                   initialData: false,

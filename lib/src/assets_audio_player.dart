@@ -825,6 +825,11 @@ class AssetsAudioPlayer {
         _playlistFinished.value = false;
       } catch (e) {
         _lastOpenedAssetsAudio = currentAudio; //revert to the previous audio
+        try {
+          await stop();
+        } catch (t) {
+          print(t);
+        }
         print(e);
         return Future.error(e);
       }
@@ -1108,11 +1113,11 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.stop();
   ///
   Future<void> stop() async {
+    _stopped = true;
+    _current.value = null;
     await _sendChannel.invokeMethod('stop', {
       "id": this.id,
     });
-    _stopped = true;
-    _current.value = null;
   }
 
   /// Change the current play speed (rate) of the MediaPlayer
