@@ -5,10 +5,11 @@ import 'package:uuid/uuid.dart';
 class Playable {
   final Set<PlayerEditor> _currentlyOpenedIn = Set();
   Set<PlayerEditor> get currentlyOpenedIn => Set.from(_currentlyOpenedIn);
-  void setCurrentlyOpenedIn(PlayerEditor player){
+  void setCurrentlyOpenedIn(PlayerEditor player) {
     _currentlyOpenedIn.add(player);
   }
-  void removeCurrentlyOpenedIn(PlayerEditor player){
+
+  void removeCurrentlyOpenedIn(PlayerEditor player) {
     _currentlyOpenedIn.remove(player);
   }
 }

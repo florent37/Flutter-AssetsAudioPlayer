@@ -48,18 +48,18 @@ enum PlayerState {
   stop,
 }
 
-class PlayerEditor{
+class PlayerEditor {
   final AssetsAudioPlayer assetsAudioPlayer;
   PlayerEditor._(this.assetsAudioPlayer);
 
   void onAudioRemovedAt(int index) {
-    if(assetsAudioPlayer._playlist.playlistIndex == index){
+    if (assetsAudioPlayer._playlist.playlistIndex == index) {
       assetsAudioPlayer._openPlaylistCurrent();
     }
   }
 
   void onAudioAddedAt(int index) {
-    if(assetsAudioPlayer._playlist.playlistIndex == index){
+    if (assetsAudioPlayer._playlist.playlistIndex == index) {
       assetsAudioPlayer._openPlaylistCurrent();
     }
   }
@@ -84,7 +84,6 @@ class PlayerEditor{
 ///       assets:
 ///         - assets/audios/
 class AssetsAudioPlayer {
-
   PlayerEditor _playerEditor;
 
   static final double minVolume = 0.0;
