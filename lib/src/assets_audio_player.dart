@@ -344,7 +344,7 @@ class AssetsAudioPlayer {
   Future<void> setLoopMode(LoopMode value) async {
     _playlist.loopMode = value;
     _loopMode.value = value;
-    if (_playlist.isSingleAudio) {
+    if (_playlist.isSingleAudio || value == LoopMode.single) {
       _loopSingleAudio(value != LoopMode.none);
     } else {
       _loopSingleAudio(false);
