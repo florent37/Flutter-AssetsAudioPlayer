@@ -972,8 +972,8 @@ class AssetsAudioPlayer {
   ///
   ///     _assetsAudioPlayer.seek(Duration(minutes: 1, seconds: 34));
   ///
-  Future<void> seek(Duration to) async {
-    if (to != _lastSeek) {
+  Future<void> seek(Duration to, {bool force = false}) async {
+    if (to != _lastSeek || force) {
       _lastSeek = to;
       await _sendChannel.invokeMethod('seek', {
         "id": this.id,
