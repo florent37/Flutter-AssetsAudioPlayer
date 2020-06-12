@@ -617,6 +617,9 @@ class AssetsAudioPlayer {
     await _openPlaylistCurrent();
   }
 
+  /// keepLoopMode:
+  /// if true : the loopMode is .single => execute previous() will keep it .single
+  /// if false : the loopMode is .single => execute previous() will set it as .playlist
   Future<bool> previous({bool keepLoopMode = true}) async {
     if (_playlist != null) {
       //more than 5 sec played, go back to the start of audio
@@ -624,7 +627,7 @@ class AssetsAudioPlayer {
           _currentPosition.value.inSeconds >= 5) {
         await seek(Duration.zero, force: true);
       } else if (_playlist.hasPrev()) {
-        if(!keepLoopMode) {
+        if (!keepLoopMode) {
           if (loopMode.value == LoopMode.single) {
             await setLoopMode(LoopMode.playlist);
           }
@@ -658,6 +661,9 @@ class AssetsAudioPlayer {
     }
   }
 
+  /// keepLoopMode:
+  /// if true : the loopMode is .single => execute next() will keep it .single
+  /// if false : the loopMode is .single => execute next() will set it as .playlist
   Future<bool> next({
     bool stopIfLast = false,
     bool keepLoopMode = true,
@@ -680,7 +686,7 @@ class AssetsAudioPlayer {
           await seek(Duration.zero);
           return true;
         } else {
-          if(!keepLoopMode) {
+          if (!keepLoopMode) {
             await setLoopMode(LoopMode
                 .playlist); //on loop.single + next, change it to loopMode.playlist
           }

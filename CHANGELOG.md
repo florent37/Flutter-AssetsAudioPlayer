@@ -1,10 +1,11 @@
-## 2.0.3
+## 2.0.3+1
 
 * Added custom notification icons for Android (in AndroidManifest.xml)
 * Fixed `seek` and `seekBy` not working on the web
 * `PlayList.startIndex` is now mutable
 * Stop player then call `play` reopen it at `playlist.startIndex`
 * Increased buffer size on android/exoplayer
+* Added keepLoopMode on prev/next
 
 ## 2.0.2
 
