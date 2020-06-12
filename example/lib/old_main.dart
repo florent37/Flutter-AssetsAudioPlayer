@@ -38,6 +38,18 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
+  String loopModeText(LoopMode loopMode){
+    switch(loopMode){
+      case LoopMode.none:
+        return "Not looping";
+      case LoopMode.single:
+        return "Looping single";
+      case LoopMode.playlist:
+        return "Looping playlist";
+    }
+    return "";
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -95,12 +107,12 @@ class _MyAppState extends State<MyApp> {
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   StreamBuilder(
-                    stream: _assetsAudioPlayer.isLooping,
-                    initialData: false,
+                    stream: _assetsAudioPlayer.loopMode,
+                    initialData: LoopMode.none,
                     builder:
-                        (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                        (BuildContext context, AsyncSnapshot<LoopMode> snapshot) {
                       return RaisedButton(
-                        child: Text(snapshot.data ? "Looping" : "Not looping"),
+                        child: Text(loopModeText(snapshot.data)),
                         onPressed: () {
                           _assetsAudioPlayer.toggleLoop();
                         },

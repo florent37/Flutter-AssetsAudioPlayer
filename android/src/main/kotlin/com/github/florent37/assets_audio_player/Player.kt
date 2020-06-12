@@ -148,7 +148,11 @@ class Player(
              result: MethodChannel.Result,
              context: Context
     ) {
-        stop(pingListener = false)
+        try {
+            stop(pingListener = false)
+        } catch (t: Throwable){
+            print(t)
+        }
 
         this.displayNotification = displayNotification
         this.audioMetas = audioMetas

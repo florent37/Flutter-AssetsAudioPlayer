@@ -34,7 +34,8 @@ class _MyAppState extends State<MyApp> {
         title: "Online",
         artist: "Florent Champigny",
         album: "OnlineAlbum",
-        image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+        image: MetasImage.network(
+            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
       ),
     ),
     Audio(
@@ -43,7 +44,8 @@ class _MyAppState extends State<MyApp> {
         title: "Rock",
         artist: "Florent Champigny",
         album: "RockAlbum",
-        image: MetasImage.network("https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+        image: MetasImage.network(
+            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
       ),
     ),
     Audio(
@@ -61,7 +63,8 @@ class _MyAppState extends State<MyApp> {
         title: "Electronic",
         artist: "Florent Champigny",
         album: "ElectronicAlbum",
-        image: MetasImage.network("https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
+        image: MetasImage.network(
+            "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
       ),
     ),
     Audio(
@@ -70,7 +73,8 @@ class _MyAppState extends State<MyApp> {
         title: "HipHop",
         artist: "Florent Champigny",
         album: "HipHopAlbum",
-        image: MetasImage.network("https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg"),
+        image: MetasImage.network(
+            "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg"),
       ),
     ),
     Audio(
@@ -79,7 +83,8 @@ class _MyAppState extends State<MyApp> {
         title: "Pop",
         artist: "Florent Champigny",
         album: "PopAlbum",
-        image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+        image: MetasImage.network(
+            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
       ),
     ),
     Audio(
@@ -88,7 +93,8 @@ class _MyAppState extends State<MyApp> {
         title: "Instrumental",
         artist: "Florent Champigny",
         album: "InstrumentalAlbum",
-        image: MetasImage.network("https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
+        image: MetasImage.network(
+            "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
       ),
     ),
   ];
@@ -143,10 +149,12 @@ class _MyAppState extends State<MyApp> {
                   children: <Widget>[
                     StreamBuilder(
                       stream: _assetsAudioPlayer.current,
-                      builder: (BuildContext context, AsyncSnapshot<Playing> snapshot) {
+                      builder: (BuildContext context,
+                          AsyncSnapshot<Playing> snapshot) {
                         final Playing playing = snapshot.data;
                         if (playing != null) {
-                          final myAudio = find(this.audios, playing.audio.assetAudioPath);
+                          final myAudio =
+                              find(this.audios, playing.audio.assetAudioPath);
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Neumorphic(
@@ -156,19 +164,20 @@ class _MyAppState extends State<MyApp> {
                                 shape: NeumorphicShape.concave,
                                 boxShape: NeumorphicBoxShape.circle(),
                               ),
-                              child: myAudio.metas.image.type == ImageType.network
-                                  ? Image.network(
-                                      myAudio.metas.image.path,
-                                      height: 150,
-                                      width: 150,
-                                      fit: BoxFit.contain,
-                                    )
-                                  : Image.asset(
-                                      myAudio.metas.image.path,
-                                      height: 150,
-                                      width: 150,
-                                      fit: BoxFit.contain,
-                                    ),
+                              child:
+                                  myAudio.metas.image.type == ImageType.network
+                                      ? Image.network(
+                                          myAudio.metas.image.path,
+                                          height: 150,
+                                          width: 150,
+                                          fit: BoxFit.contain,
+                                        )
+                                      : Image.asset(
+                                          myAudio.metas.image.path,
+                                          height: 150,
+                                          width: 150,
+                                          fit: BoxFit.contain,
+                                        ),
                             ),
                           );
                         }
@@ -184,7 +193,8 @@ class _MyAppState extends State<MyApp> {
                         padding: EdgeInsets.all(18),
                         margin: EdgeInsets.all(18),
                         onPressed: () {
-                          AssetsAudioPlayer.playAndForget(Audio("assets/audios/horn.mp3"));
+                          AssetsAudioPlayer.playAndForget(
+                              Audio("assets/audios/horn.mp3"));
                         },
                         child: Icon(
                           Icons.add_alert,
@@ -210,19 +220,20 @@ class _MyAppState extends State<MyApp> {
                       return Column(
                         children: <Widget>[
                           StreamBuilder(
-                            stream: _assetsAudioPlayer.isLooping,
-                            initialData: false,
+                            stream: _assetsAudioPlayer.loopMode,
+                            initialData: LoopMode.none,
                             builder: (context, snapshotLooping) {
-                              final bool isLooping = snapshotLooping.data;
+                              final LoopMode loopMode = snapshotLooping.data;
                               return StreamBuilder(
                                   stream: _assetsAudioPlayer.isPlaying,
                                   initialData: false,
                                   builder: (context, snapshotPlaying) {
                                     final isPlaying = snapshotPlaying.data;
                                     return PlayingControls(
-                                      isLooping: isLooping,
+                                      loopMode: loopMode,
                                       isPlaying: isPlaying,
-                                      isPlaylist: playing.playlist.audios.length > 1,
+                                      isPlaylist:
+                                          playing.playlist.audios.length > 1,
                                       toggleLoop: () {
                                         _assetsAudioPlayer.toggleLoop();
                                       },
@@ -246,7 +257,8 @@ class _MyAppState extends State<MyApp> {
                                 if (!snapshot.hasData) {
                                   return SizedBox();
                                 }
-                                final RealtimePlayingInfos infos = snapshot.data;
+                                final RealtimePlayingInfos infos =
+                                    snapshot.data;
                                 //print("infos: $infos");
                                 return PositionSeekWidget(
                                   currentPosition: infos.currentPosition,
@@ -265,7 +277,8 @@ class _MyAppState extends State<MyApp> {
                 Expanded(
                   child: StreamBuilder(
                       stream: _assetsAudioPlayer.current,
-                      builder: (BuildContext context, AsyncSnapshot<Playing> snapshot) {
+                      builder: (BuildContext context,
+                          AsyncSnapshot<Playing> snapshot) {
                         final Playing playing = snapshot.data;
                         return SongsSelector(
                           audios: this.audios,

@@ -2,7 +2,17 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
-class Playable {}
+class Playable {
+  final Set<PlayerEditor> _currentlyOpenedIn = Set();
+  Set<PlayerEditor> get currentlyOpenedIn => Set.from(_currentlyOpenedIn);
+  void setCurrentlyOpenedIn(PlayerEditor player) {
+    _currentlyOpenedIn.add(player);
+  }
+
+  void removeCurrentlyOpenedIn(PlayerEditor player) {
+    _currentlyOpenedIn.remove(player);
+  }
+}
 
 enum AudioType {
   network,
@@ -129,7 +139,7 @@ class Metas {
   }
 }
 
-class Audio implements Playable {
+class Audio extends Playable {
   final String path;
   final String package;
   final AudioType audioType;
@@ -185,8 +195,12 @@ class Audio implements Playable {
   int get hashCode =>
       path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode;
 
+  @override
+  String toString() {
+    return 'Audio{path: $path, package: $package, audioType: $audioType, _metas: $_metas, _networkHeaders: $_networkHeaders}';
+  }
+
   void updateMetas({
-    AssetsAudioPlayer player,
     String title,
     String artist,
     String album,
@@ -200,9 +214,9 @@ class Audio implements Playable {
       extra: extra,
       image: image,
     );
-    if (player != null) {
-      player.onAudioUpdated(this);
-    }
+    super.currentlyOpenedIn.forEach((playerEditor) {
+      playerEditor.onAudioMetasUpdated(this);
+    });
   }
 
   Audio copyWith({
@@ -222,15 +236,22 @@ class Audio implements Playable {
   }
 }
 
-class Playlist implements Playable {
+class Playlist extends Playable {
   final List<Audio> audios = [];
 
-  final int startIndex;
+  int _startIndex = 0;
+  int get startIndex => _startIndex;
+  set startIndex(int newValue) {
+    if (newValue < this.audios.length) {
+      _startIndex = newValue;
+    }
+  }
 
-  Playlist({List<Audio> audios, this.startIndex = 0}) {
+  Playlist({List<Audio> audios, int startIndex = 0}) {
     if (audios != null) {
       this.audios.addAll(audios);
     }
+    this.startIndex = startIndex;
   }
 
   int get numberOfItems => audios.length;
@@ -242,11 +263,44 @@ class Playlist implements Playable {
     return this;
   }
 
+  Playlist insert(int index, Audio audio) {
+    if (audio != null) {
+      this.audios.insert(index, audio);
+    }
+    super.currentlyOpenedIn.forEach((playerEditor) {
+      playerEditor.onAudioAddedAt(index);
+    });
+    return this;
+  }
+
   Playlist addAll(List<Audio> audios) {
     if (audios != null) {
       this.audios.addAll(audios);
     }
     return this;
+  }
+
+  bool remove(Audio audio) {
+    if (audio == null) return false;
+    final index = this.audios.indexOf(audio);
+    final bool removed = this.audios.remove(audio);
+    super.currentlyOpenedIn.forEach((playerEditor) {
+      playerEditor.onAudioRemovedAt(index);
+    });
+    //here maybe stop the player if playing this index
+    return removed;
+  }
+
+  Audio removeAtIndex(int index) {
+    Audio removedAudio = this.audios.removeAt(index);
+    super.currentlyOpenedIn.forEach((playerEditor) {
+      playerEditor.onAudioRemovedAt(index);
+    });
+    return removedAudio;
+  }
+
+  bool contains(Audio audio) {
+    return this.audios.contains(audio);
   }
 
   @override

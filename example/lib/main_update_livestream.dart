@@ -41,12 +41,9 @@ class _MyAppState extends State {
             onPressed: () {
 
               this.audio.updateMetas(
-                player: _assetsAudioPlayer, //to update a player
                 title: "Online 2",
                 artist: "My artist",
               );
-
-
             },
           ),
         ),

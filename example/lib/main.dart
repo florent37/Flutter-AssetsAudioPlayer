@@ -36,6 +36,17 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final audios = <Audio>[
+    //Audio.network(
+    //  "https://d14nt81hc5bide.cloudfront.net/U7ZRzzHfk8pvmW28sziKKPzK",
+    //  metas: Metas(
+    //    id: "Invalid",
+    //    title: "Invalid",
+    //    artist: "Florent Champigny",
+    //    album: "OnlineAlbum",
+    //    image: MetasImage.network(
+    //        "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+    //  ),
+    //),
     Audio.network(
       "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3",
       metas: Metas(
@@ -128,9 +139,9 @@ class _MyAppState extends State<MyApp> {
     //_subscriptions.add(_assetsAudioPlayer.current.listen((data) {
     //  print("current : $data");
     //}));
-    //_subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
-    //  print("onRedayToPlay : $audio");
-    //}));
+    _subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
+      print("onReadyToPlay : $audio");
+    }));
     //_subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
     //  print("playerState : $playerState");
     //}));
@@ -239,15 +250,18 @@ class _MyAppState extends State<MyApp> {
                     }
                     return Column(
                       children: <Widget>[
-                        _assetsAudioPlayer.builderIsLooping(
-                          builder: (context, isLooping) {
+                        _assetsAudioPlayer.builderLoopMode(
+                          builder: (context, loopMode) {
                             return PlayerBuilder.isPlaying(
                                 player: _assetsAudioPlayer,
                                 builder: (context, isPlaying) {
                                   return PlayingControls(
-                                    isLooping: isLooping,
+                                    loopMode: loopMode,
                                     isPlaying: isPlaying,
                                     isPlaylist: true,
+                                    onStop: (){
+                                      _assetsAudioPlayer.stop();
+                                    },
                                     toggleLoop: () {
                                       _assetsAudioPlayer.toggleLoop();
                                     },
@@ -321,13 +335,14 @@ class _MyAppState extends State<MyApp> {
                           showNotification: true,
                         );
                       },
-                      onSelected: (myAudio) {
-                        _assetsAudioPlayer.open(myAudio,
-                            autoStart: true,
-                            respectSilentMode: true,
-                            showNotification: true,
-                            playInBackground: PlayInBackground.enabled,
-                            notificationSettings: NotificationSettings(
+                      onSelected: (myAudio) async {
+                        try {
+                          await _assetsAudioPlayer.open(myAudio,
+                              autoStart: true,
+                              respectSilentMode: true,
+                              showNotification: true,
+                              playInBackground: PlayInBackground.enabled,
+                              notificationSettings: NotificationSettings(
                                 //seekBarEnabled: false,
                                 //stopEnabled: true,
                                 //customStopAction: (player){
@@ -337,7 +352,10 @@ class _MyAppState extends State<MyApp> {
                                 //customNextAction: (player) {
                                 //  print("next");
                                 //}
-                                ));
+                              ));
+                        } catch (e){
+                          print(e);
+                        }
                       },
                       playing: playing,
                     );

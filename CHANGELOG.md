@@ -1,3 +1,14 @@
+## 2.0.2+6
+
+* Added custom notification icons for Android (in AndroidManifest.xml)
+* Fixed `seek` and `seekBy` not working on the web
+* `PlayList.startIndex` is now mutable
+* Stop player then call `play` reopen it at `playlist.startIndex`
+
+## 2.0.2
+
+* Breaking change : `loop` boolean now enumerate 3 values : `none`, `single` and `playlist`
+
 ## 2.0.1+9
 
 * Added `.showNotification = true/false` to hide dynamically displayed notification
