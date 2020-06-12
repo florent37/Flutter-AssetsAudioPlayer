@@ -619,7 +619,13 @@ class AssetsAudioPlayer {
 
   Future<bool> previous() async {
     if (_playlist != null) {
-      if (_playlist.hasPrev()) {
+      //more than 5 sec played, go back to the start of audio
+      if(_currentPosition.value != null && _currentPosition.value.inSeconds >= 5){
+        await seek(Duration.zero, force: true);
+      } else if (_playlist.hasPrev()) {
+        if(loopMode.value == LoopMode.single){
+          await setLoopMode(LoopMode.playlist);
+        }
         _playlist.selectPrev();
         await _openPlaylistCurrent();
         return true;
