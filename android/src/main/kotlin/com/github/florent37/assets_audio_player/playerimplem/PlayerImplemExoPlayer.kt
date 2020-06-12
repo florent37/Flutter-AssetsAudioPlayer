@@ -20,17 +20,17 @@ class PlayerImplemExoPlayer(
         onBuffering: ((Boolean) -> Unit),
         onError: ((Throwable) -> Unit)
 ) : PlayerImplem(
-        onFinished=onFinished, 
-        onBuffering=onBuffering, 
-        onError=onError
+        onFinished = onFinished,
+        onBuffering = onBuffering,
+        onError = onError
 ) {
 
     private var mediaPlayer: ExoPlayer? = null
-    
+
     override var loopSingleAudio: Boolean
         get() = mediaPlayer?.repeatMode == REPEAT_MODE_ALL
         set(value) {
-            mediaPlayer?.repeatMode = if(value) REPEAT_MODE_ALL else REPEAT_MODE_OFF
+            mediaPlayer?.repeatMode = if (value) REPEAT_MODE_ALL else REPEAT_MODE_OFF
         }
 
     override val isPlaying: Boolean
@@ -50,34 +50,30 @@ class PlayerImplemExoPlayer(
         mediaPlayer?.playWhenReady = false
     }
 
-    fun getDataSource( context: Context,
-                               flutterAssets: FlutterPlugin.FlutterAssets,
-                               assetAudioPath: String?,
-                               audioType: String,
-                               networkHeaders: Map<*, *>?,
-                               assetAudioPackage: String?) : MediaSource {
+    fun getDataSource(context: Context,
+                      flutterAssets: FlutterPlugin.FlutterAssets,
+                      assetAudioPath: String?,
+                      audioType: String,
+                      networkHeaders: Map<*, *>?,
+                      assetAudioPackage: String?): MediaSource {
         try {
             mediaPlayer?.stop()
             if (audioType == Player.AUDIO_TYPE_NETWORK || audioType == Player.AUDIO_TYPE_LIVESTREAM) {
                 val uri = Uri.parse(assetAudioPath)
                 val userAgent = "assets_audio_player"
-                if(networkHeaders == null) {
-                    return ProgressiveMediaSource
-                            .Factory(DefaultDataSourceFactory(context, userAgent), DefaultExtractorsFactory())
-                            .createMediaSource(uri)
-                } else {
-                    return ProgressiveMediaSource.Factory(DataSource.Factory {
-                        val dataSource = DefaultHttpDataSource(userAgent)
-                        networkHeaders.forEach {
-                            it.key?.let { key ->
-                                it.value?.let { value ->
-                                    dataSource.setRequestProperty(key.toString(), value.toString())
-                                }
+
+                return ProgressiveMediaSource.Factory(DataSource.Factory {
+                    val allowCrossProtocol = true
+                    val dataSource = DefaultHttpDataSource(userAgent, DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS, DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, allowCrossProtocol, null)
+                    networkHeaders?.forEach {
+                        it.key?.let { key ->
+                            it.value?.let { value ->
+                                dataSource.setRequestProperty(key.toString(), value.toString())
                             }
                         }
-                        dataSource;
-                    }).createMediaSource(uri)
-                }
+                    }
+                    dataSource;
+                }).createMediaSource(uri)
             } else if (audioType == Player.AUDIO_TYPE_FILE) {
                 return ProgressiveMediaSource
                         .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
@@ -101,7 +97,7 @@ class PlayerImplemExoPlayer(
         }
     }
 
-    private fun SimpleExoPlayer.Builder.incrementBufferSize(audioType: String) : SimpleExoPlayer.Builder {
+    private fun SimpleExoPlayer.Builder.incrementBufferSize(audioType: String): SimpleExoPlayer.Builder {
         if (audioType == Player.AUDIO_TYPE_NETWORK || audioType == Player.AUDIO_TYPE_LIVESTREAM) {
             /* Instantiate a DefaultLoadControl.Builder. */
             val loadControlBuilder = DefaultLoadControl.Builder()
@@ -137,20 +133,20 @@ class PlayerImplemExoPlayer(
                     .build()
 
             val mediaSource = getDataSource(
-                    context=context,
-                    flutterAssets=flutterAssets,
-                    assetAudioPath=assetAudioPath,
-                    audioType= audioType,
+                    context = context,
+                    flutterAssets = flutterAssets,
+                    assetAudioPath = assetAudioPath,
+                    audioType = audioType,
                     networkHeaders = networkHeaders,
-                    assetAudioPackage= assetAudioPackage
+                    assetAudioPackage = assetAudioPackage
             )
 
-            var lastState : Int? = null
+            var lastState: Int? = null
 
             this.mediaPlayer?.addListener(object : com.google.android.exoplayer2.Player.EventListener {
 
                 override fun onPlayerError(error: ExoPlaybackException) {
-                    if(!onThisMediaReady) {
+                    if (!onThisMediaReady) {
                         continuation.resumeWithException(error)
                     } else {
                         onError(error)
@@ -158,7 +154,7 @@ class PlayerImplemExoPlayer(
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                    if(lastState != playbackState) {
+                    if (lastState != playbackState) {
                         when (playbackState) {
                             ExoPlayer.STATE_ENDED -> {
                                 pause()
@@ -192,8 +188,8 @@ class PlayerImplemExoPlayer(
             })
 
             mediaPlayer?.prepare(mediaSource)
-        } catch (error: Throwable){
-            if(!onThisMediaReady) {
+        } catch (error: Throwable) {
+            if (!onThisMediaReady) {
                 continuation.resumeWithException(error)
             } else {
                 onError(error)
