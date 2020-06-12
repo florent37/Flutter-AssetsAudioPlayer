@@ -721,6 +721,7 @@ class AssetsAudioPlayer {
       _playlistFinished.value = false; //continue playing the playlist
     } else {
       _playlistFinished.value = true; // no next elements -> finished
+      stop();
     }
   }
 
