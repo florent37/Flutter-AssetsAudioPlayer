@@ -462,12 +462,14 @@ class AssetsAudioPlayer {
           break;
         case METHOD_CURRENT:
           if (call.arguments == null) {
-            _playlistAudioFinished.add(Playing(
-              audio: this._current.value.audio,
-              index: this._current.value.index,
+            final current = this._current.value;
+            final finishedPlay = Playing(
+              audio: current.audio,
+              index: current.index,
               hasNext: false,
-              playlist: this._current.value.playlist,
-            ));
+              playlist: current.playlist,
+            );
+            _playlistAudioFinished.add(finishedPlay);
             _playlistFinished.value = true;
             _current.value = null;
             _playerState.value = PlayerState.stop;
@@ -1114,7 +1116,6 @@ class AssetsAudioPlayer {
   ///
   Future<void> stop() async {
     _stopped = true;
-    _current.value = null;
     await _sendChannel.invokeMethod('stop', {
       "id": this.id,
     });
