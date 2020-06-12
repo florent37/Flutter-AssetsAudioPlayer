@@ -1035,7 +1035,7 @@ class AssetsAudioPlayer {
   Future<void> pause() async {
     if (_isLiveStream) {
       //on livestream, we stop
-      await stop();
+      await _stop(removeNotification: false);
     } else {
       if (!_stopped) {
         await _sendChannel.invokeMethod('pause', {
@@ -1144,9 +1144,14 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.stop();
   ///
   Future<void> stop() async {
+    return _stop(removeNotification: true);
+  }
+
+  Future<void> _stop({bool removeNotification = true}) async {
     _stopped = true;
     await _sendChannel.invokeMethod('stop', {
       "id": this.id,
+      "removeNotification": removeNotification
     });
   }
 

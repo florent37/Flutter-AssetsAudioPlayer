@@ -255,7 +255,8 @@ class AssetsAudioPlayer(
                         result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
                         return
                     }
-                    getOrCreatePlayer(id).stop()
+                    val removeNotification = args["removeNotification"] as? Boolean ?: true
+                    getOrCreatePlayer(id).stop(removeNotification= removeNotification)
                     result.success(null)
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)

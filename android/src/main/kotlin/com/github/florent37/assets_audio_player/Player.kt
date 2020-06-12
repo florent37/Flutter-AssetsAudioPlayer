@@ -278,7 +278,7 @@ class Player(
         }
     }
 
-    fun stop(pingListener: Boolean = true) {
+    fun stop(pingListener: Boolean = true, removeNotification: Boolean = true) {
         mediaPlayer?.apply {
             // Reset duration and position.
             // handler.removeCallbacks(updatePosition);
@@ -298,7 +298,7 @@ class Player(
         onForwardRewind?.invoke(0.0)
         if (pingListener) { //action from user
             onStop?.invoke()
-            updateNotif()
+            updateNotif(removeNotificationOnStop= removeNotification)
         }
     }
 
@@ -360,7 +360,7 @@ class Player(
         }
     }
     
-    private fun updateNotif() {
+    private fun updateNotif(removeNotificationOnStop: Boolean = true) {
         this.audioMetas?.takeIf { this.displayNotification }?.let { audioMetas ->
             this.notificationSettings?.let { notificationSettings ->
                 updateNotifPosition()
@@ -369,7 +369,7 @@ class Player(
                         audioMetas = audioMetas,
                         isPlaying = this.isPlaying,
                         notificationSettings = notificationSettings,
-                        stop = (mediaPlayer == null),
+                        stop = removeNotificationOnStop && (mediaPlayer == null),
                         durationMs = this._durationMs
                 )
             }
