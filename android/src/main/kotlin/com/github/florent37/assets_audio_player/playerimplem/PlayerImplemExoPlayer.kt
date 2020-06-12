@@ -3,12 +3,9 @@ package com.github.florent37.assets_audio_player.playerimplem
 import android.content.Context
 import android.net.Uri
 import com.github.florent37.assets_audio_player.Player
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.PlaybackParameters
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.REPEAT_MODE_ALL
 import com.google.android.exoplayer2.Player.REPEAT_MODE_OFF
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -104,6 +101,26 @@ class PlayerImplemExoPlayer(
         }
     }
 
+    private fun SimpleExoPlayer.Builder.incrementBufferSize(audioType: String) : SimpleExoPlayer.Builder {
+        if (audioType == Player.AUDIO_TYPE_NETWORK || audioType == Player.AUDIO_TYPE_LIVESTREAM) {
+            /* Instantiate a DefaultLoadControl.Builder. */
+            val loadControlBuilder = DefaultLoadControl.Builder()
+
+/*How many milliseconds of media data to buffer at any time. */
+            val loadControlBufferMs = DefaultLoadControl.DEFAULT_MAX_BUFFER_MS /* This is 50000 milliseconds in ExoPlayer 2.9.6 */
+
+/* Configure the DefaultLoadControl to use the same value for */
+            loadControlBuilder.setBufferDurationsMs(
+                    loadControlBufferMs,
+                    loadControlBufferMs,
+                    DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
+                    DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
+
+            return this.setLoadControl(loadControlBuilder.createDefaultLoadControl())
+        }
+        return this
+    }
+
     override suspend fun open(
             context: Context,
             flutterAssets: FlutterPlugin.FlutterAssets,
@@ -115,7 +132,9 @@ class PlayerImplemExoPlayer(
         var onThisMediaReady = false
 
         try {
-            mediaPlayer = SimpleExoPlayer.Builder(context).build();
+            mediaPlayer = SimpleExoPlayer.Builder(context)
+                    .incrementBufferSize(audioType)
+                    .build()
 
             val mediaSource = getDataSource(
                     context=context,
