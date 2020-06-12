@@ -1149,10 +1149,8 @@ class AssetsAudioPlayer {
 
   Future<void> _stop({bool removeNotification = true}) async {
     _stopped = true;
-    await _sendChannel.invokeMethod('stop', {
-      "id": this.id,
-      "removeNotification": removeNotification
-    });
+    await _sendChannel.invokeMethod(
+        'stop', {"id": this.id, "removeNotification": removeNotification});
   }
 
   /// Change the current play speed (rate) of the MediaPlayer
