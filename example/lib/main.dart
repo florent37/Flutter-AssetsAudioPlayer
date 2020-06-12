@@ -270,10 +270,10 @@ class _MyAppState extends State<MyApp> {
                                     },
                                     onNext: () {
                                       //_assetsAudioPlayer.forward(Duration(seconds: 10));
-                                      _assetsAudioPlayer.next();
+                                      _assetsAudioPlayer.next(/*keepLoopMode: false*/);
                                     },
                                     onPrevious: () {
-                                      _assetsAudioPlayer.previous();
+                                      _assetsAudioPlayer.previous(/*keepLoopMode: false*/);
                                     },
                                   );
                                 });
