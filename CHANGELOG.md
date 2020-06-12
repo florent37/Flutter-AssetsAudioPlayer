@@ -1,3 +1,7 @@
+## 2.0.3+2
+
+* ExoPlayer network now set `allowCrossProtocolRedirect=true` by default
+
 ## 2.0.3+1
 
 * Added custom notification icons for Android (in AndroidManifest.xml)
