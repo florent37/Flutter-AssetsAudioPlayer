@@ -662,9 +662,14 @@ class AssetsAudioPlayer {
       {bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
       if (loopMode.value == LoopMode.single) {
-        await seek(Duration.zero);
-        return true;
-      } else if (_playlist.hasNext()) {
+        if(!requestByUser){
+          await seek(Duration.zero);
+          return true;
+        } else {
+          await setLoopMode(LoopMode.playlist); //on loop.single + next, change it to loopMode.playlist
+        }
+      }
+      if (_playlist.hasNext()) {
         if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
             audio: this._current.value.audio,
