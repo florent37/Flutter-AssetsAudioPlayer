@@ -37,7 +37,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^2.0.1+9
+  assets_audio_player: ^2.0.2+5
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -483,6 +483,26 @@ Custom icon (android only)
      android:resource="@drawable/ic_music_custom"/>
 ```
 
+You can also change actions icons 
+
+```
+<meta-data
+    android:name="assets.audio.player.notification.icon.play"
+    android:resource="@drawable/ic_play_custom"/>
+<meta-data
+    android:name="assets.audio.player.notification.icon.pause"
+    android:resource="@drawable/ic_pause_custom"/>
+<meta-data
+    android:name="assets.audio.player.notification.icon.stop"
+    android:resource="@drawable/ic_stop_custom"/>
+<meta-data
+    android:name="assets.audio.player.notification.icon.next"
+    android:resource="@drawable/ic_next_custom"/>
+<meta-data
+    android:name="assets.audio.player.notification.icon.prev"
+    android:resource="@drawable/ic_prev_custom"/>
+```
+
 ## Custom actions
 
 You can enable/disable a notification action
@@ -786,11 +806,15 @@ assetsAudioPlayer.playlistFinished.listen((finished){
 ### 🔁 Looping
 
 ```Dart
-final bool isLooping = assetsAudioPlayer.loop; //true / false
+final LoopMode loopMode = assetsAudioPlayer.loop; 
+// possible values
+// LoopMode.none : not looping
+// LoopMode.single : looping a single audio
+// LoopMode.playlist : looping the fyll playlist
 
-assetsAudioPlayer.loop = true; //set loop as true
+assetsAudioPlayer.setLoopMode(LoopMode.single);
 
-assetsAudioPlayer.isLooping.listen((loop){
+assetsAudioPlayer.loopMode.listen((loopMode){
     //listen to loop
 })
 
@@ -872,12 +896,6 @@ Complete `Runner/DebugProfile.entitlements`
 </dict>
 </plist>
 ```
-
-# 🌐 Web Support
-
-Web support is using [import_js_library](https://pub.dev/packages/import_js_library) to import the [Howler.js library](https://howlerjs.com/)
-
-The flutter wrapper of Howler has been exported in another package : https://github.com/florent37/flutter_web_howl
 
 # 🎶 Musics
 

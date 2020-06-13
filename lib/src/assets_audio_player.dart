@@ -15,11 +15,13 @@ import 'applifecycle.dart';
 import 'notification.dart';
 import 'playable.dart';
 import 'playing.dart';
+import 'loop.dart';
 
 export 'applifecycle.dart';
 export 'notification.dart';
 export 'playable.dart';
 export 'playing.dart';
+export 'loop.dart';
 
 const _DEFAULT_AUTO_START = true;
 const _DEFAULT_RESPECT_SILENT_MODE = false;
@@ -46,6 +48,27 @@ enum PlayerState {
   stop,
 }
 
+class PlayerEditor {
+  final AssetsAudioPlayer assetsAudioPlayer;
+  PlayerEditor._(this.assetsAudioPlayer);
+
+  void onAudioRemovedAt(int index) {
+    if (assetsAudioPlayer._playlist.playlistIndex == index) {
+      assetsAudioPlayer._openPlaylistCurrent();
+    }
+  }
+
+  void onAudioAddedAt(int index) {
+    if (assetsAudioPlayer._playlist.playlistIndex == index) {
+      assetsAudioPlayer._openPlaylistCurrent();
+    }
+  }
+
+  void onAudioMetasUpdated(Audio audio) {
+    assetsAudioPlayer._onAudioUpdated(audio);
+  }
+}
+
 /// The AssetsAudioPlayer, playing audios from assets/
 /// Example :
 ///
@@ -61,6 +84,8 @@ enum PlayerState {
 ///       assets:
 ///         - assets/audios/
 class AssetsAudioPlayer {
+  PlayerEditor _playerEditor;
+
   static final double minVolume = 0.0;
   static final double maxVolume = 1.0;
   static final double minPlaySpeed = 0.0;
@@ -288,7 +313,8 @@ class AssetsAudioPlayer {
   ///         }),
   ValueStream<double> get volume => _volume.stream;
 
-  final BehaviorSubject<bool> _loop = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<LoopMode> _loopMode =
+      BehaviorSubject<LoopMode>.seeded(LoopMode.none);
   final BehaviorSubject<bool> _shuffle = BehaviorSubject<bool>.seeded(false);
 
   /// Called when the looping state changes
@@ -296,7 +322,7 @@ class AssetsAudioPlayer {
   ///
   ///     })
   ///
-  ValueStream<bool> get isLooping => _loop.stream;
+  ValueStream<LoopMode> get loopMode => _loopMode.stream;
 
   ValueStream<bool> get isShuffling => _shuffle.stream;
 
@@ -317,9 +343,11 @@ class AssetsAudioPlayer {
   Duration _lastSeek;
 
   /// returns the looping state : true -> looping, false -> not looping
-  bool get loop => _loop.value;
+  LoopMode get currentLoopMode => _loopMode.value;
 
   bool get shuffle => _shuffle.value;
+
+  bool _stopped = false;
 
   bool _respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE;
 
@@ -334,16 +362,11 @@ class AssetsAudioPlayer {
         'showNotification', {"id": this.id, "show": _showNotification});
   }
 
-  /// assign the looping state : true -> looping, false -> not looping
-  set loop(value) {
-    setLoop(value);
-  }
-
-  Future<void> setLoop(bool value) async {
-    _playlist.loop = value;
-    _loop.value = value;
-    if (_playlist.isSingleAudio) {
-      _loopSingleAudio(value);
+  Future<void> setLoopMode(LoopMode value) async {
+    _playlist.loopMode = value;
+    _loopMode.value = value;
+    if (_playlist.isSingleAudio || value == LoopMode.single) {
+      _loopSingleAudio(value != LoopMode.none);
     } else {
       _loopSingleAudio(false);
     }
@@ -357,8 +380,23 @@ class AssetsAudioPlayer {
   /// toggle the looping state
   /// if it was looping -> stops this
   /// if it was'nt looping -> now it is
-  void toggleLoop() {
-    loop = !loop;
+  Future<void> toggleLoop() async {
+    final currentMode = loopMode.value;
+    if (_playlist.isSingleAudio) {
+      if (currentMode == LoopMode.none) {
+        await setLoopMode(LoopMode.single);
+      } else {
+        await setLoopMode(LoopMode.none);
+      }
+    } else {
+      if (currentMode == LoopMode.none) {
+        await setLoopMode(LoopMode.playlist);
+      } else if (currentMode == LoopMode.playlist) {
+        await setLoopMode(LoopMode.single);
+      } else {
+        await setLoopMode(LoopMode.none);
+      }
+    }
   }
 
   /// toggle the shuffling state
@@ -373,13 +411,15 @@ class AssetsAudioPlayer {
   void dispose() {
     stop();
 
+    playlist?.removeCurrentlyOpenedIn(_playerEditor);
+
     _currentPosition.close();
     _isPlaying.close();
     _volume.close();
     _playlistFinished.close();
     _current.close();
     _playlistAudioFinished.close();
-    _loop.close();
+    _loopMode.close();
     _shuffle.close();
     _playSpeed.close();
     _playerState.close();
@@ -389,11 +429,15 @@ class AssetsAudioPlayer {
     _realTimeSubscription?.cancel();
     _players.remove(this.id);
 
+    _playerEditor = null;
+
     WidgetsBinding.instance.removeObserver(_lifecycleObserver);
     _lifecycleObserver = null;
   }
 
   _init() {
+    _playerEditor = PlayerEditor._(this);
+
     _recieveChannel = MethodChannel('assets_audio_player/$id');
     _recieveChannel.setMethodCallHandler((MethodCall call) async {
       //print("received call ${call.method} with arguments ${call.arguments}");
@@ -545,7 +589,7 @@ class AssetsAudioPlayer {
     _realTimeSubscription = CombineLatestStream.list<dynamic>([
       this.volume,
       this.isPlaying,
-      this.isLooping,
+      this.loopMode,
       this.isShuffling,
       this.current,
       this.currentPosition,
@@ -554,7 +598,7 @@ class AssetsAudioPlayer {
         .map((values) => RealtimePlayingInfos(
               volume: values[0],
               isPlaying: values[1],
-              isLooping: values[2],
+              loopMode: values[2],
               isShuffling: values[3],
               current: values[4],
               currentPosition: values[5],
@@ -597,7 +641,7 @@ class AssetsAudioPlayer {
         playSpeed: _playlist.playSpeed,
         notificationSettings: _playlist.notificationSettings,
         autoStart: autoStart,
-        loop: _playlist.loop,
+        loopMode: _playlist.loopMode,
         seek: seek,
       );
     }
@@ -615,7 +659,10 @@ class AssetsAudioPlayer {
   Future<bool> _next(
       {bool stopIfLast = false, bool requestByUser = false}) async {
     if (_playlist != null) {
-      if (_playlist.hasNext()) {
+      if (loopMode.value == LoopMode.single) {
+        await seek(Duration.zero);
+        return true;
+      } else if (_playlist.hasNext()) {
         if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
             audio: this._current.value.audio,
@@ -628,7 +675,7 @@ class AssetsAudioPlayer {
         await _openPlaylistCurrent();
 
         return true;
-      } else if (loop) {
+      } else if (loopMode.value == LoopMode.playlist) {
         //last element
         if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
@@ -729,7 +776,7 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
     double playSpeed,
-    bool loop,
+    LoopMode loopMode,
     NotificationSettings notificationSettings,
   }) async {
     final currentAudio = _lastOpenedAssetsAudio;
@@ -738,6 +785,8 @@ class AssetsAudioPlayer {
       _showNotification = showNotification;
 
       final audio = await _handlePlatformAsset(audioInput);
+
+      audio.setCurrentlyOpenedIn(_playerEditor);
 
       try {
         Map<String, dynamic> params = {
@@ -771,18 +820,23 @@ class AssetsAudioPlayer {
 
         await _sendChannel.invokeMethod('open', params);
 
-        await setLoop(loop);
+        await setLoopMode(loopMode);
 
         _playlistFinished.value = false;
       } catch (e) {
         _lastOpenedAssetsAudio = currentAudio; //revert to the previous audio
+        try {
+          await stop();
+        } catch (t) {
+          print(t);
+        }
         print(e);
         return Future.error(e);
       }
     }
   }
 
-  Future<void> onAudioUpdated(Audio audio) async {
+  Future<void> _onAudioUpdated(Audio audio) async {
     if (_lastOpenedAssetsAudio != null) {
       if (_lastOpenedAssetsAudio.path == audio.path) {
         final Map<String, dynamic> params = {
@@ -820,7 +874,7 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration seek,
     double playSpeed,
-    bool loop,
+    LoopMode loopMode,
     NotificationSettings notificationSettings,
     PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
   }) async {
@@ -832,11 +886,14 @@ class AssetsAudioPlayer {
         respectSilentMode: respectSilentMode,
         showNotification: showNotification,
         playSpeed: playSpeed,
-        loop: loop,
+        loopMode: loopMode,
         notificationSettings: notificationSettings,
         playInBackground: playInBackground);
     _playlist.clearPlayerAudio(shuffle);
     _playlist.moveTo(playlist.startIndex);
+
+    playlist.setCurrentlyOpenedIn(_playerEditor);
+
     return _openPlaylistCurrent(autoStart: autoStart, seek: seek);
   }
 
@@ -866,7 +923,7 @@ class AssetsAudioPlayer {
     Duration seek,
     double playSpeed,
     NotificationSettings notificationSettings,
-    bool loop = false,
+    LoopMode loopMode = LoopMode.none,
     PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
   }) async {
     Playlist playlist;
@@ -886,7 +943,7 @@ class AssetsAudioPlayer {
         respectSilentMode: respectSilentMode,
         showNotification: showNotification,
         seek: seek,
-        loop: loop,
+        loopMode: loopMode,
         playSpeed: playSpeed,
         notificationSettings:
             notificationSettings ?? defaultNotificationSettings,
@@ -917,11 +974,16 @@ class AssetsAudioPlayer {
     if (_isLiveStream) {
       //on livestream, it re-open the media to be live and not on buffer
       await _openPlaylistCurrent();
-    } else if (_playlistFinished.value == true) {
-      //open the last
-      await _openPlaylistCurrent();
     } else {
-      await _play();
+      if (_stopped) {
+        _stopped = false;
+        _lastOpenedAssetsAudio = null; //to force open again
+        //open the last
+        _playlist?.returnToFirst();
+        await _openPlaylistCurrent();
+      } else {
+        await _play();
+      }
     }
   }
 
@@ -944,11 +1006,13 @@ class AssetsAudioPlayer {
       //on livestream, we stop
       await stop();
     } else {
-      await _sendChannel.invokeMethod('pause', {
-        "id": this.id,
-      });
+      if (!_stopped) {
+        await _sendChannel.invokeMethod('pause', {
+          "id": this.id,
+        });
+        _lastSeek = _currentPosition.value;
+      }
     }
-    _lastSeek = _currentPosition.value;
   }
 
   /// Change the current position of the song
@@ -956,8 +1020,8 @@ class AssetsAudioPlayer {
   ///
   ///     _assetsAudioPlayer.seek(Duration(minutes: 1, seconds: 34));
   ///
-  Future<void> seek(Duration to) async {
-    if (to != _lastSeek) {
+  Future<void> seek(Duration to, {bool force = false}) async {
+    if (to != _lastSeek || force) {
       _lastSeek = to;
       await _sendChannel.invokeMethod('seek', {
         "id": this.id,
@@ -1049,6 +1113,8 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.stop();
   ///
   Future<void> stop() async {
+    _stopped = true;
+    _current.value = null;
     await _sendChannel.invokeMethod('stop', {
       "id": this.id,
     });
@@ -1112,7 +1178,7 @@ class _CurrentPlaylist {
   final double volume;
   final bool respectSilentMode;
   final bool showNotification;
-  bool loop;
+  LoopMode loopMode;
   final double playSpeed;
   final NotificationSettings notificationSettings;
   final PlayInBackground playInBackground;
@@ -1215,11 +1281,11 @@ class _CurrentPlaylist {
     this.playSpeed,
     this.notificationSettings,
     this.playInBackground,
-    this.loop,
+    this.loopMode,
   });
 
   void returnToFirst() {
-    playlistIndex = 0;
+    playlistIndex = playlist.startIndex;
   }
 
   bool hasPrev() {
