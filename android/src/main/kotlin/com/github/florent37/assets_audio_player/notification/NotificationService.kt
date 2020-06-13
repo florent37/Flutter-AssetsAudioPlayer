@@ -94,17 +94,24 @@ class NotificationService : Service() {
 
     private fun displayNotification(action: NotificationAction.Show) {
         GlobalScope.launch(Dispatchers.Main) {
-            if (action.audioMetas.imageType != null && action.audioMetas.image != null) {
-                try {
-                    val image = ImageDownloader.getBitmap(context = applicationContext, fileType = action.audioMetas.imageType, filePath = action.audioMetas.image, filePackage = action.audioMetas.imagePackage)
-                    displayNotification(action, image) //display without image for now
-                } catch (t: Throwable) {
-                    t.printStackTrace()
-                    displayNotification(action, null) //display without image
-                }
-            } else {
-                displayNotification(action, null) //display without image
+            val image = ImageDownloader.loadBitmap(context = applicationContext, imageMetas = action.audioMetas.image)
+            if(image != null){
+                displayNotification(action, image) //display without image for now
+                return@launch
             }
+            val imageOnLoadError = ImageDownloader.loadBitmap(context = applicationContext, imageMetas = action.audioMetas.imageOnLoadError)
+            if(imageOnLoadError != null){
+                displayNotification(action, imageOnLoadError) //display without image for now
+                return@launch
+            }
+
+            val imageFromManifest = ImageDownloader.loadHolderBitmapFromManifest(context = applicationContext)
+            if(imageFromManifest != null){
+                displayNotification(action, imageFromManifest) //display without image for now
+                return@launch
+            }
+
+            displayNotification(action, null) //display without image
         }
     }
 

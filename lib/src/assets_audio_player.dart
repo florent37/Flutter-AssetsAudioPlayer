@@ -846,6 +846,7 @@ class AssetsAudioPlayer {
         //endregion
 
         writeAudioMetasInto(params, audio.metas);
+        writeAudioMetasInto(params, audio.metas);
         _lastOpenedAssetsAudio = audioInput;
         /*final result = */
 

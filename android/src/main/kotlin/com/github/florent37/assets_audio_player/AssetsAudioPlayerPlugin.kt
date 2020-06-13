@@ -66,10 +66,13 @@ class AssetsAudioPlayerPlugin : FlutterPlugin,PluginRegistry.NewIntentListener, 
     }
 
     override fun onNewIntent(intent: Intent?): Boolean {
-        if (!intent!!.getBooleanExtra("isVisited", false)) {
-            val res = sendNotificationPayloadMessage(intent!!)!!
+        if(intent == null)
+            return false
+
+        if (!intent.getBooleanExtra("isVisited", false)) {
+            val res = sendNotificationPayloadMessage(intent) ?: false
             if (res && myActivity != null) {
-                myActivity!!.intent = intent
+                myActivity?.intent = intent
                 intent.putExtra("isVisited", true)
             }
             return res
@@ -78,21 +81,21 @@ class AssetsAudioPlayerPlugin : FlutterPlugin,PluginRegistry.NewIntentListener, 
     }
 
     override fun onDetachedFromActivity() {
-        myActivity = null;
+        myActivity = null
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        binding.addOnNewIntentListener(this);
-        myActivity = binding.getActivity();
+        binding.addOnNewIntentListener(this)
+        myActivity = binding.activity
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        binding.addOnNewIntentListener(this);
-        myActivity = binding.getActivity();
+        binding.addOnNewIntentListener(this)
+        myActivity = binding.activity;
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        myActivity = null;
+        myActivity = null
     }
 }
 
