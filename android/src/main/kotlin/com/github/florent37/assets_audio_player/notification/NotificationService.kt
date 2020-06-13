@@ -51,19 +51,36 @@ class NotificationService : Service() {
             }
         }
 
-        fun displaySeekBar(context: Context, display: Boolean, durationMs: Long) {
+
+        private fun MediaMetadataCompat.Builder.putStringIfNotNull(key: String, value: String?) : MediaMetadataCompat.Builder {
+            return if(value != null)
+                this.putString(key, value)
+            else
+                this
+        }
+
+        fun updateNotifMetaData(context: Context, display: Boolean,
+                                durationMs: Long,
+                                title: String? = null,
+                                artist: String? = null,
+                                album: String? = null
+        ) {
             val mediaSession = MediaButtonsReceiver.getMediaSessionCompat(context)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val builder = MediaMetadataCompat.Builder()
+                        //for samsung devices https://github.com/florent37/Flutter-AssetsAudioPlayer/issues/205
+                        .putStringIfNotNull(MediaMetadata.METADATA_KEY_TITLE, title)
+                        .putStringIfNotNull(MediaMetadata.METADATA_KEY_ARTIST, artist)
+                        .putStringIfNotNull(MediaMetadata.METADATA_KEY_ALBUM, album)
+
                 if (!display || durationMs == 0L /* livestream */) {
-                    mediaSession.setMetadata(MediaMetadataCompat.Builder()
-                            .putLong(MediaMetadata.METADATA_KEY_DURATION, C.TIME_UNSET)
-                            .build())
+                    builder.putLong(MediaMetadata.METADATA_KEY_DURATION, C.TIME_UNSET)
                 } else {
-                    mediaSession.setMetadata(MediaMetadataCompat.Builder()
-                            .putLong(MediaMetadata.METADATA_KEY_DURATION, durationMs)
-                            .build())
+                    builder.putLong(MediaMetadata.METADATA_KEY_DURATION, durationMs)
                 }
+
+                mediaSession.setMetadata(builder.build())
             }
         }
     }
@@ -173,9 +190,12 @@ class NotificationService : Service() {
 
         val notificationSettings = action.notificationSettings
 
-        displaySeekBar(
+        updateNotifMetaData(
                 context = applicationContext,
                 display = notificationSettings.seekBarEnabled,
+                title = action.audioMetas.title,
+                artist = action.audioMetas.artist,
+                album = action.audioMetas.album,
                 durationMs = action.durationMs
         )
 
