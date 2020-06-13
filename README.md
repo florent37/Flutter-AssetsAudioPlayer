@@ -473,6 +473,39 @@ _player.open(audio, showNotification: true)
 
 Custom icon (android only)
 
+### By ResourceName
+
+Make sur you added those icons inside your `android/res/drawable` **!!! not on flutter assets !!!!**
+
+```dart
+await _assetsAudioPlayer.open(
+        myAudio,
+        showNotification: true,
+        notificationSettings: NotificationSettings(
+            customStopIcon: AndroidResDrawable(name: "ic_stop_custom"),
+            customPauseIcon: AndroidResDrawable(name:"ic_pause_custom"),
+            customPlayIcon: AndroidResDrawable(name:"ic_play_custom"),
+            customPrevIcon: AndroidResDrawable(name:"ic_prev_custom"),
+            customNextIcon: AndroidResDrawable(name:"ic_next_custom"),
+        )
+      
+```
+
+And don't forget tell proguard to keep those resources for release mode
+
+(part Keeping Resources)
+
+https://sites.google.com/a/android.com/tools/tech-docs/new-build-system/resource-shrinking
+
+```xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+tools:keep="@drawable/ic_next_custom, @drawable/ic_prev_custom, @drawable/ic_pause_custom, @drawable/ic_play_custom, @drawable/ic_stop_custom"/>
+```
+
+### By Manifest
+
 1. Add your icon into your android's `res` folder (android/app/src/main/res)
 
 2. Reference this icon into your AndroidManifest (android/app/src/main/AndroidManifest.xml)

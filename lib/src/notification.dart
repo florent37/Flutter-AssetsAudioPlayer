@@ -1,8 +1,15 @@
 import 'package:flutter/foundation.dart';
 
 import '../assets_audio_player.dart';
+import 'utils.dart';
 
 typedef NotificationAction = void Function(AssetsAudioPlayer player);
+
+class AndroidResDrawable {
+  final String name;
+
+  AndroidResDrawable({@required this.name});
+}
 
 @immutable
 class NotificationSettings {
@@ -39,11 +46,11 @@ class NotificationSettings {
   //no custom action for stop
 
   //custom icon
-  final String customNextIcon;
-  final String customPreviousIcon;
-  final String customPlayIcon;
-  final String customPauseIcon;
-  final String customStopIcon;
+  final AndroidResDrawable customNextIcon;
+  final AndroidResDrawable customPreviousIcon;
+  final AndroidResDrawable customPlayIcon;
+  final AndroidResDrawable customPauseIcon;
+  final AndroidResDrawable customStopIcon;
 
   //endregion
 
@@ -73,11 +80,12 @@ void writeNotificationSettingsInto(
       notificationSettings.playPauseEnabled;
   params["notif.settings.prevEnabled"] = notificationSettings.prevEnabled;
   params["notif.settings.seekBarEnabled"] = notificationSettings.seekBarEnabled;
-  params["notif.settings.playIcon"] = notificationSettings.customPlayIcon;
-  params["notif.settings.pauseIcon"] = notificationSettings.customPauseIcon;
-  params["notif.settings.nextIcon"] = notificationSettings.customNextIcon;
-  params["notif.settings.previousIcon"] = notificationSettings.customPreviousIcon;
-  params["notif.settings.stopIcon"] = notificationSettings.customStopIcon;
+
+  params.addIfNotNull("notif.settings.playIcon", notificationSettings.customPlayIcon?.name);
+  params.addIfNotNull("notif.settings.pauseIcon", notificationSettings.customPauseIcon?.name);
+  params.addIfNotNull("notif.settings.nextIcon", notificationSettings.customNextIcon?.name);
+  params.addIfNotNull("notif.settings.previousIcon", notificationSettings.customPreviousIcon?.name);
+  params.addIfNotNull("notif.settings.stopIcon", notificationSettings.customStopIcon?.name);
 }
 
 class ClickedNotification {

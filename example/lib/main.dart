@@ -354,9 +354,9 @@ class _MyAppState extends State<MyApp> {
                               //customNextAction: (player) {
                               //  print("next");
                               //}
-                              customStopIcon: "ic_stop_custom",
-                              customPauseIcon: "ic_pause_custom",
-                              customPlayIcon: "ic_play_custom",
+                              //customStopIcon: AndroidResDrawable(name: "ic_stop_custom"),
+                              //customPauseIcon: AndroidResDrawable(name:"ic_pause_custom"),
+                              //customPlayIcon: AndroidResDrawable(name:"ic_play_custom"),
                             ),
                           );
                         } catch (e) {
