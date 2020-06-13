@@ -81,11 +81,16 @@ void writeNotificationSettingsInto(
   params["notif.settings.prevEnabled"] = notificationSettings.prevEnabled;
   params["notif.settings.seekBarEnabled"] = notificationSettings.seekBarEnabled;
 
-  params.addIfNotNull("notif.settings.playIcon", notificationSettings.customPlayIcon?.name);
-  params.addIfNotNull("notif.settings.pauseIcon", notificationSettings.customPauseIcon?.name);
-  params.addIfNotNull("notif.settings.nextIcon", notificationSettings.customNextIcon?.name);
-  params.addIfNotNull("notif.settings.previousIcon", notificationSettings.customPreviousIcon?.name);
-  params.addIfNotNull("notif.settings.stopIcon", notificationSettings.customStopIcon?.name);
+  params.addIfNotNull(
+      "notif.settings.playIcon", notificationSettings.customPlayIcon?.name);
+  params.addIfNotNull(
+      "notif.settings.pauseIcon", notificationSettings.customPauseIcon?.name);
+  params.addIfNotNull(
+      "notif.settings.nextIcon", notificationSettings.customNextIcon?.name);
+  params.addIfNotNull("notif.settings.previousIcon",
+      notificationSettings.customPreviousIcon?.name);
+  params.addIfNotNull(
+      "notif.settings.stopIcon", notificationSettings.customStopIcon?.name);
 }
 
 class ClickedNotification {
