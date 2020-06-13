@@ -50,13 +50,16 @@ class _MyAppState extends State<MyApp> {
     Audio.network(
       "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3",
       metas: Metas(
-        id: "Online",
-        title: "Online",
-        artist: "Florent Champigny",
-        album: "OnlineAlbum",
-        image: MetasImage.network(
-            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
-      ),
+          id: "Online",
+          title: "Online",
+          artist: "Florent Champigny",
+          album: "OnlineAlbum",
+          image: MetasImage.network(
+            "https://www.google.com",
+          )
+          // image: MetasImage.network(
+          //     "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+          ),
     ),
     Audio(
       "assets/audios/rock.mp3",
@@ -148,7 +151,8 @@ class _MyAppState extends State<MyApp> {
     _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
       print("isplaying : $isplaying");
     }));
-    _subscriptions.add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
+    _subscriptions
+        .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
       return false;
     }));
     super.initState();
@@ -259,7 +263,7 @@ class _MyAppState extends State<MyApp> {
                                     loopMode: loopMode,
                                     isPlaying: isPlaying,
                                     isPlaylist: true,
-                                    onStop: (){
+                                    onStop: () {
                                       _assetsAudioPlayer.stop();
                                     },
                                     toggleLoop: () {
@@ -270,10 +274,12 @@ class _MyAppState extends State<MyApp> {
                                     },
                                     onNext: () {
                                       //_assetsAudioPlayer.forward(Duration(seconds: 10));
-                                      _assetsAudioPlayer.next(/*keepLoopMode: false*/);
+                                      _assetsAudioPlayer.next(
+                                          /*keepLoopMode: false*/);
                                     },
                                     onPrevious: () {
-                                      _assetsAudioPlayer.previous(/*keepLoopMode: false*/);
+                                      _assetsAudioPlayer.previous(
+                                          /*keepLoopMode: false*/);
                                     },
                                   );
                                 });
@@ -343,17 +349,17 @@ class _MyAppState extends State<MyApp> {
                               showNotification: true,
                               playInBackground: PlayInBackground.enabled,
                               notificationSettings: NotificationSettings(
-                                //seekBarEnabled: false,
-                                //stopEnabled: true,
-                                //customStopAction: (player){
-                                //  player.stop();
-                                //}
-                                //prevEnabled: false,
-                                //customNextAction: (player) {
-                                //  print("next");
-                                //}
-                              ));
-                        } catch (e){
+                                  //seekBarEnabled: false,
+                                  //stopEnabled: true,
+                                  //customStopAction: (player){
+                                  //  player.stop();
+                                  //}
+                                  //prevEnabled: false,
+                                  //customNextAction: (player) {
+                                  //  print("next");
+                                  //}
+                                  ));
+                        } catch (e) {
                           print(e);
                         }
                       },

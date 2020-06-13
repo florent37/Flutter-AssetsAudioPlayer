@@ -66,6 +66,9 @@
             android:name="assets.audio.player.notification.icon.prev"
             android:resource="@drawable/ic_prev_custom"/>
         -->
+        <meta-data
+            android:name="assets.audio.player.notification.place.holder"
+            android:resource="@drawable/notification_place_holder"/>
 
     </application>
 
