@@ -95,15 +95,14 @@ class Metas {
   final MetasImage image;
   final MetasImage onImageLoadFail;
 
-  Metas({
-    this.id,
-    this.title,
-    this.artist,
-    this.album,
-    this.image,
-    this.extra,
-    this.onImageLoadFail
-  }) {
+  Metas(
+      {this.id,
+      this.title,
+      this.artist,
+      this.album,
+      this.image,
+      this.extra,
+      this.onImageLoadFail}) {
     if (this.id == null) {
       this.id = Uuid().v4();
     }
@@ -325,20 +324,24 @@ class Playlist extends Playable {
   int get hashCode => audios.hashCode ^ startIndex.hashCode;
 }
 
-void writeAudioMetasInto(Map<String, dynamic> params, /* nullable */ Metas metas) {
+void writeAudioMetasInto(
+    Map<String, dynamic> params, /* nullable */ Metas metas) {
   if (metas != null) {
     if (metas.title != null) params["song.title"] = metas.title;
     if (metas.artist != null) params["song.artist"] = metas.artist;
     if (metas.album != null) params["song.album"] = metas.album;
     writeAudioImageMetasInto(params, metas.image);
-    writeAudioImageMetasInto(params, metas.onImageLoadFail, suffix: ".onLoadFail");
+    writeAudioImageMetasInto(params, metas.onImageLoadFail,
+        suffix: ".onLoadFail");
     if (metas.id != null) {
       params["song.trackID"] = metas.id;
     }
   }
 }
 
-void writeAudioImageMetasInto(Map<String, dynamic> params, /* nullable */ MetasImage metasImage, {String suffix = ""}) {
+void writeAudioImageMetasInto(
+    Map<String, dynamic> params, /* nullable */ MetasImage metasImage,
+    {String suffix = ""}) {
   if (metasImage != null) {
     params["song.image$suffix"] = metasImage.path;
     params["song.imageType$suffix"] = imageTypeDescription(metasImage.type);
