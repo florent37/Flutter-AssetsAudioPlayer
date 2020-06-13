@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-                  Player(streamUrl),
+            Player(streamUrl),
           ],
         ),
       ),
@@ -64,7 +64,16 @@ class _PlayerState extends State<Player> {
   @override
   void initState() {
     super.initState();
-    _player.open(Audio.liveStream(this.widget.streamPath), autoStart: false);
+    _player.open(
+      Audio.liveStream(this.widget.streamPath),
+      autoStart: false,
+      showNotification: true,
+      notificationSettings: NotificationSettings(
+        nextEnabled: false,
+        prevEnabled: false,
+        stopEnabled: false
+      ),
+    );
   }
 
   @override
@@ -74,7 +83,7 @@ class _PlayerState extends State<Player> {
         PlayerBuilder.isBuffering(
           player: _player,
           builder: (context, isBuffering) {
-            if(isBuffering){
+            if (isBuffering) {
               return Text("Buffering");
             } else {
               return SizedBox(); //empty

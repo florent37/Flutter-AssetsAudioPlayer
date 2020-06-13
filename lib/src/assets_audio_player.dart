@@ -462,12 +462,14 @@ class AssetsAudioPlayer {
           break;
         case METHOD_CURRENT:
           if (call.arguments == null) {
-            _playlistAudioFinished.add(Playing(
-              audio: this._current.value.audio,
-              index: this._current.value.index,
+            final current = this._current.value;
+            final finishedPlay = Playing(
+              audio: current.audio,
+              index: current.index,
               hasNext: false,
-              playlist: this._current.value.playlist,
-            ));
+              playlist: current.playlist,
+            );
+            _playlistAudioFinished.add(finishedPlay);
             _playlistFinished.value = true;
             _current.value = null;
             _playerState.value = PlayerState.stop;
@@ -615,9 +617,21 @@ class AssetsAudioPlayer {
     await _openPlaylistCurrent();
   }
 
-  Future<bool> previous() async {
+  /// keepLoopMode:
+  /// if true : the loopMode is .single => execute previous() will keep it .single
+  /// if false : the loopMode is .single => execute previous() will set it as .playlist
+  Future<bool> previous({bool keepLoopMode = true}) async {
     if (_playlist != null) {
-      if (_playlist.hasPrev()) {
+      //more than 5 sec played, go back to the start of audio
+      if (_currentPosition.value != null &&
+          _currentPosition.value.inSeconds >= 5) {
+        await seek(Duration.zero, force: true);
+      } else if (_playlist.hasPrev()) {
+        if (!keepLoopMode) {
+          if (loopMode.value == LoopMode.single) {
+            await setLoopMode(LoopMode.playlist);
+          }
+        }
         _playlist.selectPrev();
         await _openPlaylistCurrent();
         return true;
@@ -647,22 +661,38 @@ class AssetsAudioPlayer {
     }
   }
 
+  /// keepLoopMode:
+  /// if true : the loopMode is .single => execute next() will keep it .single
+  /// if false : the loopMode is .single => execute next() will set it as .playlist
   Future<bool> next({
     bool stopIfLast = false,
+    bool keepLoopMode = true,
   }) {
     return _next(
       stopIfLast: stopIfLast,
       requestByUser: true,
+      keepLoopMode: keepLoopMode,
     );
   }
 
-  Future<bool> _next(
-      {bool stopIfLast = false, bool requestByUser = false}) async {
+  Future<bool> _next({
+    bool stopIfLast = false,
+    bool requestByUser = false,
+    bool keepLoopMode = true,
+  }) async {
     if (_playlist != null) {
       if (loopMode.value == LoopMode.single) {
-        await seek(Duration.zero);
-        return true;
-      } else if (_playlist.hasNext()) {
+        if (!requestByUser) {
+          await seek(Duration.zero);
+          return true;
+        } else {
+          if (!keepLoopMode) {
+            await setLoopMode(LoopMode
+                .playlist); //on loop.single + next, change it to loopMode.playlist
+          }
+        }
+      }
+      if (_playlist.hasNext()) {
         if (this._current.value != null) {
           _playlistAudioFinished.add(Playing(
             audio: this._current.value.audio,
@@ -719,6 +749,7 @@ class AssetsAudioPlayer {
       _playlistFinished.value = false; //continue playing the playlist
     } else {
       _playlistFinished.value = true; // no next elements -> finished
+      stop();
     }
   }
 
@@ -1004,7 +1035,7 @@ class AssetsAudioPlayer {
   Future<void> pause() async {
     if (_isLiveStream) {
       //on livestream, we stop
-      await stop();
+      await _stop(removeNotification: false);
     } else {
       if (!_stopped) {
         await _sendChannel.invokeMethod('pause', {
@@ -1113,11 +1144,13 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.stop();
   ///
   Future<void> stop() async {
+    return _stop(removeNotification: true);
+  }
+
+  Future<void> _stop({bool removeNotification = true}) async {
     _stopped = true;
-    _current.value = null;
-    await _sendChannel.invokeMethod('stop', {
-      "id": this.id,
-    });
+    await _sendChannel.invokeMethod(
+        'stop', {"id": this.id, "removeNotification": removeNotification});
   }
 
   /// Change the current play speed (rate) of the MediaPlayer

@@ -1,9 +1,16 @@
-## 2.0.2+6
+## 2.0.3+3
+
+* ExoPlayer network now set `allowCrossProtocolRedirect=true` by default
+* Fixed notification hide on livestream pause (android)
+
+## 2.0.3+1
 
 * Added custom notification icons for Android (in AndroidManifest.xml)
 * Fixed `seek` and `seekBy` not working on the web
 * `PlayList.startIndex` is now mutable
 * Stop player then call `play` reopen it at `playlist.startIndex`
+* Increased buffer size on android/exoplayer
+* Added keepLoopMode on prev/next
 
 ## 2.0.2
 

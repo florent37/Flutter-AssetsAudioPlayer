@@ -139,12 +139,12 @@ class _MyAppState extends State<MyApp> {
     //_subscriptions.add(_assetsAudioPlayer.current.listen((data) {
     //  print("current : $data");
     //}));
-    _subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
-      print("onReadyToPlay : $audio");
-    }));
-    //_subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
-    //  print("playerState : $playerState");
+    //_subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
+    //  print("onReadyToPlay : $audio");
     //}));
+    _subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
+      print("playerState : $playerState");
+    }));
     _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
       print("isplaying : $isplaying");
     }));
@@ -270,10 +270,10 @@ class _MyAppState extends State<MyApp> {
                                     },
                                     onNext: () {
                                       //_assetsAudioPlayer.forward(Duration(seconds: 10));
-                                      _assetsAudioPlayer.next();
+                                      _assetsAudioPlayer.next(/*keepLoopMode: false*/);
                                     },
                                     onPrevious: () {
-                                      _assetsAudioPlayer.previous();
+                                      _assetsAudioPlayer.previous(/*keepLoopMode: false*/);
                                     },
                                   );
                                 });
