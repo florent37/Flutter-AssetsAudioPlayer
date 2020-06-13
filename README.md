@@ -588,7 +588,7 @@ assetsAudioPlayer.open(
       Audio("assets/audios/song2.mp3")
     ]
   ),
-  loopMode: LoopMode.playlist() //loop the full playlist
+  loopMode: LoopMode.playlist //loop the full playlist
 );
 
 assetsAudioPlayer.next();
