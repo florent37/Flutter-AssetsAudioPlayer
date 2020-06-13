@@ -341,22 +341,27 @@ class _MyAppState extends State<MyApp> {
                       },
                       onSelected: (myAudio) async {
                         try {
-                          await _assetsAudioPlayer.open(myAudio,
-                              autoStart: true,
-                              respectSilentMode: true,
-                              showNotification: true,
-                              playInBackground: PlayInBackground.enabled,
-                              notificationSettings: NotificationSettings(
-                                  //seekBarEnabled: false,
-                                  //stopEnabled: true,
-                                  //customStopAction: (player){
-                                  //  player.stop();
-                                  //}
-                                  //prevEnabled: false,
-                                  //customNextAction: (player) {
-                                  //  print("next");
-                                  //}
-                                  ));
+                          await _assetsAudioPlayer.open(
+                            myAudio,
+                            autoStart: true,
+                            respectSilentMode: true,
+                            showNotification: true,
+                            playInBackground: PlayInBackground.enabled,
+                            notificationSettings: NotificationSettings(
+                              //seekBarEnabled: false,
+                              //stopEnabled: true,
+                              //customStopAction: (player){
+                              //  player.stop();
+                              //}
+                              //prevEnabled: false,
+                              //customNextAction: (player) {
+                              //  print("next");
+                              //}
+                              //customStopIcon: AndroidResDrawable(name: "ic_stop_custom"),
+                              //customPauseIcon: AndroidResDrawable(name:"ic_pause_custom"),
+                              //customPlayIcon: AndroidResDrawable(name:"ic_play_custom"),
+                            ),
+                          );
                         } catch (e) {
                           print(e);
                         }

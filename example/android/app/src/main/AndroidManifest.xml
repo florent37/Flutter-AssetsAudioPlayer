@@ -49,8 +49,8 @@
         <meta-data
             android:name="assets.audio.player.notification.icon"
             android:resource="@drawable/ic_music_custom"/>
-        <!--
-        <meta-data
+        
+        <!-- <meta-data
             android:name="assets.audio.player.notification.icon.play"
             android:resource="@drawable/ic_play_custom"/>
         <meta-data
