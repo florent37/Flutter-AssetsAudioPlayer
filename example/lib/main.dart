@@ -148,7 +148,8 @@ class _MyAppState extends State<MyApp> {
     _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
       print("isplaying : $isplaying");
     }));
-    _subscriptions.add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
+    _subscriptions
+        .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
       return false;
     }));
     super.initState();
@@ -259,7 +260,7 @@ class _MyAppState extends State<MyApp> {
                                     loopMode: loopMode,
                                     isPlaying: isPlaying,
                                     isPlaylist: true,
-                                    onStop: (){
+                                    onStop: () {
                                       _assetsAudioPlayer.stop();
                                     },
                                     toggleLoop: () {
@@ -337,23 +338,28 @@ class _MyAppState extends State<MyApp> {
                       },
                       onSelected: (myAudio) async {
                         try {
-                          await _assetsAudioPlayer.open(myAudio,
-                              autoStart: true,
-                              respectSilentMode: true,
-                              showNotification: true,
-                              playInBackground: PlayInBackground.enabled,
-                              notificationSettings: NotificationSettings(
-                                //seekBarEnabled: false,
-                                //stopEnabled: true,
-                                //customStopAction: (player){
-                                //  player.stop();
-                                //}
-                                //prevEnabled: false,
-                                //customNextAction: (player) {
-                                //  print("next");
-                                //}
-                              ));
-                        } catch (e){
+                          await _assetsAudioPlayer.open(
+                            myAudio,
+                            autoStart: true,
+                            respectSilentMode: true,
+                            showNotification: true,
+                            playInBackground: PlayInBackground.enabled,
+                            notificationSettings: NotificationSettings(
+                              //seekBarEnabled: false,
+                              //stopEnabled: true,
+                              //customStopAction: (player){
+                              //  player.stop();
+                              //}
+                              //prevEnabled: false,
+                              //customNextAction: (player) {
+                              //  print("next");
+                              //}
+                              customStopIcon: "ic_stop_custom",
+                              customPauseIcon: "ic_pause_custom",
+                              customPlayIcon: "ic_play_custom",
+                            ),
+                          );
+                        } catch (e) {
                           print(e);
                         }
                       },

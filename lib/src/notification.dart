@@ -38,6 +38,13 @@ class NotificationSettings {
 
   //no custom action for stop
 
+  //custom icon
+  final String customNextIcon;
+  final String customPreviousIcon;
+  final String customPlayIcon;
+  final String customPauseIcon;
+  final String customStopIcon;
+
   //endregion
 
   const NotificationSettings({
@@ -50,6 +57,11 @@ class NotificationSettings {
     this.customPlayPauseAction,
     this.customPrevAction,
     this.customStopAction,
+    this.customNextIcon,
+    this.customPauseIcon,
+    this.customPlayIcon,
+    this.customPreviousIcon,
+    this.customStopIcon,
   });
 }
 
@@ -61,6 +73,11 @@ void writeNotificationSettingsInto(
       notificationSettings.playPauseEnabled;
   params["notif.settings.prevEnabled"] = notificationSettings.prevEnabled;
   params["notif.settings.seekBarEnabled"] = notificationSettings.seekBarEnabled;
+  params["notif.settings.playIcon"] = notificationSettings.customPlayIcon;
+  params["notif.settings.pauseIcon"] = notificationSettings.customPauseIcon;
+  params["notif.settings.nextIcon"] = notificationSettings.customNextIcon;
+  params["notif.settings.previousIcon"] = notificationSettings.customPreviousIcon;
+  params["notif.settings.stopIcon"] = notificationSettings.customStopIcon;
 }
 
 class ClickedNotification {

@@ -49,23 +49,23 @@
         <meta-data
             android:name="assets.audio.player.notification.icon"
             android:resource="@drawable/ic_music_custom"/>
-        <!--
-        <meta-data
+        
+        <!-- <meta-data
             android:name="assets.audio.player.notification.icon.play"
             android:resource="@drawable/ic_play_custom"/>
         <meta-data
             android:name="assets.audio.player.notification.icon.pause"
-            android:resource="@drawable/ic_pause_custom"/>
-        <meta-data
+            android:resource="@drawable/ic_pause_custom"/> -->
+        <!-- <meta-data
             android:name="assets.audio.player.notification.icon.stop"
-            android:resource="@drawable/ic_stop_custom"/>
+            android:resource="@drawable/ic_stop_custom"/> -->
         <meta-data
             android:name="assets.audio.player.notification.icon.next"
             android:resource="@drawable/ic_next_custom"/>
         <meta-data
             android:name="assets.audio.player.notification.icon.prev"
             android:resource="@drawable/ic_prev_custom"/>
-        -->
+       
 
     </application>
 
