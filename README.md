@@ -583,11 +583,12 @@ final player = AssetsAudioPlayer.withId(id: "MY_UNIQUE_ID");
 ```Dart
 assetsAudioPlayer.open(
   Playlist(
-    assetAudioPaths: [
-      "assets/audios/song1.mp3",
-      "assets/audios/song2.mp3"
+    audios: [
+      Audio("assets/audios/song1.mp3"),
+      Audio("assets/audios/song2.mp3")
     ]
-  )
+  ),
+  loopMode: LoopMode.playlist() //loop the full playlist
 );
 
 assetsAudioPlayer.next();
