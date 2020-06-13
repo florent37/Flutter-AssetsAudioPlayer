@@ -1,7 +1,9 @@
 package com.github.florent37.assets_audio_player.notification
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.Log
@@ -17,7 +19,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 object ImageDownloader {
-
+    const val manifestNotificationPlaceHolder = "assets.audio.player.notification.place.holder"
     suspend fun getBitmap(context: Context, fileType: String, filePath: String, filePackage: String?): Bitmap = withContext(Dispatchers.IO) {
         suspendCoroutine<Bitmap> { continuation ->
             try {
@@ -39,7 +41,18 @@ object ImageDownloader {
                                 .load(uri)
                                 .into(object : CustomTarget<Bitmap>() {
                                     override fun onLoadFailed(errorDrawable: Drawable?) {
-                                        continuation.resumeWithException(Exception("failed to download $filePath"))
+                                        try {
+                                            val appInfos = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+                                            val manifestPlaceHolderResource = appInfos.metaData.get(manifestNotificationPlaceHolder) as? Int
+                                            if(manifestPlaceHolderResource == null){
+                                                continuation.resumeWithException(Exception("failed to download $filePath"))
+                                            }else{
+                                                val placeHolder = BitmapFactory.decodeResource(context.resources,manifestPlaceHolderResource)
+                                                continuation.resume(placeHolder)
+                                            }
+                                        } catch (t : Throwable) {
+                                            continuation.resumeWithException(Exception("failed to download $filePath"))
+                                        }
                                     }
 
                                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -62,7 +75,18 @@ object ImageDownloader {
                                 .load(filePath)
                                 .into(object : CustomTarget<Bitmap>() {
                                     override fun onLoadFailed(errorDrawable: Drawable?) {
-                                        continuation.resumeWithException(Exception("failed to download $filePath"))
+                                        try {
+                                            val appInfos = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+                                            val manifestPlaceHolderResource = appInfos.metaData.get(manifestNotificationPlaceHolder) as? Int
+                                            if(manifestPlaceHolderResource == null){
+                                                continuation.resumeWithException(Exception("failed to download $filePath"))
+                                            }else{
+                                                val placeHolder = BitmapFactory.decodeResource(context.resources,manifestPlaceHolderResource)
+                                                continuation.resume(placeHolder)
+                                            }
+                                        } catch (t : Throwable) {
+                                            continuation.resumeWithException(Exception("failed to download $filePath"))
+                                        }
                                     }
 
                                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -87,7 +111,18 @@ object ImageDownloader {
                                 .load(File(filePath).path)
                                 .into(object : CustomTarget<Bitmap>() {
                                     override fun onLoadFailed(errorDrawable: Drawable?) {
-                                        continuation.resumeWithException(Exception("failed to download $filePath"))
+                                        try {
+                                            val appInfos = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+                                            val manifestPlaceHolderResource = appInfos.metaData.get(manifestNotificationPlaceHolder) as? Int
+                                            if(manifestPlaceHolderResource == null){
+                                                continuation.resumeWithException(Exception("failed to download $filePath"))
+                                            }else{
+                                                val placeHolder = BitmapFactory.decodeResource(context.resources,manifestPlaceHolderResource)
+                                                continuation.resume(placeHolder)
+                                            }
+                                        } catch (t : Throwable) {
+                                            continuation.resumeWithException(Exception("failed to download $filePath"))
+                                        }
                                     }
 
                                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {

@@ -54,11 +54,9 @@ class _MyAppState extends State<MyApp> {
           title: "Online",
           artist: "Florent Champigny",
           album: "OnlineAlbum",
+          // image: MetasImage.network("https://www.google.com")
           image: MetasImage.network(
-            "https://www.google.com",
-          )
-          // image: MetasImage.network(
-          //     "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+              "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
           ),
     ),
     Audio(
