@@ -1,4 +1,4 @@
-## 2.0.3+5
+## 2.0.3+6
 
 * ExoPlayer network now set `allowCrossProtocolRedirect=true` by default
 * Fixed notification hide on livestream pause (android)
