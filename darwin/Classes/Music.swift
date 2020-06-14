@@ -126,11 +126,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         var url : URL
         
         if(audioType == "network" || audioType == "liveStream"){
-            let urlStr : String = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-            if let u = URL(string: urlStr) {
+            if let u = URL(string: path) {
                 return u
             } else {
-                print("Couldn't parse myURL = \(urlStr)")
+                print("Couldn't parse myURL = \(path)")
                 return nil
             }
             
@@ -484,8 +483,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             print("category " + category.rawValue);
             print("mode " + mode.rawValue);
             print("displayNotification " + displayNotification.description);
-            
-            //        log("url: "+url.absoluteString)
+            print("url: " + url.absoluteString)
+
             /* set session category and mode with options */
             if #available(iOS 10.0, *) {
                 try AVAudioSession.sharedInstance().setCategory(category, mode: mode, options: [.mixWithOthers])
@@ -578,7 +577,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                     result(FlutterError(
                         code: "PLAY_ERROR",
                         message: "Cannot play "+assetPath,
-                        details: nil)
+                        details: item.error?.localizedDescription)
                     );
                 @unknown default:
                     fatalError()
