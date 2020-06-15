@@ -878,7 +878,7 @@ class Music : NSObject, FlutterPlugin {
                     break
                 }
                 result(self.getOrCreatePlayer(id: id).playing)
-                break
+
             case "play" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
@@ -899,7 +899,6 @@ class Music : NSObject, FlutterPlugin {
                 self.getOrCreatePlayer(id: id)
                     .play()
                 result(true)
-                break
                 
             case "pause" :
                 guard let args = call.arguments as? NSDictionary else {
@@ -921,7 +920,6 @@ class Music : NSObject, FlutterPlugin {
                 self.getOrCreatePlayer(id: id)
                     .pause()
                 result(true)
-                break
                 
             case "stop" :
                 guard let args = call.arguments as? NSDictionary else {
@@ -944,7 +942,7 @@ class Music : NSObject, FlutterPlugin {
                 self.getOrCreatePlayer(id: id)
                     .stop()
                 result(true)
-                break
+
             case "seek" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
@@ -973,7 +971,6 @@ class Music : NSObject, FlutterPlugin {
                 self.getOrCreatePlayer(id: id)
                     .seek(to: pos)
                 result(true)
-                break
                 
             case "volume" :
                 guard let args = call.arguments as? NSDictionary else {
@@ -1003,7 +1000,6 @@ class Music : NSObject, FlutterPlugin {
                 self.getOrCreatePlayer(id: id)
                     .setVolume(volume: volume)
                 result(true)
-                break
                 
             case "playSpeed" :
                 guard let args = call.arguments as? NSDictionary else {
@@ -1033,7 +1029,7 @@ class Music : NSObject, FlutterPlugin {
                 self.getOrCreatePlayer(id: id)
                     .setPlaySpeed(playSpeed: playSpeed)
                 result(true)
-                break
+
             case "showNotification" :
                 guard let args = call.arguments as? NSDictionary else {
                       result(FlutterError(
@@ -1062,7 +1058,7 @@ class Music : NSObject, FlutterPlugin {
                  self.getOrCreatePlayer(id: id)
                     .showNotification(show: show)
                  result(true)
-                 break
+
             case "loopSingleAudio" :
                 guard let args = call.arguments as? NSDictionary else {
                       result(FlutterError(
@@ -1091,7 +1087,7 @@ class Music : NSObject, FlutterPlugin {
                  self.getOrCreatePlayer(id: id)
                     .loopSingleAudio(loop: loop)
                  result(true)
-                 break
+
             case "forwardRewind" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
@@ -1120,7 +1116,7 @@ class Music : NSObject, FlutterPlugin {
                 self.getOrCreatePlayer(id: id)
                     .forwardRewind(speed: speed)
                 result(true)
-                break
+
             case "forceNotificationForGroup" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
@@ -1165,7 +1161,6 @@ class Music : NSObject, FlutterPlugin {
                
                 result(true)
                
-                break
             case "onAudioUpdated" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
@@ -1196,7 +1191,7 @@ class Music : NSObject, FlutterPlugin {
 
                 self.getOrCreatePlayer(id: id).onAudioUpdated(path: path, audioMetas: audioMetas)
                 result(true)
-                break
+
             case "open" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
@@ -1284,7 +1279,6 @@ class Music : NSObject, FlutterPlugin {
                         networkHeaders: networkHeaders,
                         result: result
                 )
-                break
                 
             default:
                 result(FlutterMethodNotImplemented)
