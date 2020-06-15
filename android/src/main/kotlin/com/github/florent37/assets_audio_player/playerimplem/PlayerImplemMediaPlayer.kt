@@ -9,6 +9,41 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
+class PlayerImplemTesterMediaPlayer : PlayerImplemTester {
+
+    override suspend fun open(configuration: PlayerFinderConfiguration): PlayerFinder.PlayerWithDuration {
+        val mediaPlayer = PlayerImplemMediaPlayer(
+                onFinished = {
+                    configuration.onFinished?.invoke()
+                    //stop(pingListener = false)
+                },
+                onBuffering = {
+                    configuration.onBuffering?.invoke(it)
+                },
+                onError = { t ->
+                    //TODO, handle errors after opened
+                }
+        )
+        try {
+            val durationMS = mediaPlayer.open(
+                    context = configuration.context,
+                    assetAudioPath = configuration.assetAudioPath,
+                    audioType = configuration.audioType,
+                    assetAudioPackage = configuration.assetAudioPackage,
+                    networkHeaders = configuration.networkHeaders,
+                    flutterAssets = configuration.flutterAssets
+            )
+            return PlayerFinder.PlayerWithDuration(
+                    player = mediaPlayer,
+                    duration = durationMS
+            )
+        } catch (t: Throwable) {
+            mediaPlayer.release()
+            throw  t
+        }
+    }
+}
+
 class PlayerImplemMediaPlayer(
         onFinished: (() -> Unit),
         onBuffering: ((Boolean) -> Unit),
