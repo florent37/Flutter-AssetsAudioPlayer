@@ -245,6 +245,8 @@ class Audio extends Playable {
   }
 }
 
+typedef PlaylistAudioReplacer = Audio Function(Audio oldAudio);
+
 class Playlist extends Playable {
   final List<Audio> audios = [];
 
@@ -279,6 +281,18 @@ class Playlist extends Playable {
     super.currentlyOpenedIn.forEach((playerEditor) {
       playerEditor.onAudioAddedAt(index);
     });
+    return this;
+  }
+
+  Playlist replace(int index, PlaylistAudioReplacer replacer, {bool keepPlayingPositionIfCurrent}) {
+    if(index < this.audios.length && replacer != null) {
+      final oldElement = this.audios.elementAt(index);
+      final newElement = replacer(oldElement);
+      this.audios[index] = newElement;
+      super.currentlyOpenedIn.forEach((playerEditor) {
+        playerEditor.onAudioReplacedAt(index, keepPlayingPositionIfCurrent);
+      });
+    }
     return this;
   }
 
