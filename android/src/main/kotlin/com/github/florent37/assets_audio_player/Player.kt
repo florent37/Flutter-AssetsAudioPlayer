@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Does not depend on Flutter, feel free to use it in all your projects
@@ -106,7 +107,11 @@ class Player(
                         }
                     }
 
-                    _positionMs = positionMs
+                    _positionMs = if(_durationMs != 0L) {
+                        min(positionMs, _durationMs)
+                    } else {
+                        positionMs
+                    }
                     updateNotifPosition()
 
                     // Update every 300ms.

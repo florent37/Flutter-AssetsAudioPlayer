@@ -22,6 +22,7 @@ import com.google.android.exoplayer2.C
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class NotificationService : Service() {
 
@@ -41,13 +42,37 @@ class NotificationService : Service() {
         const val manifestIconNext = "assets.audio.player.notification.icon.next"
         const val manifestIconStop = "assets.audio.player.notification.icon.stop"
 
+        private var stateCompat : PlaybackStateCompat? = null
+
+        fun timeDiffer(old: PlaybackStateCompat?, new: PlaybackStateCompat, minDifferenceMS: Long) : Boolean {
+            if(old == null){
+                return true
+            }
+
+            val currentPos = old.position
+            return abs(new.position - currentPos) > minDifferenceMS
+        }
+
         fun updatePosition(context: Context, isPlaying: Boolean, currentPositionMs: Long, speed: Float) {
             MediaButtonsReceiver.getMediaSessionCompat(context).let { mediaSession ->
-                val state = if (isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED;
-                mediaSession.setPlaybackState(PlaybackStateCompat.Builder()
+                val state = if (isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
+                val newState = PlaybackStateCompat.Builder()
                         .setActions(ACTION_SEEK_TO)
                         .setState(state, currentPositionMs, if (isPlaying) speed else 0f)
-                        .build());
+                        .build()
+
+                if(
+                        //pause -> play, play-> pause
+                        stateCompat?.state != newState.state ||
+                        //speed changed
+                        stateCompat?.playbackSpeed != speed ||
+                        //seek
+                        timeDiffer(stateCompat, newState, 2000)
+                ){
+                    stateCompat = newState
+                    mediaSession.setPlaybackState(stateCompat)
+                }
+
             }
         }
 
