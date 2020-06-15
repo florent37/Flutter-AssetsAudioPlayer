@@ -12,6 +12,7 @@ import 'package:rxdart/subjects.dart';
 import 'package:uuid/uuid.dart';
 
 import 'applifecycle.dart';
+import 'cache.dart';
 import 'notification.dart';
 import 'playable.dart';
 import 'playing.dart';
@@ -98,6 +99,8 @@ class PlayerEditor {
 class AssetsAudioPlayer {
   PlayerEditor _playerEditor;
 
+  AssetsAudioPlayerCache _audioPlayerCache = defaultAssetsAudioPlayerCache;
+
   static final double minVolume = 0.0;
   static final double maxVolume = 1.0;
   static final double minPlaySpeed = 0.0;
@@ -158,6 +161,12 @@ class AssetsAudioPlayer {
   _CurrentPlaylist _playlist;
 
   final String id;
+
+  set cachePathProvider(AssetsAudioPlayerCache newValue){
+    if(newValue != null){
+      _audioPlayerCache = newValue;
+    }
+  }
 
   AssetsAudioPlayer._({this.id = _DEFAULT_PLAYER}) {
     _init();

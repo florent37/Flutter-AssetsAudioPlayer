@@ -154,6 +154,7 @@ class Audio extends Playable {
   final AudioType audioType;
   Metas _metas;
   Map _networkHeaders;
+  final bool cached; //download audio then play it
 
   Metas get metas => _metas;
   Map get networkHeaders => _networkHeaders;
@@ -162,6 +163,7 @@ class Audio extends Playable {
     this.path,
     this.package,
     this.audioType,
+    this.cached,
     Map headers,
     Metas metas,
   })  : _metas = metas,
@@ -170,15 +172,17 @@ class Audio extends Playable {
   Audio(this.path, {Metas metas, this.package})
       : audioType = AudioType.asset,
         _networkHeaders = null,
+        cached = false,
         _metas = metas;
 
   Audio.file(this.path, {Metas metas})
       : audioType = AudioType.file,
         package = null,
         _networkHeaders = null,
+        cached = false,
         _metas = metas;
 
-  Audio.network(this.path, {Metas metas, Map headers})
+  Audio.network(this.path, {Metas metas, Map headers, this.cached = false})
       : audioType = AudioType.network,
         package = null,
         _networkHeaders = headers,
@@ -188,6 +192,7 @@ class Audio extends Playable {
       : audioType = AudioType.liveStream,
         package = null,
         _networkHeaders = headers,
+        cached = false,
         _metas = metas;
 
   @override
@@ -198,11 +203,12 @@ class Audio extends Playable {
           path == other.path &&
           package == other.package &&
           audioType == other.audioType &&
+          cached == other.cached &&
           metas == other.metas;
 
   @override
   int get hashCode =>
-      path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode;
+      path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode ^ cached.hashCode;
 
   @override
   String toString() {
@@ -234,6 +240,7 @@ class Audio extends Playable {
     AudioType audioType,
     Metas metas,
     Map headers,
+    bool cached,
   }) {
     return Audio._(
       path: path ?? this.path,
@@ -241,6 +248,7 @@ class Audio extends Playable {
       audioType: audioType ?? this.audioType,
       metas: metas ?? this._metas,
       headers: headers ?? this._networkHeaders,
+      cached: cached ?? this.cached,
     );
   }
 }
