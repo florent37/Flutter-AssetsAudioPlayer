@@ -284,7 +284,7 @@ class Playlist extends Playable {
     return this;
   }
 
-  Playlist replace(int index, PlaylistAudioReplacer replacer, {bool keepPlayingPositionIfCurrent}) {
+  Playlist replaceAt(int index, PlaylistAudioReplacer replacer, {bool keepPlayingPositionIfCurrent}) {
     if(index < this.audios.length && replacer != null) {
       final oldElement = this.audios.elementAt(index);
       final newElement = replacer(oldElement);

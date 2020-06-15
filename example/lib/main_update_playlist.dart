@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
         });
     setState(() {
       print("downloaded, switching to file type $downloadPath");
-      playlist.replace(
+      playlist.replaceAt(
         0,
             (oldAudio) {
           return oldAudio.copyWith(audioType: AudioType.file, path: downloadPath);
