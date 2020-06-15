@@ -1,3 +1,7 @@
+## 2.0.4
+
+* Added HLS, Dash, SmoothStream support on Android
+
 ## 2.0.3+6
 
 * ExoPlayer network now set `allowCrossProtocolRedirect=true` by default

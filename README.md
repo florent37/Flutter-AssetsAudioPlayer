@@ -79,7 +79,7 @@ You like the package ? buy me a kofi :)
           <td>✅</td>
         </tr>
         <tr>
-          <td>📻 Network LiveStream / radio (url)</td>
+          <td>📻 Network LiveStream / radio (url)\n (Default, HLS, Dash, SmoothStream)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
