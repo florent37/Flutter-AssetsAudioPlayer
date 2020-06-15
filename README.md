@@ -9,6 +9,7 @@ https://pub.dartlang.org/packages/assets_audio_player)
 
 
 [![Codemagic build status](https://api.codemagic.io/apps/5ed8002fe1907b001c67db52/5ed8002fe1907b001c67db51/status_badge.svg)](https://codemagic.io/apps/5ed8002fe1907b001c67db52/5ed8002fe1907b001c67db51/latest_build)
+[![CodeFactor](https://www.codefactor.io/repository/github/florent37/flutter-assetsaudioplayer/badge)](https://www.codefactor.io/repository/github/florent37/flutter-assetsaudioplayer)
 
 Play music/audio stored in assets files (simultaneously) directly from Flutter (android / ios / web / macos). 
 
