@@ -503,8 +503,6 @@ class AssetsAudioPlayer(
         lastPlayerIdWithNotificationEnabled
                 ?.let {
                     getPlayer(it)
-                }?.let { player ->
-                    player.seek(toMs)
-                }
+                }?.seek(toMs)
     }
 }

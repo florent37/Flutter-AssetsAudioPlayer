@@ -37,7 +37,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^2.0.3+4
+  assets_audio_player: ^2.0.4
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -79,7 +79,7 @@ You like the package ? buy me a kofi :)
           <td>✅</td>
         </tr>
         <tr>
-          <td>📻 Network LiveStream / radio (url)</td>
+          <td>📻 Network LiveStream / radio (url) <br/> (<b>Default, HLS, Dash, SmoothStream</b>)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>

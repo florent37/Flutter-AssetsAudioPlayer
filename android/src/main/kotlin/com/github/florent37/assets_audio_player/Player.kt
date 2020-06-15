@@ -9,10 +9,7 @@ import com.github.florent37.assets_audio_player.notification.AudioMetas
 import com.github.florent37.assets_audio_player.notification.NotificationManager
 import com.github.florent37.assets_audio_player.notification.NotificationService
 import com.github.florent37.assets_audio_player.notification.NotificationSettings
-import com.github.florent37.assets_audio_player.playerimplem.DurationMS
-import com.github.florent37.assets_audio_player.playerimplem.PlayerImplem
-import com.github.florent37.assets_audio_player.playerimplem.PlayerImplemExoPlayer
-import com.github.florent37.assets_audio_player.playerimplem.PlayerImplemMediaPlayer
+import com.github.florent37.assets_audio_player.playerimplem.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.Dispatchers
@@ -168,24 +165,22 @@ class Player(
 
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val durationMs = try {
-                    openExoPlayer(
-                            assetAudioPath = assetAudioPath,
-                            assetAudioPackage = assetAudioPackage,
-                            audioType = audioType,
-                            networkHeaders= networkHeaders,
-                            context = context
-                    )
-                } catch (t: Throwable) {
-                    //fallback to mediaPlayer if error while opening
-                    openMediaPlayer(
-                            assetAudioPath = assetAudioPath,
-                            assetAudioPackage = assetAudioPackage,
-                            audioType = audioType,
-                            networkHeaders= networkHeaders,
-                            context = context
-                    )
-                }
+                val playerWithDuration = PlayerFinder.findWorkingPlayer(
+                        PlayerFinderConfiguration(
+                        assetAudioPath = assetAudioPath,
+                        flutterAssets = flutterAssets,
+                        assetAudioPackage = assetAudioPackage,
+                        audioType = audioType,
+                        networkHeaders = networkHeaders,
+                        context = context,
+                        onFinished = onFinished,
+                        onPlaying = onPlaying,
+                        onBuffering = onBuffering
+                        )
+                )
+
+                val durationMs = playerWithDuration.duration
+                mediaPlayer = playerWithDuration.player
 
                 //here one open succeed
                 onReadyToPlay?.invoke(durationMs)
@@ -212,74 +207,6 @@ class Player(
                 t.printStackTrace()
                 result.error("OPEN", t.message, null)
             }
-        }
-    }
-
-    private suspend fun openExoPlayer(assetAudioPath: String?,
-                                      assetAudioPackage: String?,
-                                      audioType: String,
-                                      networkHeaders: Map<*, *>?,
-                                      context: Context
-    ): DurationMS {
-        mediaPlayer = PlayerImplemExoPlayer(
-                onFinished = {
-                    onFinished?.invoke()
-                    //stop(pingListener = false)
-                },
-                onBuffering = {
-                    onBuffering?.invoke(it)
-                },
-                onError = { t ->
-                    //TODO, handle errors after opened
-                }
-        )
-
-        try {
-            return mediaPlayer!!.open(
-                    context = context,
-                    assetAudioPath = assetAudioPath,
-                    audioType = audioType,
-                    assetAudioPackage = assetAudioPackage,
-                    networkHeaders= networkHeaders,
-                    flutterAssets = flutterAssets
-            )
-        } catch (t: Throwable) {
-            mediaPlayer?.release()
-            throw  t
-        }
-    }
-
-    private suspend fun openMediaPlayer(
-            assetAudioPath: String?,
-            assetAudioPackage: String?,
-            audioType: String,
-            networkHeaders: Map<*, *>?,
-            context: Context
-    ): DurationMS {
-        mediaPlayer = PlayerImplemMediaPlayer(
-                onFinished = {
-                    onFinished?.invoke()
-                    //stop(pingListener = false)
-                },
-                onBuffering = {
-                    onBuffering?.invoke(it)
-                },
-                onError = { t ->
-                    //TODO, handle errors after opened
-                }
-        )
-        try {
-            return mediaPlayer!!.open(
-                    context = context,
-                    assetAudioPath = assetAudioPath,
-                    audioType = audioType,
-                    assetAudioPackage = assetAudioPackage,
-                    networkHeaders= networkHeaders,
-                    flutterAssets = flutterAssets
-            )
-        } catch (t: Throwable) {
-            mediaPlayer?.release()
-            throw  t
         }
     }
 
@@ -374,7 +301,7 @@ class Player(
                         audioMetas = audioMetas,
                         isPlaying = this.isPlaying,
                         notificationSettings = notificationSettings,
-                        stop = removeNotificationOnStop && (mediaPlayer == null),
+                        stop = removeNotificationOnStop && mediaPlayer == null,
                         durationMs = this._durationMs
                 )
             }
@@ -476,11 +403,9 @@ class Player(
             forwardHandler = ForwardHandler()
         }
 
-        mediaPlayer?.let {
-            it.pause()
-            //handler.removeCallbacks(updatePosition)
-            //onPlaying?.invoke(false)
-        }
+        mediaPlayer?.pause()
+        //handler.removeCallbacks(updatePosition)
+        //onPlaying?.invoke(false)
 
         onForwardRewind?.invoke(speed)
         forwardHandler!!.start(this, speed)

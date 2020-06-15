@@ -1,7 +1,7 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 
-final streamUrl = "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p";
+final streamUrl = "https://18843.live.streamtheworld.com/WBBRAMAAC48/HLS/playlist.m3u8";
 
 void main() => runApp(MyApp());
 
