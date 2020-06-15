@@ -1,6 +1,7 @@
-## 2.0.4+1
+## 2.0.4+2
 
 * Added HLS, Dash, SmoothStream support on Android
+* Added `laylist.replaceAt` method
 
 ## 2.0.3+6
 

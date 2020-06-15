@@ -74,7 +74,8 @@ class WebPlayerHtml extends WebPlayer {
 
       if (_position != currentPosition) {
         _position = currentPosition;
-        channel.invokeMethod(WebPlayer.methodPosition, currentPosition);
+        final positionMs = currentPosition * 1000;
+        channel.invokeMethod(WebPlayer.methodPosition, positionMs);
       }
       return Future.delayed(Duration(milliseconds: 200)).then((value) {
         return __listenPosition;

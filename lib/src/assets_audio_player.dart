@@ -64,6 +64,18 @@ class PlayerEditor {
     }
   }
 
+  void onAudioReplacedAt(int index, bool keepPlayingPositionIfCurrent) {
+    if (assetsAudioPlayer._playlist.playlistIndex == index) {
+      final currentPosition = assetsAudioPlayer.currentPosition.value;
+      print("onAudioReplacedAt/ currentPosition : $currentPosition");
+      if(keepPlayingPositionIfCurrent && currentPosition != null){
+        assetsAudioPlayer._openPlaylistCurrent(seek: currentPosition);
+      } else {
+        assetsAudioPlayer._openPlaylistCurrent();
+      }
+    }
+  }
+
   void onAudioMetasUpdated(Audio audio) {
     assetsAudioPlayer._onAudioUpdated(audio);
   }
@@ -499,10 +511,10 @@ class AssetsAudioPlayer {
           break;
         case METHOD_POSITION:
           if (call.arguments is int) {
-            _currentPosition.value = Duration(seconds: call.arguments);
+            _currentPosition.value = Duration(milliseconds: call.arguments);
           } else if (call.arguments is double) {
             double value = call.arguments;
-            _currentPosition.value = Duration(seconds: value.round());
+            _currentPosition.value = Duration(milliseconds: value.round());
           }
           break;
         case METHOD_IS_PLAYING:

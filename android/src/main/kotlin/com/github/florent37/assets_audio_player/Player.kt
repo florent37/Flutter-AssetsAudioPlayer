@@ -50,7 +50,7 @@ class Player(
     var onPlaySpeedChanged: ((Double) -> Unit)? = null
     var onForwardRewind: ((Double) -> Unit)? = null
     var onReadyToPlay: ((DurationMS) -> Unit)? = null
-    var onPositionChanged: ((Long) -> Unit)? = null
+    var onPositionMSChanged: ((Long) -> Unit)? = null
     var onFinished: (() -> Unit)? = null
     var onPlaying: ((Boolean) -> Unit)? = null
     var onBuffering: ((Boolean) -> Unit)? = null
@@ -91,10 +91,9 @@ class Player(
                     }
 
                     val positionMs : Long = mediaPlayer.currentPositionMs
-                    val position = positionMs / 1000L
 
-                    // Send position (seconds) to the application.
-                    onPositionChanged?.invoke(position)
+                    // Send position (milliseconds) to the application.
+                    onPositionMSChanged?.invoke(positionMs)
 
                     if (respectSilentMode) {
                         val ringerMode = am.ringerMode
@@ -203,7 +202,7 @@ class Player(
                 result.success(null)
             } catch (t: Throwable) {
                 //if one error while opening, result.error
-                onPositionChanged?.invoke(0)
+                onPositionMSChanged?.invoke(0)
                 t.printStackTrace()
                 result.error("OPEN", t.message, null)
             }
@@ -215,7 +214,7 @@ class Player(
             // Reset duration and position.
             // handler.removeCallbacks(updatePosition);
             // channel.invokeMethod("player.duration", 0);
-            onPositionChanged?.invoke(0)
+            onPositionMSChanged?.invoke(0)
 
             mediaPlayer?.stop()
             mediaPlayer?.release()
@@ -352,7 +351,7 @@ class Player(
         mediaPlayer?.apply {
             val to = max(milliseconds, 0L)
             seekTo(to)
-            onPositionChanged?.invoke(currentPositionMs / 1000L)
+            onPositionMSChanged?.invoke(currentPositionMs)
         }
     }
 

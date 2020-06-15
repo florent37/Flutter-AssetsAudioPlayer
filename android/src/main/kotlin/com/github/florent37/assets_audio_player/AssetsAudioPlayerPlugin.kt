@@ -172,8 +172,8 @@ class AssetsAudioPlayer(
                 onPlaySpeedChanged = { speed ->
                     channel.invokeMethod(METHOD_PLAY_SPEED, speed)
                 }
-                onPositionChanged = { position ->
-                    channel.invokeMethod(METHOD_POSITION, position)
+                onPositionMSChanged = { positionMS ->
+                    channel.invokeMethod(METHOD_POSITION, positionMS)
                 }
                 onReadyToPlay = { totalDurationMs ->
                     channel.invokeMethod(METHOD_CURRENT, mapOf(

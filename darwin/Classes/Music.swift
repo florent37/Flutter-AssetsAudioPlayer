@@ -728,7 +728,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         set(newValue) {
             if(_currentTime != newValue){
                 _currentTime = newValue
-                self.channel.invokeMethod(Music.METHOD_POSITION, arguments: self._currentTime)
+                let currentTimeMS = _currentTime * 1000 //not possible to have a better precision on ios...
+                self.channel.invokeMethod(Music.METHOD_POSITION, arguments: currentTimeMS)
                 
                 if(self.displayMediaPlayerNotification){
                     #if os(iOS)
