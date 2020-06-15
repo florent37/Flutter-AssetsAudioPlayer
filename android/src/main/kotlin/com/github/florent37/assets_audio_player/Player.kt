@@ -301,7 +301,7 @@ class Player(
                         audioMetas = audioMetas,
                         isPlaying = this.isPlaying,
                         notificationSettings = notificationSettings,
-                        stop = removeNotificationOnStop && (mediaPlayer == null),
+                        stop = removeNotificationOnStop && mediaPlayer == null,
                         durationMs = this._durationMs
                 )
             }
@@ -403,11 +403,9 @@ class Player(
             forwardHandler = ForwardHandler()
         }
 
-        mediaPlayer?.let {
-            it.pause()
-            //handler.removeCallbacks(updatePosition)
-            //onPlaying?.invoke(false)
-        }
+        mediaPlayer?.pause()
+        //handler.removeCallbacks(updatePosition)
+        //onPlaying?.invoke(false)
 
         onForwardRewind?.invoke(speed)
         forwardHandler!!.start(this, speed)
