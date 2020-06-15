@@ -1,4 +1,4 @@
-## 2.0.4
+## 2.0.4+1
 
 * Added HLS, Dash, SmoothStream support on Android
 

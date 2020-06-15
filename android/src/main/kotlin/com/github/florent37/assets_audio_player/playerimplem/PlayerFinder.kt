@@ -25,13 +25,37 @@ object PlayerFinder {
     class PlayerWithDuration(val player: PlayerImplem, val duration: DurationMS)
     class NoPlayerFoundException() : Throwable()
 
+    private val HLSExoPlayerTester = PlayerImplemTesterExoPlayer(PlayerImplemTesterExoPlayer.Type.HLS)
+    private val DefaultExoPlayerTester = PlayerImplemTesterExoPlayer(PlayerImplemTesterExoPlayer.Type.Default)
+    private val DASHExoPlayerTester = PlayerImplemTesterExoPlayer(PlayerImplemTesterExoPlayer.Type.DASH)
+    private val SmoothStreamingExoPlayerTester = PlayerImplemTesterExoPlayer(PlayerImplemTesterExoPlayer.Type.SmoothStreaming)
+    private val MediaPlayerTester = PlayerImplemTesterMediaPlayer()
+
     private val playerImpls = listOf<PlayerImplemTester>(
-            PlayerImplemTesterExoPlayer(PlayerImplemTesterExoPlayer.Type.Default),
-            PlayerImplemTesterExoPlayer(PlayerImplemTesterExoPlayer.Type.HLS),
-            PlayerImplemTesterExoPlayer(PlayerImplemTesterExoPlayer.Type.DASH),
-            PlayerImplemTesterExoPlayer(PlayerImplemTesterExoPlayer.Type.SmoothStreaming),
-            PlayerImplemTesterMediaPlayer()
+            DefaultExoPlayerTester,
+            HLSExoPlayerTester,
+            DASHExoPlayerTester,
+            SmoothStreamingExoPlayerTester,
+            MediaPlayerTester
     )
+
+    private fun sortPlayerImpls(path: String?, originList: List<PlayerImplemTester>) : List<PlayerImplemTester> {
+        val editedList = originList.toMutableList()
+
+        path?.let {
+            //add others suggestions
+            if (path.endsWith(".m3u8")) {
+                editedList.moveToFirst(HLSExoPlayerTester)
+            }
+        }
+
+        return editedList
+    }
+
+    fun <T> MutableList<T>.moveToFirst(element: T) = this.apply {
+        remove(element)
+        add(0, element) //move to first
+    }
 
     @Throws(NoPlayerFoundException::class)
     private suspend fun _findWorkingPlayer(
@@ -64,7 +88,10 @@ object PlayerFinder {
     @Throws(NoPlayerFoundException::class)
     suspend fun findWorkingPlayer(configuration: PlayerFinderConfiguration): PlayerWithDuration {
         return _findWorkingPlayer(
-                remainingImpls= playerImpls,
+                remainingImpls= sortPlayerImpls(
+                        path= configuration.assetAudioPath,
+                        originList=playerImpls
+                ),
                 configuration= configuration
         )
     }
