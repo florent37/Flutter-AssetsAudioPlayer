@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:assets_audio_player/src/cache/cache_downloader.dart';
 import 'package:assets_audio_player/src/cache/cache_manager.dart';
 import 'package:assets_audio_player/src/notification.dart';
 import 'package:flutter/cupertino.dart';
@@ -324,6 +325,9 @@ class AssetsAudioPlayer {
   final BehaviorSubject<bool> _isBuffering =
       BehaviorSubject<bool>.seeded(false);
 
+  final PublishSubject<CacheDownloadInfos> _cacheDownloadInfos = PublishSubject<CacheDownloadInfos>();
+  Stream<CacheDownloadInfos> get cacheDownloadInfos => _cacheDownloadInfos.stream;
+
   /// Streams the volume of the media Player (min: 0, max: 1)
   ///     final double volume = _assetsAudioPlayer.volume.value;
   ///
@@ -443,6 +447,7 @@ class AssetsAudioPlayer {
     _playlistAudioFinished.close();
     _loopMode.close();
     _shuffle.close();
+    _cacheDownloadInfos.close();
     _playSpeed.close();
     _playerState.close();
     _isBuffering.close();
@@ -1207,7 +1212,9 @@ class AssetsAudioPlayer {
 
 
   Future<Audio> _downloadOrFetchFromCacheIfNecessary(Audio input) async {
-    return AssetsAudioPlayerCacheManager().transform(this._audioPlayerCache, input);
+    return AssetsAudioPlayerCacheManager().transform(this._audioPlayerCache, input, (downloadInfos){
+      this._cacheDownloadInfos.add(downloadInfos);
+    });
   }
 
   //returns the file path

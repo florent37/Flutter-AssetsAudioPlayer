@@ -54,6 +54,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    _player.cacheDownloadInfos.listen((infos) {
+      print(infos.percent);
+    });
     _player.open(
         Audio.network(mp3Url, cached: true),
         autoStart: true,

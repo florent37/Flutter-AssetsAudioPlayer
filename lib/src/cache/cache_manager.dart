@@ -24,7 +24,7 @@ class AssetsAudioPlayerCacheManager {
 
   Map<String, CacheDownloader> _downloadingElements = Map();
 
-  Future<Audio> transform(AssetsAudioPlayerCache cache, Audio audio) async {
+  Future<Audio> transform(AssetsAudioPlayerCache cache, Audio audio, CacheDownloadListener cacheDownloadListener) async {
     if(audio.audioType != AudioType.network || audio.cached == false){
       return audio;
     }
@@ -38,7 +38,7 @@ class AssetsAudioPlayerCacheManager {
       );
     } else {
       try {
-        await _download(audio, path);
+        await _download(audio, path, cacheDownloadListener);
         return audio.copyWith(
             path: path,
             audioType: AudioType.file
@@ -56,11 +56,11 @@ class AssetsAudioPlayerCacheManager {
     return await file.exists();
   }
 
-  Future<void> _download(Audio audio, String intoPath) async {
+  Future<void> _download(Audio audio, String intoPath, CacheDownloadListener cacheDownloadListener) async {
     print(intoPath);
     if(_downloadingElements.containsKey(intoPath)) { //is already downloading it
       final downloader = _downloadingElements[intoPath];
-      await downloader.wait();
+      await downloader.wait(cacheDownloadListener);
     } else {
       final downloader = CacheDownloader(dio: _dio);
       _downloadingElements[intoPath] = downloader;
@@ -68,13 +68,17 @@ class AssetsAudioPlayerCacheManager {
           url: audio.path,
           savePath: intoPath,
           headers: audio.networkHeaders ?? {},
-          progressFunction: (received, total) {
-            //TODO
-          }
       );
-      await downloader.wait();
-      //download finished
-      _downloadingElements.remove(intoPath);
+      try {
+        await downloader.wait(cacheDownloadListener);
+        //download finished
+        _downloadingElements.remove(intoPath);
+      } catch (t){
+        //on error, remove also the downloader
+        _downloadingElements.remove(intoPath);
+        //then throw again the exception
+        throw t;
+      }
     }
   }
 }

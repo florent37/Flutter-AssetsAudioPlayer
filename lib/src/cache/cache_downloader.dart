@@ -4,19 +4,53 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
+class CacheDownloadInfos {
+  final int received;
+  final int total;
+
+  const CacheDownloadInfos({
+    @required this.received,
+    @required this.total,
+  });
+
+  double get percent {
+    if(total == 0) return 0;
+    else return received / total;
+  }
+
+}
+
+typedef CacheDownloadListener = Function(CacheDownloadInfos infos);
+
+class _DownloadWaiter {
+  final Completer completer = Completer();
+  final CacheDownloadListener downloadInfosListener;
+
+  _DownloadWaiter({this.downloadInfosListener});
+
+  void pingInfos(CacheDownloadInfos infos) {
+    if(downloadInfosListener != null){
+      downloadInfosListener(infos);
+    }
+  }
+}
+
 class CacheDownloader {
 
   final Dio dio;
 
   CacheDownloader({@required this.dio});
 
-  final List<Completer> _waiters = [];
+  final List<_DownloadWaiter> _waiters = [];
 
-  void downloadAndSave({
+  void _dispose(){
+    _waiters.clear();
+  }
+
+  Future<void> downloadAndSave({
     String url,
     String savePath,
     Map<String, dynamic> headers,
-    Function(int received, int total) progressFunction,
   }) async {
 
     //1. download
@@ -24,7 +58,15 @@ class CacheDownloader {
     try {
       final Response response = await dio.get(
         url,
-        onReceiveProgress: progressFunction,
+        onReceiveProgress: (received, total){
+          final infos =  CacheDownloadInfos(
+              received: received,
+              total: total
+          );
+          for (var waiter in _waiters) {
+            waiter.pingInfos(infos);
+          }
+        },
         //Received data with List<int>
         options: Options(
             headers: headers,
@@ -44,20 +86,21 @@ class CacheDownloader {
       await raf.close();
 
       for (var waiter in _waiters) {
-        waiter.complete();
+        waiter.completer.complete();
       }
-      _waiters.clear();
+      _dispose();
     } catch (t){
       for (var waiter in _waiters) {
-        waiter.completeError(t);
+        waiter.completer.completeError(t);
       }
+      _dispose();
     }
   }
 
-  Future<String> wait() async {
-    Completer waiter = Completer();
+  Future<String> wait(CacheDownloadListener downloadListener) async {
+    final waiter = _DownloadWaiter(downloadInfosListener: downloadListener);
     this._waiters.add(waiter);
-    return await waiter.future;
+    return await waiter.completer.future;
   }
 
 }
