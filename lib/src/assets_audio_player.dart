@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:assets_audio_player/src/cache/cache_manager.dart';
 import 'package:assets_audio_player/src/notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -12,7 +13,7 @@ import 'package:rxdart/subjects.dart';
 import 'package:uuid/uuid.dart';
 
 import 'applifecycle.dart';
-import 'cache.dart';
+import 'cache/cache.dart';
 import 'notification.dart';
 import 'playable.dart';
 import 'playing.dart';
@@ -836,7 +837,8 @@ class AssetsAudioPlayer {
       _respectSilentMode = respectSilentMode;
       _showNotification = showNotification;
 
-      final audio = await _handlePlatformAsset(audioInput);
+      var audio = await _handlePlatformAsset(audioInput);
+      audio = await _downloadOrFetchFromCacheIfNecessary(audio);
 
       audio.setCurrentlyOpenedIn(_playerEditor);
 
@@ -1200,6 +1202,12 @@ class AssetsAudioPlayer {
       return input.copyWith(audioType: AudioType.file, path: path);
     }
     return input;
+  }
+
+
+
+  Future<Audio> _downloadOrFetchFromCacheIfNecessary(Audio input) async {
+    return AssetsAudioPlayerCacheManager().transform(this._audioPlayerCache, input);
   }
 
   //returns the file path

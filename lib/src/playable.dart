@@ -153,18 +153,18 @@ class Audio extends Playable {
   final String package;
   final AudioType audioType;
   Metas _metas;
-  Map _networkHeaders;
+  Map<String, dynamic> _networkHeaders;
   final bool cached; //download audio then play it
 
   Metas get metas => _metas;
-  Map get networkHeaders => _networkHeaders;
+  Map<String, dynamic> get networkHeaders => _networkHeaders;
 
   Audio._({
     this.path,
     this.package,
     this.audioType,
     this.cached,
-    Map headers,
+    Map<String, dynamic> headers,
     Metas metas,
   })  : _metas = metas,
         _networkHeaders = headers;
@@ -182,13 +182,20 @@ class Audio extends Playable {
         cached = false,
         _metas = metas;
 
-  Audio.network(this.path, {Metas metas, Map headers, this.cached = false})
+  Audio.network(this.path, {
+    Metas metas,
+    Map<String, dynamic> headers,
+    this.cached = false,
+  })
       : audioType = AudioType.network,
         package = null,
         _networkHeaders = headers,
         _metas = metas;
 
-  Audio.liveStream(this.path, {Metas metas, Map headers})
+  Audio.liveStream(this.path, {
+    Metas metas,
+    Map<String, dynamic> headers,
+  })
       : audioType = AudioType.liveStream,
         package = null,
         _networkHeaders = headers,
@@ -239,7 +246,7 @@ class Audio extends Playable {
     String package,
     AudioType audioType,
     Metas metas,
-    Map headers,
+    Map<String, dynamic> headers,
     bool cached,
   }) {
     return Audio._(

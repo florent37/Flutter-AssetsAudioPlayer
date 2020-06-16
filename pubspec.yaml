@@ -13,7 +13,9 @@ dependencies:
       sdk: flutter
   rxdart: ^0.24.1
   uuid: ^2.0.4
-  path_provider: ^1.5.1 # removed this because it cancel flutter/android/ios on pub.dev path_provider: ^1.6.10
+  dio: 3.0.9 #to download / cache network files
+  path_provider: ^1.6.8 # removed this because it cancel flutter/android/ios on pub.dev path_provider: ^1.6.10
+
 
   # The design on https://flutter.dev/go/federated-plugins was to leave
   # this constraint as "any". We cannot do it right now as it fails pub publish
