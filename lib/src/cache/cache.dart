@@ -11,23 +11,22 @@ class AssetsAudioPlayerCache {
   final CachePathProvider cachePathProvider;
   final AudioKeyTransformer audioKeyTransformer;
 
-  AssetsAudioPlayerCache({@required this.cachePathProvider, @required this.audioKeyTransformer});
+  AssetsAudioPlayerCache(
+      {@required this.cachePathProvider, @required this.audioKeyTransformer});
 }
 
 String removeHttpSpecialCharsFromStrings(String from) {
-    return from
-        .replaceAll(RegExp(r"/"), "_")
-        .replaceAll(RegExp(r":"), "_")
-        .replaceAll(RegExp(r"%"), "_");
+  return from
+      .replaceAll(RegExp(r"/"), "_")
+      .replaceAll(RegExp(r":"), "_")
+      .replaceAll(RegExp(r"%"), "_");
 }
 
-AssetsAudioPlayerCache defaultAssetsAudioPlayerCache = AssetsAudioPlayerCache(
-    cachePathProvider: (audio, key) async {
-      final directory = await getTemporaryDirectory();
-      final dirPath = directory.path;
-      return '$dirPath/$key';
-    },
-    audioKeyTransformer: (audio) async {
-      return removeHttpSpecialCharsFromStrings(audio.path);
-    }
-);
+AssetsAudioPlayerCache defaultAssetsAudioPlayerCache =
+    AssetsAudioPlayerCache(cachePathProvider: (audio, key) async {
+  final directory = await getTemporaryDirectory();
+  final dirPath = directory.path;
+  return '$dirPath/$key';
+}, audioKeyTransformer: (audio) async {
+  return removeHttpSpecialCharsFromStrings(audio.path);
+});

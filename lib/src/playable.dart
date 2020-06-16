@@ -182,21 +182,21 @@ class Audio extends Playable {
         cached = false,
         _metas = metas;
 
-  Audio.network(this.path, {
+  Audio.network(
+    this.path, {
     Metas metas,
     Map<String, dynamic> headers,
     this.cached = false,
-  })
-      : audioType = AudioType.network,
+  })  : audioType = AudioType.network,
         package = null,
         _networkHeaders = headers,
         _metas = metas;
 
-  Audio.liveStream(this.path, {
+  Audio.liveStream(
+    this.path, {
     Metas metas,
     Map<String, dynamic> headers,
-  })
-      : audioType = AudioType.liveStream,
+  })  : audioType = AudioType.liveStream,
         package = null,
         _networkHeaders = headers,
         cached = false,
@@ -215,7 +215,11 @@ class Audio extends Playable {
 
   @override
   int get hashCode =>
-      path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode ^ cached.hashCode;
+      path.hashCode ^
+      package.hashCode ^
+      audioType.hashCode ^
+      metas.hashCode ^
+      cached.hashCode;
 
   @override
   String toString() {
@@ -299,8 +303,9 @@ class Playlist extends Playable {
     return this;
   }
 
-  Playlist replaceAt(int index, PlaylistAudioReplacer replacer, {bool keepPlayingPositionIfCurrent}) {
-    if(index < this.audios.length && replacer != null) {
+  Playlist replaceAt(int index, PlaylistAudioReplacer replacer,
+      {bool keepPlayingPositionIfCurrent}) {
+    if (index < this.audios.length && replacer != null) {
       final oldElement = this.audios.elementAt(index);
       final newElement = replacer(oldElement);
       this.audios[index] = newElement;

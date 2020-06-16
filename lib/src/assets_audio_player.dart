@@ -71,7 +71,7 @@ class PlayerEditor {
     if (assetsAudioPlayer._playlist.playlistIndex == index) {
       final currentPosition = assetsAudioPlayer.currentPosition.value;
       print("onAudioReplacedAt/ currentPosition : $currentPosition");
-      if(keepPlayingPositionIfCurrent && currentPosition != null){
+      if (keepPlayingPositionIfCurrent && currentPosition != null) {
         assetsAudioPlayer._openPlaylistCurrent(seek: currentPosition);
       } else {
         assetsAudioPlayer._openPlaylistCurrent();
@@ -164,8 +164,8 @@ class AssetsAudioPlayer {
 
   final String id;
 
-  set cachePathProvider(AssetsAudioPlayerCache newValue){
-    if(newValue != null){
+  set cachePathProvider(AssetsAudioPlayerCache newValue) {
+    if (newValue != null) {
       _audioPlayerCache = newValue;
     }
   }
@@ -325,8 +325,10 @@ class AssetsAudioPlayer {
   final BehaviorSubject<bool> _isBuffering =
       BehaviorSubject<bool>.seeded(false);
 
-  final PublishSubject<CacheDownloadInfos> _cacheDownloadInfos = PublishSubject<CacheDownloadInfos>();
-  Stream<CacheDownloadInfos> get cacheDownloadInfos => _cacheDownloadInfos.stream;
+  final PublishSubject<CacheDownloadInfos> _cacheDownloadInfos =
+      PublishSubject<CacheDownloadInfos>();
+  Stream<CacheDownloadInfos> get cacheDownloadInfos =>
+      _cacheDownloadInfos.stream;
 
   /// Streams the volume of the media Player (min: 0, max: 1)
   ///     final double volume = _assetsAudioPlayer.volume.value;
@@ -1209,10 +1211,9 @@ class AssetsAudioPlayer {
     return input;
   }
 
-
-
   Future<Audio> _downloadOrFetchFromCacheIfNecessary(Audio input) async {
-    return AssetsAudioPlayerCacheManager().transform(this._audioPlayerCache, input, (downloadInfos){
+    return AssetsAudioPlayerCacheManager()
+        .transform(this._audioPlayerCache, input, (downloadInfos) {
       this._cacheDownloadInfos.add(downloadInfos);
     });
   }

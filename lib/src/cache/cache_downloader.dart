@@ -14,10 +14,11 @@ class CacheDownloadInfos {
   });
 
   double get percent {
-    if(total == 0) return 0;
-    else return received / total;
+    if (total == 0)
+      return 0;
+    else
+      return received / total;
   }
-
 }
 
 typedef CacheDownloadListener = Function(CacheDownloadInfos infos);
@@ -29,21 +30,20 @@ class _DownloadWaiter {
   _DownloadWaiter({this.downloadInfosListener});
 
   void pingInfos(CacheDownloadInfos infos) {
-    if(downloadInfosListener != null){
+    if (downloadInfosListener != null) {
       downloadInfosListener(infos);
     }
   }
 }
 
 class CacheDownloader {
-
   final Dio dio;
 
   CacheDownloader({@required this.dio});
 
   final List<_DownloadWaiter> _waiters = [];
 
-  void _dispose(){
+  void _dispose() {
     _waiters.clear();
   }
 
@@ -52,17 +52,13 @@ class CacheDownloader {
     String savePath,
     Map<String, dynamic> headers,
   }) async {
-
     //1. download
 
     try {
       final Response response = await dio.get(
         url,
-        onReceiveProgress: (received, total){
-          final infos =  CacheDownloadInfos(
-              received: received,
-              total: total
-          );
+        onReceiveProgress: (received, total) {
+          final infos = CacheDownloadInfos(received: received, total: total);
           for (var waiter in _waiters) {
             waiter.pingInfos(infos);
           }
@@ -89,7 +85,7 @@ class CacheDownloader {
         waiter.completer.complete();
       }
       _dispose();
-    } catch (t){
+    } catch (t) {
       for (var waiter in _waiters) {
         waiter.completer.completeError(t);
       }
@@ -102,5 +98,4 @@ class CacheDownloader {
     this._waiters.add(waiter);
     return await waiter.completer.future;
   }
-
 }
