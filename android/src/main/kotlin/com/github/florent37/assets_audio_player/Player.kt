@@ -3,8 +3,10 @@ package com.github.florent37.assets_audio_player
 import StopWhenCall
 import android.content.Context
 import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Message
+import android.util.Log
 import com.github.florent37.assets_audio_player.notification.AudioMetas
 import com.github.florent37.assets_audio_player.notification.NotificationManager
 import com.github.florent37.assets_audio_player.notification.NotificationService
@@ -13,11 +15,13 @@ import com.github.florent37.assets_audio_player.playerimplem.DurationMS
 import com.github.florent37.assets_audio_player.playerimplem.PlayerImplem
 import com.github.florent37.assets_audio_player.playerimplem.PlayerImplemExoPlayer
 import com.github.florent37.assets_audio_player.playerimplem.PlayerImplemMediaPlayer
+import com.google.android.exoplayer2.ExoPlaybackException
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.IOException
 import kotlin.math.max
 
 /**
@@ -171,7 +175,10 @@ class Player(
                             networkHeaders= networkHeaders,
                             context = context
                     )
-                } catch (t: Throwable) {
+                } catch (exoError : ExoPlaybackException){
+                    throw exoError
+                }
+                catch (t: Throwable) {
                     //fallback to mediaPlayer if error while opening
                     openMediaPlayer(
                             assetAudioPath = assetAudioPath,
@@ -201,6 +208,16 @@ class Player(
                     updateNotif() //if pause, we need to display the notif
                 }
                 result.success(null)
+            } catch (exoError : ExoPlaybackException){
+                if(exoError.type == ExoPlaybackException.TYPE_SOURCE){
+                    onPositionChanged?.invoke(0)
+                    onBuffering?.invoke(false)
+                    stop()
+                } else{
+                    onPositionChanged?.invoke(0)
+                    exoError.printStackTrace()
+                    result.error("OPEN", exoError.message, null)
+                }
             } catch (t: Throwable) {
                 //if one error while opening, result.error
                 onPositionChanged?.invoke(0)
@@ -225,7 +242,13 @@ class Player(
                     onBuffering?.invoke(it)
                 },
                 onError = { t ->
-                    //TODO, handle errors after opened
+                    if(t.message == null){
+                        //Do Nothing
+                    }
+                    else if(t!!.message!!.contains("unable to connect",true)){
+                        stop()
+                    }
+//                    TODO, handle errors after opened
                 }
         )
 
