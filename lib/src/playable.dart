@@ -153,16 +153,18 @@ class Audio extends Playable {
   final String package;
   final AudioType audioType;
   Metas _metas;
-  Map _networkHeaders;
+  Map<String, dynamic> _networkHeaders;
+  final bool cached; //download audio then play it
 
   Metas get metas => _metas;
-  Map get networkHeaders => _networkHeaders;
+  Map<String, dynamic> get networkHeaders => _networkHeaders;
 
   Audio._({
     this.path,
     this.package,
     this.audioType,
-    Map headers,
+    this.cached,
+    Map<String, dynamic> headers,
     Metas metas,
   })  : _metas = metas,
         _networkHeaders = headers;
@@ -170,24 +172,34 @@ class Audio extends Playable {
   Audio(this.path, {Metas metas, this.package})
       : audioType = AudioType.asset,
         _networkHeaders = null,
+        cached = false,
         _metas = metas;
 
   Audio.file(this.path, {Metas metas})
       : audioType = AudioType.file,
         package = null,
         _networkHeaders = null,
+        cached = false,
         _metas = metas;
 
-  Audio.network(this.path, {Metas metas, Map headers})
+  Audio.network(this.path, {
+    Metas metas,
+    Map<String, dynamic> headers,
+    this.cached = false,
+  })
       : audioType = AudioType.network,
         package = null,
         _networkHeaders = headers,
         _metas = metas;
 
-  Audio.liveStream(this.path, {Metas metas, Map headers})
+  Audio.liveStream(this.path, {
+    Metas metas,
+    Map<String, dynamic> headers,
+  })
       : audioType = AudioType.liveStream,
         package = null,
         _networkHeaders = headers,
+        cached = false,
         _metas = metas;
 
   @override
@@ -198,11 +210,12 @@ class Audio extends Playable {
           path == other.path &&
           package == other.package &&
           audioType == other.audioType &&
+          cached == other.cached &&
           metas == other.metas;
 
   @override
   int get hashCode =>
-      path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode;
+      path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode ^ cached.hashCode;
 
   @override
   String toString() {
@@ -233,7 +246,8 @@ class Audio extends Playable {
     String package,
     AudioType audioType,
     Metas metas,
-    Map headers,
+    Map<String, dynamic> headers,
+    bool cached,
   }) {
     return Audio._(
       path: path ?? this.path,
@@ -241,6 +255,7 @@ class Audio extends Playable {
       audioType: audioType ?? this.audioType,
       metas: metas ?? this._metas,
       headers: headers ?? this._networkHeaders,
+      cached: cached ?? this.cached,
     );
   }
 }

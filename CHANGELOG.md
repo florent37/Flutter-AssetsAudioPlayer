@@ -1,3 +1,7 @@
+## 2.0.5
+
+* Added Cache management (beta), with Audio.network(url, cached: true)
+
 ## 2.0.4+2
 
 * Added HLS, Dash, SmoothStream support on Android
