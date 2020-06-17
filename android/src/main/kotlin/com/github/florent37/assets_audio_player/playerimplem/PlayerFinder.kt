@@ -1,6 +1,7 @@
 package com.github.florent37.assets_audio_player.playerimplem
 
 import android.content.Context
+import com.github.florent37.assets_audio_player.AssetAudioPlayerThrowable
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 
 interface PlayerImplemTester {
@@ -17,7 +18,8 @@ class PlayerFinderConfiguration(
         val context: Context,
         val onFinished: (() -> Unit)?,
         val onPlaying: ((Boolean) -> Unit)?,
-        val onBuffering: ((Boolean) -> Unit)?
+        val onBuffering: ((Boolean) -> Unit)?,
+        val onError: ((AssetAudioPlayerThrowable) -> Unit)?
 )
 
 object PlayerFinder {

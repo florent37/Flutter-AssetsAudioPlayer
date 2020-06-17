@@ -7,6 +7,10 @@ import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import com.github.florent37.assets_audio_player.notification.AudioMetas
+import com.github.florent37.assets_audio_player.notification.NotificationManager
+import com.github.florent37.assets_audio_player.notification.NotificationService
+import com.github.florent37.assets_audio_player.notification.NotificationSettings
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.github.florent37.assets_audio_player.playerimplem.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -54,6 +58,7 @@ class Player(
     var onFinished: (() -> Unit)? = null
     var onPlaying: ((Boolean) -> Unit)? = null
     var onBuffering: ((Boolean) -> Unit)? = null
+    var onError: ((AssetAudioPlayerThrowable) -> Unit)? = null
     var onNext: (() -> Unit)? = null
     var onPrev: (() -> Unit)? = null
     var onStop: (() -> Unit)? = null
@@ -161,17 +166,6 @@ class Player(
         this.respectSilentMode = respectSilentMode
 
         _lastOpenedPath = assetAudioPath
-
-        //TODO move this
-        val onError : ((Throwable) -> Unit) = { t ->
-          if(t.message == null){
-               //Do Nothing
-          }
-          else if(t!!.message!!.contains("unable to connect",true)){ //TODO find another wau
-               stop()
-          }
-          //TODO, handle errors after opened
-        }
       
         GlobalScope.launch(Dispatchers.Main) {
             try {
@@ -212,21 +206,9 @@ class Player(
                     updateNotif() //if pause, we need to display the notif
                 }
                 result.success(null)
-            } catch (exoError : ExoPlaybackException){
-                if(exoError.type == ExoPlaybackException.TYPE_SOURCE){
-                    onPositionChanged?.invoke(0)
-                    onBuffering?.invoke(false)
-                    stop()
-                } else{
-                    onPositionChanged?.invoke(0)
-                    exoError.printStackTrace()
-                    result.error("OPEN", exoError.message, null)
-                }
-            } catch (t: Throwable) {
-                //if one error while opening, result.error
-                onPositionMSChanged?.invoke(0)
-                t.printStackTrace()
-                result.error("OPEN", t.message, null)
+            } catch (error: Throwable) {
+                error.printStackTrace()
+                result.error("OPEN", error.message, null)
             }
         }
     }
