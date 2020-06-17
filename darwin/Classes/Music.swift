@@ -104,7 +104,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     var player: AVQueuePlayer?
     
     var observerStatus: [NSKeyValueObservation] = []
-    
+    var bufferObserver : Any?
+
     var displayMediaPlayerNotification = false
     var audioMetas : AudioMetas?
     var _playingPath: String?
@@ -518,21 +519,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
             
-            observerStatus.append( item.observe(\.isPlaybackBufferEmpty, options: [.new]) { [weak self] (_, _) in
-                // show buffering
-                self?.setBuffering(true)
-            })
-            
-            observerStatus.append( item.observe(\.isPlaybackLikelyToKeepUp, options: [.new]) { [weak self] (_, _) in
-                // hide buffering
-                self?.setBuffering(false)
-            })
-            
-            observerStatus.append( item.observe( \.isPlaybackBufferFull, options: [.new]) { [weak self] (_, _) in
-                // hide buffering
-                self?.setBuffering(false)
-            })
-            
+            self.setBuffering(true)
             observerStatus.append( item.observe(\.status, changeHandler: { [weak self] (item, value) in
                 
                 switch item.status {
@@ -569,6 +556,9 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                     }
                     
                     self?._playingPath = assetPath
+                    self?.setBuffering(false)
+                    
+                    self?.addPostPlayingBufferListeners(item: item)
                     
                     result(nil)
                 case .failed:
@@ -602,6 +592,23 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             log(error.localizedDescription)
             print(error.localizedDescription)
         }
+    }
+    
+    private func addPostPlayingBufferListeners(item : SlowMoPlayerItem){
+        observerStatus.append( item.observe(\.isPlaybackBufferEmpty, options: [.new]) { [weak self] (_, _) in
+            // show buffering
+            self?.setBuffering(true)
+        })
+                   
+        observerStatus.append( item.observe(\.isPlaybackLikelyToKeepUp, options: [.new]) { [weak self] (_, _) in
+            // hide buffering
+            self?.setBuffering(false)
+        })
+                   
+        observerStatus.append( item.observe( \.isPlaybackBufferFull, options: [.new]) { [weak self] (_, _) in
+            // hide buffering
+            self?.setBuffering(false)
+        })
     }
     
     private func setBuffering(_ value: Bool){
@@ -650,6 +657,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.player?.rate = 0.0
         
         self.updateNotifStatus(playing: self.playing, stopped: true, rate: self.player?.rate)
+        
+        if let bufferObserver = self.bufferObserver {
+            self.player?.removeTimeObserver(bufferObserver)
+        }
         
         self.player?.seek(to: CMTime.zero)
         self.player = nil   
