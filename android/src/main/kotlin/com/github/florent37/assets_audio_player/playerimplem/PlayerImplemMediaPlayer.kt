@@ -3,11 +3,50 @@ package com.github.florent37.assets_audio_player.playerimplem
 import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
+import android.util.Log
 import com.github.florent37.assets_audio_player.Player
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+
+class PlayerImplemTesterMediaPlayer : PlayerImplemTester {
+
+    override suspend fun open(configuration: PlayerFinderConfiguration): PlayerFinder.PlayerWithDuration {
+        Log.d("PlayerImplem", "trying to open with native mediaplayer")
+        val mediaPlayer = PlayerImplemMediaPlayer(
+                onFinished = {
+                    configuration.onFinished?.invoke()
+                    //stop(pingListener = false)
+                },
+                onBuffering = {
+                    configuration.onBuffering?.invoke(it)
+                },
+                onError = { t ->
+                    //TODO, handle errors after opened
+                }
+        )
+        try {
+            val durationMS = mediaPlayer.open(
+                    context = configuration.context,
+                    assetAudioPath = configuration.assetAudioPath,
+                    audioType = configuration.audioType,
+                    assetAudioPackage = configuration.assetAudioPackage,
+                    networkHeaders = configuration.networkHeaders,
+                    flutterAssets = configuration.flutterAssets
+            )
+            return PlayerFinder.PlayerWithDuration(
+                    player = mediaPlayer,
+                    duration = durationMS
+            )
+        } catch (t: Throwable) {
+            Log.d("PlayerImplem","failed to open with native mediaplayer")
+
+            mediaPlayer.release()
+            throw  t
+        }
+    }
+}
 
 class PlayerImplemMediaPlayer(
         onFinished: (() -> Unit),

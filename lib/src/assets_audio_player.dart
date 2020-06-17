@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:assets_audio_player/src/cache/cache_downloader.dart';
+import 'package:assets_audio_player/src/cache/cache_manager.dart';
 import 'package:assets_audio_player/src/notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +14,7 @@ import 'package:rxdart/subjects.dart';
 import 'package:uuid/uuid.dart';
 
 import 'applifecycle.dart';
+import 'cache/cache.dart';
 import 'notification.dart';
 import 'playable.dart';
 import 'playing.dart';
@@ -64,6 +67,18 @@ class PlayerEditor {
     }
   }
 
+  void onAudioReplacedAt(int index, bool keepPlayingPositionIfCurrent) {
+    if (assetsAudioPlayer._playlist.playlistIndex == index) {
+      final currentPosition = assetsAudioPlayer.currentPosition.value;
+      print("onAudioReplacedAt/ currentPosition : $currentPosition");
+      if (keepPlayingPositionIfCurrent && currentPosition != null) {
+        assetsAudioPlayer._openPlaylistCurrent(seek: currentPosition);
+      } else {
+        assetsAudioPlayer._openPlaylistCurrent();
+      }
+    }
+  }
+
   void onAudioMetasUpdated(Audio audio) {
     assetsAudioPlayer._onAudioUpdated(audio);
   }
@@ -85,6 +100,8 @@ class PlayerEditor {
 ///         - assets/audios/
 class AssetsAudioPlayer {
   PlayerEditor _playerEditor;
+
+  AssetsAudioPlayerCache _audioPlayerCache = defaultAssetsAudioPlayerCache;
 
   static final double minVolume = 0.0;
   static final double maxVolume = 1.0;
@@ -146,6 +163,12 @@ class AssetsAudioPlayer {
   _CurrentPlaylist _playlist;
 
   final String id;
+
+  set cachePathProvider(AssetsAudioPlayerCache newValue) {
+    if (newValue != null) {
+      _audioPlayerCache = newValue;
+    }
+  }
 
   AssetsAudioPlayer._({this.id = _DEFAULT_PLAYER}) {
     _init();
@@ -302,6 +325,11 @@ class AssetsAudioPlayer {
   final BehaviorSubject<bool> _isBuffering =
       BehaviorSubject<bool>.seeded(false);
 
+  final PublishSubject<CacheDownloadInfos> _cacheDownloadInfos =
+      PublishSubject<CacheDownloadInfos>();
+  Stream<CacheDownloadInfos> get cacheDownloadInfos =>
+      _cacheDownloadInfos.stream;
+
   /// Streams the volume of the media Player (min: 0, max: 1)
   ///     final double volume = _assetsAudioPlayer.volume.value;
   ///
@@ -421,6 +449,7 @@ class AssetsAudioPlayer {
     _playlistAudioFinished.close();
     _loopMode.close();
     _shuffle.close();
+    _cacheDownloadInfos.close();
     _playSpeed.close();
     _playerState.close();
     _isBuffering.close();
@@ -499,10 +528,10 @@ class AssetsAudioPlayer {
           break;
         case METHOD_POSITION:
           if (call.arguments is int) {
-            _currentPosition.value = Duration(seconds: call.arguments);
+            _currentPosition.value = Duration(milliseconds: call.arguments);
           } else if (call.arguments is double) {
             double value = call.arguments;
-            _currentPosition.value = Duration(seconds: value.round());
+            _currentPosition.value = Duration(milliseconds: value.round());
           }
           break;
         case METHOD_IS_PLAYING:
@@ -815,7 +844,8 @@ class AssetsAudioPlayer {
       _respectSilentMode = respectSilentMode;
       _showNotification = showNotification;
 
-      final audio = await _handlePlatformAsset(audioInput);
+      var audio = await _handlePlatformAsset(audioInput);
+      audio = await _downloadOrFetchFromCacheIfNecessary(audio);
 
       audio.setCurrentlyOpenedIn(_playerEditor);
 
@@ -845,7 +875,6 @@ class AssetsAudioPlayer {
         writeNotificationSettingsInto(params, notifSettings);
         //endregion
 
-        writeAudioMetasInto(params, audio.metas);
         writeAudioMetasInto(params, audio.metas);
         _lastOpenedAssetsAudio = audioInput;
         /*final result = */
@@ -1180,6 +1209,13 @@ class AssetsAudioPlayer {
       return input.copyWith(audioType: AudioType.file, path: path);
     }
     return input;
+  }
+
+  Future<Audio> _downloadOrFetchFromCacheIfNecessary(Audio input) async {
+    return AssetsAudioPlayerCacheManager()
+        .transform(this._audioPlayerCache, input, (downloadInfos) {
+      this._cacheDownloadInfos.add(downloadInfos);
+    });
   }
 
   //returns the file path

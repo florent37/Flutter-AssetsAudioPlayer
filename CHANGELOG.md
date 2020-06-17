@@ -1,3 +1,12 @@
+## 2.0.5
+
+* Added Cache management (beta), with Audio.network(url, cached: true)
+
+## 2.0.4+2
+
+* Added HLS, Dash, SmoothStream support on Android
+* Added `laylist.replaceAt` method
+
 ## 2.0.3+6
 
 * ExoPlayer network now set `allowCrossProtocolRedirect=true` by default

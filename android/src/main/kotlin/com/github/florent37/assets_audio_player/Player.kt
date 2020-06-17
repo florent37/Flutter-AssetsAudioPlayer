@@ -7,15 +7,8 @@ import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Message
 import android.util.Log
-import com.github.florent37.assets_audio_player.notification.AudioMetas
-import com.github.florent37.assets_audio_player.notification.NotificationManager
-import com.github.florent37.assets_audio_player.notification.NotificationService
-import com.github.florent37.assets_audio_player.notification.NotificationSettings
-import com.github.florent37.assets_audio_player.playerimplem.DurationMS
-import com.github.florent37.assets_audio_player.playerimplem.PlayerImplem
-import com.github.florent37.assets_audio_player.playerimplem.PlayerImplemExoPlayer
-import com.github.florent37.assets_audio_player.playerimplem.PlayerImplemMediaPlayer
 import com.google.android.exoplayer2.ExoPlaybackException
+import com.github.florent37.assets_audio_player.playerimplem.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +16,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.IOException
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Does not depend on Flutter, feel free to use it in all your projects
@@ -56,7 +50,7 @@ class Player(
     var onPlaySpeedChanged: ((Double) -> Unit)? = null
     var onForwardRewind: ((Double) -> Unit)? = null
     var onReadyToPlay: ((DurationMS) -> Unit)? = null
-    var onPositionChanged: ((Long) -> Unit)? = null
+    var onPositionMSChanged: ((Long) -> Unit)? = null
     var onFinished: (() -> Unit)? = null
     var onPlaying: ((Boolean) -> Unit)? = null
     var onBuffering: ((Boolean) -> Unit)? = null
@@ -97,10 +91,9 @@ class Player(
                     }
 
                     val positionMs : Long = mediaPlayer.currentPositionMs
-                    val position = positionMs / 1000L
 
-                    // Send position (seconds) to the application.
-                    onPositionChanged?.invoke(position)
+                    // Send position (milliseconds) to the application.
+                    onPositionMSChanged?.invoke(positionMs)
 
                     if (respectSilentMode) {
                         val ringerMode = am.ringerMode
@@ -110,7 +103,11 @@ class Player(
                         }
                     }
 
-                    _positionMs = positionMs
+                    _positionMs = if(_durationMs != 0L) {
+                        min(positionMs, _durationMs)
+                    } else {
+                        positionMs
+                    }
                     updateNotifPosition()
 
                     // Update every 300ms.
@@ -165,29 +162,36 @@ class Player(
 
         _lastOpenedPath = assetAudioPath
 
+        //TODO move this
+        val onError : ((Throwable) -> Unit) = { t ->
+          if(t.message == null){
+               //Do Nothing
+          }
+          else if(t!!.message!!.contains("unable to connect",true)){ //TODO find another wau
+               stop()
+          }
+          //TODO, handle errors after opened
+        }
+      
         GlobalScope.launch(Dispatchers.Main) {
             try {
-                val durationMs = try {
-                    openExoPlayer(
-                            assetAudioPath = assetAudioPath,
-                            assetAudioPackage = assetAudioPackage,
-                            audioType = audioType,
-                            networkHeaders= networkHeaders,
-                            context = context
-                    )
-                } catch (exoError : ExoPlaybackException){
-                    throw exoError
-                }
-                catch (t: Throwable) {
-                    //fallback to mediaPlayer if error while opening
-                    openMediaPlayer(
-                            assetAudioPath = assetAudioPath,
-                            assetAudioPackage = assetAudioPackage,
-                            audioType = audioType,
-                            networkHeaders= networkHeaders,
-                            context = context
-                    )
-                }
+                val playerWithDuration = PlayerFinder.findWorkingPlayer(
+                        PlayerFinderConfiguration(
+                        assetAudioPath = assetAudioPath,
+                        flutterAssets = flutterAssets,
+                        assetAudioPackage = assetAudioPackage,
+                        audioType = audioType,
+                        networkHeaders = networkHeaders,
+                        context = context,
+                        onFinished = onFinished,
+                        onPlaying = onPlaying,
+                        onBuffering = onBuffering,
+                        onError= onError
+                        )
+                )
+
+                val durationMs = playerWithDuration.duration
+                mediaPlayer = playerWithDuration.player
 
                 //here one open succeed
                 onReadyToPlay?.invoke(durationMs)
@@ -220,84 +224,10 @@ class Player(
                 }
             } catch (t: Throwable) {
                 //if one error while opening, result.error
-                onPositionChanged?.invoke(0)
+                onPositionMSChanged?.invoke(0)
                 t.printStackTrace()
                 result.error("OPEN", t.message, null)
             }
-        }
-    }
-
-    private suspend fun openExoPlayer(assetAudioPath: String?,
-                                      assetAudioPackage: String?,
-                                      audioType: String,
-                                      networkHeaders: Map<*, *>?,
-                                      context: Context
-    ): DurationMS {
-        mediaPlayer = PlayerImplemExoPlayer(
-                onFinished = {
-                    onFinished?.invoke()
-                    //stop(pingListener = false)
-                },
-                onBuffering = {
-                    onBuffering?.invoke(it)
-                },
-                onError = { t ->
-                    if(t.message == null){
-                        //Do Nothing
-                    }
-                    else if(t!!.message!!.contains("unable to connect",true)){
-                        stop()
-                    }
-//                    TODO, handle errors after opened
-                }
-        )
-
-        try {
-            return mediaPlayer!!.open(
-                    context = context,
-                    assetAudioPath = assetAudioPath,
-                    audioType = audioType,
-                    assetAudioPackage = assetAudioPackage,
-                    networkHeaders= networkHeaders,
-                    flutterAssets = flutterAssets
-            )
-        } catch (t: Throwable) {
-            mediaPlayer?.release()
-            throw  t
-        }
-    }
-
-    private suspend fun openMediaPlayer(
-            assetAudioPath: String?,
-            assetAudioPackage: String?,
-            audioType: String,
-            networkHeaders: Map<*, *>?,
-            context: Context
-    ): DurationMS {
-        mediaPlayer = PlayerImplemMediaPlayer(
-                onFinished = {
-                    onFinished?.invoke()
-                    //stop(pingListener = false)
-                },
-                onBuffering = {
-                    onBuffering?.invoke(it)
-                },
-                onError = { t ->
-                    //TODO, handle errors after opened
-                }
-        )
-        try {
-            return mediaPlayer!!.open(
-                    context = context,
-                    assetAudioPath = assetAudioPath,
-                    audioType = audioType,
-                    assetAudioPackage = assetAudioPackage,
-                    networkHeaders= networkHeaders,
-                    flutterAssets = flutterAssets
-            )
-        } catch (t: Throwable) {
-            mediaPlayer?.release()
-            throw  t
         }
     }
 
@@ -306,7 +236,7 @@ class Player(
             // Reset duration and position.
             // handler.removeCallbacks(updatePosition);
             // channel.invokeMethod("player.duration", 0);
-            onPositionChanged?.invoke(0)
+            onPositionMSChanged?.invoke(0)
 
             mediaPlayer?.stop()
             mediaPlayer?.release()
@@ -392,7 +322,7 @@ class Player(
                         audioMetas = audioMetas,
                         isPlaying = this.isPlaying,
                         notificationSettings = notificationSettings,
-                        stop = removeNotificationOnStop && (mediaPlayer == null),
+                        stop = removeNotificationOnStop && mediaPlayer == null,
                         durationMs = this._durationMs
                 )
             }
@@ -443,7 +373,7 @@ class Player(
         mediaPlayer?.apply {
             val to = max(milliseconds, 0L)
             seekTo(to)
-            onPositionChanged?.invoke(currentPositionMs / 1000L)
+            onPositionMSChanged?.invoke(currentPositionMs)
         }
     }
 
@@ -494,11 +424,9 @@ class Player(
             forwardHandler = ForwardHandler()
         }
 
-        mediaPlayer?.let {
-            it.pause()
-            //handler.removeCallbacks(updatePosition)
-            //onPlaying?.invoke(false)
-        }
+        mediaPlayer?.pause()
+        //handler.removeCallbacks(updatePosition)
+        //onPlaying?.invoke(false)
 
         onForwardRewind?.invoke(speed)
         forwardHandler!!.start(this, speed)

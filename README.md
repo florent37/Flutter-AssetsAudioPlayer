@@ -9,6 +9,7 @@ https://pub.dartlang.org/packages/assets_audio_player)
 
 
 [![Codemagic build status](https://api.codemagic.io/apps/5ed8002fe1907b001c67db52/5ed8002fe1907b001c67db51/status_badge.svg)](https://codemagic.io/apps/5ed8002fe1907b001c67db52/5ed8002fe1907b001c67db51/latest_build)
+[![CodeFactor](https://www.codefactor.io/repository/github/florent37/flutter-assetsaudioplayer/badge)](https://www.codefactor.io/repository/github/florent37/flutter-assetsaudioplayer)
 
 Play music/audio stored in assets files (simultaneously) directly from Flutter (android / ios / web / macos). 
 
@@ -37,7 +38,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^2.0.3+4
+  assets_audio_player: ^2.0.4+2
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -79,7 +80,7 @@ You like the package ? buy me a kofi :)
           <td>✅</td>
         </tr>
         <tr>
-          <td>📻 Network LiveStream / radio (url)</td>
+          <td>📻 Network LiveStream / radio (url) <br/> (<b>Default, HLS, Dash, SmoothStream</b>)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
