@@ -3,18 +3,18 @@ package com.github.florent37.assets_audio_player
 import StopWhenCall
 import android.content.Context
 import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Message
-import com.github.florent37.assets_audio_player.notification.AudioMetas
-import com.github.florent37.assets_audio_player.notification.NotificationManager
-import com.github.florent37.assets_audio_player.notification.NotificationService
-import com.github.florent37.assets_audio_player.notification.NotificationSettings
+import android.util.Log
+import com.google.android.exoplayer2.ExoPlaybackException
 import com.github.florent37.assets_audio_player.playerimplem.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.IOException
 import kotlin.math.max
 import kotlin.math.min
 
@@ -162,6 +162,17 @@ class Player(
 
         _lastOpenedPath = assetAudioPath
 
+        //TODO move this
+        val onError : ((Throwable) -> Unit) = { t ->
+          if(t.message == null){
+               //Do Nothing
+          }
+          else if(t!!.message!!.contains("unable to connect",true)){ //TODO find another wau
+               stop()
+          }
+          //TODO, handle errors after opened
+        }
+      
         GlobalScope.launch(Dispatchers.Main) {
             try {
                 val playerWithDuration = PlayerFinder.findWorkingPlayer(
@@ -174,7 +185,8 @@ class Player(
                         context = context,
                         onFinished = onFinished,
                         onPlaying = onPlaying,
-                        onBuffering = onBuffering
+                        onBuffering = onBuffering,
+                        onError= onError
                         )
                 )
 
@@ -200,6 +212,16 @@ class Player(
                     updateNotif() //if pause, we need to display the notif
                 }
                 result.success(null)
+            } catch (exoError : ExoPlaybackException){
+                if(exoError.type == ExoPlaybackException.TYPE_SOURCE){
+                    onPositionChanged?.invoke(0)
+                    onBuffering?.invoke(false)
+                    stop()
+                } else{
+                    onPositionChanged?.invoke(0)
+                    exoError.printStackTrace()
+                    result.error("OPEN", exoError.message, null)
+                }
             } catch (t: Throwable) {
                 //if one error while opening, result.error
                 onPositionMSChanged?.invoke(0)
