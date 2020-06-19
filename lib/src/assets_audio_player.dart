@@ -906,9 +906,11 @@ class AssetsAudioPlayer {
 
         await setLoopMode(loopMode);
 
+        _stopped = false;
         _playlistFinished.value = false;
       } catch (e) {
         _lastOpenedAssetsAudio = currentAudio; //revert to the previous audio
+        _current.add(null);
         _isBuffering.add(false);
         _currentPosition.add(Duration.zero);
         try {
