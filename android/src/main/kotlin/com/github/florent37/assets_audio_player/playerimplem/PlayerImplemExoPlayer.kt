@@ -270,6 +270,7 @@ class PlayerImplemExoPlayer(
             if (!onThisMediaReady) {
                 continuation.resumeWithException(error)
             } else {
+                onBuffering.invoke(false)
                 onError(mapError(error))
             }
         }

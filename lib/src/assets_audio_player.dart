@@ -479,7 +479,7 @@ class AssetsAudioPlayer {
 
     _recieveChannel = MethodChannel('assets_audio_player/$id');
     _recieveChannel.setMethodCallHandler((MethodCall call) async {
-      //print("received call ${call.method} with arguments ${call.arguments}");
+      print("received call ${call.method} with arguments ${call.arguments}");
       switch (call.method) {
         case 'log':
           print("log: " + call.arguments);
@@ -795,14 +795,16 @@ class AssetsAudioPlayer {
     }
   }
 
-  void _handleOnError(Map<String, String> args) async {
+  void _handleOnError(Map args) async {
     final String errorType = args["type"];
     final String errorMessage = args["message"];
     final AssetsAudioPlayerError error = AssetsAudioPlayerError(
       errorType: parseAssetsAudioPlayerErrorType(errorType),
       message: errorMessage,
     );
-
+    if(onErrorDo != null){
+      onErrorDo(error, this);
+    }
   }
 
   /// Converts a number to duration

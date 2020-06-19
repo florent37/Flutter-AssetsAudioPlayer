@@ -87,6 +87,7 @@ class Player(
     private var audioMetas: AudioMetas? = null
     private var notificationSettings: NotificationSettings? = null
 
+    private var _lastPositionMs: Long? = null
     private val updatePosition = object : Runnable {
         override fun run() {
             mediaPlayer?.let { mediaPlayer ->
@@ -97,8 +98,11 @@ class Player(
 
                     val positionMs : Long = mediaPlayer.currentPositionMs
 
-                    // Send position (milliseconds) to the application.
-                    onPositionMSChanged?.invoke(positionMs)
+                    if(_lastPositionMs != positionMs) {
+                        // Send position (milliseconds) to the application.
+                        onPositionMSChanged?.invoke(positionMs)
+                        _lastPositionMs = positionMs
+                    }
 
                     if (respectSilentMode) {
                         val ringerMode = am.ringerMode
@@ -325,6 +329,7 @@ class Player(
             mediaPlayer?.let { player ->
                 stopForward()
                 player.play()
+                _lastPositionMs = null
                 handler.post(updatePosition)
                 onPlaying?.invoke(true)
                 updateNotif()
