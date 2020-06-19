@@ -1,3 +1,7 @@
+## 2.0.5+1
+
+* Added custom error handling (beta)
+
 ## 2.0.5
 
 * Added Cache management (beta), with Audio.network(url, cached: true)
