@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:assets_audio_player/src/cache/cache_downloader.dart';
-import 'package:assets_audio_player/src/cache/cache_manager.dart';
-import 'package:assets_audio_player/src/notification.dart';
+import 'cache/cache_downloader.dart';
+import 'cache/cache_manager.dart';
+import 'notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -15,16 +15,17 @@ import 'package:uuid/uuid.dart';
 
 import 'applifecycle.dart';
 import 'cache/cache.dart';
-import 'notification.dart';
 import 'playable.dart';
 import 'playing.dart';
 import 'loop.dart';
+import 'errors.dart';
 
 export 'applifecycle.dart';
 export 'notification.dart';
 export 'playable.dart';
 export 'playing.dart';
 export 'loop.dart';
+export 'errors.dart';
 
 const _DEFAULT_AUTO_START = true;
 const _DEFAULT_RESPECT_SILENT_MODE = false;
@@ -44,6 +45,7 @@ const METHOD_NOTIFICATION_PREV = "player.prev";
 const METHOD_NOTIFICATION_STOP = "player.stop";
 const METHOD_NOTIFICATION_PLAY_OR_PAUSE = "player.playOrPause";
 const METHOD_PLAY_SPEED = "player.playSpeed";
+const METHOD_ERROR = "player.error";
 
 enum PlayerState {
   play,
@@ -360,6 +362,8 @@ class AssetsAudioPlayer {
   ValueStream<RealtimePlayingInfos> get realtimePlayingInfos =>
       _realtimePlayingInfos.stream;
 
+  AssetsAudioPlayerErrorHandler onErrorDo; //custom error Handler, default value in "_init"
+
   BehaviorSubject<double> _playSpeed = BehaviorSubject.seeded(1.0);
 
   ValueStream<double> get playSpeed => _playSpeed.stream;
@@ -465,6 +469,12 @@ class AssetsAudioPlayer {
   }
 
   _init() {
+    //default action, can be overriden using player.onErrorDo = (error, player) { ACTION };
+    onErrorDo = (errorHandler) {
+      print(errorHandler.error.message);
+      errorHandler.player.stop();
+    };
+
     _playerEditor = PlayerEditor._(this);
 
     _recieveChannel = MethodChannel('assets_audio_player/$id');
@@ -488,6 +498,9 @@ class AssetsAudioPlayer {
           break;
         case METHOD_NOTIFICATION_PLAY_OR_PAUSE: //eg: from notification
           _notificationPlayPause();
+          break;
+        case METHOD_ERROR:
+          _handleOnError(call.arguments);
           break;
         case METHOD_CURRENT:
           if (call.arguments == null) {
@@ -782,6 +795,35 @@ class AssetsAudioPlayer {
     }
   }
 
+  void _handleOnError(Map args) async {
+    final String errorType = args["type"];
+    final String errorMessage = args["message"];
+    final AssetsAudioPlayerError error = AssetsAudioPlayerError(
+      errorType: parseAssetsAudioPlayerErrorType(errorType),
+      message: errorMessage,
+    );
+
+    /* example
+    onErrorDo = (handler){
+      handler.player.open(
+          handler.playlist.copyWith(startIndex: handler.playlistIndex),
+          seek: handler.currentPosition
+      );
+    };
+     */
+
+    if(onErrorDo != null){
+      final errorHandler = ErrorHandler(
+        player: this,
+        currentPosition: currentPosition.value,
+        playlist: this._playlist?.playlist,
+        playlistIndex: this._playlist?.playlistIndex,
+        error: error
+      );
+      onErrorDo(errorHandler);
+    }
+  }
+
   /// Converts a number to duration
   Duration _toDuration(num value) {
     if (value.isNaN) {
@@ -883,9 +925,13 @@ class AssetsAudioPlayer {
 
         await setLoopMode(loopMode);
 
+        _stopped = false;
         _playlistFinished.value = false;
       } catch (e) {
         _lastOpenedAssetsAudio = currentAudio; //revert to the previous audio
+        _current.add(null);
+        _isBuffering.add(false);
+        _currentPosition.add(Duration.zero);
         try {
           await stop();
         } catch (t) {

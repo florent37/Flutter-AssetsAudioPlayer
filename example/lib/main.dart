@@ -143,6 +143,9 @@ class _MyAppState extends State<MyApp> {
     //_subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
     //  print("onReadyToPlay : $audio");
     //}));
+    _subscriptions.add(_assetsAudioPlayer.isBuffering.listen((isBuffering) {
+      print("isBuffering : $isBuffering");
+    }));
     _subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
       print("playerState : $playerState");
     }));

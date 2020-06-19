@@ -28,6 +28,7 @@ internal val METHOD_NEXT = "player.next"
 internal val METHOD_PREV = "player.prev"
 internal val METHOD_PLAY_OR_PAUSE = "player.playOrPause"
 internal val METHOD_NOTIFICATION_STOP = "player.stop"
+internal val METHOD_ERROR = "player.error"
 
 class AssetsAudioPlayerPlugin : FlutterPlugin,PluginRegistry.NewIntentListener, ActivityAware {
 
@@ -137,9 +138,9 @@ class AssetsAudioPlayer(
     }
 
     fun unregister() {
-        stopWhenCall?.stop()
+        stopWhenCall.stop()
         notificationManager.hideNotificationService(definitively = true)
-        stopWhenCall?.unregister(stopWhenCallListener)
+        stopWhenCall.unregister(stopWhenCallListener)
         players.values.forEach {
             it.stop()
         }
@@ -159,7 +160,7 @@ class AssetsAudioPlayer(
                     context = context,
                     id = id,
                     notificationManager = notificationManager,
-                    stopWhenCall = stopWhenCall!!,
+                    stopWhenCall = stopWhenCall,
                     flutterAssets = flutterAssets
             )
             player.apply {
@@ -204,6 +205,12 @@ class AssetsAudioPlayer(
                 }
                 onNotificationStop = {
                     channel.invokeMethod(METHOD_NOTIFICATION_STOP, null)
+                }
+                onError = {
+                    channel.invokeMethod(METHOD_ERROR, mapOf(
+                            "type" to it.type,
+                            "message" to it.message
+                        ))
                 }
             }
             return@getOrPut player

@@ -3,6 +3,7 @@ package com.github.florent37.assets_audio_player.playerimplem
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import com.github.florent37.assets_audio_player.AssetAudioPlayerThrowable
 import com.github.florent37.assets_audio_player.Player
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.REPEAT_MODE_ALL
@@ -48,7 +49,7 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
                     configuration.onBuffering?.invoke(it)
                 },
                 onError = { t ->
-                    //TODO, handle errors after opened
+                    configuration.onError?.invoke(t)
                 },
                 type = this.type
         )
@@ -77,7 +78,7 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
 class PlayerImplemExoPlayer(
         onFinished: (() -> Unit),
         onBuffering: ((Boolean) -> Unit),
-        onError: ((Throwable) -> Unit),
+        onError: ((AssetAudioPlayerThrowable) -> Unit),
         val type: PlayerImplemTesterExoPlayer.Type
 ) : PlayerImplem(
         onFinished = onFinished,
@@ -185,6 +186,14 @@ class PlayerImplemExoPlayer(
         return this
     }
 
+    fun mapError(t: Throwable) : AssetAudioPlayerThrowable {
+        return if(t?.message?.contains("unable to connect",true) == true) {
+            AssetAudioPlayerThrowable.NetworkError(t)
+        } else {
+            AssetAudioPlayerThrowable.PlayerError(t)
+        }
+    }
+
     override suspend fun open(
             context: Context,
             flutterAssets: FlutterPlugin.FlutterAssets,
@@ -214,10 +223,11 @@ class PlayerImplemExoPlayer(
             this.mediaPlayer?.addListener(object : com.google.android.exoplayer2.Player.EventListener {
 
                 override fun onPlayerError(error: ExoPlaybackException) {
+                    val errorMapped = mapError(error)
                     if (!onThisMediaReady) {
-                        continuation.resumeWithException(error)
+                        continuation.resumeWithException(errorMapped)
                     } else {
-                        onError(error)
+                        onError(errorMapped)
                     }
                 }
 
@@ -260,7 +270,8 @@ class PlayerImplemExoPlayer(
             if (!onThisMediaReady) {
                 continuation.resumeWithException(error)
             } else {
-                onError(error)
+                onBuffering.invoke(false)
+                onError(mapError(error))
             }
         }
     }

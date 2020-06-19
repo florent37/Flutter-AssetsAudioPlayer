@@ -104,7 +104,6 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     var player: AVQueuePlayer?
     
     var observerStatus: [NSKeyValueObservation] = []
-    var bufferObserver : Any?
 
     var displayMediaPlayerNotification = false
     var audioMetas : AudioMetas?
@@ -284,6 +283,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             commandCenter.nextTrackCommand.removeTarget(t)
         }
         self.targets.removeAll()
+        
     }
     
     var nowPlayingInfo = [String: Any]()
@@ -517,7 +517,13 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             self._lastOpenedPath = assetPath
             
-            NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
+            let notifCenter = NotificationCenter.default
+
+            notifCenter.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
+            
+            // Watch notifications
+            notifCenter.addObserver(self, selector: #selector(self.newErrorLogEntry), name: NSNotification.Name.AVPlayerItemNewErrorLogEntry, object: item)
+            notifCenter.addObserver(self, selector: #selector(self.failedToPlayToEndTime), name: NSNotification.Name.AVPlayerItemFailedToPlayToEndTime, object: item)
             
             self.setBuffering(true)
             observerStatus.append( item.observe(\.status, changeHandler: { [weak self] (item, value) in
@@ -564,6 +570,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 case .failed:
                     debugPrint("playback failed")
                     
+                    self?.stop()
+                    
                     result(FlutterError(
                         code: "PLAY_ERROR",
                         message: "Cannot play "+assetPath,
@@ -591,6 +599,31 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             )
             log(error.localizedDescription)
             print(error.localizedDescription)
+        }
+    }
+    
+    // Getting error from Notification payload
+    @objc func newErrorLogEntry(_ notification: Notification) {
+        guard let object = notification.object, let playerItem = object as? AVPlayerItem else {
+            return
+        }
+        guard let errorLog: AVPlayerItemErrorLog = playerItem.errorLog() else {
+            return
+        }
+        NSLog("Error: \(errorLog)")
+    }
+    
+    @objc func failedToPlayToEndTime(_ notification: Notification) {
+        //Format errors    Playlist format error, Key format error, Session data format error    AVErrorFailedToParse
+        //Live playlist update errors    Must update live playlist in time as per HLS Spec    AVErrorContentNotUpdated
+        if let error : NSError = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? NSError {
+            //Network / Timeout errors    HTTP 4xx errors, HTTP 5xx errors, TCP/IP, DNS errors    AVErrorContentIsUnavailable, AVErrorNoLongerPlayable
+            if(error.code == -11863 /*AVErrorContentIsUnavailable*/ || error.code == -11867 /* AVErrorNoLongerPlayable*/ ){
+                self.onError(NetworkError(message: "avplayer http error"));
+            }
+            else {
+                self.onError(PlayerError(message: "avplayer error"));
+            }
         }
     }
     
@@ -625,6 +658,13 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.channel.invokeMethod(Music.METHOD_VOLUME, arguments: volume)
     }
     
+    private func onError(_ error: AssetAudioPlayerError){
+        self.channel.invokeMethod(Music.METHOD_ERROR, arguments: [
+            "type" : error.type,
+            "message" : error.message,
+        ])
+    }
+       
     var _rate : Float = 1.0
     var rate : Float {
         get {
@@ -658,16 +698,12 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         
         self.updateNotifStatus(playing: self.playing, stopped: true, rate: self.player?.rate)
         
-        if let bufferObserver = self.bufferObserver {
-            self.player?.removeTimeObserver(bufferObserver)
-        }
-        
         self.player?.seek(to: CMTime.zero)
         self.player = nil   
         self.playing = false
         self.currentTimeTimer?.invalidate()
         #if os(iOS)
-        self.deinitMediaPlayerNotifEvent()
+        self._deinit()
         #endif
         NotificationCenter.default.removeObserver(self)
         self.observerStatus.forEach {
@@ -824,6 +860,7 @@ class Music : NSObject, FlutterPlugin {
     static let METHOD_NEXT = "player.next"
     static let METHOD_PREV = "player.prev"
     static let METHOD_PLAY_OR_PAUSE = "player.playOrPause"
+    static let METHOD_ERROR = "player.error"
 
     var players = Dictionary<String, Player>()
     
@@ -1302,3 +1339,22 @@ class Music : NSObject, FlutterPlugin {
     
 }
 
+class AssetAudioPlayerError {
+    let type: String
+    let message: String
+    init(type: String, message: String) {
+        self.type = type
+        self.message = message
+    }
+}
+    
+class NetworkError : AssetAudioPlayerError {
+    init(message: String) {
+        super.init(type: "network", message: message)
+    }
+}
+class PlayerError : AssetAudioPlayerError {
+    init(message: String) {
+        super.init(type: "player", message: message)
+    }
+}

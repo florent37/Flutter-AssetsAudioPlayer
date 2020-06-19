@@ -856,6 +856,40 @@ assetsAudioPlayer.loopMode.listen((loopMode){
 assetsAudioPlayer.toggleLoop(); //toggle the value of looping
 ```
 
+
+# Error Handling
+
+By default, on playing error, it stop the audio
+
+BUT you can add a custom behavior
+
+```dart
+_player.onErrorDo = (handler){
+  handler.player.stop();
+};
+```
+
+Open another audio
+
+```dart
+_player.onErrorDo = (handler){
+  handler.player.open(ANOTHER_AUDIO);
+};
+```
+
+Try to open again on same position 
+
+```dart
+_player.onErrorDo = (handler){
+  handler.player.open(
+      handler.playlist.copyWith(
+        startIndex: handler.playlistIndex
+      ),
+      seek: handler.currentPosition
+  );
+};
+```
+
 # Network Policies (android/iOS/macOS)
 
 Android only allow HTTPS calls, you will have an error if you're using HTTP, 

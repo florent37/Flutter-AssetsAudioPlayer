@@ -10,3 +10,4 @@ export 'package:assets_audio_player/src/widget/audio_widget.dart';
 export 'package:assets_audio_player/src/notification.dart';
 export 'package:assets_audio_player/src/loop.dart';
 export 'package:assets_audio_player/src/cache/cache.dart';
+export 'package:assets_audio_player/src/errors.dart';

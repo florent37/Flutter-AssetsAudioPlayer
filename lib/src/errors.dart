@@ -1,0 +1,43 @@
+import 'package:flutter/foundation.dart';
+
+import 'assets_audio_player.dart';
+
+enum AssetsAudioPlayerErrorType {
+  Network,
+  Player
+}
+
+class ErrorHandler {
+  final AssetsAudioPlayerError error;
+  final AssetsAudioPlayer player;
+  final Duration currentPosition;
+  final Playlist playlist;
+  final int playlistIndex;
+
+  const ErrorHandler({
+    @required this.error,
+    @required this.player,
+    @required this.currentPosition,
+    @required this.playlist,
+    @required this.playlistIndex,
+  });
+}
+
+typedef AssetsAudioPlayerErrorHandler = Function(ErrorHandler errorHandler);
+
+AssetsAudioPlayerErrorType parseAssetsAudioPlayerErrorType(String type){
+  switch(type){
+    case "network" : return AssetsAudioPlayerErrorType.Network;
+    default : return AssetsAudioPlayerErrorType.Player;
+  }
+}
+
+class AssetsAudioPlayerError {
+  final AssetsAudioPlayerErrorType errorType;
+  final String message;
+
+  const AssetsAudioPlayerError({
+    @required this.errorType,
+    @required this.message,
+  });
+}
