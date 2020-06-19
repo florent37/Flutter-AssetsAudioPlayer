@@ -440,8 +440,8 @@ class AssetsAudioPlayer {
   }
 
   /// Call it to dispose stream
-  void dispose() {
-    stop();
+  Future<void> dispose() async {
+    await stop();
 
     playlist?.removeCurrentlyOpenedIn(_playerEditor);
 
@@ -763,7 +763,7 @@ class AssetsAudioPlayer {
 
         return true;
       } else if (stopIfLast) {
-        stop();
+        await stop();
         return true;
       } else if (requestByUser) {
         //last element
@@ -791,7 +791,7 @@ class AssetsAudioPlayer {
       _playlistFinished.value = false; //continue playing the playlist
     } else {
       _playlistFinished.value = true; // no next elements -> finished
-      stop();
+      await stop();
     }
   }
 
