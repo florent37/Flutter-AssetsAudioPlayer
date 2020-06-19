@@ -470,16 +470,16 @@ class AssetsAudioPlayer {
 
   _init() {
     //default action, can be overriden using player.onErrorDo = (error, player) { ACTION };
-    onErrorDo = (error, player) {
-      print(error.message);
-      player.stop();
+    onErrorDo = (errorHandler) {
+      print(errorHandler.error.message);
+      errorHandler.player.stop();
     };
 
     _playerEditor = PlayerEditor._(this);
 
     _recieveChannel = MethodChannel('assets_audio_player/$id');
     _recieveChannel.setMethodCallHandler((MethodCall call) async {
-      print("received call ${call.method} with arguments ${call.arguments}");
+      //print("received call ${call.method} with arguments ${call.arguments}");
       switch (call.method) {
         case 'log':
           print("log: " + call.arguments);
@@ -802,8 +802,25 @@ class AssetsAudioPlayer {
       errorType: parseAssetsAudioPlayerErrorType(errorType),
       message: errorMessage,
     );
+
+    /* example
+    onErrorDo = (handler){
+      handler.player.open(
+          handler.playlist.copyWith(startIndex: handler.playlistIndex),
+          seek: handler.currentPosition
+      );
+    };
+     */
+
     if(onErrorDo != null){
-      onErrorDo(error, this);
+      final errorHandler = ErrorHandler(
+        player: this,
+        currentPosition: currentPosition.value,
+        playlist: this._playlist?.playlist,
+        playlistIndex: this._playlist?.playlistIndex,
+        error: error
+      );
+      onErrorDo(errorHandler);
     }
   }
 

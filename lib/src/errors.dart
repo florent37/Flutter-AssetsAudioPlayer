@@ -7,7 +7,23 @@ enum AssetsAudioPlayerErrorType {
   Player
 }
 
-typedef AssetsAudioPlayerErrorHandler = Function(AssetsAudioPlayerError error, AssetsAudioPlayer player);
+class ErrorHandler {
+  final AssetsAudioPlayerError error;
+  final AssetsAudioPlayer player;
+  final Duration currentPosition;
+  final Playlist playlist;
+  final int playlistIndex;
+
+  const ErrorHandler({
+    @required this.error,
+    @required this.player,
+    @required this.currentPosition,
+    @required this.playlist,
+    @required this.playlistIndex,
+  });
+}
+
+typedef AssetsAudioPlayerErrorHandler = Function(ErrorHandler errorHandler);
 
 AssetsAudioPlayerErrorType parseAssetsAudioPlayerErrorType(String type){
   switch(type){

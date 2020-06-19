@@ -284,6 +284,16 @@ class Playlist extends Playable {
     this.startIndex = startIndex;
   }
 
+  Playlist copyWith({
+    List<Audio> audios,
+    int startIndex,
+  }) {
+    return new Playlist(
+      audios: audios ?? this.audios,
+      startIndex: startIndex ?? this._startIndex,
+    );
+  }
+
   int get numberOfItems => audios.length;
 
   Playlist add(Audio audio) {
