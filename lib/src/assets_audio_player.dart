@@ -58,18 +58,21 @@ class PlayerEditor {
   PlayerEditor._(this.assetsAudioPlayer);
 
   void onAudioRemovedAt(int index) {
+    assetsAudioPlayer._updatePlaylistIndexes();
     if (assetsAudioPlayer._playlist.playlistIndex == index) {
       assetsAudioPlayer._openPlaylistCurrent();
     }
   }
 
   void onAudioAddedAt(int index) {
+    assetsAudioPlayer._updatePlaylistIndexes();
     if (assetsAudioPlayer._playlist.playlistIndex == index) {
       assetsAudioPlayer._openPlaylistCurrent();
     }
   }
 
   void onAudioReplacedAt(int index, bool keepPlayingPositionIfCurrent) {
+    assetsAudioPlayer._updatePlaylistIndexes();
     if (assetsAudioPlayer._playlist.playlistIndex == index) {
       final currentPosition = assetsAudioPlayer.currentPosition.value;
       print("onAudioReplacedAt/ currentPosition : $currentPosition");
@@ -437,7 +440,7 @@ class AssetsAudioPlayer {
   /// if it was'nt shuffling -> now it is
   void toggleShuffle() {
     shuffle = !shuffle;
-    _playlist.clearPlayerAudio(shuffle);
+    _updatePlaylistIndexes();
   }
 
   /// Call it to dispose stream
@@ -829,6 +832,10 @@ class AssetsAudioPlayer {
     }
   }
 
+  void _updatePlaylistIndexes(){
+    _playlist.clearPlayerAudio(shuffle);
+  }
+
   /// Converts a number to duration
   Duration _toDuration(num value) {
     if (value.isNaN) {
@@ -1001,7 +1008,7 @@ class AssetsAudioPlayer {
         loopMode: loopMode,
         notificationSettings: notificationSettings,
         playInBackground: playInBackground);
-    _playlist.clearPlayerAudio(shuffle);
+    _updatePlaylistIndexes();
     _playlist.moveTo(playlist.startIndex);
 
     playlist.setCurrentlyOpenedIn(_playerEditor);

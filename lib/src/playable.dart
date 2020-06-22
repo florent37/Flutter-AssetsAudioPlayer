@@ -299,22 +299,31 @@ class Playlist extends Playable {
   Playlist add(Audio audio) {
     if (audio != null) {
       this.audios.add(audio);
+
+      final index = this.audios.length - 1;
+      super.currentlyOpenedIn.forEach((playerEditor) {
+        playerEditor.onAudioAddedAt(index);
+      });
     }
     return this;
   }
 
   Playlist insert(int index, Audio audio) {
-    if (audio != null) {
-      this.audios.insert(index, audio);
+    if (audio != null && index >= 0) {
+      if (index < this.audios.length) {
+        this.audios.insert(index, audio);
+        super.currentlyOpenedIn.forEach((playerEditor) {
+          playerEditor.onAudioAddedAt(index);
+        });
+      } else {
+        return this.add(audio);
+      }
     }
-    super.currentlyOpenedIn.forEach((playerEditor) {
-      playerEditor.onAudioAddedAt(index);
-    });
     return this;
   }
 
   Playlist replaceAt(int index, PlaylistAudioReplacer replacer,
-      {bool keepPlayingPositionIfCurrent}) {
+      {bool keepPlayingPositionIfCurrent = false}) {
     if (index < this.audios.length && replacer != null) {
       final oldElement = this.audios.elementAt(index);
       final newElement = replacer(oldElement);
