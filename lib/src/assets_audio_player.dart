@@ -75,11 +75,13 @@ class PlayerEditor {
     assetsAudioPlayer._updatePlaylistIndexes();
     if (assetsAudioPlayer._playlist.playlistIndex == index) {
       final currentPosition = assetsAudioPlayer.currentPosition.value;
-      print("onAudioReplacedAt/ currentPosition : $currentPosition");
+      final isPlaying = assetsAudioPlayer.isPlaying.value ?? false;
+      //print("onAudioReplacedAt/ currentPosition : $currentPosition");
       if (keepPlayingPositionIfCurrent && currentPosition != null) {
-        assetsAudioPlayer._openPlaylistCurrent(seek: currentPosition);
+        assetsAudioPlayer._openPlaylistCurrent(
+            seek: currentPosition, autoStart: isPlaying);
       } else {
-        assetsAudioPlayer._openPlaylistCurrent();
+        assetsAudioPlayer._openPlaylistCurrent(autoStart: isPlaying);
       }
     }
   }
