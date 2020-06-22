@@ -690,7 +690,7 @@ class AssetsAudioPlayer {
     return false;
   }
 
-  void _onPositionReceived(dynamic argument){
+  void _onPositionReceived(dynamic argument) {
     final oldValue = _currentPosition.value;
     int newValue = null;
     if (argument is int) {
@@ -700,14 +700,15 @@ class AssetsAudioPlayer {
       final double value = argument;
       newValue = value.round();
     }
-    if(newValue != null){
+    if (newValue != null) {
       _currentPosition.value = Duration(milliseconds: newValue);
-      if(loopMode.value == LoopMode.single){
-
+      if (loopMode.value == LoopMode.single) {
         final current = this.current.value;
         if (current != null) {
           final Duration completeDuration = current.audio?.duration;
-          final oldEndReached = (completeDuration.inMilliseconds - oldValue.inMilliseconds) < 1500; //< 1.5s
+          final oldEndReached =
+              (completeDuration.inMilliseconds - oldValue.inMilliseconds) <
+                  1500; //< 1.5s
           final newJustStarted = newValue < 1000; //<1s
 
           //print("old: ${oldValue.inMilliseconds}, dur : ${completeDuration.inMilliseconds}");
@@ -723,7 +724,6 @@ class AssetsAudioPlayer {
         }
       }
     }
-
   }
 
   Future<void> _openPlaylistCurrent(
