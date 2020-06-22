@@ -2,10 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import 'assets_audio_player.dart';
 
-enum AssetsAudioPlayerErrorType {
-  Network,
-  Player
-}
+enum AssetsAudioPlayerErrorType { Network, Player }
 
 class ErrorHandler {
   final AssetsAudioPlayerError error;
@@ -25,10 +22,12 @@ class ErrorHandler {
 
 typedef AssetsAudioPlayerErrorHandler = Function(ErrorHandler errorHandler);
 
-AssetsAudioPlayerErrorType parseAssetsAudioPlayerErrorType(String type){
-  switch(type){
-    case "network" : return AssetsAudioPlayerErrorType.Network;
-    default : return AssetsAudioPlayerErrorType.Player;
+AssetsAudioPlayerErrorType parseAssetsAudioPlayerErrorType(String type) {
+  switch (type) {
+    case "network":
+      return AssetsAudioPlayerErrorType.Network;
+    default:
+      return AssetsAudioPlayerErrorType.Player;
   }
 }
 

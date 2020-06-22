@@ -362,7 +362,8 @@ class AssetsAudioPlayer {
   ValueStream<RealtimePlayingInfos> get realtimePlayingInfos =>
       _realtimePlayingInfos.stream;
 
-  AssetsAudioPlayerErrorHandler onErrorDo; //custom error Handler, default value in "_init"
+  AssetsAudioPlayerErrorHandler
+      onErrorDo; //custom error Handler, default value in "_init"
 
   BehaviorSubject<double> _playSpeed = BehaviorSubject.seeded(1.0);
 
@@ -505,13 +506,15 @@ class AssetsAudioPlayer {
         case METHOD_CURRENT:
           if (call.arguments == null) {
             final current = this._current.value;
-            final finishedPlay = Playing(
-              audio: current.audio,
-              index: current.index,
-              hasNext: false,
-              playlist: current.playlist,
-            );
-            _playlistAudioFinished.add(finishedPlay);
+            if (current != null) {
+              final finishedPlay = Playing(
+                audio: current.audio,
+                index: current.index,
+                hasNext: false,
+                playlist: current.playlist,
+              );
+              _playlistAudioFinished.add(finishedPlay);
+            }
             _playlistFinished.value = true;
             _current.value = null;
             _playerState.value = PlayerState.stop;
@@ -735,10 +738,11 @@ class AssetsAudioPlayer {
         }
       }
       if (_playlist.hasNext()) {
-        if (this._current.value != null) {
+        final curr = this._current.value;
+        if (curr != null) {
           _playlistAudioFinished.add(Playing(
-            audio: this._current.value.audio,
-            index: this._current.value.index,
+            audio: curr.audio,
+            index: curr.index,
             hasNext: true,
             playlist: this._current.value.playlist,
           ));
@@ -749,10 +753,11 @@ class AssetsAudioPlayer {
         return true;
       } else if (loopMode.value == LoopMode.playlist) {
         //last element
-        if (this._current.value != null) {
+        final curr = this._current.value;
+        if (curr != null) {
           _playlistAudioFinished.add(Playing(
-            audio: this._current.value.audio,
-            index: this._current.value.index,
+            audio: curr.audio,
+            index: curr.index,
             hasNext: false,
             playlist: this._current.value.playlist,
           ));
@@ -767,10 +772,11 @@ class AssetsAudioPlayer {
         return true;
       } else if (requestByUser) {
         //last element
-        if (this._current.value != null) {
+        final curr = this._current.value;
+        if (curr != null) {
           _playlistAudioFinished.add(Playing(
-            audio: this._current.value.audio,
-            index: this._current.value.index,
+            audio: curr.audio,
+            index: curr.index,
             hasNext: false,
             playlist: this._current.value.playlist,
           ));
@@ -812,14 +818,13 @@ class AssetsAudioPlayer {
     };
      */
 
-    if(onErrorDo != null){
+    if (onErrorDo != null) {
       final errorHandler = ErrorHandler(
-        player: this,
-        currentPosition: currentPosition.value,
-        playlist: this._playlist?.playlist,
-        playlistIndex: this._playlist?.playlistIndex,
-        error: error
-      );
+          player: this,
+          currentPosition: currentPosition.value,
+          playlist: this._playlist?.playlist,
+          playlistIndex: this._playlist?.playlistIndex,
+          error: error);
       onErrorDo(errorHandler);
     }
   }
@@ -1173,7 +1178,7 @@ class AssetsAudioPlayer {
     //only if playing a song
     final playing = this.current.value;
     if (playing != null) {
-      final totalDuration = playing.audio.duration;
+      final totalDuration = playing.audio?.duration ?? Duration.zero;
 
       final currentPosition = this.currentPosition.value ?? Duration();
 

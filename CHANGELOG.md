@@ -1,4 +1,4 @@
-## 2.0.5+2
+## 2.0.5+3
 
 * Added custom error handling (beta)
 * Dispose is now a future
