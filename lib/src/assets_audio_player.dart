@@ -832,7 +832,7 @@ class AssetsAudioPlayer {
     }
   }
 
-  void _updatePlaylistIndexes(){
+  void _updatePlaylistIndexes() {
     _playlist.clearPlayerAudio(shuffle);
   }
 
