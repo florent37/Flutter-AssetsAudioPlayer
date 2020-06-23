@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:dio/dio.dart';
-
 import '../playable.dart';
 import 'cache.dart';
 import 'cache_downloader.dart';
@@ -13,18 +11,13 @@ class AssetsAudioPlayerCacheManager {
   AssetsAudioPlayerCacheManager._();
   factory AssetsAudioPlayerCacheManager() => _instance;
 
-  Dio _dio = Dio(); //expose it to make use capable to update it
-  get dio => _dio;
-  set dio(Dio newValue) {
-    if (newValue != null) {
-      _dio = newValue;
-    }
-  }
-
   Map<String, CacheDownloader> _downloadingElements = Map();
 
-  Future<Audio> transform(AssetsAudioPlayerCache cache, Audio audio,
-      CacheDownloadListener cacheDownloadListener) async {
+  Future<Audio> transform(
+    AssetsAudioPlayerCache cache,
+    Audio audio,
+    CacheDownloadListener cacheDownloadListener,
+  ) async {
     if (audio.audioType != AudioType.network || audio.cached == false) {
       return audio;
     }
@@ -50,15 +43,18 @@ class AssetsAudioPlayerCacheManager {
     return await file.exists();
   }
 
-  Future<void> _download(Audio audio, String intoPath,
-      CacheDownloadListener cacheDownloadListener) async {
+  Future<void> _download(
+    Audio audio,
+    String intoPath,
+    CacheDownloadListener cacheDownloadListener,
+  ) async {
     print(intoPath);
     if (_downloadingElements.containsKey(intoPath)) {
       //is already downloading it
       final downloader = _downloadingElements[intoPath];
       await downloader.wait(cacheDownloadListener);
     } else {
-      final downloader = CacheDownloader(dio: _dio);
+      final downloader = CacheDownloader();
       _downloadingElements[intoPath] = downloader;
       downloader.downloadAndSave(
         url: audio.path,

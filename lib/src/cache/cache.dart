@@ -8,11 +8,13 @@ typedef CachePathProvider = Future<String> Function(Audio audio, String key);
 typedef AudioKeyTransformer = Future<String> Function(Audio audio);
 
 class AssetsAudioPlayerCache {
+  AssetsAudioPlayerCache({
+    @required this.cachePathProvider,
+    @required this.audioKeyTransformer,
+  });
+
   final CachePathProvider cachePathProvider;
   final AudioKeyTransformer audioKeyTransformer;
-
-  AssetsAudioPlayerCache(
-      {@required this.cachePathProvider, @required this.audioKeyTransformer});
 }
 
 String removeHttpSpecialCharsFromStrings(String from) {
@@ -22,11 +24,13 @@ String removeHttpSpecialCharsFromStrings(String from) {
       .replaceAll(RegExp(r"%"), "_");
 }
 
-AssetsAudioPlayerCache defaultAssetsAudioPlayerCache =
-    AssetsAudioPlayerCache(cachePathProvider: (audio, key) async {
-  final directory = await getTemporaryDirectory();
-  final dirPath = directory.path;
-  return '$dirPath/$key';
-}, audioKeyTransformer: (audio) async {
-  return removeHttpSpecialCharsFromStrings(audio.path);
-});
+AssetsAudioPlayerCache defaultAssetsAudioPlayerCache = AssetsAudioPlayerCache(
+  cachePathProvider: (audio, key) async {
+    final directory = await getTemporaryDirectory();
+    final dirPath = directory.path;
+    return '$dirPath/$key';
+  },
+  audioKeyTransformer: (audio) async {
+    return removeHttpSpecialCharsFromStrings(audio.path);
+  },
+);
