@@ -1,3 +1,7 @@
+## 2.0.6
+
+* Cache now use `http` instead of `dio`
+
 ## 2.0.5+7
 
 * Added custom error handling (beta)

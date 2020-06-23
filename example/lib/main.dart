@@ -126,7 +126,8 @@ class _MyAppState extends State<MyApp> {
     ),
   ];
 
-  final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
+  //final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
+  AssetsAudioPlayer get _assetsAudioPlayer => AssetsAudioPlayer.withId("music");
   final List<StreamSubscription> _subscriptions = [];
 
   @override
@@ -162,6 +163,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     _assetsAudioPlayer.dispose();
+    print("dispose");
     super.dispose();
   }
 
