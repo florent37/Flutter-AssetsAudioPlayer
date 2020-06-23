@@ -702,7 +702,9 @@ class AssetsAudioPlayer {
     }
     if (newValue != null) {
       _currentPosition.value = Duration(milliseconds: newValue);
-      if (loopMode.value == LoopMode.single || (this._playlist.isSingleAudio && loopMode.value == LoopMode.playlist)) {
+      if (loopMode.value == LoopMode.single ||
+          (this._playlist.isSingleAudio &&
+              loopMode.value == LoopMode.playlist)) {
         final current = this.current.value;
         if (current != null) {
           final Duration completeDuration = current.audio?.duration;
