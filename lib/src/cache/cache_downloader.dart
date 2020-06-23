@@ -49,9 +49,15 @@ class CacheDownloader {
     Map<String, dynamic> headers,
   }) async {
     final http.Client client = http.Client();
-    final http.Request request = http.Request('GET', Uri.parse(url))
-      ..headers.addAll(headers)
-      ..followRedirects = false;
+    final uri = Uri.parse(url);
+    final http.Request request = http.Request('GET', uri);
+
+    if (headers != null && !headers.isEmpty) {
+      request.headers.addAll(headers);
+    }
+
+    request.followRedirects = false;
+
     final Future<http.StreamedResponse> response = client.send(request);
 
     final File file = File(savePath);
@@ -59,6 +65,7 @@ class CacheDownloader {
     final List<List<int>> responseChunk = <List<int>>[];
     int downloadedLength = 0;
 
+    final Completer completer = Completer();
     response.asStream().listen((http.StreamedResponse r) {
       r.stream.listen((List<int> chunk) {
         raf.writeFromSync(chunk);
@@ -78,13 +85,18 @@ class CacheDownloader {
           waiter.completer.complete();
         }
         _dispose();
+
+        completer.complete();
       }, onError: (dynamic e) {
         for (final _DownloadWaiter waiter in _waiters) {
           waiter.completer.completeError(e);
         }
         _dispose();
+        completer.completeError(e);
       });
     });
+
+    await completer.future;
   }
 
   Future<String> wait(CacheDownloadListener downloadListener) async {

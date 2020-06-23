@@ -54,14 +54,14 @@ class AssetsAudioPlayerCacheManager {
       final downloader = _downloadingElements[intoPath];
       await downloader.wait(cacheDownloadListener);
     } else {
-      final downloader = CacheDownloader();
-      _downloadingElements[intoPath] = downloader;
-      downloader.downloadAndSave(
-        url: audio.path,
-        savePath: intoPath,
-        headers: audio.networkHeaders ?? {},
-      );
       try {
+        final downloader = CacheDownloader();
+        _downloadingElements[intoPath] = downloader;
+        downloader.downloadAndSave(
+          url: audio.path,
+          savePath: intoPath,
+          headers: audio.networkHeaders ?? {},
+        );
         await downloader.wait(cacheDownloadListener);
         //download finished
         _downloadingElements.remove(intoPath);
