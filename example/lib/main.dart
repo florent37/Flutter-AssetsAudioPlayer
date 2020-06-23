@@ -50,13 +50,14 @@ class _MyAppState extends State<MyApp> {
     Audio.network(
       "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3",
       metas: Metas(
-        id: "Online",
-        title: "Online",
-        artist: "Florent Champigny",
-        album: "OnlineAlbum",
-        image: MetasImage.network(
-            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
-      ),
+          id: "Online",
+          title: "Online",
+          artist: "Florent Champigny",
+          album: "OnlineAlbum",
+          // image: MetasImage.network("https://www.google.com")
+          image: MetasImage.network(
+              "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+          ),
     ),
     Audio(
       "assets/audios/rock.mp3",
@@ -125,7 +126,8 @@ class _MyAppState extends State<MyApp> {
     ),
   ];
 
-  final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
+  //final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
+  AssetsAudioPlayer get _assetsAudioPlayer => AssetsAudioPlayer.withId("music");
   final List<StreamSubscription> _subscriptions = [];
 
   @override
@@ -133,22 +135,26 @@ class _MyAppState extends State<MyApp> {
     //_subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
     //  print("finished : $data");
     //}));
-    //_subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
-    //  print("playlistAudioFinished : $data");
-    //}));
+    _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
+      print("playlistAudioFinished : $data");
+    }));
     //_subscriptions.add(_assetsAudioPlayer.current.listen((data) {
     //  print("current : $data");
     //}));
-    _subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
-      print("onReadyToPlay : $audio");
-    }));
+    //_subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
+    //  print("onReadyToPlay : $audio");
+    //}));
+    //_subscriptions.add(_assetsAudioPlayer.isBuffering.listen((isBuffering) {
+    //  print("isBuffering : $isBuffering");
+    //}));
     //_subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
     //  print("playerState : $playerState");
     //}));
-    _subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
-      print("isplaying : $isplaying");
-    }));
-    _subscriptions.add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
+    //_subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
+    //  print("isplaying : $isplaying");
+    //}));
+    _subscriptions
+        .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
       return false;
     }));
     super.initState();
@@ -157,6 +163,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     _assetsAudioPlayer.dispose();
+    print("dispose");
     super.dispose();
   }
 
@@ -259,7 +266,7 @@ class _MyAppState extends State<MyApp> {
                                     loopMode: loopMode,
                                     isPlaying: isPlaying,
                                     isPlaylist: true,
-                                    onStop: (){
+                                    onStop: () {
                                       _assetsAudioPlayer.stop();
                                     },
                                     toggleLoop: () {
@@ -270,10 +277,12 @@ class _MyAppState extends State<MyApp> {
                                     },
                                     onNext: () {
                                       //_assetsAudioPlayer.forward(Duration(seconds: 10));
-                                      _assetsAudioPlayer.next();
+                                      _assetsAudioPlayer.next(
+                                          /*keepLoopMode: false*/);
                                     },
                                     onPrevious: () {
-                                      _assetsAudioPlayer.previous();
+                                      _assetsAudioPlayer.previous(
+                                          /*keepLoopMode: false*/);
                                     },
                                   );
                                 });
@@ -337,23 +346,28 @@ class _MyAppState extends State<MyApp> {
                       },
                       onSelected: (myAudio) async {
                         try {
-                          await _assetsAudioPlayer.open(myAudio,
-                              autoStart: true,
-                              respectSilentMode: true,
-                              showNotification: true,
-                              playInBackground: PlayInBackground.enabled,
-                              notificationSettings: NotificationSettings(
-                                //seekBarEnabled: false,
-                                //stopEnabled: true,
-                                //customStopAction: (player){
-                                //  player.stop();
-                                //}
-                                //prevEnabled: false,
-                                //customNextAction: (player) {
-                                //  print("next");
-                                //}
-                              ));
-                        } catch (e){
+                          await _assetsAudioPlayer.open(
+                            myAudio,
+                            autoStart: true,
+                            respectSilentMode: true,
+                            showNotification: true,
+                            playInBackground: PlayInBackground.enabled,
+                            notificationSettings: NotificationSettings(
+                              //seekBarEnabled: false,
+                              //stopEnabled: true,
+                              //customStopAction: (player){
+                              //  player.stop();
+                              //}
+                              //prevEnabled: false,
+                              //customNextAction: (player) {
+                              //  print("next");
+                              //}
+                              //customStopIcon: AndroidResDrawable(name: "ic_stop_custom"),
+                              //customPauseIcon: AndroidResDrawable(name:"ic_pause_custom"),
+                              //customPlayIcon: AndroidResDrawable(name:"ic_play_custom"),
+                            ),
+                          );
+                        } catch (e) {
                           print(e);
                         }
                       },

@@ -9,6 +9,7 @@ https://pub.dartlang.org/packages/assets_audio_player)
 
 
 [![Codemagic build status](https://api.codemagic.io/apps/5ed8002fe1907b001c67db52/5ed8002fe1907b001c67db51/status_badge.svg)](https://codemagic.io/apps/5ed8002fe1907b001c67db52/5ed8002fe1907b001c67db51/latest_build)
+[![CodeFactor](https://www.codefactor.io/repository/github/florent37/flutter-assetsaudioplayer/badge)](https://www.codefactor.io/repository/github/florent37/flutter-assetsaudioplayer)
 
 Play music/audio stored in assets files (simultaneously) directly from Flutter (android / ios / web / macos). 
 
@@ -37,7 +38,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^2.0.2+5
+  assets_audio_player: ^2.0.6
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -79,7 +80,7 @@ You like the package ? buy me a kofi :)
           <td>✅</td>
         </tr>
         <tr>
-          <td>📻 Network LiveStream / radio (url)</td>
+          <td>📻 Network LiveStream / radio (url) <br/> (<b>Default, HLS, Dash, SmoothStream</b>)</td>
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
@@ -473,6 +474,39 @@ _player.open(audio, showNotification: true)
 
 Custom icon (android only)
 
+### By ResourceName
+
+Make sur you added those icons inside your `android/res/drawable` **!!! not on flutter assets !!!!**
+
+```dart
+await _assetsAudioPlayer.open(
+        myAudio,
+        showNotification: true,
+        notificationSettings: NotificationSettings(
+            customStopIcon: AndroidResDrawable(name: "ic_stop_custom"),
+            customPauseIcon: AndroidResDrawable(name:"ic_pause_custom"),
+            customPlayIcon: AndroidResDrawable(name:"ic_play_custom"),
+            customPrevIcon: AndroidResDrawable(name:"ic_prev_custom"),
+            customNextIcon: AndroidResDrawable(name:"ic_next_custom"),
+        )
+      
+```
+
+And don't forget tell proguard to keep those resources for release mode
+
+(part Keeping Resources)
+
+https://sites.google.com/a/android.com/tools/tech-docs/new-build-system/resource-shrinking
+
+```xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+tools:keep="@drawable/ic_next_custom, @drawable/ic_prev_custom, @drawable/ic_pause_custom, @drawable/ic_play_custom, @drawable/ic_stop_custom"/>
+```
+
+### By Manifest
+
 1. Add your icon into your android's `res` folder (android/app/src/main/res)
 
 2. Reference this icon into your AndroidManifest (android/app/src/main/AndroidManifest.xml)
@@ -583,11 +617,12 @@ final player = AssetsAudioPlayer.withId(id: "MY_UNIQUE_ID");
 ```Dart
 assetsAudioPlayer.open(
   Playlist(
-    assetAudioPaths: [
-      "assets/audios/song1.mp3",
-      "assets/audios/song2.mp3"
+    audios: [
+      Audio("assets/audios/song1.mp3"),
+      Audio("assets/audios/song2.mp3")
     ]
-  )
+  ),
+  loopMode: LoopMode.playlist //loop the full playlist
 );
 
 assetsAudioPlayer.next();
@@ -819,6 +854,40 @@ assetsAudioPlayer.loopMode.listen((loopMode){
 })
 
 assetsAudioPlayer.toggleLoop(); //toggle the value of looping
+```
+
+
+# Error Handling
+
+By default, on playing error, it stop the audio
+
+BUT you can add a custom behavior
+
+```dart
+_player.onErrorDo = (handler){
+  handler.player.stop();
+};
+```
+
+Open another audio
+
+```dart
+_player.onErrorDo = (handler){
+  handler.player.open(ANOTHER_AUDIO);
+};
+```
+
+Try to open again on same position 
+
+```dart
+_player.onErrorDo = (handler){
+  handler.player.open(
+      handler.playlist.copyWith(
+        startIndex: handler.playlistIndex
+      ),
+      seek: handler.currentPosition
+  );
+};
 ```
 
 # Network Policies (android/iOS/macOS)

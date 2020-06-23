@@ -1,7 +1,8 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 
-final streamUrl = "https://18843.live.streamtheworld.com/WBBRAMAAC48/HLS/playlist.m3u8";
+final mp3Url =
+    "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3";
 
 void main() => runApp(MyApp());
 
@@ -9,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'From File path',
+      title: 'Cache',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -28,8 +29,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String downloadedFilePath;
+
   String downloadingProgress;
+
+  final AssetsAudioPlayer _player = AssetsAudioPlayer.newPlayer();
 
   @override
   Widget build(BuildContext context) {
@@ -41,56 +44,34 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Player(streamUrl),
+            playerWidget(context)
           ],
         ),
       ),
     );
   }
-}
-
-class Player extends StatefulWidget {
-  final String streamPath;
-
-  Player(this.streamPath);
-
-  @override
-  _PlayerState createState() => _PlayerState();
-}
-
-class _PlayerState extends State<Player> {
-  final AssetsAudioPlayer _player = AssetsAudioPlayer.newPlayer();
 
   @override
   void initState() {
     super.initState();
+    _player.cacheDownloadInfos.listen((infos) {
+      print(infos.percent);
+    });
     _player.open(
-      Audio.liveStream(this.widget.streamPath),
-      autoStart: false,
-      showNotification: true,
-      notificationSettings: NotificationSettings(
-        nextEnabled: false,
-        prevEnabled: false,
-        stopEnabled: false
-      ),
+        Audio.network(mp3Url, cached: true),
+        autoStart: true,
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        PlayerBuilder.isBuffering(
-          player: _player,
-          builder: (context, isBuffering) {
-            if (isBuffering) {
-              return Text("Buffering");
-            } else {
-              return SizedBox(); //empty
-            }
-          },
-        ),
-        PlayerBuilder.isPlaying(
+  Widget playerWidget(BuildContext context) {
+    return PlayerBuilder.current(
+      player: _player,
+      builder: (context, current) {
+        if(current == null){
+          return SizedBox();
+        }
+        return PlayerBuilder.isPlaying(
           player: _player,
           builder: (context, isPlaying) {
             return FloatingActionButton(
@@ -100,8 +81,8 @@ class _PlayerState extends State<Player> {
               },
             );
           },
-        ),
-      ],
+        );
+      },
     );
   }
 }

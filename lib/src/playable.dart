@@ -1,6 +1,7 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
+import 'utils.dart';
 
 class Playable {
   final Set<PlayerEditor> _currentlyOpenedIn = Set();
@@ -92,15 +93,16 @@ class Metas {
   final String album;
   final Map<String, dynamic> extra;
   final MetasImage image;
+  final MetasImage onImageLoadFail;
 
-  Metas({
-    this.id,
-    this.title,
-    this.artist,
-    this.album,
-    this.image,
-    this.extra,
-  }) {
+  Metas(
+      {this.id,
+      this.title,
+      this.artist,
+      this.album,
+      this.image,
+      this.extra,
+      this.onImageLoadFail}) {
     if (this.id == null) {
       this.id = Uuid().v4();
     }
@@ -114,11 +116,16 @@ class Metas {
           title == other.title &&
           artist == other.artist &&
           album == other.album &&
-          image == other.image;
+          image == other.image &&
+          onImageLoadFail == onImageLoadFail;
 
   @override
   int get hashCode =>
-      title.hashCode ^ artist.hashCode ^ album.hashCode ^ image.hashCode;
+      title.hashCode ^
+      artist.hashCode ^
+      album.hashCode ^
+      image.hashCode ^
+      onImageLoadFail.hashCode;
 
   Metas copyWith({
     String id,
@@ -127,6 +134,7 @@ class Metas {
     String album,
     Map<String, dynamic> extra,
     MetasImage image,
+    MetasImage onImageLoadFail,
   }) {
     return new Metas(
       id: id ?? this.id,
@@ -135,6 +143,7 @@ class Metas {
       album: album ?? this.album,
       extra: extra ?? this.extra,
       image: image ?? this.image,
+      onImageLoadFail: onImageLoadFail ?? this.onImageLoadFail,
     );
   }
 }
@@ -144,16 +153,18 @@ class Audio extends Playable {
   final String package;
   final AudioType audioType;
   Metas _metas;
-  Map _networkHeaders;
+  Map<String, dynamic> _networkHeaders;
+  final bool cached; //download audio then play it
 
   Metas get metas => _metas;
-  Map get networkHeaders => _networkHeaders;
+  Map<String, dynamic> get networkHeaders => _networkHeaders;
 
   Audio._({
     this.path,
     this.package,
     this.audioType,
-    Map headers,
+    this.cached,
+    Map<String, dynamic> headers,
     Metas metas,
   })  : _metas = metas,
         _networkHeaders = headers;
@@ -161,24 +172,34 @@ class Audio extends Playable {
   Audio(this.path, {Metas metas, this.package})
       : audioType = AudioType.asset,
         _networkHeaders = null,
+        cached = false,
         _metas = metas;
 
   Audio.file(this.path, {Metas metas})
       : audioType = AudioType.file,
         package = null,
         _networkHeaders = null,
+        cached = false,
         _metas = metas;
 
-  Audio.network(this.path, {Metas metas, Map headers})
-      : audioType = AudioType.network,
+  Audio.network(
+    this.path, {
+    Metas metas,
+    Map<String, dynamic> headers,
+    this.cached = false,
+  })  : audioType = AudioType.network,
         package = null,
         _networkHeaders = headers,
         _metas = metas;
 
-  Audio.liveStream(this.path, {Metas metas, Map headers})
-      : audioType = AudioType.liveStream,
+  Audio.liveStream(
+    this.path, {
+    Metas metas,
+    Map<String, dynamic> headers,
+  })  : audioType = AudioType.liveStream,
         package = null,
         _networkHeaders = headers,
+        cached = false,
         _metas = metas;
 
   @override
@@ -189,11 +210,16 @@ class Audio extends Playable {
           path == other.path &&
           package == other.package &&
           audioType == other.audioType &&
+          cached == other.cached &&
           metas == other.metas;
 
   @override
   int get hashCode =>
-      path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode;
+      path.hashCode ^
+      package.hashCode ^
+      audioType.hashCode ^
+      metas.hashCode ^
+      cached.hashCode;
 
   @override
   String toString() {
@@ -224,7 +250,8 @@ class Audio extends Playable {
     String package,
     AudioType audioType,
     Metas metas,
-    Map headers,
+    Map<String, dynamic> headers,
+    bool cached,
   }) {
     return Audio._(
       path: path ?? this.path,
@@ -232,9 +259,12 @@ class Audio extends Playable {
       audioType: audioType ?? this.audioType,
       metas: metas ?? this._metas,
       headers: headers ?? this._networkHeaders,
+      cached: cached ?? this.cached,
     );
   }
 }
+
+typedef PlaylistAudioReplacer = Audio Function(Audio oldAudio);
 
 class Playlist extends Playable {
   final List<Audio> audios = [];
@@ -254,22 +284,54 @@ class Playlist extends Playable {
     this.startIndex = startIndex;
   }
 
+  Playlist copyWith({
+    List<Audio> audios,
+    int startIndex,
+  }) {
+    return new Playlist(
+      audios: audios ?? this.audios,
+      startIndex: startIndex ?? this._startIndex,
+    );
+  }
+
   int get numberOfItems => audios.length;
 
   Playlist add(Audio audio) {
     if (audio != null) {
       this.audios.add(audio);
+
+      final index = this.audios.length - 1;
+      super.currentlyOpenedIn.forEach((playerEditor) {
+        playerEditor.onAudioAddedAt(index);
+      });
     }
     return this;
   }
 
   Playlist insert(int index, Audio audio) {
-    if (audio != null) {
-      this.audios.insert(index, audio);
+    if (audio != null && index >= 0) {
+      if (index < this.audios.length) {
+        this.audios.insert(index, audio);
+        super.currentlyOpenedIn.forEach((playerEditor) {
+          playerEditor.onAudioAddedAt(index);
+        });
+      } else {
+        return this.add(audio);
+      }
     }
-    super.currentlyOpenedIn.forEach((playerEditor) {
-      playerEditor.onAudioAddedAt(index);
-    });
+    return this;
+  }
+
+  Playlist replaceAt(int index, PlaylistAudioReplacer replacer,
+      {bool keepPlayingPositionIfCurrent = false}) {
+    if (index < this.audios.length && replacer != null) {
+      final oldElement = this.audios.elementAt(index);
+      final newElement = replacer(oldElement);
+      this.audios[index] = newElement;
+      super.currentlyOpenedIn.forEach((playerEditor) {
+        playerEditor.onAudioReplacedAt(index, keepPlayingPositionIfCurrent);
+      });
+    }
     return this;
   }
 
@@ -321,15 +383,22 @@ void writeAudioMetasInto(
     if (metas.title != null) params["song.title"] = metas.title;
     if (metas.artist != null) params["song.artist"] = metas.artist;
     if (metas.album != null) params["song.album"] = metas.album;
-    if (metas.image != null) {
-      params["song.image"] = metas.image.path;
-      params["song.imageType"] = imageTypeDescription(metas.image.type);
-      if (metas.image.package != null)
-        params["song.imagePackage"] = metas.image.package;
-    }
+    writeAudioImageMetasInto(params, metas.image);
+    writeAudioImageMetasInto(params, metas.onImageLoadFail,
+        suffix: ".onLoadFail");
     if (metas.id != null) {
       params["song.trackID"] = metas.id;
     }
+  }
+}
+
+void writeAudioImageMetasInto(
+    Map<String, dynamic> params, /* nullable */ MetasImage metasImage,
+    {String suffix = ""}) {
+  if (metasImage != null) {
+    params["song.image$suffix"] = metasImage.path;
+    params["song.imageType$suffix"] = imageTypeDescription(metasImage.type);
+    params.addIfNotNull("song.imagePackage$suffix", metasImage.package);
   }
 }
 

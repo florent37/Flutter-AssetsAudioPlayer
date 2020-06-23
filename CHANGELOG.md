@@ -1,9 +1,37 @@
-## 2.0.2+6
+## 2.0.6+1
+
+* Cache now use `http` instead of `dio`
+
+## 2.0.5+7
+
+* Added custom error handling (beta)
+* Dispose is now a future
+* Fixed playlist insert / replace
+
+## 2.0.5
+
+* Added Cache management (beta), with Audio.network(url, cached: true)
+
+## 2.0.4+2
+
+* Added HLS, Dash, SmoothStream support on Android
+* Added `laylist.replaceAt` method
+
+## 2.0.3+6
+
+* ExoPlayer network now set `allowCrossProtocolRedirect=true` by default
+* Fixed notification hide on livestream pause (android)
+* Added custom icons for android from drawable names
+* Fixed notification texts on Samsung devices
+
+## 2.0.3+1
 
 * Added custom notification icons for Android (in AndroidManifest.xml)
 * Fixed `seek` and `seekBy` not working on the web
 * `PlayList.startIndex` is now mutable
 * Stop player then call `play` reopen it at `playlist.startIndex`
+* Increased buffer size on android/exoplayer
+* Added keepLoopMode on prev/next
 
 ## 2.0.2
 

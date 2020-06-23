@@ -28,6 +28,7 @@ internal val METHOD_NEXT = "player.next"
 internal val METHOD_PREV = "player.prev"
 internal val METHOD_PLAY_OR_PAUSE = "player.playOrPause"
 internal val METHOD_NOTIFICATION_STOP = "player.stop"
+internal val METHOD_ERROR = "player.error"
 
 class AssetsAudioPlayerPlugin : FlutterPlugin,PluginRegistry.NewIntentListener, ActivityAware {
 
@@ -66,10 +67,13 @@ class AssetsAudioPlayerPlugin : FlutterPlugin,PluginRegistry.NewIntentListener, 
     }
 
     override fun onNewIntent(intent: Intent?): Boolean {
-        if (!intent!!.getBooleanExtra("isVisited", false)) {
-            val res = sendNotificationPayloadMessage(intent!!)!!
+        if(intent == null)
+            return false
+
+        if (!intent.getBooleanExtra("isVisited", false)) {
+            val res = sendNotificationPayloadMessage(intent) ?: false
             if (res && myActivity != null) {
-                myActivity!!.intent = intent
+                myActivity?.intent = intent
                 intent.putExtra("isVisited", true)
             }
             return res
@@ -78,21 +82,21 @@ class AssetsAudioPlayerPlugin : FlutterPlugin,PluginRegistry.NewIntentListener, 
     }
 
     override fun onDetachedFromActivity() {
-        myActivity = null;
+        myActivity = null
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        binding.addOnNewIntentListener(this);
-        myActivity = binding.getActivity();
+        binding.addOnNewIntentListener(this)
+        myActivity = binding.activity
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        binding.addOnNewIntentListener(this);
-        myActivity = binding.getActivity();
+        binding.addOnNewIntentListener(this)
+        myActivity = binding.activity;
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        myActivity = null;
+        myActivity = null
     }
 }
 
@@ -134,9 +138,9 @@ class AssetsAudioPlayer(
     }
 
     fun unregister() {
-        stopWhenCall?.stop()
+        stopWhenCall.stop()
         notificationManager.hideNotificationService(definitively = true)
-        stopWhenCall?.unregister(stopWhenCallListener)
+        stopWhenCall.unregister(stopWhenCallListener)
         players.values.forEach {
             it.stop()
         }
@@ -156,7 +160,7 @@ class AssetsAudioPlayer(
                     context = context,
                     id = id,
                     notificationManager = notificationManager,
-                    stopWhenCall = stopWhenCall!!,
+                    stopWhenCall = stopWhenCall,
                     flutterAssets = flutterAssets
             )
             player.apply {
@@ -169,8 +173,8 @@ class AssetsAudioPlayer(
                 onPlaySpeedChanged = { speed ->
                     channel.invokeMethod(METHOD_PLAY_SPEED, speed)
                 }
-                onPositionChanged = { position ->
-                    channel.invokeMethod(METHOD_POSITION, position)
+                onPositionMSChanged = { positionMS ->
+                    channel.invokeMethod(METHOD_POSITION, positionMS)
                 }
                 onReadyToPlay = { totalDurationMs ->
                     channel.invokeMethod(METHOD_CURRENT, mapOf(
@@ -201,6 +205,12 @@ class AssetsAudioPlayer(
                 }
                 onNotificationStop = {
                     channel.invokeMethod(METHOD_NOTIFICATION_STOP, null)
+                }
+                onError = {
+                    channel.invokeMethod(METHOD_ERROR, mapOf(
+                            "type" to it.type,
+                            "message" to it.message
+                        ))
                 }
             }
             return@getOrPut player
@@ -255,7 +265,8 @@ class AssetsAudioPlayer(
                         result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
                         return
                     }
-                    getOrCreatePlayer(id).stop()
+                    val removeNotification = args["removeNotification"] as? Boolean ?: true
+                    getOrCreatePlayer(id).stop(removeNotification= removeNotification)
                     result.success(null)
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
@@ -499,8 +510,6 @@ class AssetsAudioPlayer(
         lastPlayerIdWithNotificationEnabled
                 ?.let {
                     getPlayer(it)
-                }?.let { player ->
-                    player.seek(toMs)
-                }
+                }?.seek(toMs)
     }
 }
