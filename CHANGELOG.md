@@ -1,6 +1,7 @@
 ## 2.0.6+2
 
 * Cache now use `http` instead of `dio`
+* Added live tag on notification for LiveStream play (ios)
 
 ## 2.0.5+7
 

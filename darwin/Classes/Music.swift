@@ -112,7 +112,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     var notificationSettings: NotificationSettings?
 
     var _loopSingleAudio = false
-    
+    var isLiveStream: Bool = false
+
     init(channel: FlutterMethodChannel, registrar: FlutterPluginRegistrar) {
         self.channel = channel
         self.registrar = registrar
@@ -312,7 +313,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             #endif
         }
     }
-    
+            
     #if os(iOS)
     func updateNotif(audioMetas: AudioMetas?, isPlaying: Bool) {
         self.audioMetas = audioMetas
@@ -350,6 +351,14 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
 
         self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = 0
+        
+        if #available(iOS 10.0, *) {
+            if(isLiveStream){
+                 self.nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = 1.0
+            } else {
+                self.nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = 0.0
+            }
+        }
         
         
         //print(self.nowPlayingInfo.description)
@@ -526,6 +535,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             notifCenter.addObserver(self, selector: #selector(self.failedToPlayToEndTime), name: NSNotification.Name.AVPlayerItemFailedToPlayToEndTime, object: item)
             
             self.setBuffering(true)
+            self.isLiveStream = false
             observerStatus.append( item.observe(\.status, changeHandler: { [weak self] (item, value) in
                 
                 switch item.status {
@@ -537,6 +547,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                     if(audioType == "liveStream"){
                         self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDurationMs": 0.0])
                         self?.currentSongDuration = Float64(0.0)
+                        self?.isLiveStream = true
                         #if os(iOS)
                         self?.setupMediaPlayerNotificationView(notificationSettings: notificationSettings, audioMetas: audioMetas, isPlaying: false)
                         #endif

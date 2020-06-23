@@ -65,7 +65,11 @@ class _PlayerState extends State<Player> {
   void initState() {
     super.initState();
     _player.open(
-      Audio.liveStream(this.widget.streamPath),
+      Audio.liveStream(this.widget.streamPath, metas: Metas(
+        title: "title",
+        album: "album",
+        artist: "artist",
+      )),
       autoStart: false,
       showNotification: true,
       notificationSettings: NotificationSettings(
