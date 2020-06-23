@@ -702,17 +702,18 @@ class AssetsAudioPlayer {
     }
     if (newValue != null) {
       _currentPosition.value = Duration(milliseconds: newValue);
-      if (loopMode.value == LoopMode.single) {
+      if (loopMode.value == LoopMode.single || (this._playlist.isSingleAudio && loopMode.value == LoopMode.playlist)) {
         final current = this.current.value;
         if (current != null) {
           final Duration completeDuration = current.audio?.duration;
           final oldEndReached =
               (completeDuration.inMilliseconds - oldValue.inMilliseconds) <
-                  1500; //< 1.5s
-          final newJustStarted = newValue < 1000; //<1s
+                  800; //< 800ms
+          final newJustStarted = newValue < 800; //<800ms
 
           //print("old: ${oldValue.inMilliseconds}, dur : ${completeDuration.inMilliseconds}");
           if (newJustStarted && oldEndReached) {
+            //print("loop");
             final finishedPlay = Playing(
               audio: current.audio,
               index: current.index,

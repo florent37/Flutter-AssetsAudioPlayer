@@ -1,4 +1,4 @@
-## 2.0.6+1
+## 2.0.6+2
 
 * Cache now use `http` instead of `dio`
 
