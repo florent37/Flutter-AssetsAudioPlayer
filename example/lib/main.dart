@@ -61,6 +61,7 @@ class _MyAppState extends State<MyApp> {
     ),
     Audio(
       "assets/audios/rock.mp3",
+      //playSpeed: 2.0,
       metas: Metas(
         id: "Rock",
         title: "Rock",

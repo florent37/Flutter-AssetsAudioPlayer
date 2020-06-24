@@ -69,6 +69,7 @@ class _PlayerState extends State<Player> {
         title: "title",
         album: "album",
         artist: "artist",
+        image: MetasImage.network("https://i.pinimg.com/564x/e3/77/94/e377940a4c2417221d04c47e5a52d2d4.jpg")
       )),
       autoStart: false,
       showNotification: true,

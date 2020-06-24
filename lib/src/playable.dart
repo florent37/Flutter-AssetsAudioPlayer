@@ -1,11 +1,14 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
+
 import 'utils.dart';
 
 class Playable {
   final Set<PlayerEditor> _currentlyOpenedIn = Set();
+
   Set<PlayerEditor> get currentlyOpenedIn => Set.from(_currentlyOpenedIn);
+
   void setCurrentlyOpenedIn(PlayerEditor player) {
     _currentlyOpenedIn.add(player);
   }
@@ -74,13 +77,7 @@ class MetasImage {
         package = null;
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MetasImage &&
-          runtimeType == other.runtimeType &&
-          path == other.path &&
-          package == other.package &&
-          type == other.type;
+  bool operator ==(Object other) => identical(this, other) || other is MetasImage && runtimeType == other.runtimeType && path == other.path && package == other.package && type == other.type;
 
   @override
   int get hashCode => path.hashCode ^ package.hashCode ^ type.hashCode;
@@ -95,14 +92,15 @@ class Metas {
   final MetasImage image;
   final MetasImage onImageLoadFail;
 
-  Metas(
-      {this.id,
-      this.title,
-      this.artist,
-      this.album,
-      this.image,
-      this.extra,
-      this.onImageLoadFail}) {
+  Metas({
+    this.id,
+    this.title,
+    this.artist,
+    this.album,
+    this.image,
+    this.extra,
+    this.onImageLoadFail,
+  }) {
     if (this.id == null) {
       this.id = Uuid().v4();
     }
@@ -111,21 +109,10 @@ class Metas {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Metas &&
-          runtimeType == other.runtimeType &&
-          title == other.title &&
-          artist == other.artist &&
-          album == other.album &&
-          image == other.image &&
-          onImageLoadFail == onImageLoadFail;
+      other is Metas && runtimeType == other.runtimeType && title == other.title && artist == other.artist && album == other.album && image == other.image && onImageLoadFail == onImageLoadFail;
 
   @override
-  int get hashCode =>
-      title.hashCode ^
-      artist.hashCode ^
-      album.hashCode ^
-      image.hashCode ^
-      onImageLoadFail.hashCode;
+  int get hashCode => title.hashCode ^ artist.hashCode ^ album.hashCode ^ image.hashCode ^ onImageLoadFail.hashCode;
 
   Metas copyWith({
     String id,
@@ -155,8 +142,10 @@ class Audio extends Playable {
   Metas _metas;
   Map<String, dynamic> _networkHeaders;
   final bool cached; //download audio then play it
+  final double playSpeed;
 
   Metas get metas => _metas;
+
   Map<String, dynamic> get networkHeaders => _networkHeaders;
 
   Audio._({
@@ -164,19 +153,27 @@ class Audio extends Playable {
     this.package,
     this.audioType,
     this.cached,
+    this.playSpeed,
     Map<String, dynamic> headers,
     Metas metas,
   })  : _metas = metas,
         _networkHeaders = headers;
 
-  Audio(this.path, {Metas metas, this.package})
-      : audioType = AudioType.asset,
+  Audio(
+    this.path, {
+    Metas metas,
+    this.package,
+    this.playSpeed,
+  })  : audioType = AudioType.asset,
         _networkHeaders = null,
         cached = false,
         _metas = metas;
 
-  Audio.file(this.path, {Metas metas})
-      : audioType = AudioType.file,
+  Audio.file(
+    this.path, {
+    Metas metas,
+    this.playSpeed,
+  })  : audioType = AudioType.file,
         package = null,
         _networkHeaders = null,
         cached = false,
@@ -187,6 +184,7 @@ class Audio extends Playable {
     Metas metas,
     Map<String, dynamic> headers,
     this.cached = false,
+    this.playSpeed,
   })  : audioType = AudioType.network,
         package = null,
         _networkHeaders = headers,
@@ -195,6 +193,7 @@ class Audio extends Playable {
   Audio.liveStream(
     this.path, {
     Metas metas,
+    this.playSpeed,
     Map<String, dynamic> headers,
   })  : audioType = AudioType.liveStream,
         package = null,
@@ -211,15 +210,11 @@ class Audio extends Playable {
           package == other.package &&
           audioType == other.audioType &&
           cached == other.cached &&
+          playSpeed == other.playSpeed &&
           metas == other.metas;
 
   @override
-  int get hashCode =>
-      path.hashCode ^
-      package.hashCode ^
-      audioType.hashCode ^
-      metas.hashCode ^
-      cached.hashCode;
+  int get hashCode => path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode ^ playSpeed.hashCode ^ cached.hashCode;
 
   @override
   String toString() {
@@ -250,6 +245,7 @@ class Audio extends Playable {
     String package,
     AudioType audioType,
     Metas metas,
+    double playSpeed,
     Map<String, dynamic> headers,
     bool cached,
   }) {
@@ -259,6 +255,7 @@ class Audio extends Playable {
       audioType: audioType ?? this.audioType,
       metas: metas ?? this._metas,
       headers: headers ?? this._networkHeaders,
+      playSpeed: playSpeed ?? this.playSpeed,
       cached: cached ?? this.cached,
     );
   }
@@ -270,7 +267,9 @@ class Playlist extends Playable {
   final List<Audio> audios = [];
 
   int _startIndex = 0;
+
   int get startIndex => _startIndex;
+
   set startIndex(int newValue) {
     if (newValue < this.audios.length) {
       _startIndex = newValue;
@@ -322,8 +321,7 @@ class Playlist extends Playable {
     return this;
   }
 
-  Playlist replaceAt(int index, PlaylistAudioReplacer replacer,
-      {bool keepPlayingPositionIfCurrent = false}) {
+  Playlist replaceAt(int index, PlaylistAudioReplacer replacer, {bool keepPlayingPositionIfCurrent = false}) {
     if (index < this.audios.length && replacer != null) {
       final oldElement = this.audios.elementAt(index);
       final newElement = replacer(oldElement);
@@ -366,35 +364,26 @@ class Playlist extends Playable {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Playlist &&
-          runtimeType == other.runtimeType &&
-          audios == other.audios &&
-          startIndex == other.startIndex;
+  bool operator ==(Object other) => identical(this, other) || other is Playlist && runtimeType == other.runtimeType && audios == other.audios && startIndex == other.startIndex;
 
   @override
   int get hashCode => audios.hashCode ^ startIndex.hashCode;
 }
 
-void writeAudioMetasInto(
-    Map<String, dynamic> params, /* nullable */ Metas metas) {
+void writeAudioMetasInto(Map<String, dynamic> params, /* nullable */ Metas metas) {
   if (metas != null) {
     if (metas.title != null) params["song.title"] = metas.title;
     if (metas.artist != null) params["song.artist"] = metas.artist;
     if (metas.album != null) params["song.album"] = metas.album;
     writeAudioImageMetasInto(params, metas.image);
-    writeAudioImageMetasInto(params, metas.onImageLoadFail,
-        suffix: ".onLoadFail");
+    writeAudioImageMetasInto(params, metas.onImageLoadFail, suffix: ".onLoadFail");
     if (metas.id != null) {
       params["song.trackID"] = metas.id;
     }
   }
 }
 
-void writeAudioImageMetasInto(
-    Map<String, dynamic> params, /* nullable */ MetasImage metasImage,
-    {String suffix = ""}) {
+void writeAudioImageMetasInto(Map<String, dynamic> params, /* nullable */ MetasImage metasImage, {String suffix = ""}) {
   if (metasImage != null) {
     params["song.image$suffix"] = metasImage.path;
     params["song.imageType$suffix"] = imageTypeDescription(metasImage.type);
