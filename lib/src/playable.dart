@@ -77,7 +77,13 @@ class MetasImage {
         package = null;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is MetasImage && runtimeType == other.runtimeType && path == other.path && package == other.package && type == other.type;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MetasImage &&
+          runtimeType == other.runtimeType &&
+          path == other.path &&
+          package == other.package &&
+          type == other.type;
 
   @override
   int get hashCode => path.hashCode ^ package.hashCode ^ type.hashCode;
@@ -109,10 +115,21 @@ class Metas {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Metas && runtimeType == other.runtimeType && title == other.title && artist == other.artist && album == other.album && image == other.image && onImageLoadFail == onImageLoadFail;
+      other is Metas &&
+          runtimeType == other.runtimeType &&
+          title == other.title &&
+          artist == other.artist &&
+          album == other.album &&
+          image == other.image &&
+          onImageLoadFail == onImageLoadFail;
 
   @override
-  int get hashCode => title.hashCode ^ artist.hashCode ^ album.hashCode ^ image.hashCode ^ onImageLoadFail.hashCode;
+  int get hashCode =>
+      title.hashCode ^
+      artist.hashCode ^
+      album.hashCode ^
+      image.hashCode ^
+      onImageLoadFail.hashCode;
 
   Metas copyWith({
     String id,
@@ -214,7 +231,13 @@ class Audio extends Playable {
           metas == other.metas;
 
   @override
-  int get hashCode => path.hashCode ^ package.hashCode ^ audioType.hashCode ^ metas.hashCode ^ playSpeed.hashCode ^ cached.hashCode;
+  int get hashCode =>
+      path.hashCode ^
+      package.hashCode ^
+      audioType.hashCode ^
+      metas.hashCode ^
+      playSpeed.hashCode ^
+      cached.hashCode;
 
   @override
   String toString() {
@@ -321,7 +344,8 @@ class Playlist extends Playable {
     return this;
   }
 
-  Playlist replaceAt(int index, PlaylistAudioReplacer replacer, {bool keepPlayingPositionIfCurrent = false}) {
+  Playlist replaceAt(int index, PlaylistAudioReplacer replacer,
+      {bool keepPlayingPositionIfCurrent = false}) {
     if (index < this.audios.length && replacer != null) {
       final oldElement = this.audios.elementAt(index);
       final newElement = replacer(oldElement);
@@ -364,26 +388,35 @@ class Playlist extends Playable {
   }
 
   @override
-  bool operator ==(Object other) => identical(this, other) || other is Playlist && runtimeType == other.runtimeType && audios == other.audios && startIndex == other.startIndex;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Playlist &&
+          runtimeType == other.runtimeType &&
+          audios == other.audios &&
+          startIndex == other.startIndex;
 
   @override
   int get hashCode => audios.hashCode ^ startIndex.hashCode;
 }
 
-void writeAudioMetasInto(Map<String, dynamic> params, /* nullable */ Metas metas) {
+void writeAudioMetasInto(
+    Map<String, dynamic> params, /* nullable */ Metas metas) {
   if (metas != null) {
     if (metas.title != null) params["song.title"] = metas.title;
     if (metas.artist != null) params["song.artist"] = metas.artist;
     if (metas.album != null) params["song.album"] = metas.album;
     writeAudioImageMetasInto(params, metas.image);
-    writeAudioImageMetasInto(params, metas.onImageLoadFail, suffix: ".onLoadFail");
+    writeAudioImageMetasInto(params, metas.onImageLoadFail,
+        suffix: ".onLoadFail");
     if (metas.id != null) {
       params["song.trackID"] = metas.id;
     }
   }
 }
 
-void writeAudioImageMetasInto(Map<String, dynamic> params, /* nullable */ MetasImage metasImage, {String suffix = ""}) {
+void writeAudioImageMetasInto(
+    Map<String, dynamic> params, /* nullable */ MetasImage metasImage,
+    {String suffix = ""}) {
   if (metasImage != null) {
     params["song.image$suffix"] = metasImage.path;
     params["song.imageType$suffix"] = imageTypeDescription(metasImage.type);

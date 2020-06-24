@@ -949,7 +949,10 @@ class AssetsAudioPlayer {
           "respectSilentMode": respectSilentMode,
           "displayNotification": showNotification,
           "volume": forcedVolume ?? this.volume.value ?? defaultVolume,
-          "playSpeed": playSpeed ?? audio.playSpeed ?? this.playSpeed.value ?? defaultPlaySpeed,
+          "playSpeed": playSpeed ??
+              audio.playSpeed ??
+              this.playSpeed.value ??
+              defaultPlaySpeed,
         };
         if (seek != null) {
           params["seek"] = seek.inMilliseconds.round();
