@@ -64,21 +64,32 @@ class _PlayerState extends State<Player> {
   @override
   void initState() {
     super.initState();
-    _player.open(
-      Audio.liveStream(this.widget.streamPath, metas: Metas(
-        title: "title",
-        album: "album",
-        artist: "artist",
-        image: MetasImage.network("https://i.pinimg.com/564x/e3/77/94/e377940a4c2417221d04c47e5a52d2d4.jpg")
-      )),
-      autoStart: false,
-      showNotification: true,
-      notificationSettings: NotificationSettings(
-        nextEnabled: false,
-        prevEnabled: false,
-        stopEnabled: false
-      ),
-    );
+    _init();
+  }
+
+  void _init() async {
+    try {
+      _player.onErrorDo = (error) {
+        error.player.stop();
+      };
+      await _player.open(
+        Audio.liveStream(this.widget.streamPath, metas: Metas(
+            title: "title",
+            album: "album",
+            artist: "artist",
+            image: MetasImage.network("https://i.pinimg.com/564x/e3/77/94/e377940a4c2417221d04c47e5a52d2d4.jpg")
+        )),
+        autoStart: false,
+        showNotification: true,
+        notificationSettings: NotificationSettings(
+            nextEnabled: false,
+            prevEnabled: false,
+            stopEnabled: false
+        ),
+      );
+    } catch(t) {
+      print(t);
+    }
   }
 
   @override
@@ -89,7 +100,13 @@ class _PlayerState extends State<Player> {
           player: _player,
           builder: (context, isBuffering) {
             if (isBuffering) {
-              return Text("Buffering");
+              return Column(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 8,),
+                  Text("Buffering"),
+                ],
+              );
             } else {
               return SizedBox(); //empty
             }
@@ -100,8 +117,12 @@ class _PlayerState extends State<Player> {
           builder: (context, isPlaying) {
             return FloatingActionButton(
               child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
-              onPressed: () {
-                _player.playOrPause();
+              onPressed: () async {
+                try {
+                  await _player.playOrPause();
+                } catch (t) {
+                  print(t);
+                }
               },
             );
           },

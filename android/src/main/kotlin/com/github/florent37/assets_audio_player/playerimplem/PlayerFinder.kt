@@ -25,7 +25,7 @@ class PlayerFinderConfiguration(
 object PlayerFinder {
 
     class PlayerWithDuration(val player: PlayerImplem, val duration: DurationMS)
-    class NoPlayerFoundException() : Throwable()
+    class NoPlayerFoundException(val why: AssetAudioPlayerThrowable? = null) : Throwable()
 
     private val HLSExoPlayerTester = PlayerImplemTesterExoPlayer(PlayerImplemTesterExoPlayer.Type.HLS)
     private val DefaultExoPlayerTester = PlayerImplemTesterExoPlayer(PlayerImplemTesterExoPlayer.Type.Default)
@@ -71,10 +71,13 @@ object PlayerFinder {
             //try the first
             val implemTester = remainingImpls.first()
             val playerWithDuration = implemTester.open(
-                    configuration= configuration
+                    configuration = configuration
             )
             //if we're here : no exception, we can return it
             return playerWithDuration
+        } catch (unrachable : AssetAudioPlayerThrowable.UnreachableException) {
+            //not usefull to test all players if the first is UnreachableException
+            throw NoPlayerFoundException(why= unrachable)
         } catch (t: Throwable) {
             //else, remove it from list and test the next
             val implsToTest = remainingImpls.toMutableList().apply {

@@ -39,4 +39,9 @@ class AssetsAudioPlayerError {
     @required this.errorType,
     @required this.message,
   });
+
+  @override
+  String toString() {
+    return 'AssetsAudioPlayerError{errorType: $errorType, message: $message}';
+  }
 }

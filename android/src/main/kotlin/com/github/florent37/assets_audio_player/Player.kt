@@ -212,7 +212,14 @@ class Player(
                 result.success(null)
             } catch (error: Throwable) {
                 error.printStackTrace()
-                result.error("OPEN", error.message, null)
+                if(error is PlayerFinder.NoPlayerFoundException && error.why != null){
+                    result.error("OPEN", error.why.message, mapOf(
+                            "type" to error.why.type,
+                            "message" to error.why.message
+                    ))
+                } else {
+                    result.error("OPEN", error.message, null)
+                }
             }
         }
     }

@@ -187,10 +187,20 @@ class PlayerImplemExoPlayer(
     }
 
     fun mapError(t: Throwable) : AssetAudioPlayerThrowable {
-        return if(t?.message?.contains("unable to connect",true) == true) {
-            AssetAudioPlayerThrowable.NetworkError(t)
-        } else {
-            AssetAudioPlayerThrowable.PlayerError(t)
+        return when {
+            t is ExoPlaybackException -> {
+                (t.cause as? HttpDataSource.InvalidResponseCodeException)?.takeIf { it.responseCode >= 400 }?.let {
+                    AssetAudioPlayerThrowable.UnreachableException(t)
+                } ?: let {
+                    AssetAudioPlayerThrowable.NetworkError(t)
+                }
+            }
+            t.message?.contains("unable to connect",true) == true -> {
+                AssetAudioPlayerThrowable.NetworkError(t)
+            }
+            else -> {
+                AssetAudioPlayerThrowable.PlayerError(t)
+            }
         }
     }
 
@@ -223,6 +233,7 @@ class PlayerImplemExoPlayer(
             this.mediaPlayer?.addListener(object : com.google.android.exoplayer2.Player.EventListener {
 
                 override fun onPlayerError(error: ExoPlaybackException) {
+                    Log.d("PLAYER","XXXX onPlayerError XXXX")
                     val errorMapped = mapError(error)
                     if (!onThisMediaReady) {
                         continuation.resumeWithException(errorMapped)
@@ -267,6 +278,8 @@ class PlayerImplemExoPlayer(
 
             mediaPlayer?.prepare(mediaSource)
         } catch (error: Throwable) {
+            Log.d("PLAYER","XXXX CATCH EXOPLAYER XXXX")
+
             if (!onThisMediaReady) {
                 continuation.resumeWithException(error)
             } else {
