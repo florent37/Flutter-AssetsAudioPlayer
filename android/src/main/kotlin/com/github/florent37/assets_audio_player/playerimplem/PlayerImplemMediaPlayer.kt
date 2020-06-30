@@ -203,6 +203,10 @@ class PlayerImplemMediaPlayer(
         //not possible
     }
 
+    override fun getSessionId(): Int? {
+        return mediaPlayer?.audioSessionId?.takeIf { it != 0 }
+    }
+
 }
 
 fun Map<*, *>.toMapString(): Map<String, String> {

@@ -46,6 +46,7 @@ const METHOD_NOTIFICATION_STOP = "player.stop";
 const METHOD_NOTIFICATION_PLAY_OR_PAUSE = "player.playOrPause";
 const METHOD_PLAY_SPEED = "player.playSpeed";
 const METHOD_ERROR = "player.error";
+const METHOD_AUDIO_SESSION_ID = "player.audioSessionId";
 
 enum PlayerState {
   play,
@@ -262,6 +263,12 @@ class AssetsAudioPlayer {
   ///         }),
   ValueStream<bool> get isPlaying => _isPlaying.stream;
 
+  ///represent the android session id
+  ///does nothing on others platforms
+  final BehaviorSubject<int> _audioSessionId = BehaviorSubject<int>();
+
+  ValueStream<int> get audioSessionId => _audioSessionId.stream;
+
   final BehaviorSubject<PlayerState> _playerState =
       BehaviorSubject<PlayerState>.seeded(PlayerState.stop);
 
@@ -457,6 +464,7 @@ class AssetsAudioPlayer {
     _playlistFinished.close();
     _current.close();
     _playlistAudioFinished.close();
+    _audioSessionId.close();
     _loopMode.close();
     _shuffle.close();
     _cacheDownloadInfos.close();
@@ -507,6 +515,11 @@ class AssetsAudioPlayer {
           break;
         case METHOD_ERROR:
           _handleOnError(call.arguments);
+          break;
+        case METHOD_AUDIO_SESSION_ID:
+          if(call.arguments != null) {
+            _audioSessionId.value = call.arguments;
+          }
           break;
         case METHOD_CURRENT:
           if (call.arguments == null) {

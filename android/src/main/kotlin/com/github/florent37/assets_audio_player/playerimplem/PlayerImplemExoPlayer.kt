@@ -6,6 +6,7 @@ import android.util.Log
 import com.github.florent37.assets_audio_player.AssetAudioPlayerThrowable
 import com.github.florent37.assets_audio_player.Player
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C.AUDIO_SESSION_ID_UNSET
 import com.google.android.exoplayer2.Player.REPEAT_MODE_ALL
 import com.google.android.exoplayer2.Player.REPEAT_MODE_OFF
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -305,4 +306,7 @@ class PlayerImplemExoPlayer(
         mediaPlayer?.setPlaybackParameters(PlaybackParameters(playSpeed))
     }
 
+    override fun getSessionId(): Int? {
+        return mediaPlayer?.audioComponent?.audioSessionId?.takeIf { it != AUDIO_SESSION_ID_UNSET }
+    }
 }

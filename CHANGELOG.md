@@ -1,7 +1,8 @@
-## 2.0.6+6
+## 2.0.6+7
 
 * Cache now use `http` instead of `dio`
 * Added live tag on notification for LiveStream play (ios)
+* Added audio session id (android only)
 
 ## 2.0.5+7
 

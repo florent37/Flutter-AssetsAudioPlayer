@@ -139,6 +139,9 @@ class _MyAppState extends State<MyApp> {
     _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
       print("playlistAudioFinished : $data");
     }));
+    _subscriptions.add(_assetsAudioPlayer.audioSessionId.listen((sessionId) {
+      print("audioSessionId : $sessionId");
+    }));
     //_subscriptions.add(_assetsAudioPlayer.current.listen((data) {
     //  print("current : $data");
     //}));

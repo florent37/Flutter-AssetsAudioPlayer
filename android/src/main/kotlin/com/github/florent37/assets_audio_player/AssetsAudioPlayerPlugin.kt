@@ -24,6 +24,7 @@ internal val METHOD_FINISHED = "player.finished"
 internal val METHOD_IS_PLAYING = "player.isPlaying"
 internal val METHOD_IS_BUFFERING = "player.isBuffering"
 internal val METHOD_CURRENT = "player.current"
+internal val METHOD_AUDIO_SESSION_ID = "player.audioSessionId"
 internal val METHOD_NEXT = "player.next"
 internal val METHOD_PREV = "player.prev"
 internal val METHOD_PLAY_OR_PAUSE = "player.playOrPause"
@@ -180,6 +181,9 @@ class AssetsAudioPlayer(
                     channel.invokeMethod(METHOD_CURRENT, mapOf(
                             "totalDurationMs" to totalDurationMs)
                     )
+                }
+                onSessionIdFound = { sessionId ->
+                    channel.invokeMethod(METHOD_AUDIO_SESSION_ID, sessionId)
                 }
                 onPlaying = {
                     channel.invokeMethod(METHOD_IS_PLAYING, it)
