@@ -723,6 +723,13 @@ class AssetsAudioPlayer {
               playlist: current.playlist,
             );
             _playlistAudioFinished.add(finishedPlay);
+            if(_playlist.isSingleAudio){
+              _playlistFinished.value = true;
+            }
+          } else if(newJustStarted && _playlistFinished.value == true) {
+            //if was true (just finished an audio)
+            //re-set it to false
+            _playlistFinished.value = false;
           }
         }
       }
