@@ -1,14 +1,23 @@
 package com.github.florent37.assets_audio_player.stopwhencall
 
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.AudioManager
+import android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY
+import android.os.Build
+import androidx.core.content.ContextCompat.getSystemService
 
 private class MusicIntentReceiver : BroadcastReceiver() {
     var pluggedListener: ((Boolean) -> Unit)? = null
-    override fun onReceive(context: Context, intent: Intent?) {
-            if (intent?.action == Intent.ACTION_HEADSET_PLUG) {
+    override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == ACTION_AUDIO_BECOMING_NOISY) {
+                pluggedListener?.invoke(false)
+            }
+            if (intent.action == Intent.ACTION_HEADSET_PLUG) {
                 when (intent.getIntExtra("state", -1)) {
                     0 -> {
                         pluggedListener?.invoke(false)
@@ -35,9 +44,37 @@ class HeadsetManager(private val context: Context) {
         }
     }
 
+    val profileListener = object: BluetoothProfile.ServiceListener {
+        override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
+            if (profile == BluetoothProfile.HEADSET) {
+                /* Connected to BT headset profile proxy. */
+                this@HeadsetManager.onHeadsetPluggedListener?.invoke(true)
+            }
+        }
+        override fun onServiceDisconnected(profile: Int) {
+            if (profile == BluetoothProfile.HEADSET) {
+                /* Disonnected from BT headset profile proxy. */
+                this@HeadsetManager.onHeadsetPluggedListener?.invoke(false)
+            }
+        }
+    }
+
     fun start(){
-        val filter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
-        context.registerReceiver(receiver, filter)
+        val action = if (Build.VERSION.SDK_INT >= 21) {
+            AudioManager.ACTION_HEADSET_PLUG
+        } else {
+            Intent.ACTION_HEADSET_PLUG
+        }
+
+        context.registerReceiver(receiver, IntentFilter(action))
+        context.registerReceiver(receiver, IntentFilter(ACTION_AUDIO_BECOMING_NOISY))
+
+        try {
+            BluetoothAdapter.getDefaultAdapter()
+                    ?.getProfileProxy(context, profileListener, BluetoothProfile.HEADSET)
+        } catch (t: Throwable) {
+            t.printStackTrace()
+        }
     }
 
     fun stop(){

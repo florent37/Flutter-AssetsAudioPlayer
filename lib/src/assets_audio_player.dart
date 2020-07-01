@@ -971,7 +971,7 @@ class AssetsAudioPlayer {
           "path": audio.path,
           "autoStart": autoStart,
           "respectSilentMode": respectSilentMode,
-          "headPhoneStrategy": headPhoneStrategy,
+          "headPhoneStrategy": describeHeadPhoneStrategy(headPhoneStrategy),
           "displayNotification": showNotification,
           "volume": forcedVolume ?? this.volume.value ?? defaultVolume,
           "playSpeed": playSpeed ??
