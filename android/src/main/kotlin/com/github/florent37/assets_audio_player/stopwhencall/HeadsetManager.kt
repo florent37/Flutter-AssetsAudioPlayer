@@ -9,7 +9,6 @@ import android.content.IntentFilter
 import android.media.AudioManager
 import android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY
 import android.os.Build
-import androidx.core.content.ContextCompat.getSystemService
 
 private class MusicIntentReceiver : BroadcastReceiver() {
     var pluggedListener: ((Boolean) -> Unit)? = null
@@ -46,7 +45,7 @@ class HeadsetManager(private val context: Context) {
 
     val profileListener = object: BluetoothProfile.ServiceListener {
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
-            if (profile == BluetoothProfile.HEADSET) {
+             if (profile == BluetoothProfile.HEADSET) {
                 /* Connected to BT headset profile proxy. */
                 this@HeadsetManager.onHeadsetPluggedListener?.invoke(true)
             }
@@ -69,6 +68,7 @@ class HeadsetManager(private val context: Context) {
         context.registerReceiver(receiver, IntentFilter(action))
         context.registerReceiver(receiver, IntentFilter(ACTION_AUDIO_BECOMING_NOISY))
 
+        //will only work if the     <uses-permission android:name="android.permission.BLUETOOTH" /> is in the manifest
         try {
             BluetoothAdapter.getDefaultAdapter()
                     ?.getProfileProxy(context, profileListener, BluetoothProfile.HEADSET)

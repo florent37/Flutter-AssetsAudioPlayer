@@ -4,7 +4,6 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
     <application>
         <receiver android:name=".notification.NotificationActionReceiver"/>
         <receiver android:name="androidx.media.session.MediaButtonReceiver" >
