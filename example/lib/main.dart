@@ -346,6 +346,7 @@ class _MyAppState extends State<MyApp> {
                         _assetsAudioPlayer.open(
                           Playlist(audios: myAudios),
                           showNotification: true,
+                          headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplugPlayOnPlug,
                         );
                       },
                       onSelected: (myAudio) async {
@@ -356,6 +357,7 @@ class _MyAppState extends State<MyApp> {
                             respectSilentMode: true,
                             showNotification: true,
                             playInBackground: PlayInBackground.enabled,
+                            headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
                             notificationSettings: NotificationSettings(
                               //seekBarEnabled: false,
                               //stopEnabled: true,

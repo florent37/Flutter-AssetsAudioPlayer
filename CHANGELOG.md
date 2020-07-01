@@ -1,3 +1,7 @@
+## 2.0.7
+
+* Added Android HeadPhoneStrategy
+
 ## 2.0.6+7
 
 * Cache now use `http` instead of `dio`

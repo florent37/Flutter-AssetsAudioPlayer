@@ -6,7 +6,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.NonNull
+import com.github.florent37.assets_audio_player.headset.HeadsetStrategy
 import com.github.florent37.assets_audio_player.notification.*
+import com.github.florent37.assets_audio_player.stopwhencall.HeadsetManager
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -108,6 +110,7 @@ class AssetsAudioPlayer(
 ) : MethodCallHandler {
 
     private var stopWhenCall = StopWhenCallAudioFocus(context)
+    private var headsetManager = HeadsetManager(context)
     private val notificationManager = NotificationManager(context)
     private var mediaButtonsReceiver: MediaButtonsReceiver? = null
     private val stopWhenCallListener = object : StopWhenCall.Listener {
@@ -118,10 +121,19 @@ class AssetsAudioPlayer(
         }
     }
 
+    private val onHeadsetPluggedListener = { plugged: Boolean ->
+        players.values.forEach {
+            it.onHeadsetPlugged(plugged)
+        }
+    }
+
     private var lastPlayerIdWithNotificationEnabled: String? = null
 
     fun register() {
         stopWhenCall.register(stopWhenCallListener)
+
+        headsetManager.onHeadsetPluggedListener = onHeadsetPluggedListener
+        headsetManager.start()
 
         mediaButtonsReceiver = MediaButtonsReceiver(context,
                 onAction = {
@@ -465,6 +477,8 @@ class AssetsAudioPlayer(
                     val notificationSettings = fetchNotificationSettings(args)
                     val audioMetas = fetchAudioMetas(args)
 
+                    val headsetStrategy = HeadsetStrategy.from(args["headPhoneStrategy"] as? String)
+
                     getOrCreatePlayer(id).open(
                             assetAudioPath = path,
                             assetAudioPackage = assetPackage,
@@ -478,6 +492,7 @@ class AssetsAudioPlayer(
                             result = result,
                             playSpeed = playSpeed,
                             audioMetas = audioMetas,
+                            headsetStrategy= headsetStrategy,
                             networkHeaders= networkHeaders,
                             context = context
                     )
