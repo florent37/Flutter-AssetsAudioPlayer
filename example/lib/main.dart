@@ -346,6 +346,7 @@ class _MyAppState extends State<MyApp> {
                         _assetsAudioPlayer.open(
                           Playlist(audios: myAudios),
                           showNotification: true,
+                          headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
                         );
                       },
                       onSelected: (myAudio) async {
