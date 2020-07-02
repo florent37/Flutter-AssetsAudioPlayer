@@ -73,7 +73,7 @@ class HeadsetManager(private val context: Context) {
             BluetoothAdapter.getDefaultAdapter()
                     ?.getProfileProxy(context, profileListener, BluetoothProfile.HEADSET)
         } catch (t: Throwable) {
-            t.printStackTrace()
+            //t.printStackTrace()
         }
     }
 
