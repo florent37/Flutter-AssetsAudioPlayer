@@ -203,8 +203,8 @@ class PlayerImplemMediaPlayer(
         //not possible
     }
 
-    override fun getSessionId(): Int? {
-        return mediaPlayer?.audioSessionId?.takeIf { it != 0 }
+    override fun getSessionId(listener: (Int) -> Unit) {
+        mediaPlayer?.audioSessionId?.takeIf { it != 0 }?.let(listener)
     }
 
 }

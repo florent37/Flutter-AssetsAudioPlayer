@@ -198,9 +198,9 @@ class Player(
 
                 //here one open succeed
                 onReadyToPlay?.invoke(durationMs)
-                mediaPlayer?.getSessionId()?.let {
+                mediaPlayer?.getSessionId(listener = {
                     onSessionIdFound?.invoke(it)
-                }
+                })
 
                 _playingPath = assetAudioPath
                 _durationMs = durationMs
