@@ -1043,7 +1043,7 @@ class AssetsAudioPlayer {
     if (_lastOpenedAssetsAudio != null) {
       final Map<String, dynamic> params = {
         "id": this.id,
-        "path": _lastOpenedAssetsAudio,
+        "path": _lastOpenedAssetsAudio.path,
         "showNotification": showNotifications,
       };
 
