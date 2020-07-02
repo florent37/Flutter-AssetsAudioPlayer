@@ -1,11 +1,7 @@
-enum HeadPhoneStrategy {
-  none,
-  pauseOnUnplug,
-  pauseOnUnplugPlayOnPlug
-}
+enum HeadPhoneStrategy { none, pauseOnUnplug, pauseOnUnplugPlayOnPlug }
 
 String describeHeadPhoneStrategy(HeadPhoneStrategy strategy) {
-  switch(strategy){
+  switch (strategy) {
     case HeadPhoneStrategy.none:
       return "none";
     case HeadPhoneStrategy.pauseOnUnplug:

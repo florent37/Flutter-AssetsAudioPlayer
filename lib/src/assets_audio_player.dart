@@ -519,7 +519,7 @@ class AssetsAudioPlayer {
           _handleOnError(call.arguments);
           break;
         case METHOD_AUDIO_SESSION_ID:
-          if(call.arguments != null) {
+          if (call.arguments != null) {
             _audioSessionId.value = call.arguments;
           }
           break;
@@ -738,10 +738,10 @@ class AssetsAudioPlayer {
               playlist: current.playlist,
             );
             _playlistAudioFinished.add(finishedPlay);
-            if(_playlist.isSingleAudio){
+            if (_playlist.isSingleAudio) {
               _playlistFinished.value = true;
             }
-          } else if(newJustStarted && _playlistFinished.value == true) {
+          } else if (newJustStarted && _playlistFinished.value == true) {
             //if was true (just finished an audio)
             //re-set it to false
             _playlistFinished.value = false;
@@ -1066,15 +1066,15 @@ class AssetsAudioPlayer {
     _lastSeek = null;
     _replaceRealtimeSubscription();
     this._playlist = _CurrentPlaylist(
-        playlist: playlist,
-        volume: volume,
-        respectSilentMode: respectSilentMode,
-        showNotification: showNotification,
-        playSpeed: playSpeed,
-        loopMode: loopMode,
-        notificationSettings: notificationSettings,
-        playInBackground: playInBackground,
-        headPhoneStrategy: headPhoneStrategy,
+      playlist: playlist,
+      volume: volume,
+      respectSilentMode: respectSilentMode,
+      showNotification: showNotification,
+      playSpeed: playSpeed,
+      loopMode: loopMode,
+      notificationSettings: notificationSettings,
+      playInBackground: playInBackground,
+      headPhoneStrategy: headPhoneStrategy,
     );
     _updatePlaylistIndexes();
     _playlist.moveTo(playlist.startIndex);
