@@ -6,9 +6,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY
 import android.os.Build
+import java.util.*
+import kotlin.collections.ArrayList
 
 private class MusicIntentReceiver : BroadcastReceiver() {
     var pluggedListener: ((Boolean) -> Unit)? = null
@@ -70,8 +73,10 @@ class HeadsetManager(private val context: Context) {
 
         //will only work if the     <uses-permission android:name="android.permission.BLUETOOTH" /> is in the manifest
         try {
-            BluetoothAdapter.getDefaultAdapter()
-                    ?.getProfileProxy(context, profileListener, BluetoothProfile.HEADSET)
+            if(context.hasPermissionBluetooth()) {
+                BluetoothAdapter.getDefaultAdapter()
+                        ?.getProfileProxy(context, profileListener, BluetoothProfile.HEADSET)
+            }
         } catch (t: Throwable) {
             //t.printStackTrace()
         }
@@ -79,6 +84,18 @@ class HeadsetManager(private val context: Context) {
 
     fun stop(){
         context.unregisterReceiver(receiver)
+    }
+
+
+    fun Context.hasPermissionBluetooth() : Boolean {
+        try {
+            val packageInfo = this.packageManager.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
+            return  packageInfo.requestedPermissions.contains("android.permission.BLUETOOTH")
+        } catch (t: Throwable) {
+
+        }
+
+        return false
     }
 
 }
