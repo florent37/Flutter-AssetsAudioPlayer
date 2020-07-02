@@ -17,6 +17,7 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
 import com.google.android.exoplayer2.upstream.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import java.io.File
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -147,7 +148,7 @@ class PlayerImplemExoPlayer(
             } else if (audioType == Player.AUDIO_TYPE_FILE) {
                 return ProgressiveMediaSource
                         .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
-                        .createMediaSource(Uri.parse(assetAudioPath))
+                        .createMediaSource(Uri.fromFile(File(assetAudioPath)))
             } else { //asset
                 val path = if (assetAudioPackage.isNullOrBlank()) {
                     flutterAssets.getAssetFilePathByName(assetAudioPath!!)
