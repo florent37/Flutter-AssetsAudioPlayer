@@ -150,14 +150,15 @@ class PlayerImplemExoPlayer(
                 return ProgressiveMediaSource
                         .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
                         .createMediaSource(Uri.fromFile(File(assetAudioPath)))
-            } else { //asset
+            } else { //asset$
+                val p = assetAudioPath!!.replace(" ", "%20")
                 val path = if (assetAudioPackage.isNullOrBlank()) {
-                    flutterAssets.getAssetFilePathByName(assetAudioPath!!)
+                    flutterAssets.getAssetFilePathByName(p)
                 } else {
-                    flutterAssets.getAssetFilePathByName(assetAudioPath!!, assetAudioPackage)
+                    flutterAssets.getAssetFilePathByName(p, assetAudioPackage)
                 }
                 val assetDataSource = AssetDataSource(context)
-                assetDataSource.open(DataSpec(Uri.parse(path)))
+                assetDataSource.open(DataSpec(Uri.fromFile(File(path))))
 
                 val factory = DataSource.Factory { assetDataSource }
                 return ProgressiveMediaSource
