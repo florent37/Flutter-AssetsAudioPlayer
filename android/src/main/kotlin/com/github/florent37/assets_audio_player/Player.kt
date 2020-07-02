@@ -7,6 +7,7 @@ import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import com.github.florent37.assets_audio_player.headset.HeadsetStrategy
 import com.github.florent37.assets_audio_player.notification.AudioMetas
 import com.github.florent37.assets_audio_player.notification.NotificationManager
 import com.github.florent37.assets_audio_player.notification.NotificationService
@@ -68,6 +69,7 @@ class Player(
     //endregion
 
     private var respectSilentMode: Boolean = false
+    private var headsetStrategy: HeadsetStrategy = HeadsetStrategy.none
     private var volume: Double = 1.0
     private var playSpeed: Double = 1.0
 
@@ -155,6 +157,7 @@ class Player(
              notificationSettings: NotificationSettings,
              audioMetas: AudioMetas,
              playSpeed: Double,
+             headsetStrategy: HeadsetStrategy,
              networkHeaders: Map<*, *>?,
              result: MethodChannel.Result,
              context: Context
@@ -169,6 +172,7 @@ class Player(
         this.audioMetas = audioMetas
         this.notificationSettings = notificationSettings
         this.respectSilentMode = respectSilentMode
+        this.headsetStrategy = headsetStrategy
 
         _lastOpenedPath = assetAudioPath
       
@@ -470,6 +474,29 @@ class Player(
 
     fun askStop() {
         this.onNotificationStop?.invoke()
+    }
+
+    fun onHeadsetPlugged(plugged: Boolean) {
+        if(plugged){
+            when(this.headsetStrategy){
+                HeadsetStrategy.pauseOnUnplug -> { /* do nothing */}
+                HeadsetStrategy.pauseOnUnplugPlayOnPlug -> {
+                    if(!isPlaying) {
+                        this.onNotificationPlayOrPause?.invoke()
+                    }
+                }
+                else -> { /* do nothing */ }
+            }
+        } else {
+            when(this.headsetStrategy){
+                HeadsetStrategy.pauseOnUnplug, HeadsetStrategy.pauseOnUnplugPlayOnPlug  -> {
+                    if(isPlaying) {
+                        this.onNotificationPlayOrPause?.invoke()
+                    }
+                }
+                else -> { /* do nothing */ }
+            }
+        }
     }
 }
 
