@@ -110,7 +110,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     var _playingPath: String?
     var _lastOpenedPath: String?
     var notificationSettings: NotificationSettings?
-
+    var phoneCallStrategy: PhoneCallStrategy = PhoneCallStrategy.none
+    
     var _loopSingleAudio = false
     var isLiveStream: Bool = false
 
@@ -208,6 +209,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         MPNowPlayingInfoCenter.default().nowPlayingInfo = [:] //empty
         #endif
     }
+    
+    func invokeListenerPlayPause(){
+        self.channel.invokeMethod(Music.METHOD_PLAY_OR_PAUSE, arguments: [])
+    }
 
     func setupMediaPlayerNotificationView(notificationSettings: NotificationSettings, audioMetas: AudioMetas, isPlaying: Bool) {
         self.notificationSettings = notificationSettings
@@ -226,14 +231,14 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         // Add handler for Play Command
         commandCenter.playCommand.isEnabled = (self.notificationSettings ?? NotificationSettings()).playPauseEnabled
         self.targets["play"] = commandCenter.playCommand.addTarget { [unowned self] event in
-            self.channel.invokeMethod(Music.METHOD_PLAY_OR_PAUSE, arguments: [])
+            self.invokeListenerPlayPause()
             return .success
         }
         
         // Add handler for Pause Command
         commandCenter.pauseCommand.isEnabled = (self.notificationSettings ?? NotificationSettings()).playPauseEnabled
         self.targets["pause"] = commandCenter.pauseCommand.addTarget { [unowned self] event in
-            self.channel.invokeMethod(Music.METHOD_PLAY_OR_PAUSE, arguments: [])
+            self.invokeListenerPlayPause()
             return .success
         }
         
@@ -473,6 +478,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
               audioMetas: AudioMetas,
               displayNotification: Bool,
               notificationSettings: NotificationSettings,
+              phoneCallStrategy: PhoneCallStrategy,
               playSpeed: Double,
               networkHeaders: NSDictionary?,
               result: @escaping FlutterResult
@@ -497,12 +503,12 @@ public class Player : NSObject, AVAudioPlayerDelegate {
 
             /* set session category and mode with options */
             if #available(iOS 10.0, *) {
-                try AVAudioSession.sharedInstance().setCategory(category, mode: mode, options: [.mixWithOthers])
+                //try AVAudioSession.sharedInstance().setCategory(category, mode: mode, options: [.mixWithOthers])
+                try AVAudioSession.sharedInstance().setCategory(category, mode: .default, options: [])
                 try AVAudioSession.sharedInstance().setActive(true)
-                
             } else {
                 
-                try AVAudioSession.sharedInstance().setCategory(category, options: .mixWithOthers)
+                try AVAudioSession.sharedInstance().setCategory(category)
                 try AVAudioSession.sharedInstance().setActive(true)
                 
             }
@@ -523,11 +529,19 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             self.displayMediaPlayerNotification = displayNotification
             self.notificationSettings = notificationSettings
+            self.phoneCallStrategy = phoneCallStrategy
             self.audioMetas = audioMetas
             
             self._lastOpenedPath = assetPath
             
             let notifCenter = NotificationCenter.default
+            
+            //phone call
+            notifCenter.addObserver(self,
+                                    selector: #selector(self.handleInterruption(_:)),
+                                    name: AVAudioSession.interruptionNotification,
+                                    object: AVAudioSession.sharedInstance()
+            )
 
             notifCenter.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
             
@@ -654,6 +668,42 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             // hide buffering
             self?.setBuffering(false)
         })
+    }
+    
+    @objc func handleInterruption(_ notification: Notification) {
+        if(self.phoneCallStrategy == PhoneCallStrategy.none) {
+            return
+        }
+        
+        guard let userInfo = notification.userInfo,
+            let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+            let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
+                return
+        }
+
+        // Switch over the interruption type.
+        switch type {
+
+        case .began:
+            // An interruption began. Update the UI as needed.
+            pause()
+
+        case .ended:
+           // An interruption ended. Resume playback, if appropriate.
+
+            guard let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else { return }
+            let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+            if options.contains(.shouldResume) {
+                if(phoneCallStrategy == PhoneCallStrategy.pauseOnPhoneCallResumeAfter) {
+                    self.invokeListenerPlayPause()
+                }
+                // Interruption ended. Playback should resume.
+            } else {
+                // Interruption ended. Playback should not resume.
+            }
+
+        default: ()
+        }
     }
     
     private func setBuffering(_ value: Bool){
@@ -1324,6 +1374,8 @@ class Music : NSObject, FlutterPlugin {
                 
                 let notifSettings = notificationSettings(from: args)
                 
+                let phoneCallStrategy = parsePhoneCallStrategy(args["phoneCallStrategy"] as? String)
+                
                 self.getOrCreatePlayer(id: id)
                     .open(
                         assetPath: assetPath,
@@ -1336,6 +1388,7 @@ class Music : NSObject, FlutterPlugin {
                         audioMetas: audioMetas,
                         displayNotification: displayNotification,
                         notificationSettings: notifSettings,
+                        phoneCallStrategy: phoneCallStrategy,
                         playSpeed: playSpeed,
                         networkHeaders: networkHeaders,
                         result: result
@@ -1368,5 +1421,22 @@ class NetworkError : AssetAudioPlayerError {
 class PlayerError : AssetAudioPlayerError {
     init(message: String) {
         super.init(type: "player", message: message)
+    }
+}
+
+enum PhoneCallStrategy {
+    case none
+    case pauseOnPhoneCall
+    case pauseOnPhoneCallResumeAfter
+}
+
+func parsePhoneCallStrategy(_ from: String?) -> PhoneCallStrategy {
+    switch from {
+    case "pauseOnPhoneCall":
+        return .pauseOnPhoneCall
+    case "pauseOnPhoneCallResumeAfter":
+        return .pauseOnPhoneCallResumeAfter
+    default:
+        return .none
     }
 }

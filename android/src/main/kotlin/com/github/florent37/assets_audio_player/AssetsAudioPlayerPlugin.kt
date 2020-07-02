@@ -1,7 +1,5 @@
 package com.github.florent37.assets_audio_player
 
-import StopWhenCall
-import StopWhenCallAudioFocus
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -9,6 +7,9 @@ import androidx.annotation.NonNull
 import com.github.florent37.assets_audio_player.headset.HeadsetStrategy
 import com.github.florent37.assets_audio_player.notification.*
 import com.github.florent37.assets_audio_player.stopwhencall.HeadsetManager
+import com.github.florent37.assets_audio_player.stopwhencall.PhoneCallStrategy
+import com.github.florent37.assets_audio_player.stopwhencall.StopWhenCall
+import com.github.florent37.assets_audio_player.stopwhencall.StopWhenCallAudioFocus
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -477,6 +478,7 @@ class AssetsAudioPlayer(
                     val notificationSettings = fetchNotificationSettings(args)
                     val audioMetas = fetchAudioMetas(args)
 
+                    val phoneCallStrategy = PhoneCallStrategy.from(args["phoneCallStrategy"] as? String)
                     val headsetStrategy = HeadsetStrategy.from(args["headPhoneStrategy"] as? String)
 
                     getOrCreatePlayer(id).open(
@@ -493,6 +495,7 @@ class AssetsAudioPlayer(
                             playSpeed = playSpeed,
                             audioMetas = audioMetas,
                             headsetStrategy= headsetStrategy,
+                            phoneCallStrategy= phoneCallStrategy,
                             networkHeaders= networkHeaders,
                             context = context
                     )

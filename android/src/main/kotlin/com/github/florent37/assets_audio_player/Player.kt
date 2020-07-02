@@ -1,25 +1,22 @@
 package com.github.florent37.assets_audio_player
 
-import StopWhenCall
 import android.content.Context
 import android.media.AudioManager
-import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import com.github.florent37.assets_audio_player.headset.HeadsetStrategy
 import com.github.florent37.assets_audio_player.notification.AudioMetas
 import com.github.florent37.assets_audio_player.notification.NotificationManager
 import com.github.florent37.assets_audio_player.notification.NotificationService
 import com.github.florent37.assets_audio_player.notification.NotificationSettings
-import com.google.android.exoplayer2.ExoPlaybackException
 import com.github.florent37.assets_audio_player.playerimplem.*
+import com.github.florent37.assets_audio_player.stopwhencall.PhoneCallStrategy
+import com.github.florent37.assets_audio_player.stopwhencall.StopWhenCall
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.IOException
 import kotlin.math.max
 import kotlin.math.min
 
@@ -70,6 +67,7 @@ class Player(
 
     private var respectSilentMode: Boolean = false
     private var headsetStrategy: HeadsetStrategy = HeadsetStrategy.none
+    private var phoneCallStrategy: PhoneCallStrategy = PhoneCallStrategy.pauseOnPhoneCall
     private var volume: Double = 1.0
     private var playSpeed: Double = 1.0
 
@@ -158,6 +156,7 @@ class Player(
              audioMetas: AudioMetas,
              playSpeed: Double,
              headsetStrategy: HeadsetStrategy,
+             phoneCallStrategy: PhoneCallStrategy,
              networkHeaders: Map<*, *>?,
              result: MethodChannel.Result,
              context: Context
@@ -173,6 +172,7 @@ class Player(
         this.notificationSettings = notificationSettings
         this.respectSilentMode = respectSilentMode
         this.headsetStrategy = headsetStrategy
+        this.phoneCallStrategy = phoneCallStrategy
 
         _lastOpenedPath = assetAudioPath
       
@@ -437,33 +437,37 @@ class Player(
     private var volumeBeforePhoneStateChanged: Double? = null
     private var wasPlayingBeforeEnablePlayChange: Boolean? = null
     fun updateEnableToPlay(audioState: StopWhenCall.AudioState) {
-        when (audioState) {
-            StopWhenCall.AudioState.AUTHORIZED_TO_PLAY -> {
-                this.isEnabledToPlayPause = true //this one must be called before play/pause()
-                this.isEnabledToChangeVolume = true //this one must be called before play/pause()
-                wasPlayingBeforeEnablePlayChange?.let {
-                    //phone call ended
-                    if (it) {
-                        playerPlay()
-                    } else {
-                        pause()
+        if(phoneCallStrategy != PhoneCallStrategy.none) {
+            when (audioState) {
+                StopWhenCall.AudioState.AUTHORIZED_TO_PLAY -> {
+                    this.isEnabledToPlayPause = true //this one must be called before play/pause()
+                    this.isEnabledToChangeVolume = true //this one must be called before play/pause()
+                    if(phoneCallStrategy == PhoneCallStrategy.pauseOnPhoneCallResumeAfter) {
+                        wasPlayingBeforeEnablePlayChange?.let {
+                            //phone call ended
+                            if (it) {
+                                playerPlay()
+                            } else {
+                                pause()
+                            }
+                        }
                     }
+                    volumeBeforePhoneStateChanged?.let {
+                        setVolume(it)
+                    }
+                    wasPlayingBeforeEnablePlayChange = null
+                    volumeBeforePhoneStateChanged = null
                 }
-                volumeBeforePhoneStateChanged?.let {
-                    setVolume(it)
+                StopWhenCall.AudioState.REDUCE_VOLUME -> {
+                    volumeBeforePhoneStateChanged = this.volume
+                    setVolume(VOLUME_WHEN_REDUCED)
+                    this.isEnabledToChangeVolume = false //this one must be called after setVolume()
                 }
-                wasPlayingBeforeEnablePlayChange = null
-                volumeBeforePhoneStateChanged = null
-            }
-            StopWhenCall.AudioState.REDUCE_VOLUME -> {
-                volumeBeforePhoneStateChanged = this.volume
-                setVolume(VOLUME_WHEN_REDUCED)
-                this.isEnabledToChangeVolume = false //this one must be called after setVolume()
-            }
-            StopWhenCall.AudioState.FORBIDDEN -> {
-                wasPlayingBeforeEnablePlayChange = this.isPlaying
-                pause()
-                this.isEnabledToPlayPause = false //this one must be called after pause()
+                StopWhenCall.AudioState.FORBIDDEN -> {
+                    wasPlayingBeforeEnablePlayChange = this.isPlaying
+                    pause()
+                    this.isEnabledToPlayPause = false //this one must be called after pause()
+                }
             }
         }
     }
