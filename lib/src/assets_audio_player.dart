@@ -19,7 +19,7 @@ import 'playable.dart';
 import 'playing.dart';
 import 'loop.dart';
 import 'errors.dart';
-import 'HeadPhoneStrategy.dart';
+import 'PhoneStrategy.dart';
 
 export 'applifecycle.dart';
 export 'notification.dart';
@@ -27,7 +27,7 @@ export 'playable.dart';
 export 'playing.dart';
 export 'loop.dart';
 export 'errors.dart';
-export 'HeadPhoneStrategy.dart';
+export 'PhoneStrategy.dart';
 
 const _DEFAULT_AUTO_START = true;
 const _DEFAULT_RESPECT_SILENT_MODE = false;
@@ -764,6 +764,7 @@ class AssetsAudioPlayer {
         autoStart: autoStart,
         loopMode: _playlist.loopMode,
         headPhoneStrategy: _playlist.headPhoneStrategy,
+        phoneCallStrategy: _playlist.phoneCallStrategy,
         seek: seek,
       );
     }
@@ -952,6 +953,7 @@ class AssetsAudioPlayer {
     double playSpeed,
     LoopMode loopMode,
     HeadPhoneStrategy headPhoneStrategy,
+    PhoneCallStrategy phoneCallStrategy,
     NotificationSettings notificationSettings,
   }) async {
     final currentAudio = _lastOpenedAssetsAudio;
@@ -972,6 +974,7 @@ class AssetsAudioPlayer {
           "autoStart": autoStart,
           "respectSilentMode": respectSilentMode,
           "headPhoneStrategy": describeHeadPhoneStrategy(headPhoneStrategy),
+          "phoneCallStrategy": describePhoneCallStrategy(phoneCallStrategy),
           "displayNotification": showNotification,
           "volume": forcedVolume ?? this.volume.value ?? defaultVolume,
           "playSpeed": playSpeed ??
@@ -1062,6 +1065,7 @@ class AssetsAudioPlayer {
     NotificationSettings notificationSettings,
     PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
     HeadPhoneStrategy headPhoneStrategy = HeadPhoneStrategy.none,
+    PhoneCallStrategy phoneCallStrategy = PhoneCallStrategy.pauseOnPhoneCall,
   }) async {
     _lastSeek = null;
     _replaceRealtimeSubscription();
@@ -1072,6 +1076,7 @@ class AssetsAudioPlayer {
       showNotification: showNotification,
       playSpeed: playSpeed,
       loopMode: loopMode,
+      phoneCallStrategy: phoneCallStrategy,
       notificationSettings: notificationSettings,
       playInBackground: playInBackground,
       headPhoneStrategy: headPhoneStrategy,
@@ -1113,6 +1118,7 @@ class AssetsAudioPlayer {
     LoopMode loopMode = LoopMode.none,
     PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
     HeadPhoneStrategy headPhoneStrategy = HeadPhoneStrategy.none,
+    PhoneCallStrategy phoneCallStrategy = PhoneCallStrategy.pauseOnPhoneCall,
   }) async {
     Playlist playlist;
     if (playable is Playlist &&
@@ -1134,6 +1140,7 @@ class AssetsAudioPlayer {
         loopMode: loopMode,
         playSpeed: playSpeed,
         headPhoneStrategy: headPhoneStrategy,
+        phoneCallStrategy: phoneCallStrategy,
         notificationSettings:
             notificationSettings ?? defaultNotificationSettings,
         playInBackground: playInBackground,
@@ -1379,6 +1386,7 @@ class _CurrentPlaylist {
   LoopMode loopMode;
   final double playSpeed;
   final NotificationSettings notificationSettings;
+  final PhoneCallStrategy phoneCallStrategy;
   final PlayInBackground playInBackground;
   final HeadPhoneStrategy headPhoneStrategy;
 
@@ -1482,6 +1490,7 @@ class _CurrentPlaylist {
     this.playInBackground,
     this.loopMode,
     this.headPhoneStrategy,
+    this.phoneCallStrategy,
   });
 
   void returnToFirst() {

@@ -347,6 +347,7 @@ class _MyAppState extends State<MyApp> {
                           Playlist(audios: myAudios),
                           showNotification: true,
                           headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplugPlayOnPlug,
+                          phoneCallStrategy: PhoneCallStrategy.pauseOnPhoneCallResumeAfter,
                         );
                       },
                       onSelected: (myAudio) async {

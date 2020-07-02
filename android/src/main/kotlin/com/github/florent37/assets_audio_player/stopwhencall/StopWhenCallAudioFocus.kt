@@ -1,3 +1,5 @@
+package com.github.florent37.assets_audio_player.stopwhencall
+
 import android.content.Context
 import android.media.AudioManager
 import androidx.media.AudioAttributesCompat
