@@ -1337,7 +1337,8 @@ class AssetsAudioPlayer {
 
   Future<Audio> _handlePlatformAsset(Audio input) async {
     if (defaultTargetPlatform == TargetPlatform.macOS &&
-        input.audioType == AudioType.asset && !kIsWeb) {
+        input.audioType == AudioType.asset &&
+        !kIsWeb) {
       //on macos assets are not available from native
       final String path = await _copyToTmpMemory(
           package: input.package, assetSource: input.path);
