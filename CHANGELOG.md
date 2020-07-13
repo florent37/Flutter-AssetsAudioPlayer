@@ -1,4 +1,4 @@
-## 2.0.8+2s
+## 2.0.8+2
 
 * Added Android HeadPhoneStrategy
 * Fix local path file uri (android)
