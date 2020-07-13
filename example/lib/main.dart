@@ -356,9 +356,9 @@ class _MyAppState extends State<MyApp> {
                           await _assetsAudioPlayer.open(
                             myAudio,
                             autoStart: true,
-                            respectSilentMode: true,
                             showNotification: false,
                             playInBackground: PlayInBackground.enabled,
+                            phoneCallStrategy: PhoneCallStrategy.none,
                             headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
                             notificationSettings: NotificationSettings(
                               //seekBarEnabled: false,

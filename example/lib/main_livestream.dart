@@ -81,6 +81,7 @@ class _PlayerState extends State<Player> {
         )),
         autoStart: false,
         showNotification: true,
+
         notificationSettings: NotificationSettings(
             nextEnabled: false,
             prevEnabled: false,
