@@ -180,6 +180,8 @@ class AssetsAudioPlayer {
     }
   }
 
+  bool _acceptUserOpen = true; //if false, user cannot call open method
+
   AssetsAudioPlayer._({this.id = _DEFAULT_PLAYER}) {
     _init();
   }
@@ -1119,32 +1121,48 @@ class AssetsAudioPlayer {
     PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
     HeadPhoneStrategy headPhoneStrategy = HeadPhoneStrategy.none,
     PhoneCallStrategy phoneCallStrategy = PhoneCallStrategy.pauseOnPhoneCall,
+    bool forceOpen = false, //skip the _acceptUserOpen
   }) async {
-    Playlist playlist;
-    if (playable is Playlist &&
-        playable.audios != null &&
-        playable.audios.length > 0) {
-      playlist = playable;
-    } else if (playable is Audio) {
-      playlist = Playlist(audios: [playable]);
+    if(forceOpen) {
+      _acceptUserOpen = true;
     }
 
-    if (playlist != null) {
-      await _openPlaylist(
-        playlist,
-        autoStart: autoStart,
-        volume: volume,
-        respectSilentMode: respectSilentMode,
-        showNotification: showNotification,
-        seek: seek,
-        loopMode: loopMode,
-        playSpeed: playSpeed,
-        headPhoneStrategy: headPhoneStrategy,
-        phoneCallStrategy: phoneCallStrategy,
-        notificationSettings:
-            notificationSettings ?? defaultNotificationSettings,
-        playInBackground: playInBackground,
-      );
+    if (_acceptUserOpen == false) {
+      return;
+    }
+
+    try {
+      _acceptUserOpen = false;
+      Playlist playlist;
+      if (playable is Playlist &&
+          playable.audios != null &&
+          playable.audios.length > 0) {
+        playlist = playable;
+      } else if (playable is Audio) {
+        playlist = Playlist(audios: [playable]);
+      }
+
+      if (playlist != null) {
+        await _openPlaylist(
+          playlist,
+          autoStart: autoStart,
+          volume: volume,
+          respectSilentMode: respectSilentMode,
+          showNotification: showNotification,
+          seek: seek,
+          loopMode: loopMode,
+          playSpeed: playSpeed,
+          headPhoneStrategy: headPhoneStrategy,
+          phoneCallStrategy: phoneCallStrategy,
+          notificationSettings:
+          notificationSettings ?? defaultNotificationSettings,
+          playInBackground: playInBackground,
+        );
+      }
+      _acceptUserOpen = true;
+    } catch (t) {
+      _acceptUserOpen = true;
+      throw t;
     }
   }
 

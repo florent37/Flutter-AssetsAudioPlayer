@@ -282,6 +282,7 @@ class _MyAppState extends State<MyApp> {
                                     onNext: () {
                                       //_assetsAudioPlayer.forward(Duration(seconds: 10));
                                       _assetsAudioPlayer.next(
+                                        keepLoopMode: true
                                           /*keepLoopMode: false*/);
                                     },
                                     onPrevious: () {
@@ -356,7 +357,7 @@ class _MyAppState extends State<MyApp> {
                             myAudio,
                             autoStart: true,
                             respectSilentMode: true,
-                            showNotification: true,
+                            showNotification: false,
                             playInBackground: PlayInBackground.enabled,
                             headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
                             notificationSettings: NotificationSettings(

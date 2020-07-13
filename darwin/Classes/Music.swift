@@ -536,12 +536,14 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             let notifCenter = NotificationCenter.default
             
+             #if os(iOS)
             //phone call
             notifCenter.addObserver(self,
                                     selector: #selector(self.handleInterruption(_:)),
                                     name: AVAudioSession.interruptionNotification,
                                     object: AVAudioSession.sharedInstance()
             )
+            #endif
 
             notifCenter.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
             
@@ -671,6 +673,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     }
     
     @objc func handleInterruption(_ notification: Notification) {
+         #if os(iOS)
         if(self.phoneCallStrategy == PhoneCallStrategy.none) {
             return
         }
@@ -704,6 +707,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
 
         default: ()
         }
+        #endif
     }
     
     private func setBuffering(_ value: Bool){
@@ -1166,8 +1170,10 @@ class Music : NSObject, FlutterPlugin {
                      )
                      break
                  }
+                 #if os(iOS)
                  self.getOrCreatePlayer(id: id)
                     .showNotification(show: show)
+                 #endif
                  result(true)
 
             case "loopSingleAudio" :
