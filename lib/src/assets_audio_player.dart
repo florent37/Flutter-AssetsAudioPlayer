@@ -5,6 +5,7 @@ import 'dart:math';
 import 'cache/cache_downloader.dart';
 import 'cache/cache_manager.dart';
 import 'notification.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,7 @@ import 'playing.dart';
 import 'loop.dart';
 import 'errors.dart';
 import 'PhoneStrategy.dart';
+import 'network_settings.dart';
 
 export 'applifecycle.dart';
 export 'notification.dart';
@@ -34,6 +36,7 @@ const _DEFAULT_RESPECT_SILENT_MODE = false;
 const _DEFAULT_SHOW_NOTIFICATION = false;
 const _DEFAULT_PLAY_IN_BACKGROUND = PlayInBackground.enabled;
 const _DEFAULT_PLAYER = "DEFAULT_PLAYER";
+ const _DEFAULT_NETWORK_SETTINGS = NetworkSettings();
 
 const METHOD_POSITION = "player.position";
 const METHOD_VOLUME = "player.volume";
@@ -173,6 +176,7 @@ class AssetsAudioPlayer {
   _CurrentPlaylist _playlist;
 
   final String id;
+  final NetworkSettings networkSettings = _DEFAULT_NETWORK_SETTINGS;
 
   set cachePathProvider(AssetsAudioPlayerCache newValue) {
     if (newValue != null) {
@@ -990,8 +994,10 @@ class AssetsAudioPlayer {
         if (audio.package != null) {
           params["package"] = audio.package;
         }
-        if (audio.networkHeaders != null) {
-          params["networkHeaders"] = audio.networkHeaders;
+        if (audio.audioType == AudioType.file ||
+            audio.audioType == AudioType.liveStream) {
+          params["networkHeaders"] =
+              audio.networkHeaders ?? networkSettings.defaultHeaders;
         }
 
         //region notifs
