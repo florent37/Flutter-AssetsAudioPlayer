@@ -1,7 +1,7 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 
-final streamUrl = "https://18843.live.streamtheworld.com/WBBRAMAAC48/HLS/playlist.m3u8";
+final streamUrl = "http://media.emit.com/pbs/tomorrow-land/202005081300/aac_mid.m4a";
 
 void main() => runApp(MyApp());
 

@@ -515,9 +515,9 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             #endif
             
             var item : SlowMoPlayerItem
-            if let headers = networkHeaders {
+            if networkHeaders != nil && networkHeaders!.count > 0 {
                 let asset = AVURLAsset(url: url, options: [
-                    "AVURLAssetHTTPHeaderFieldsKey": headers,
+                    "AVURLAssetHTTPHeaderFieldsKey": networkHeaders!,
                     "AVURLAssetOutOfBandMIMETypeKey": "mp3"
                 ])
                 item = SlowMoPlayerItem(asset: asset)
@@ -596,6 +596,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                     
                     result(nil)
                 case .failed:
+                    var error = item.error
                     debugPrint("playback failed")
                     
                     self?.stop()
