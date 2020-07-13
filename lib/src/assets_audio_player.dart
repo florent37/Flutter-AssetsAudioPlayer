@@ -36,7 +36,7 @@ const _DEFAULT_RESPECT_SILENT_MODE = false;
 const _DEFAULT_SHOW_NOTIFICATION = false;
 const _DEFAULT_PLAY_IN_BACKGROUND = PlayInBackground.enabled;
 const _DEFAULT_PLAYER = "DEFAULT_PLAYER";
- const _DEFAULT_NETWORK_SETTINGS = NetworkSettings();
+const _DEFAULT_NETWORK_SETTINGS = NetworkSettings();
 
 const METHOD_POSITION = "player.position";
 const METHOD_VOLUME = "player.volume";
@@ -1129,7 +1129,7 @@ class AssetsAudioPlayer {
     PhoneCallStrategy phoneCallStrategy = PhoneCallStrategy.pauseOnPhoneCall,
     bool forceOpen = false, //skip the _acceptUserOpen
   }) async {
-    if(forceOpen) {
+    if (forceOpen) {
       _acceptUserOpen = true;
     }
 
@@ -1161,7 +1161,7 @@ class AssetsAudioPlayer {
           headPhoneStrategy: headPhoneStrategy,
           phoneCallStrategy: phoneCallStrategy,
           notificationSettings:
-          notificationSettings ?? defaultNotificationSettings,
+              notificationSettings ?? defaultNotificationSettings,
           playInBackground: playInBackground,
         );
       }
