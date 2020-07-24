@@ -1,8 +1,9 @@
-## 2.0.8+2
+## 2.0.8+3
 
 * Added Android HeadPhoneStrategy
 * Fix local path file uri (android)
 * Added open multiple calls protection
+* Open uri content on androids
 
 ## 2.0.6+7
 
