@@ -113,6 +113,7 @@ class AssetsAudioPlayer(
     private var stopWhenCall = StopWhenCallAudioFocus(context)
     private var headsetManager = HeadsetManager(context)
     private val notificationManager = NotificationManager(context)
+    private val uriResolver = UriResolver(context)
     private var mediaButtonsReceiver: MediaButtonsReceiver? = null
     private val stopWhenCallListener = object : StopWhenCall.Listener {
         override fun onPhoneStateChanged(audioState: StopWhenCall.AudioState) {
@@ -451,10 +452,13 @@ class AssetsAudioPlayer(
                         result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
                         return
                     }
-                    val path = args["path"] as? String ?: run {
-                        result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
+                    val path = (args["path"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument must be an String `path`", null)
                         return
+                    }).let {
+                        uriResolver.audioPath(it)
                     }
+
                     val assetPackage = args["package"] as? String
 
                     val audioType = args["audioType"] as? String ?: run {
@@ -476,7 +480,15 @@ class AssetsAudioPlayer(
                     val networkHeaders = args["networkHeaders"] as? Map<*, *>?
 
                     val notificationSettings = fetchNotificationSettings(args)
-                    val audioMetas = fetchAudioMetas(args)
+                    val audioMetas = fetchAudioMetas(args).let { meta ->
+                        meta.copy(
+                            image = meta.image?.let { img ->
+                                img.copy(
+                                        imagePath = uriResolver.imagePath(img.imagePath)
+                                )
+                            }
+                        )
+                    }
 
                     val phoneCallStrategy = PhoneCallStrategy.from(args["phoneCallStrategy"] as? String)
                     val headsetStrategy = HeadsetStrategy.from(args["headPhoneStrategy"] as? String)
