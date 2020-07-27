@@ -118,12 +118,13 @@ class AssetsAudioPlayerGroup {
 
   Future<Map<String, dynamic>> add(
     Audio audio, {
-    bool loop = false,
+    LoopMode loopMode = LoopMode.none,
     double volume,
     Duration seek,
     double playSpeed,
   }) async {
     final player = AssetsAudioPlayer.newPlayer();
+
 
     try {
       await player.open(
@@ -146,20 +147,6 @@ class AssetsAudioPlayerGroup {
       return {"error": e.toString()};
     }
 
-    // player.open(
-    //   audio,
-    //   showNotification: false,
-    //   //not need here, we'll call another method `changeNotificationForGroup`
-    //   seek: seek,
-    //   autoStart: isPlaying.value,
-    //   //need to play() for player group
-    //   volume: volume,
-    //   loop: loop,
-    //   respectSilentMode: respectSilentMode,
-    //   playInBackground: playInBackground,
-    //   playSpeed: playSpeed,
-    //   notificationSettings: _notificationSettings,
-    // );
   }
 
   Future<void> addAll(List<Audio> audios) async {

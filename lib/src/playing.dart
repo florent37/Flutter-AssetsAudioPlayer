@@ -1,3 +1,4 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
 
 import 'playable.dart';
@@ -132,7 +133,8 @@ class RealtimePlayingInfos {
   final Duration currentPosition;
   final double volume;
   final bool isPlaying;
-  final bool isLooping;
+  final LoopMode loopMode;
+  final bool isBuffering;
   final bool isShuffling;
 
   RealtimePlayingInfos({
@@ -141,7 +143,8 @@ class RealtimePlayingInfos {
     @required this.currentPosition,
     @required this.volume,
     @required this.isPlaying,
-    @required this.isLooping,
+    @required this.loopMode,
+    @required this.isBuffering,
     this.isShuffling,
   }) : this.duration = current?.audio?.duration ?? Duration();
 
@@ -160,7 +163,8 @@ class RealtimePlayingInfos {
           currentPosition == other.currentPosition &&
           volume == other.volume &&
           isPlaying == other.isPlaying &&
-          isLooping == other.isLooping &&
+          loopMode == other.loopMode &&
+          isBuffering == other.isBuffering &&
           isShuffling == other.isShuffling;
 
   @override
@@ -171,11 +175,12 @@ class RealtimePlayingInfos {
       currentPosition.hashCode ^
       volume.hashCode ^
       isPlaying.hashCode ^
-      isLooping.hashCode ^
+      loopMode.hashCode ^
+      isBuffering.hashCode ^
       isShuffling.hashCode;
 
   @override
   String toString() {
-    return 'RealtimePlayingInfos{playerId: $playerId, current: $current, duration: $duration, currentPosition: $currentPosition, volume: $volume, isPlaying: $isPlaying, isLooping: $isLooping, isShuffling: $isShuffling}';
+    return 'RealtimePlayingInfos{playerId: $playerId, current: $current, duration: $duration, currentPosition: $currentPosition, volume: $volume, isPlaying: $isPlaying, loopMode: $loopMode, isBuffering: $isBuffering, isShuffling: $isShuffling}';
   }
 }

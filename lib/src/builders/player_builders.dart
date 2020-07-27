@@ -8,7 +8,7 @@ enum _PlayingBuilderType {
   playSpeed,
   forwardRewindSpeed,
   current,
-  isLooping,
+  loopMode,
   isBuffering,
   realtimePlayingInfos,
   playerState,
@@ -16,8 +16,8 @@ enum _PlayingBuilderType {
 
 typedef PlayingWidgetBuilder = Widget Function(
     BuildContext context, bool isPlaying);
-typedef IsLoopingWidgetBuilder = Widget Function(
-    BuildContext context, bool isLooping);
+typedef LoopModeWidgetBuilder = Widget Function(
+    BuildContext context, LoopMode loopMode);
 typedef VolumeWidgetBuilder = Widget Function(
     BuildContext context, double volume);
 typedef PlaySpeedWidgetBuilder = Widget Function(
@@ -52,12 +52,10 @@ class PlayerBuilder extends StatefulWidget {
         this.builderType = _PlayingBuilderType.isBuffering,
         super(key: key);
 
-  const PlayerBuilder.isLooping(
-      {Key key,
-      @required this.player,
-      @required IsLoopingWidgetBuilder builder})
+  const PlayerBuilder.loopMode(
+      {Key key, @required this.player, @required LoopModeWidgetBuilder builder})
       : this.builder = builder,
-        this.builderType = _PlayingBuilderType.isLooping,
+        this.builderType = _PlayingBuilderType.loopMode,
         super(key: key);
 
   const PlayerBuilder.realtimePlayingInfos(
@@ -130,10 +128,10 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           },
         );
         break;
-      case _PlayingBuilderType.isLooping:
+      case _PlayingBuilderType.loopMode:
         return StreamBuilder(
-          stream: widget.player.isLooping,
-          initialData: false,
+          stream: widget.player.loopMode,
+          initialData: LoopMode.none,
           builder: (context, snap) {
             return this.widget.builder(context, snap.data);
           },

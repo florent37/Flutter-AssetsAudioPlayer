@@ -1,8 +1,15 @@
 import 'package:flutter/foundation.dart';
 
 import '../assets_audio_player.dart';
+import 'utils.dart';
 
 typedef NotificationAction = void Function(AssetsAudioPlayer player);
+
+class AndroidResDrawable {
+  final String name;
+
+  AndroidResDrawable({@required this.name});
+}
 
 @immutable
 class NotificationSettings {
@@ -38,6 +45,13 @@ class NotificationSettings {
 
   //no custom action for stop
 
+  //custom icon
+  final AndroidResDrawable customNextIcon;
+  final AndroidResDrawable customPreviousIcon;
+  final AndroidResDrawable customPlayIcon;
+  final AndroidResDrawable customPauseIcon;
+  final AndroidResDrawable customStopIcon;
+
   //endregion
 
   const NotificationSettings({
@@ -50,6 +64,11 @@ class NotificationSettings {
     this.customPlayPauseAction,
     this.customPrevAction,
     this.customStopAction,
+    this.customNextIcon,
+    this.customPauseIcon,
+    this.customPlayIcon,
+    this.customPreviousIcon,
+    this.customStopIcon,
   });
 }
 
@@ -61,4 +80,31 @@ void writeNotificationSettingsInto(
       notificationSettings.playPauseEnabled;
   params["notif.settings.prevEnabled"] = notificationSettings.prevEnabled;
   params["notif.settings.seekBarEnabled"] = notificationSettings.seekBarEnabled;
+
+  params.addIfNotNull(
+      "notif.settings.playIcon", notificationSettings.customPlayIcon?.name);
+  params.addIfNotNull(
+      "notif.settings.pauseIcon", notificationSettings.customPauseIcon?.name);
+  params.addIfNotNull(
+      "notif.settings.nextIcon", notificationSettings.customNextIcon?.name);
+  params.addIfNotNull("notif.settings.previousIcon",
+      notificationSettings.customPreviousIcon?.name);
+  params.addIfNotNull(
+      "notif.settings.stopIcon", notificationSettings.customStopIcon?.name);
 }
+
+class ClickedNotification {
+  final String audioId;
+
+  ClickedNotification({this.audioId});
+}
+
+class ClickedNotificationWrapper {
+  final ClickedNotification clickedNotification;
+  bool handled = false;
+
+  ClickedNotificationWrapper(this.clickedNotification);
+}
+
+typedef NotificationOpenAction = bool Function(
+    ClickedNotification notification);

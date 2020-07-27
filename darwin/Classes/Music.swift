@@ -104,7 +104,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     var player: AVQueuePlayer?
     
     var observerStatus: [NSKeyValueObservation] = []
-    
+
     var displayMediaPlayerNotification = false
     var audioMetas : AudioMetas?
     var _playingPath: String?
@@ -126,11 +126,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         var url : URL
         
         if(audioType == "network" || audioType == "liveStream"){
-            let urlStr : String = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-            if let u = URL(string: urlStr) {
+            if let u = URL(string: path) {
                 return u
             } else {
-                print("Couldn't parse myURL = \(urlStr)")
+                print("Couldn't parse myURL = \(path)")
                 return nil
             }
             
@@ -186,9 +185,33 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     #if os(iOS)
     var targets: [String:Any] = [:]
     
+    func showNotification(show: Bool) {
+        #if os(iOS)
+           let wasShowing = self.displayMediaPlayerNotification
+           self.displayMediaPlayerNotification = show
+           if(wasShowing){
+               //hide
+                self.hideNotification()
+           } else {
+            if let metas = self.audioMetas, let notificationSettings = self.notificationSettings {
+               //show
+               self.setupMediaPlayerNotificationView(notificationSettings: notificationSettings, audioMetas: metas, isPlaying: self.playing)
+            }
+        }
+        #endif
+    }
+
+    func hideNotification() {
+        #if os(iOS)
+        self.deinitMediaPlayerNotifEvent()
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = [:] //empty
+        #endif
+    }
+
     func setupMediaPlayerNotificationView(notificationSettings: NotificationSettings, audioMetas: AudioMetas, isPlaying: Bool) {
         self.notificationSettings = notificationSettings
-        
+        self.audioMetas = audioMetas
+
         UIApplication.shared.beginReceivingRemoteControlEvents()
         let commandCenter = MPRemoteCommandCenter.shared()
         
@@ -248,18 +271,19 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         let commandCenter = MPRemoteCommandCenter.shared()
         
         if let t = self.targets["play"] {
-            commandCenter.playCommand.removeTarget(t );
+            commandCenter.playCommand.removeTarget(t)
         }
         if let t = self.targets["pause"] {
-            commandCenter.pauseCommand.removeTarget(t);
+            commandCenter.pauseCommand.removeTarget(t)
         }
         if let t = self.targets["prev"] {
-            commandCenter.previousTrackCommand.removeTarget(t);
+            commandCenter.previousTrackCommand.removeTarget(t)
         }
         if let t = self.targets["next"] {
-            commandCenter.nextTrackCommand.removeTarget(t);
+            commandCenter.nextTrackCommand.removeTarget(t)
         }
         self.targets.removeAll()
+        
     }
     
     var nowPlayingInfo = [String: Any]()
@@ -444,10 +468,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
               networkHeaders: NSDictionary?,
               result: @escaping FlutterResult
     ){
-        self.stop();
+        self.stop()
         guard let url = self.getUrlByType(path: assetPath, audioType: audioType, assetPackage: assetPackage) else {
             log("resource not found \(assetPath)")
-            result("");
+            result("")
             return
         }
         
@@ -457,11 +481,11 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             let mode = AVAudioSession.Mode.default
             
             
-            print("category " + category.rawValue);
-            print("mode " + mode.rawValue);
-            print("displayNotification " + displayNotification.description);
-            
-            //        log("url: "+url.absoluteString)
+            print("category " + category.rawValue)
+            print("mode " + mode.rawValue)
+            print("displayNotification " + displayNotification.description)
+            print("url: " + url.absoluteString)
+
             /* set session category and mode with options */
             if #available(iOS 10.0, *) {
                 try AVAudioSession.sharedInstance().setCategory(category, mode: mode, options: [.mixWithOthers])
@@ -493,23 +517,15 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             self._lastOpenedPath = assetPath
             
-            NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
+            let notifCenter = NotificationCenter.default
+
+            notifCenter.addObserver(self, selector: #selector(self.playerDidFinishPlaying(note:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: item)
             
-            observerStatus.append( item.observe(\.isPlaybackBufferEmpty, options: [.new]) { [weak self] (_, _) in
-                // show buffering
-                self?.setBuffering(true)
-            })
+            // Watch notifications
+            notifCenter.addObserver(self, selector: #selector(self.newErrorLogEntry), name: NSNotification.Name.AVPlayerItemNewErrorLogEntry, object: item)
+            notifCenter.addObserver(self, selector: #selector(self.failedToPlayToEndTime), name: NSNotification.Name.AVPlayerItemFailedToPlayToEndTime, object: item)
             
-            observerStatus.append( item.observe(\.isPlaybackLikelyToKeepUp, options: [.new]) { [weak self] (_, _) in
-                // hide buffering
-                self?.setBuffering(false)
-            })
-            
-            observerStatus.append( item.observe( \.isPlaybackBufferFull, options: [.new]) { [weak self] (_, _) in
-                // hide buffering
-                self?.setBuffering(false)
-            })
-            
+            self.setBuffering(true)
             observerStatus.append( item.observe(\.status, changeHandler: { [weak self] (item, value) in
                 
                 switch item.status {
@@ -546,16 +562,21 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                     }
                     
                     self?._playingPath = assetPath
+                    self?.setBuffering(false)
+                    
+                    self?.addPostPlayingBufferListeners(item: item)
                     
                     result(nil)
                 case .failed:
                     debugPrint("playback failed")
                     
+                    self?.stop()
+                    
                     result(FlutterError(
                         code: "PLAY_ERROR",
                         message: "Cannot play "+assetPath,
-                        details: nil)
-                    );
+                        details: item.error?.localizedDescription)
+                    )
                 @unknown default:
                     fatalError()
                 }
@@ -564,7 +585,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             
             if(self.player == nil){
-                //log("player is null");
+                //log("player is null")
                 return
             }
             
@@ -581,6 +602,48 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
     }
     
+    // Getting error from Notification payload
+    @objc func newErrorLogEntry(_ notification: Notification) {
+        guard let object = notification.object, let playerItem = object as? AVPlayerItem else {
+            return
+        }
+        guard let errorLog: AVPlayerItemErrorLog = playerItem.errorLog() else {
+            return
+        }
+        NSLog("Error: \(errorLog)")
+    }
+    
+    @objc func failedToPlayToEndTime(_ notification: Notification) {
+        //Format errors    Playlist format error, Key format error, Session data format error    AVErrorFailedToParse
+        //Live playlist update errors    Must update live playlist in time as per HLS Spec    AVErrorContentNotUpdated
+        if let error : NSError = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? NSError {
+            //Network / Timeout errors    HTTP 4xx errors, HTTP 5xx errors, TCP/IP, DNS errors    AVErrorContentIsUnavailable, AVErrorNoLongerPlayable
+            if(error.code == -11863 /*AVErrorContentIsUnavailable*/ || error.code == -11867 /* AVErrorNoLongerPlayable*/ ){
+                self.onError(NetworkError(message: "avplayer http error"));
+            }
+            else {
+                self.onError(PlayerError(message: "avplayer error"));
+            }
+        }
+    }
+    
+    private func addPostPlayingBufferListeners(item : SlowMoPlayerItem){
+        observerStatus.append( item.observe(\.isPlaybackBufferEmpty, options: [.new]) { [weak self] (_, _) in
+            // show buffering
+            self?.setBuffering(true)
+        })
+                   
+        observerStatus.append( item.observe(\.isPlaybackLikelyToKeepUp, options: [.new]) { [weak self] (_, _) in
+            // hide buffering
+            self?.setBuffering(false)
+        })
+                   
+        observerStatus.append( item.observe( \.isPlaybackBufferFull, options: [.new]) { [weak self] (_, _) in
+            // hide buffering
+            self?.setBuffering(false)
+        })
+    }
+    
     private func setBuffering(_ value: Bool){
         self.channel.invokeMethod(Music.METHOD_IS_BUFFERING, arguments: value)
     }
@@ -595,6 +658,13 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.channel.invokeMethod(Music.METHOD_VOLUME, arguments: volume)
     }
     
+    private func onError(_ error: AssetAudioPlayerError){
+        self.channel.invokeMethod(Music.METHOD_ERROR, arguments: [
+            "type" : error.type,
+            "message" : error.message,
+        ])
+    }
+       
     var _rate : Float = 1.0
     var rate : Float {
         get {
@@ -606,7 +676,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 self.channel.invokeMethod(Music.METHOD_PLAY_SPEED, arguments: _rate)
             }
         }
-    };
+    }
     
     func setPlaySpeed(playSpeed: Double){
         self.rate = Float(playSpeed)
@@ -633,7 +703,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.playing = false
         self.currentTimeTimer?.invalidate()
         #if os(iOS)
-        self.deinitMediaPlayerNotifEvent()
+        self._deinit()
         #endif
         NotificationCenter.default.removeObserver(self)
         self.observerStatus.forEach {
@@ -660,14 +730,25 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     func loopSingleAudio(loop: Bool) {
         _loopSingleAudio = loop
         
+        let currentPos = self._currentTime
+        let currentPosMillis = Int(currentPos * 1000) //
+        
         if(loop){
             #if os(iOS)
             if #available(iOS 10.0, *) {
-                self.looper = AVPlayerLooper(player: self.player!, templateItem: self.player!.items()[0])
+                if let player = self.player {
+                    if(!player.items().isEmpty){
+                        self.looper = AVPlayerLooper(player: player, templateItem: player.items()[0])
+                    }
+                }
             }
             #elseif os(OSX)
             if #available(OSX 10.12, *) {
-                self.looper = AVPlayerLooper(player: self.player!, templateItem: self.player!.items()[0])
+                if let player = self.player {
+                    if(player.items().isEmpty){
+                        self.looper = AVPlayerLooper(player: player, templateItem: player.items()[0])
+                    }
+                }
             }
             #endif
         } else {
@@ -683,6 +764,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             }
             #endif
         }
+        seek(to: currentPosMillis)
     }
     
     var _currentTime : TimeInterval = 0
@@ -693,7 +775,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         set(newValue) {
             if(_currentTime != newValue){
                 _currentTime = newValue
-                self.channel.invokeMethod(Music.METHOD_POSITION, arguments: self._currentTime)
+                let currentTimeMS = _currentTime * 1000 //not possible to have a better precision on ios...
+                self.channel.invokeMethod(Music.METHOD_POSITION, arguments: currentTimeMS)
                 
                 if(self.displayMediaPlayerNotification){
                     #if os(iOS)
@@ -704,7 +787,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 }
             }
         }
-    };
+    }
     
     var _playing : Bool = false
     var playing : Bool {
@@ -715,7 +798,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             _playing = newValue
             self.channel.invokeMethod(Music.METHOD_IS_PLAYING, arguments: self._playing)
         }
-    };
+    }
     
     var currentTimeTimer: Timer?
     
@@ -755,7 +838,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     }
     
     @objc func updateTimer(){
-        //log("updateTimer");
+        //log("updateTimer")
         if let p = self.player {
             if let currentItem = p.currentItem {
                 self.currentTime = CMTimeGetSeconds(currentItem.currentTime())
@@ -777,6 +860,7 @@ class Music : NSObject, FlutterPlugin {
     static let METHOD_NEXT = "player.next"
     static let METHOD_PREV = "player.prev"
     static let METHOD_PLAY_OR_PAUSE = "player.playOrPause"
+    static let METHOD_ERROR = "player.error"
 
     var players = Dictionary<String, Player>()
     
@@ -806,14 +890,14 @@ class Music : NSObject, FlutterPlugin {
     
     //public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [AnyHashable : Any] = [:]) -> Bool {
     //    application.beginReceivingRemoteControlEvents()
-    //    return true;
+    //    return true
     //}
     
     let channel: FlutterMethodChannel
     let registrar: FlutterPluginRegistrar
     
     init(messenger: FlutterBinaryMessenger, registrar: FlutterPluginRegistrar) {
-        self.channel = FlutterMethodChannel(name: "assets_audio_player", binaryMessenger: messenger);
+        self.channel = FlutterMethodChannel(name: "assets_audio_player", binaryMessenger: messenger)
         self.registrar = registrar
     }
     
@@ -831,40 +915,39 @@ class Music : NSObject, FlutterPlugin {
                         code: "METHOD_CALL",
                         message: call.method + " Arguments must be an NSDictionary",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let id = args["id"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[id] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
-                result(self.getOrCreatePlayer(id: id).playing);
-                break;
+                result(self.getOrCreatePlayer(id: id).playing)
+
             case "play" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments must be an NSDictionary",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let id = args["id"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[id] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 self.getOrCreatePlayer(id: id)
-                    .play();
-                result(true);
-                break;
+                    .play()
+                result(true)
                 
             case "pause" :
                 guard let args = call.arguments as? NSDictionary else {
@@ -872,21 +955,20 @@ class Music : NSObject, FlutterPlugin {
                         code: "METHOD_CALL",
                         message: call.method + " Arguments must be an NSDictionary",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let id = args["id"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[id] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 self.getOrCreatePlayer(id: id)
-                    .pause();
-                result(true);
-                break;
+                    .pause()
+                result(true)
                 
             case "stop" :
                 guard let args = call.arguments as? NSDictionary else {
@@ -894,51 +976,50 @@ class Music : NSObject, FlutterPlugin {
                         code: "METHOD_CALL",
                         message: call.method + " Arguments must be an NSDictionary",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let id = args["id"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[id] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 
                 self.getOrCreatePlayer(id: id)
-                    .stop();
-                result(true);
-                break;
+                    .stop()
+                result(true)
+
             case "seek" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments must be an NSDictionary",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let id = args["id"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[id] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let pos = args["to"] as? Int else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[to] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 self.getOrCreatePlayer(id: id)
-                    .seek(to: pos);
-                result(true);
-                break;
+                    .seek(to: pos)
+                result(true)
                 
             case "volume" :
                 guard let args = call.arguments as? NSDictionary else {
@@ -946,29 +1027,28 @@ class Music : NSObject, FlutterPlugin {
                         code: "METHOD_CALL",
                         message: call.method + " Arguments must be an NSDictionary",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let id = args["id"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[id] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let volume = args["volume"] as? Double else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[volume] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 self.getOrCreatePlayer(id: id)
-                    .setVolume(volume: volume);
-                result(true);
-                break;
+                    .setVolume(volume: volume)
+                result(true)
                 
             case "playSpeed" :
                 guard let args = call.arguments as? NSDictionary else {
@@ -976,95 +1056,124 @@ class Music : NSObject, FlutterPlugin {
                         code: "METHOD_CALL",
                         message: call.method + " Arguments must be an NSDictionary",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let id = args["id"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[id] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let playSpeed = args["playSpeed"] as? Double else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[playSpeed] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 self.getOrCreatePlayer(id: id)
-                    .setPlaySpeed(playSpeed: playSpeed);
-                result(true);
-                break;
+                    .setPlaySpeed(playSpeed: playSpeed)
+                result(true)
+
+            case "showNotification" :
+                guard let args = call.arguments as? NSDictionary else {
+                      result(FlutterError(
+                          code: "METHOD_CALL",
+                          message: call.method + " Arguments must be an NSDictionary",
+                          details: nil)
+                      )
+                      break
+                }
+                guard let id = args["id"] as? String else {
+                    result(FlutterError(
+                        code: "METHOD_CALL",
+                        message: call.method + " Arguments[id] must be a String",
+                        details: nil)
+                    )
+                    break
+                }
+                 guard let show = args["show"] as? Bool else {
+                     result(FlutterError(
+                         code: "METHOD_CALL",
+                         message: call.method + " Arguments[show] must be a Bool",
+                         details: nil)
+                     )
+                     break
+                 }
+                 self.getOrCreatePlayer(id: id)
+                    .showNotification(show: show)
+                 result(true)
+
             case "loopSingleAudio" :
                 guard let args = call.arguments as? NSDictionary else {
                       result(FlutterError(
                           code: "METHOD_CALL",
                           message: call.method + " Arguments must be an NSDictionary",
                           details: nil)
-                      );
-                      break;
+                      )
+                      break
                 }
                 guard let id = args["id"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[id] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                  guard let loop = args["loop"] as? Bool else {
                      result(FlutterError(
                          code: "METHOD_CALL",
                          message: call.method + " Arguments[loop] must be a Bool",
                          details: nil)
-                     );
-                     break;
+                     )
+                     break
                  }
                  self.getOrCreatePlayer(id: id)
-                    .loopSingleAudio(loop: loop);
-                 result(true);
-                 break;
+                    .loopSingleAudio(loop: loop)
+                 result(true)
+
             case "forwardRewind" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments must be an NSDictionary",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let id = args["id"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[id] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let speed = args["speed"] as? Double else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[speed] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 self.getOrCreatePlayer(id: id)
-                    .forwardRewind(speed: speed);
-                result(true);
-                break;
+                    .forwardRewind(speed: speed)
+                result(true)
+
             case "forceNotificationForGroup" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments must be an NSDictionary",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 let id = args["id"] as? String //nullable
                 guard let isPlaying = args["isPlaying"] as? Bool else {
@@ -1072,16 +1181,16 @@ class Music : NSObject, FlutterPlugin {
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[isPlaying] must be a Bool",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let display = args["display"] as? Bool else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[display] must be a Bool",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 
                 
@@ -1101,62 +1210,61 @@ class Music : NSObject, FlutterPlugin {
                
                 result(true)
                
-                break;
             case "onAudioUpdated" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments must be an NSDictionary",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let id = args["id"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[id] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let path = args["path"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[path] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 
                 let audioMetas = fetchAudioMetas(from: args)
 
                 self.getOrCreatePlayer(id: id).onAudioUpdated(path: path, audioMetas: audioMetas)
-                result(true);
-                break;
+                result(true)
+
             case "open" :
                 guard let args = call.arguments as? NSDictionary else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments must be an NSDictionary",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let id = args["id"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[id] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let assetPath = args["path"] as? String else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[path] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 
                 let assetPackage = args["package"] as? String //can be null
@@ -1166,16 +1274,16 @@ class Music : NSObject, FlutterPlugin {
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[audioType] must be a String",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let volume = args["volume"] as? Double else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[volume] must be a Double",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 let seek = args["seek"] as? Int //can be null
                 guard let playSpeed = args["playSpeed"] as? Double else {
@@ -1183,16 +1291,16 @@ class Music : NSObject, FlutterPlugin {
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[playSpeed] must be a Double",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 guard let autoStart = args["autoStart"] as? Bool else {
                     result(FlutterError(
                         code: "METHOD_CALL",
                         message: call.method + " Arguments[autoStart] must be a Bool",
                         details: nil)
-                    );
-                    break;
+                    )
+                    break
                 }
                 
                 let networkHeaders = args["networkHeaders"] as? NSDictionary
@@ -1219,12 +1327,11 @@ class Music : NSObject, FlutterPlugin {
                         playSpeed: playSpeed,
                         networkHeaders: networkHeaders,
                         result: result
-                );
-                break;
+                )
                 
             default:
-                result(FlutterMethodNotImplemented);
-                break;
+                result(FlutterMethodNotImplemented)
+                break
                 
             }
         })
@@ -1232,3 +1339,22 @@ class Music : NSObject, FlutterPlugin {
     
 }
 
+class AssetAudioPlayerError {
+    let type: String
+    let message: String
+    init(type: String, message: String) {
+        self.type = type
+        self.message = message
+    }
+}
+    
+class NetworkError : AssetAudioPlayerError {
+    init(message: String) {
+        super.init(type: "network", message: message)
+    }
+}
+class PlayerError : AssetAudioPlayerError {
+    init(message: String) {
+        super.init(type: "player", message: message)
+    }
+}

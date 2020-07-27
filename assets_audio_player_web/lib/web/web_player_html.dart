@@ -74,7 +74,8 @@ class WebPlayerHtml extends WebPlayer {
 
       if (_position != currentPosition) {
         _position = currentPosition;
-        channel.invokeMethod(WebPlayer.methodPosition, currentPosition);
+        final positionMs = currentPosition * 1000;
+        channel.invokeMethod(WebPlayer.methodPosition, positionMs);
       }
       return Future.delayed(Duration(milliseconds: 200)).then((value) {
         return __listenPosition;
@@ -168,10 +169,14 @@ class WebPlayerHtml extends WebPlayer {
 
   @override
   void seek({double to}) {
-    if (_audioElement != null) {
-      if (to != null) {
-        _audioElement?.currentTime = to;
-      }
+    print("Final Seeking To $to from ${_audioElement.currentTime}");
+    if (_audioElement != null && to != null) {
+      /// Explainer on the `/1000`
+      /// The value being sent down from the plugin
+      /// is in `milliseconds` and `AudioElement` uses seconds.
+      /// This is to convert it.
+      double toInSeconds = to / 1000;
+      _audioElement?.currentTime = toInSeconds;
     }
   }
 
