@@ -116,7 +116,7 @@ class AssetsAudioPlayerGroup {
     return __notificationSettings;
   }
 
-  Future<void> add(
+  Future<Map> add(
     Audio audio, {
     LoopMode loopMode = LoopMode.none,
     double volume,
@@ -124,21 +124,28 @@ class AssetsAudioPlayerGroup {
     double playSpeed,
   }) async {
     final player = AssetsAudioPlayer.newPlayer();
-    player.open(
-      audio,
-      showNotification: false,
-      //not need here, we'll call another method `changeNotificationForGroup`
-      seek: seek,
-      autoStart: isPlaying.value,
-      //need to play() for player group
-      volume: volume,
-      loopMode: loopMode,
-      respectSilentMode: respectSilentMode,
-      playInBackground: playInBackground,
-      playSpeed: playSpeed,
-      notificationSettings: _notificationSettings,
-    );
-    await _addPlayer(audio, player);
+
+    try {
+      await player.open(
+        audio,
+        showNotification: false,
+        //not need here, we'll call another method `changeNotificationForGroup`
+        seek: seek,
+        autoStart: isPlaying.value,
+        //need to play() for player group
+        volume: volume,
+        loopMode: loopMode,
+        respectSilentMode: respectSilentMode,
+        playInBackground: playInBackground,
+        playSpeed: playSpeed,
+        notificationSettings: _notificationSettings,
+      );
+      await _addPlayer(audio, player);
+      return {"data": "opened"};
+    } on PlatformException catch (e) {
+      return {"error": e.toString()};
+      ;
+    }
   }
 
   Future<void> addAll(List<Audio> audios) async {
