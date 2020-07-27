@@ -144,7 +144,6 @@ class AssetsAudioPlayerGroup {
       return {"data": "opened"};
     } on PlatformException catch (e) {
       return {"error": e.toString()};
-      ;
     }
   }
 
