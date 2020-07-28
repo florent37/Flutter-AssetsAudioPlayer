@@ -122,7 +122,8 @@ class AssetsAudioPlayer {
   static final double maxPlaySpeed = 16.0;
   static final double defaultVolume = maxVolume;
   static final double defaultPlaySpeed = 1.0;
-  static final AudioFocusStrategy defaultFocusStrategy = AudioFocusStrategy.request(resumeAfterInterruption: true);
+  static final AudioFocusStrategy defaultFocusStrategy =
+      AudioFocusStrategy.request(resumeAfterInterruption: true);
   static final NotificationSettings defaultNotificationSettings =
       const NotificationSettings();
 
@@ -963,7 +964,6 @@ class AssetsAudioPlayer {
     AudioFocusStrategy audioFocusStrategy,
     NotificationSettings notificationSettings,
   }) async {
-
     final focusStrategy = audioFocusStrategy ?? defaultFocusStrategy;
 
     final currentAudio = _lastOpenedAssetsAudio;
@@ -1133,7 +1133,6 @@ class AssetsAudioPlayer {
     AudioFocusStrategy audioFocusStrategy,
     bool forceOpen = false, //skip the _acceptUserOpen
   }) async {
-
     final focusStrategy = audioFocusStrategy ?? defaultFocusStrategy;
 
     if (forceOpen) {

@@ -13,7 +13,6 @@ String describeHeadPhoneStrategy(HeadPhoneStrategy strategy) {
 }
 
 class AudioFocusStrategy {
-
   final bool request;
   final bool resumeAfterInterruption;
   final bool resumeOthersPlayersAfterDone;
@@ -21,8 +20,8 @@ class AudioFocusStrategy {
   /***
    * Don't request focus
    */
-  AudioFocusStrategy.none() :
-        this.request = false,
+  AudioFocusStrategy.none()
+      : this.request = false,
         this.resumeAfterInterruption = false,
         this.resumeOthersPlayersAfterDone = false;
 
@@ -32,10 +31,10 @@ class AudioFocusStrategy {
    * resumeAfterInterruption : When other app request focus (phone call, other player like spotify play), pause the AssetMediaPlayer
    * resumeOthersPlayersAfterDone : When this player finish to play, tell others native players (like spotify), to resume
    */
-  const AudioFocusStrategy.request({
-    this.resumeAfterInterruption = false,
-    this.resumeOthersPlayersAfterDone = false
-  }) : this.request = true;
+  const AudioFocusStrategy.request(
+      {this.resumeAfterInterruption = false,
+      this.resumeOthersPlayersAfterDone = false})
+      : this.request = true;
 }
 
 Map<String, dynamic> describeAudioFocusStrategy(AudioFocusStrategy strategy) {
