@@ -32,6 +32,8 @@ class AssetsAudioPlayerGroup {
 
   final PlayInBackground playInBackground;
 
+  AssetsAudioPlayerGroupErrorHandler onErrorDo; //custom error Handler
+
   final PlayerGroupMetasCallback updateNotification;
 
   final PlayerGroupCallback onNotificationOpened;
@@ -67,7 +69,13 @@ class AssetsAudioPlayerGroup {
     this.onNotificationStop,
     this.respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
     this.playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
-  });
+  }) {
+    //default action, can be overriden using player.onErrorDo = (error, player) { ACTION };
+    this.onErrorDo = (group, errorHandler) {
+      print(errorHandler.error.message);
+      errorHandler.player.stop();
+    };
+  }
 
   List<PlayingAudio> get playingAudios {
     final List<PlayingAudio> audios = <PlayingAudio>[];
@@ -166,7 +174,18 @@ class AssetsAudioPlayerGroup {
     });
     _subscriptions.add(finishedSubscription);
     _audiosWithPlayers[audio] = player;
+
+    player.onErrorDo = (errorHandler) {
+      _onPlayerError(errorHandler);
+    };
+
     await _onPlayersChanged();
+  }
+
+  void _onPlayerError(ErrorHandler errorHandler){
+    if(this.onErrorDo != null) {
+      this.onErrorDo(this, errorHandler);
+    }
   }
 
   ///Called when an audio is added or removed (/finished)
