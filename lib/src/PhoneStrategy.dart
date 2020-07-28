@@ -9,17 +9,39 @@ String describeHeadPhoneStrategy(HeadPhoneStrategy strategy) {
     case HeadPhoneStrategy.pauseOnUnplugPlayOnPlug:
       return "pauseOnUnplugPlayOnPlug";
   }
+  return null;
 }
 
-enum PhoneCallStrategy { none, pauseOnPhoneCall, pauseOnPhoneCallResumeAfter }
+class AudioFocusStrategy {
 
-String describePhoneCallStrategy(PhoneCallStrategy strategy) {
-  switch (strategy) {
-    case PhoneCallStrategy.none:
-      return "none";
-    case PhoneCallStrategy.pauseOnPhoneCall:
-      return "pauseOnPhoneCall";
-    case PhoneCallStrategy.pauseOnPhoneCallResumeAfter:
-      return "pauseOnPhoneCallResumeAfter";
-  }
+  final bool request;
+  final bool resumeAfterInterruption;
+  final bool resumeOthersPlayersAfterDone;
+
+  /***
+   * Don't request focus
+   */
+  AudioFocusStrategy.none() :
+        this.request = false,
+        this.resumeAfterInterruption = false,
+        this.resumeOthersPlayersAfterDone = false;
+
+  /***
+   * Request focus
+   *
+   * resumeAfterInterruption : When other app request focus (phone call, other player like spotify play), pause the AssetMediaPlayer
+   * resumeOthersPlayersAfterDone : When this player finish to play, tell others native players (like spotify), to resume
+   */
+  const AudioFocusStrategy.request({
+    this.resumeAfterInterruption = false,
+    this.resumeOthersPlayersAfterDone = false
+  }) : this.request = true;
+}
+
+Map<String, dynamic> describeAudioFocusStrategy(AudioFocusStrategy strategy) {
+  return {
+    "request": strategy.request,
+    "resumeAfterInterruption": strategy.resumeAfterInterruption,
+    "resumeOthersPlayersAfterDone": strategy.resumeOthersPlayersAfterDone,
+  };
 }

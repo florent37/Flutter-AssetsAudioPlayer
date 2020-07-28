@@ -6,6 +6,7 @@ import android.media.MediaPlayer.*
 import android.net.Uri
 import android.util.Log
 import com.github.florent37.assets_audio_player.AssetAudioPlayerThrowable
+import com.github.florent37.assets_audio_player.AssetsAudioPlayerPlugin
 import com.github.florent37.assets_audio_player.Player
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +22,9 @@ class PlayerImplemTesterMediaPlayer : PlayerImplemTester {
     }
 
     override suspend fun open(configuration: PlayerFinderConfiguration): PlayerFinder.PlayerWithDuration {
-        Log.d("PlayerImplem", "trying to open with native mediaplayer")
+        if(AssetsAudioPlayerPlugin.displayLogs) {
+            Log.d("PlayerImplem", "trying to open with native mediaplayer")
+        }
         val mediaPlayer = PlayerImplemMediaPlayer(
                 onFinished = {
                     configuration.onFinished?.invoke()
@@ -48,7 +51,9 @@ class PlayerImplemTesterMediaPlayer : PlayerImplemTester {
                     duration = durationMS
             )
         } catch (t: Throwable) {
-            Log.d("PlayerImplem", "failed to open with native mediaplayer")
+            if(AssetsAudioPlayerPlugin.displayLogs) {
+                Log.d("PlayerImplem", "failed to open with native mediaplayer")
+            }
 
             mediaPlayer.release()
             throw  t
@@ -134,9 +139,6 @@ class PlayerImplemMediaPlayer(
             }
 
             mediaPlayer?.setOnErrorListener { _, what, extra: Int ->
-
-                Log.d("PLAYER","XXXX MEEDIAPLAYER SETONERRORLISTENER XXXX")
-
                 // what
                 //    MEDIA_ERROR_UNKNOWN
                 //    MEDIA_ERROR_SERVER_DIED
@@ -176,8 +178,6 @@ class PlayerImplemMediaPlayer(
                 }
                 mediaPlayer?.prepare()
             } catch (error: Throwable) {
-                Log.d("PLAYER","XXXX MEDIAPLAYER CATCH XXXX")
-
                 if (!onThisMediaReady) {
                     continuation.resumeWithException(error)
                 } else {

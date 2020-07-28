@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.github.florent37.assets_audio_player.AssetAudioPlayerThrowable
+import com.github.florent37.assets_audio_player.AssetsAudioPlayerPlugin
 import com.github.florent37.assets_audio_player.Player
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.AUDIO_SESSION_ID_UNSET
@@ -35,7 +36,9 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
     }
 
     override suspend fun open(configuration: PlayerFinderConfiguration) : PlayerFinder.PlayerWithDuration {
-        Log.d("PlayerImplem","trying to open with exoplayer($type)")
+        if(AssetsAudioPlayerPlugin.displayLogs) {
+            Log.d("PlayerImplem", "trying to open with exoplayer($type)")
+        }
         //some type are only for web
         if(configuration.audioType != Player.AUDIO_TYPE_LIVESTREAM && configuration.audioType != Player.AUDIO_TYPE_LIVESTREAM){
             if(type == Type.HLS || type == Type.DASH || type == Type.SmoothStreaming) {
@@ -71,7 +74,9 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
                     duration = durationMS
             )
         } catch (t: Throwable) {
-            Log.d("PlayerImplem","failed to open with exoplayer($type)")
+            if(AssetsAudioPlayerPlugin.displayLogs) {
+                Log.d("PlayerImplem", "failed to open with exoplayer($type)")
+            }
             mediaPlayer.release()
             throw  t
         }
@@ -237,7 +242,6 @@ class PlayerImplemExoPlayer(
             this.mediaPlayer?.addListener(object : com.google.android.exoplayer2.Player.EventListener {
 
                 override fun onPlayerError(error: ExoPlaybackException) {
-                    Log.d("PLAYER","XXXX onPlayerError XXXX")
                     val errorMapped = mapError(error)
                     if (!onThisMediaReady) {
                         continuation.resumeWithException(errorMapped)
@@ -282,8 +286,6 @@ class PlayerImplemExoPlayer(
 
             mediaPlayer?.prepare(mediaSource)
         } catch (error: Throwable) {
-            Log.d("PLAYER","XXXX CATCH EXOPLAYER XXXX")
-
             if (!onThisMediaReady) {
                 continuation.resumeWithException(error)
             } else {

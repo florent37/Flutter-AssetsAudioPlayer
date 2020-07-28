@@ -348,7 +348,7 @@ class _MyAppState extends State<MyApp> {
                           Playlist(audios: myAudios),
                           showNotification: true,
                           headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplugPlayOnPlug,
-                          phoneCallStrategy: PhoneCallStrategy.pauseOnPhoneCallResumeAfter,
+                          audioFocusStrategy: AudioFocusStrategy.request(resumeAfterInterruption: true),
                         );
                       },
                       onSelected: (myAudio) async {
@@ -358,7 +358,10 @@ class _MyAppState extends State<MyApp> {
                             autoStart: true,
                             showNotification: true,
                             playInBackground: PlayInBackground.enabled,
-                            phoneCallStrategy: PhoneCallStrategy.none,
+                            audioFocusStrategy: AudioFocusStrategy.request(
+                              resumeAfterInterruption: true,
+                              resumeOthersPlayersAfterDone: true
+                            ),
                             headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
                             notificationSettings: NotificationSettings(
                               //seekBarEnabled: false,
