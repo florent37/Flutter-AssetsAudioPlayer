@@ -1,21 +1,5 @@
 package com.github.florent37.assets_audio_player.stopwhencall
 
-enum class PhoneCallStrategy {
-    none,
-    pauseOnPhoneCall,
-    pauseOnPhoneCallResumeAfter;
-
-    companion object {
-        fun from(s: String?): PhoneCallStrategy {
-            return when(s){
-                "pauseOnPhoneCall" -> pauseOnPhoneCall
-                "pauseOnPhoneCallResumeAfter" -> pauseOnPhoneCallResumeAfter
-                else -> none
-            }
-        }
-    }
-}
-
 abstract class StopWhenCall {
 
     enum class AudioState {
@@ -44,7 +28,7 @@ abstract class StopWhenCall {
         }
     }
 
-    abstract fun requestAudioFocus() : StopWhenCall.AudioState 
+    abstract fun requestAudioFocus(audioFocusStrategy: AudioFocusStrategy) : StopWhenCall.AudioState
     abstract fun stop()
 }
 

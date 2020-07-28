@@ -1,3 +1,8 @@
+## 2.0.9
+
+* Renamed PhoneCallStrategy to AudioFocusStrategy
+* Allow on android to resume native players after focus lost
+
 ## 2.0.8+5
 
 * Added Android HeadPhoneStrategy

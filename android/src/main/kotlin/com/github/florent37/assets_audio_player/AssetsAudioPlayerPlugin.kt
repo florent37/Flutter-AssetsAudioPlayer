@@ -3,11 +3,13 @@ package com.github.florent37.assets_audio_player
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.SystemClock
+import android.view.KeyEvent
 import androidx.annotation.NonNull
 import com.github.florent37.assets_audio_player.headset.HeadsetStrategy
 import com.github.florent37.assets_audio_player.notification.*
+import com.github.florent37.assets_audio_player.stopwhencall.AudioFocusStrategy
 import com.github.florent37.assets_audio_player.stopwhencall.HeadsetManager
-import com.github.florent37.assets_audio_player.stopwhencall.PhoneCallStrategy
 import com.github.florent37.assets_audio_player.stopwhencall.StopWhenCall
 import com.github.florent37.assets_audio_player.stopwhencall.StopWhenCallAudioFocus
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -34,13 +36,14 @@ internal val METHOD_PLAY_OR_PAUSE = "player.playOrPause"
 internal val METHOD_NOTIFICATION_STOP = "player.stop"
 internal val METHOD_ERROR = "player.error"
 
-class AssetsAudioPlayerPlugin : FlutterPlugin,PluginRegistry.NewIntentListener, ActivityAware {
+class AssetsAudioPlayerPlugin : FlutterPlugin, PluginRegistry.NewIntentListener, ActivityAware {
 
     var myActivity: Activity? = null
-    var notificationChannel : MethodChannel ?= null
+    var notificationChannel: MethodChannel? = null
 
     companion object {
         var instance: AssetsAudioPlayerPlugin? = null
+        var displayLogs = false
     }
 
     var assetsAudioPlayer: AssetsAudioPlayer? = null
@@ -71,7 +74,7 @@ class AssetsAudioPlayerPlugin : FlutterPlugin,PluginRegistry.NewIntentListener, 
     }
 
     override fun onNewIntent(intent: Intent?): Boolean {
-        if(intent == null)
+        if (intent == null)
             return false
 
         if (!intent.getBooleanExtra("isVisited", false)) {
@@ -228,7 +231,7 @@ class AssetsAudioPlayer(
                     channel.invokeMethod(METHOD_ERROR, mapOf(
                             "type" to it.type,
                             "message" to it.message
-                        ))
+                    ))
                 }
             }
             return@getOrPut player
@@ -284,7 +287,7 @@ class AssetsAudioPlayer(
                         return
                     }
                     val removeNotification = args["removeNotification"] as? Boolean ?: true
-                    getOrCreatePlayer(id).stop(removeNotification= removeNotification)
+                    getOrCreatePlayer(id).stop(removeNotification = removeNotification)
                     result.success(null)
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
@@ -427,18 +430,18 @@ class AssetsAudioPlayer(
 
                     val audioMetas = fetchAudioMetas(args)
                     val notificationSettings = fetchNotificationSettings(args)
-                    
-                    if(!display){
+
+                    if (!display) {
                         notificationManager.stopNotification()
-                    } else if(id != null) {
+                    } else if (id != null) {
                         getOrCreatePlayer(id).forceNotificationForGroup(
-                            audioMetas = audioMetas,
-                            isPlaying = isPlaying,
-                            display = display,
-                            notificationSettings= notificationSettings
+                                audioMetas = audioMetas,
+                                isPlaying = isPlaying,
+                                display = display,
+                                notificationSettings = notificationSettings
                         )
                     }
-                   
+
                     result.success(null)
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
@@ -482,15 +485,15 @@ class AssetsAudioPlayer(
                     val notificationSettings = fetchNotificationSettings(args)
                     val audioMetas = fetchAudioMetas(args).let { meta ->
                         meta.copy(
-                            image = meta.image?.let { img ->
-                                img.copy(
-                                        imagePath = uriResolver.imagePath(img.imagePath)
-                                )
-                            }
+                                image = meta.image?.let { img ->
+                                    img.copy(
+                                            imagePath = uriResolver.imagePath(img.imagePath)
+                                    )
+                                }
                         )
                     }
 
-                    val phoneCallStrategy = PhoneCallStrategy.from(args["phoneCallStrategy"] as? String)
+                    val audioFocusStrategy = AudioFocusStrategy.from(args["audioFocusStrategy"] as? Map<*, *>)
                     val headsetStrategy = HeadsetStrategy.from(args["headPhoneStrategy"] as? String)
 
                     getOrCreatePlayer(id).open(
@@ -506,9 +509,9 @@ class AssetsAudioPlayer(
                             result = result,
                             playSpeed = playSpeed,
                             audioMetas = audioMetas,
-                            headsetStrategy= headsetStrategy,
-                            phoneCallStrategy= phoneCallStrategy,
-                            networkHeaders= networkHeaders,
+                            headsetStrategy = headsetStrategy,
+                            audioFocusStrategy = audioFocusStrategy,
+                            networkHeaders = networkHeaders,
                             context = context
                     )
                 } ?: run {
