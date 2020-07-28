@@ -22,7 +22,8 @@ class ErrorHandler {
 }
 
 typedef AssetsAudioPlayerErrorHandler = Function(ErrorHandler errorHandler);
-typedef AssetsAudioPlayerGroupErrorHandler = Function(AssetsAudioPlayerGroup group, ErrorHandler errorHandler);
+typedef AssetsAudioPlayerGroupErrorHandler = Function(
+    AssetsAudioPlayerGroup group, ErrorHandler errorHandler);
 
 AssetsAudioPlayerErrorType parseAssetsAudioPlayerErrorType(String type) {
   switch (type) {

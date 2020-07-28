@@ -182,8 +182,8 @@ class AssetsAudioPlayerGroup {
     await _onPlayersChanged();
   }
 
-  void _onPlayerError(ErrorHandler errorHandler){
-    if(this.onErrorDo != null) {
+  void _onPlayerError(ErrorHandler errorHandler) {
+    if (this.onErrorDo != null) {
       this.onErrorDo(this, errorHandler);
     }
   }
