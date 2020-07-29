@@ -1,4 +1,4 @@
-## 2.0.9
+## 2.0.9+1
 
 * Renamed PhoneCallStrategy to AudioFocusStrategy
 * Allow on android to resume native players after focus lost
