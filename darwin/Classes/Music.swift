@@ -348,7 +348,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         }
         
         if ((self.notificationSettings ?? NotificationSettings()).seekBarEnabled) {
-            self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = self.currentSongDuration
+            self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = self.currentSongDurationMs / 1000
             self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
         } else {
             self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = 0
@@ -466,7 +466,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         #endif
     }
     
-    var currentSongDuration : Float64 = Float64(0.0)
+    var currentSongDurationMs : Float64 = Float64(0.0)
     
     func open(assetPath: String,
               assetPackage: String?,
@@ -563,16 +563,15 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                     
                     if(audioType == "liveStream"){
                         self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDurationMs": 0.0])
-                        self?.currentSongDuration = Float64(0.0)
+                        self?.currentSongDurationMs = Float64(0.0)
                         self?.isLiveStream = true
                         #if os(iOS)
                         self?.setupMediaPlayerNotificationView(notificationSettings: notificationSettings, audioMetas: audioMetas, isPlaying: false)
                         #endif
                     } else {
-                        let audioDurationSeconds = CMTimeGetSeconds(item.duration)
-                        let audioDurationMS = audioDurationSeconds * 1000
-                        self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDurationMs": audioDurationMS])
-                        self?.currentSongDuration = audioDurationSeconds
+                        let audioDurationMs = self?.getMillisecondsFromCMTime(item.duration) ?? 0
+                        self?.channel.invokeMethod(Music.METHOD_CURRENT, arguments: ["totalDurationMs": audioDurationMs])
+                        self?.currentSongDurationMs = audioDurationMs
                         #if os(iOS)
                         self?.setupMediaPlayerNotificationView(notificationSettings: notificationSettings, audioMetas: audioMetas, isPlaying: false)
                         #endif
@@ -618,7 +617,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 return
             }
             
-            self.currentTime = 0
+            self.currentTimeMs = 0.0
             self.playing = false
         } catch let error {
             result(FlutterError(
@@ -671,6 +670,16 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             // hide buffering
             self?.setBuffering(false)
         })
+    }
+    
+    func getMillisecondsFromCMTime(_ time: CMTime) -> Double {
+        let seconds = CMTimeGetSeconds(time);
+        let milliseconds = seconds * 1000;
+        return milliseconds;
+    }
+    
+    func getSecondsFromCMTime(_ time: CMTime) -> Double {
+        return self.getMillisecondsFromCMTime(time) / 1000;
     }
     
     @objc func handleInterruption(_ notification: Notification) {
@@ -785,7 +794,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     func play(){
         self.player?.play()
         self.player?.rate = self.rate
-        self.currentTimeTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
+        self.currentTimeTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
         self.currentTimeTimer?.fire()
         self.playing = true
         
@@ -797,8 +806,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     func loopSingleAudio(loop: Bool) {
         _loopSingleAudio = loop
         
-        let currentPos = self._currentTime
-        let currentPosMillis = Int(currentPos * 1000) //
+        let currentPosMillis = self._currentTime
         
         if(loop){
             #if os(iOS)
@@ -831,19 +839,19 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             }
             #endif
         }
-        seek(to: currentPosMillis)
+        seek(to: Int(currentPosMillis))
     }
     
-    var _currentTime : TimeInterval = 0
-    private var currentTime : TimeInterval {
+    var _currentTime : Double = 0.0
+    
+    private var currentTimeMs : Double {
         get {
             return _currentTime
         }
         set(newValue) {
             if(_currentTime != newValue){
                 _currentTime = newValue
-                let currentTimeMS = _currentTime * 1000 //not possible to have a better precision on ios...
-                self.channel.invokeMethod(Music.METHOD_POSITION, arguments: currentTimeMS)
+                self.channel.invokeMethod(Music.METHOD_POSITION, arguments: newValue)
                 
                 if(self.displayMediaPlayerNotification){
                     #if os(iOS)
@@ -854,6 +862,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 }
             }
         }
+    }
+    
+    func updateCurrentTime(time: CMTime){
+        self.currentTimeMs = self.getMillisecondsFromCMTime(time)
     }
     
     var _playing : Bool = false
@@ -908,7 +920,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         //log("updateTimer")
         if let p = self.player {
             if let currentItem = p.currentItem {
-                self.currentTime = CMTimeGetSeconds(currentItem.currentTime())
+                self.updateCurrentTime(time: currentItem.currentTime())
             }
         }
     }
