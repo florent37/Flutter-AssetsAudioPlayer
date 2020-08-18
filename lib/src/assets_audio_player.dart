@@ -998,7 +998,8 @@ class AssetsAudioPlayer {
         if (audio.package != null) {
           params["package"] = audio.package;
         }
-        if (audio.audioType == AudioType.file ||
+        if (audio.audioType == AudioType.file || 
+            audio.audioType == AudioType.network || 
             audio.audioType == AudioType.liveStream) {
           params["networkHeaders"] =
               audio.networkHeaders ?? networkSettings.defaultHeaders;
