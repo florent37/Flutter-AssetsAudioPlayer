@@ -669,7 +669,7 @@ assetsAudioPlayer.open(
 
 assetsAudioPlayer.next();
 assetsAudioPlayer.prev();
-assetsAudioPlayer.playAtIndex(1);
+assetsAudioPlayer.playlistPlayAtIndex(1);
 ```
 
 ## Audio Widget
@@ -702,7 +702,7 @@ Widget build(BuildContext context) {
           //onReadyToPlay
       },
       onPositionChanged: (current, duration) {
-          //onReadyToPlay
+          //onPositionChanged
       },
   );
 }
