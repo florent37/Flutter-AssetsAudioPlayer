@@ -61,6 +61,7 @@ class _MyAppState extends State<MyApp> {
     ),
     Audio(
       "assets/audios/rock.mp3",
+      //playSpeed: 2.0,
       metas: Metas(
         id: "Rock",
         title: "Rock",
@@ -71,7 +72,7 @@ class _MyAppState extends State<MyApp> {
       ),
     ),
     Audio(
-      "assets/audios/country.mp3",
+      "assets/audios/2 country.mp3",
       metas: Metas(
         id: "Country",
         title: "Country",
@@ -137,6 +138,9 @@ class _MyAppState extends State<MyApp> {
     //}));
     _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
       print("playlistAudioFinished : $data");
+    }));
+    _subscriptions.add(_assetsAudioPlayer.audioSessionId.listen((sessionId) {
+      print("audioSessionId : $sessionId");
     }));
     //_subscriptions.add(_assetsAudioPlayer.current.listen((data) {
     //  print("current : $data");
@@ -278,6 +282,7 @@ class _MyAppState extends State<MyApp> {
                                     onNext: () {
                                       //_assetsAudioPlayer.forward(Duration(seconds: 10));
                                       _assetsAudioPlayer.next(
+                                        keepLoopMode: true
                                           /*keepLoopMode: false*/);
                                     },
                                     onPrevious: () {
@@ -342,6 +347,8 @@ class _MyAppState extends State<MyApp> {
                         _assetsAudioPlayer.open(
                           Playlist(audios: myAudios),
                           showNotification: true,
+                          headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplugPlayOnPlug,
+                          audioFocusStrategy: AudioFocusStrategy.request(resumeAfterInterruption: true),
                         );
                       },
                       onSelected: (myAudio) async {
@@ -349,9 +356,13 @@ class _MyAppState extends State<MyApp> {
                           await _assetsAudioPlayer.open(
                             myAudio,
                             autoStart: true,
-                            respectSilentMode: true,
                             showNotification: true,
                             playInBackground: PlayInBackground.enabled,
+                            audioFocusStrategy: AudioFocusStrategy.request(
+                              resumeAfterInterruption: true,
+                              resumeOthersPlayersAfterDone: true
+                            ),
+                            headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
                             notificationSettings: NotificationSettings(
                               //seekBarEnabled: false,
                               //stopEnabled: true,

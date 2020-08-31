@@ -1,3 +1,5 @@
+package com.github.florent37.assets_audio_player.stopwhencall
+
 abstract class StopWhenCall {
 
     enum class AudioState {
@@ -26,7 +28,7 @@ abstract class StopWhenCall {
         }
     }
 
-    abstract fun requestAudioFocus() : StopWhenCall.AudioState 
+    abstract fun requestAudioFocus(audioFocusStrategy: AudioFocusStrategy) : StopWhenCall.AudioState
     abstract fun stop()
 }
 

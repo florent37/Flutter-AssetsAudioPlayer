@@ -11,6 +11,26 @@ class SongsSelector extends StatelessWidget {
 
   SongsSelector({@required this.playing, @required this.audios, @required this.onSelected, @required this.onPlaylistSelected});
 
+  Widget _image(Audio item) {
+    if(item.metas.image == null){
+      return SizedBox(height: 40, width: 40);
+    }
+
+    return item.metas.image?.type == ImageType.network
+        ? Image.network(
+      item.metas.image.path,
+      height: 40,
+      width: 40,
+      fit: BoxFit.cover,
+    )
+        : Image.asset(
+      item.metas.image.path,
+      height: 40,
+      width: 40,
+      fit: BoxFit.cover,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Neumorphic(
@@ -50,19 +70,7 @@ class SongsSelector extends StatelessWidget {
                       leading: Material(
                         shape: CircleBorder(),
                         clipBehavior: Clip.antiAlias,
-                        child: item.metas.image.type == ImageType.network
-                            ? Image.network(
-                                item.metas.image.path,
-                                height: 40,
-                                width: 40,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset(
-                                item.metas.image.path,
-                                height: 40,
-                                width: 40,
-                                fit: BoxFit.cover,
-                              ),
+                        child: _image(item),
                       ),
                       title: Text(item.metas.title,
                           style: TextStyle(

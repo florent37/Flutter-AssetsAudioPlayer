@@ -17,6 +17,7 @@ abstract class PlayerImplem(
     abstract fun stop()
     abstract fun play()
     abstract fun pause()
+    abstract fun getSessionId(listener: (Int) -> Unit)
     abstract suspend fun open(context: Context,
                      flutterAssets: FlutterPlugin.FlutterAssets,
                      assetAudioPath: String?,

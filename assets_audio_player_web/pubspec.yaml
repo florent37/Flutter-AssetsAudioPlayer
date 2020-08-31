@@ -1,6 +1,6 @@
 name: assets_audio_player_web
 description: Web plugin for assets_audio_player, play music/audio stored in assets files directly from Flutter.
-version: 2.0.6+1
+version: 2.0.9+2
 #author: Florent Champigny <champigny.florent@gmail.com>
 homepage: https://github.com/florent37/Flutter-AssetsAudioPlayer
 

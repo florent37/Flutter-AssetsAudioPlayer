@@ -1,3 +1,5 @@
+package com.github.florent37.assets_audio_player.stopwhencall
+
 import android.content.Context
 import android.media.AudioManager
 import androidx.media.AudioAttributesCompat
@@ -11,7 +13,7 @@ class StopWhenCallAudioFocus(private val context: Context) : StopWhenCall() {
     private val focusLock = Any()
 
     private var request: AudioFocusRequestCompat? = null
-    private val listener: ((Int) -> Unit) = { focusChange ->
+    private fun generateListener() : ((Int) -> Unit) = { focusChange ->
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN ->
                 synchronized(focusLock) {
@@ -29,11 +31,24 @@ class StopWhenCallAudioFocus(private val context: Context) : StopWhenCall() {
         }
     }
 
-    override fun requestAudioFocus() : AudioState {
+    override fun requestAudioFocus(audioFocusStrategy: AudioFocusStrategy) : AudioState {
+        if(audioFocusStrategy is AudioFocusStrategy.None)
+            return AudioState.FORBIDDEN
+        
+        val strategy = audioFocusStrategy as AudioFocusStrategy.Request
+        
         request?.let {
             AudioManagerCompat.abandonAudioFocusRequest(audioManager, it)
         }
-        this.request = AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN).also {
+        
+        val requestType = if(strategy.resumeOthersPlayersAfterDone){
+            AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT
+        } else {
+            AudioManagerCompat.AUDIOFOCUS_GAIN
+        }
+        
+        val listener = generateListener()
+        this.request = AudioFocusRequestCompat.Builder(requestType).also {
             it.setAudioAttributes(AudioAttributesCompat.Builder().run {
                 setUsage(AudioAttributesCompat.USAGE_MEDIA)
                 setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
@@ -46,7 +61,7 @@ class StopWhenCallAudioFocus(private val context: Context) : StopWhenCall() {
             listener(result)
         }
         return when(result){
-            AudioManager.AUDIOFOCUS_GAIN -> AudioState.AUTHORIZED_TO_PLAY
+            AudioManager.AUDIOFOCUS_GAIN, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT -> AudioState.AUTHORIZED_TO_PLAY
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> AudioState.REDUCE_VOLUME
             else -> AudioState.FORBIDDEN
         }

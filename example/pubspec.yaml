@@ -1,7 +1,7 @@
 name: assets_audio_player_example
 description: Demonstrates how to use the assets_audio_player plugin.
 publish_to: 'none'
-version: 2.0.1+7
+version: 2.0.7+4
 
 environment:
   sdk: ">=2.6.0 <3.0.0"
@@ -21,6 +21,8 @@ dependencies:
 
   file: ^5.0.4
   flutter_audio_recorder: 0.5.5
+
+  flutter_audio_query: ^0.3.4+1
 
 dev_dependencies:
   flutter_test:

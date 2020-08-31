@@ -1,80 +1,106 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MaterialApp(home: Home()));
 }
 
-class MyApp extends StatefulWidget {
+class Home extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  HomeState createState() {
+    return HomeState();
+  }
 }
 
-class _MyAppState extends State {
-  final audios = [
-    Audio.liveStream(
-      "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p",
-      metas: Metas(
-        title: "Online",
-        artist: "Florent Champigny",
-        album: "OnlineAlbum",
-        image: MetasImage.network(
-            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
-      ),
-    ),
-    Audio.liveStream(
-      "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p",
-      metas: Metas(
-        title: "Instrumental",
-        artist: "Florent Champigny",
-        album: "InstrumentalAlbum",
-        image: MetasImage.network(
-            "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
-      ),
-    ),
-  ];
-
-  final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
+class HomeState extends State<Home> {
+  final assetsAudioPlayer = AssetsAudioPlayer();
+  int count = 0;
+  int playlistCount = 0;
+  Audio currentAudio = Audio('assets/audios/water.mp3');
 
   @override
   void initState() {
-    _assetsAudioPlayer.stop();
-    _assetsAudioPlayer.playlistFinished.listen((data) {
-      print("finished : $data");
-    });
-    _assetsAudioPlayer.playlistAudioFinished.listen((data) {
-      print("playlistAudioFinished : $data");
-    });
-    _assetsAudioPlayer.current.listen((data) {
-      print("current : $data");
-    });
-    _assetsAudioPlayer.onReadyToPlay.listen((audio) {
-      print("onRedayToPlay : $audio");
-    });
-    _assetsAudioPlayer.open(
-        Playlist(audios: audios),
-        showNotification: false,
-        playInBackground: PlayInBackground.enabled,
-        respectSilentMode: true
-    );
     super.initState();
+    assetsAudioPlayer.playlistAudioFinished.listen((Playing playing) {
+      setState(() {
+        count++;
+      });
+    });
+    assetsAudioPlayer.playlistFinished.listen((finished) {
+      print(finished.toString());
+      if(finished) {
+        setState(() {
+          playlistCount++;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: RaisedButton(
-            child: Text('Next'),
-            onPressed: () {
-              print(_assetsAudioPlayer.current.value);
-              _assetsAudioPlayer.next();
-              Future.delayed(Duration(seconds: 5), () {
-                print(_assetsAudioPlayer.current.value);
-              });
-            },
-          ),
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            RaisedButton(
+              child: Text("load"),
+              onPressed: () {
+                assetsAudioPlayer.open(
+                  currentAudio,
+                  showNotification: true,
+                  notificationSettings: NotificationSettings(prevEnabled: false),
+                  loopMode: LoopMode.single,
+                  autoStart: false,
+                );
+              },
+            ),
+            PlayerBuilder.isPlaying(
+              player: assetsAudioPlayer,
+              builder: (context, isPlaying) {
+                return RaisedButton(
+                  child: Text(isPlaying ? "Pause" : "Play"),
+                  onPressed: () {
+                    setState(() {
+                      if (isPlaying) {
+                        assetsAudioPlayer.pause();
+                      } else {
+                        assetsAudioPlayer.play();
+                      }
+                    });
+                  },
+                );
+              },
+            ),
+            PlayerBuilder.loopMode(
+              player: assetsAudioPlayer,
+              builder: (context, loopMode) {
+                return RaisedButton(
+                  child: Text(loopMode == LoopMode.playlist ? "looping" : "not-looping"),
+                  onPressed: () {
+                    setState(() {
+                      if(loopMode == LoopMode.playlist){
+                        assetsAudioPlayer.setLoopMode(LoopMode.none);
+                      } else {
+                        assetsAudioPlayer.setLoopMode(LoopMode.playlist);
+                      }
+                    });
+                  },
+                );
+              },
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text('count: ' + count.toString()),
+            ),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text('playlist count: ' + playlistCount.toString()),
+            )
+          ],
         ),
       ),
     );

@@ -1,11 +1,14 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
+
 import 'utils.dart';
 
 class Playable {
   final Set<PlayerEditor> _currentlyOpenedIn = Set();
+
   Set<PlayerEditor> get currentlyOpenedIn => Set.from(_currentlyOpenedIn);
+
   void setCurrentlyOpenedIn(PlayerEditor player) {
     _currentlyOpenedIn.add(player);
   }
@@ -95,14 +98,15 @@ class Metas {
   final MetasImage image;
   final MetasImage onImageLoadFail;
 
-  Metas(
-      {this.id,
-      this.title,
-      this.artist,
-      this.album,
-      this.image,
-      this.extra,
-      this.onImageLoadFail}) {
+  Metas({
+    this.id,
+    this.title,
+    this.artist,
+    this.album,
+    this.image,
+    this.extra,
+    this.onImageLoadFail,
+  }) {
     if (this.id == null) {
       this.id = Uuid().v4();
     }
@@ -155,8 +159,10 @@ class Audio extends Playable {
   Metas _metas;
   Map<String, dynamic> _networkHeaders;
   final bool cached; //download audio then play it
+  final double playSpeed;
 
   Metas get metas => _metas;
+
   Map<String, dynamic> get networkHeaders => _networkHeaders;
 
   Audio._({
@@ -164,19 +170,27 @@ class Audio extends Playable {
     this.package,
     this.audioType,
     this.cached,
+    this.playSpeed,
     Map<String, dynamic> headers,
     Metas metas,
   })  : _metas = metas,
         _networkHeaders = headers;
 
-  Audio(this.path, {Metas metas, this.package})
-      : audioType = AudioType.asset,
+  Audio(
+    this.path, {
+    Metas metas,
+    this.package,
+    this.playSpeed,
+  })  : audioType = AudioType.asset,
         _networkHeaders = null,
         cached = false,
         _metas = metas;
 
-  Audio.file(this.path, {Metas metas})
-      : audioType = AudioType.file,
+  Audio.file(
+    this.path, {
+    Metas metas,
+    this.playSpeed,
+  })  : audioType = AudioType.file,
         package = null,
         _networkHeaders = null,
         cached = false,
@@ -187,6 +201,7 @@ class Audio extends Playable {
     Metas metas,
     Map<String, dynamic> headers,
     this.cached = false,
+    this.playSpeed,
   })  : audioType = AudioType.network,
         package = null,
         _networkHeaders = headers,
@@ -195,6 +210,7 @@ class Audio extends Playable {
   Audio.liveStream(
     this.path, {
     Metas metas,
+    this.playSpeed,
     Map<String, dynamic> headers,
   })  : audioType = AudioType.liveStream,
         package = null,
@@ -211,6 +227,7 @@ class Audio extends Playable {
           package == other.package &&
           audioType == other.audioType &&
           cached == other.cached &&
+          playSpeed == other.playSpeed &&
           metas == other.metas;
 
   @override
@@ -219,6 +236,7 @@ class Audio extends Playable {
       package.hashCode ^
       audioType.hashCode ^
       metas.hashCode ^
+      playSpeed.hashCode ^
       cached.hashCode;
 
   @override
@@ -250,6 +268,7 @@ class Audio extends Playable {
     String package,
     AudioType audioType,
     Metas metas,
+    double playSpeed,
     Map<String, dynamic> headers,
     bool cached,
   }) {
@@ -259,6 +278,7 @@ class Audio extends Playable {
       audioType: audioType ?? this.audioType,
       metas: metas ?? this._metas,
       headers: headers ?? this._networkHeaders,
+      playSpeed: playSpeed ?? this.playSpeed,
       cached: cached ?? this.cached,
     );
   }
@@ -270,7 +290,9 @@ class Playlist extends Playable {
   final List<Audio> audios = [];
 
   int _startIndex = 0;
+
   int get startIndex => _startIndex;
+
   set startIndex(int newValue) {
     if (newValue < this.audios.length) {
       _startIndex = newValue;

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'assets_audio_player.dart';
+import 'player_group.dart';
 
 enum AssetsAudioPlayerErrorType { Network, Player }
 
@@ -21,6 +22,8 @@ class ErrorHandler {
 }
 
 typedef AssetsAudioPlayerErrorHandler = Function(ErrorHandler errorHandler);
+typedef AssetsAudioPlayerGroupErrorHandler = Function(
+    AssetsAudioPlayerGroup group, ErrorHandler errorHandler);
 
 AssetsAudioPlayerErrorType parseAssetsAudioPlayerErrorType(String type) {
   switch (type) {
@@ -39,4 +42,9 @@ class AssetsAudioPlayerError {
     @required this.errorType,
     @required this.message,
   });
+
+  @override
+  String toString() {
+    return 'AssetsAudioPlayerError{errorType: $errorType, message: $message}';
+  }
 }

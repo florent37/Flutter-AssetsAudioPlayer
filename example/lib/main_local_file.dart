@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return RaisedButton.icon(
         onPressed: () async {
           final tempDir = await getTemporaryDirectory();
-          final downloadPath = tempDir.path + "/downloaded.mp3";
+          final downloadPath = tempDir.path + "/#downloaded.mp3";
           print('full path $downloadPath');
 
           await downloadFileTo(

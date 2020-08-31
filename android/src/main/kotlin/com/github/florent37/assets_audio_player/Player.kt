@@ -1,24 +1,23 @@
 package com.github.florent37.assets_audio_player
 
-import StopWhenCall
 import android.content.Context
+import android.content.Intent
 import android.media.AudioManager
-import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Message
-import android.util.Log
+import com.github.florent37.assets_audio_player.headset.HeadsetStrategy
 import com.github.florent37.assets_audio_player.notification.AudioMetas
 import com.github.florent37.assets_audio_player.notification.NotificationManager
 import com.github.florent37.assets_audio_player.notification.NotificationService
 import com.github.florent37.assets_audio_player.notification.NotificationSettings
-import com.google.android.exoplayer2.ExoPlaybackException
 import com.github.florent37.assets_audio_player.playerimplem.*
+import com.github.florent37.assets_audio_player.stopwhencall.AudioFocusStrategy
+import com.github.florent37.assets_audio_player.stopwhencall.StopWhenCall
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.IOException
 import kotlin.math.max
 import kotlin.math.min
 
@@ -54,6 +53,7 @@ class Player(
     var onPlaySpeedChanged: ((Double) -> Unit)? = null
     var onForwardRewind: ((Double) -> Unit)? = null
     var onReadyToPlay: ((DurationMS) -> Unit)? = null
+    var onSessionIdFound: ((Int) -> Unit)? = null
     var onPositionMSChanged: ((Long) -> Unit)? = null
     var onFinished: (() -> Unit)? = null
     var onPlaying: ((Boolean) -> Unit)? = null
@@ -67,6 +67,8 @@ class Player(
     //endregion
 
     private var respectSilentMode: Boolean = false
+    private var headsetStrategy: HeadsetStrategy = HeadsetStrategy.none
+    private var audioFocusStrategy: AudioFocusStrategy = AudioFocusStrategy.None
     private var volume: Double = 1.0
     private var playSpeed: Double = 1.0
 
@@ -154,6 +156,8 @@ class Player(
              notificationSettings: NotificationSettings,
              audioMetas: AudioMetas,
              playSpeed: Double,
+             headsetStrategy: HeadsetStrategy,
+             audioFocusStrategy: AudioFocusStrategy,
              networkHeaders: Map<*, *>?,
              result: MethodChannel.Result,
              context: Context
@@ -168,6 +172,8 @@ class Player(
         this.audioMetas = audioMetas
         this.notificationSettings = notificationSettings
         this.respectSilentMode = respectSilentMode
+        this.headsetStrategy = headsetStrategy
+        this.audioFocusStrategy = audioFocusStrategy
 
         _lastOpenedPath = assetAudioPath
       
@@ -181,7 +187,10 @@ class Player(
                         audioType = audioType,
                         networkHeaders = networkHeaders,
                         context = context,
-                        onFinished = onFinished,
+                        onFinished = {
+                            stopWhenCall.stop()
+                            onFinished?.invoke()
+                        },
                         onPlaying = onPlaying,
                         onBuffering = onBuffering,
                         onError= onError
@@ -193,6 +202,9 @@ class Player(
 
                 //here one open succeed
                 onReadyToPlay?.invoke(durationMs)
+                mediaPlayer?.getSessionId(listener = {
+                    onSessionIdFound?.invoke(it)
+                })
 
                 _playingPath = assetAudioPath
                 _durationMs = durationMs
@@ -212,7 +224,14 @@ class Player(
                 result.success(null)
             } catch (error: Throwable) {
                 error.printStackTrace()
-                result.error("OPEN", error.message, null)
+                if(error is PlayerFinder.NoPlayerFoundException && error.why != null){
+                    result.error("OPEN", error.why.message, mapOf(
+                            "type" to error.why.type,
+                            "message" to error.why.message
+                    ))
+                } else {
+                    result.error("OPEN", error.message, null)
+                }
             }
         }
     }
@@ -316,12 +335,18 @@ class Player(
     }
 
     fun play() {
-        val audioState = this.stopWhenCall.requestAudioFocus()
-        if (audioState == StopWhenCall.AudioState.AUTHORIZED_TO_PLAY) {
+        if(audioFocusStrategy is AudioFocusStrategy.None){
             this.isEnabledToPlayPause = true //this one must be called before play/pause()
             this.isEnabledToChangeVolume = true //this one must be called before play/pause()
             playerPlay()
-        } //else will wait until focus is enabled
+        } else {
+            val audioState = this.stopWhenCall.requestAudioFocus(audioFocusStrategy)
+            if (audioState == StopWhenCall.AudioState.AUTHORIZED_TO_PLAY) {
+                this.isEnabledToPlayPause = true //this one must be called before play/pause()
+                this.isEnabledToChangeVolume = true //this one must be called before play/pause()
+                playerPlay()
+            } //else will wait until focus is enabled
+        }
     }
 
     private fun playerPlay() { //the play
@@ -335,7 +360,7 @@ class Player(
                 updateNotif()
             }
         } else {
-            this.stopWhenCall.requestAudioFocus()
+            this.stopWhenCall.requestAudioFocus(audioFocusStrategy)
         }
     }
 
@@ -422,33 +447,37 @@ class Player(
     private var volumeBeforePhoneStateChanged: Double? = null
     private var wasPlayingBeforeEnablePlayChange: Boolean? = null
     fun updateEnableToPlay(audioState: StopWhenCall.AudioState) {
-        when (audioState) {
-            StopWhenCall.AudioState.AUTHORIZED_TO_PLAY -> {
-                this.isEnabledToPlayPause = true //this one must be called before play/pause()
-                this.isEnabledToChangeVolume = true //this one must be called before play/pause()
-                wasPlayingBeforeEnablePlayChange?.let {
-                    //phone call ended
-                    if (it) {
-                        playerPlay()
-                    } else {
-                        pause()
+        (audioFocusStrategy as? AudioFocusStrategy.Request)?.let { audioFocusStrategy ->
+            when (audioState) {
+                StopWhenCall.AudioState.AUTHORIZED_TO_PLAY -> {
+                    this.isEnabledToPlayPause = true //this one must be called before play/pause()
+                    this.isEnabledToChangeVolume = true //this one must be called before play/pause()
+                    if(audioFocusStrategy.resumeAfterInterruption) {
+                        wasPlayingBeforeEnablePlayChange?.let {
+                            //phone call ended
+                            if (it) {
+                                playerPlay()
+                            } else {
+                                pause()
+                            }
+                        }
                     }
+                    volumeBeforePhoneStateChanged?.let {
+                        setVolume(it)
+                    }
+                    wasPlayingBeforeEnablePlayChange = null
+                    volumeBeforePhoneStateChanged = null
                 }
-                volumeBeforePhoneStateChanged?.let {
-                    setVolume(it)
+                StopWhenCall.AudioState.REDUCE_VOLUME -> {
+                    volumeBeforePhoneStateChanged = this.volume
+                    setVolume(VOLUME_WHEN_REDUCED)
+                    this.isEnabledToChangeVolume = false //this one must be called after setVolume()
                 }
-                wasPlayingBeforeEnablePlayChange = null
-                volumeBeforePhoneStateChanged = null
-            }
-            StopWhenCall.AudioState.REDUCE_VOLUME -> {
-                volumeBeforePhoneStateChanged = this.volume
-                setVolume(VOLUME_WHEN_REDUCED)
-                this.isEnabledToChangeVolume = false //this one must be called after setVolume()
-            }
-            StopWhenCall.AudioState.FORBIDDEN -> {
-                wasPlayingBeforeEnablePlayChange = this.isPlaying
-                pause()
-                this.isEnabledToPlayPause = false //this one must be called after pause()
+                StopWhenCall.AudioState.FORBIDDEN -> {
+                    wasPlayingBeforeEnablePlayChange = this.isPlaying
+                    pause()
+                    this.isEnabledToPlayPause = false //this one must be called after pause()
+                }
             }
         }
     }
@@ -459,6 +488,29 @@ class Player(
 
     fun askStop() {
         this.onNotificationStop?.invoke()
+    }
+
+    fun onHeadsetPlugged(plugged: Boolean) {
+        if(plugged){
+            when(this.headsetStrategy){
+                HeadsetStrategy.pauseOnUnplug -> { /* do nothing */}
+                HeadsetStrategy.pauseOnUnplugPlayOnPlug -> {
+                    if(!isPlaying) {
+                        this.onNotificationPlayOrPause?.invoke()
+                    }
+                }
+                else -> { /* do nothing */ }
+            }
+        } else {
+            when(this.headsetStrategy){
+                HeadsetStrategy.pauseOnUnplug, HeadsetStrategy.pauseOnUnplugPlayOnPlug  -> {
+                    if(isPlaying) {
+                        this.onNotificationPlayOrPause?.invoke()
+                    }
+                }
+                else -> { /* do nothing */ }
+            }
+        }
     }
 }
 

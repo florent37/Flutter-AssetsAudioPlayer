@@ -1,12 +1,17 @@
 package com.github.florent37.assets_audio_player
 
-import StopWhenCall
-import StopWhenCallAudioFocus
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.SystemClock
+import android.view.KeyEvent
 import androidx.annotation.NonNull
+import com.github.florent37.assets_audio_player.headset.HeadsetStrategy
 import com.github.florent37.assets_audio_player.notification.*
+import com.github.florent37.assets_audio_player.stopwhencall.AudioFocusStrategy
+import com.github.florent37.assets_audio_player.stopwhencall.HeadsetManager
+import com.github.florent37.assets_audio_player.stopwhencall.StopWhenCall
+import com.github.florent37.assets_audio_player.stopwhencall.StopWhenCallAudioFocus
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -24,19 +29,21 @@ internal val METHOD_FINISHED = "player.finished"
 internal val METHOD_IS_PLAYING = "player.isPlaying"
 internal val METHOD_IS_BUFFERING = "player.isBuffering"
 internal val METHOD_CURRENT = "player.current"
+internal val METHOD_AUDIO_SESSION_ID = "player.audioSessionId"
 internal val METHOD_NEXT = "player.next"
 internal val METHOD_PREV = "player.prev"
 internal val METHOD_PLAY_OR_PAUSE = "player.playOrPause"
 internal val METHOD_NOTIFICATION_STOP = "player.stop"
 internal val METHOD_ERROR = "player.error"
 
-class AssetsAudioPlayerPlugin : FlutterPlugin,PluginRegistry.NewIntentListener, ActivityAware {
+class AssetsAudioPlayerPlugin : FlutterPlugin, PluginRegistry.NewIntentListener, ActivityAware {
 
     var myActivity: Activity? = null
-    var notificationChannel : MethodChannel ?= null
+    var notificationChannel: MethodChannel? = null
 
     companion object {
         var instance: AssetsAudioPlayerPlugin? = null
+        var displayLogs = false
     }
 
     var assetsAudioPlayer: AssetsAudioPlayer? = null
@@ -67,7 +74,7 @@ class AssetsAudioPlayerPlugin : FlutterPlugin,PluginRegistry.NewIntentListener, 
     }
 
     override fun onNewIntent(intent: Intent?): Boolean {
-        if(intent == null)
+        if (intent == null)
             return false
 
         if (!intent.getBooleanExtra("isVisited", false)) {
@@ -107,7 +114,9 @@ class AssetsAudioPlayer(
 ) : MethodCallHandler {
 
     private var stopWhenCall = StopWhenCallAudioFocus(context)
+    private var headsetManager = HeadsetManager(context)
     private val notificationManager = NotificationManager(context)
+    private val uriResolver = UriResolver(context)
     private var mediaButtonsReceiver: MediaButtonsReceiver? = null
     private val stopWhenCallListener = object : StopWhenCall.Listener {
         override fun onPhoneStateChanged(audioState: StopWhenCall.AudioState) {
@@ -117,10 +126,19 @@ class AssetsAudioPlayer(
         }
     }
 
+    private val onHeadsetPluggedListener = { plugged: Boolean ->
+        players.values.forEach {
+            it.onHeadsetPlugged(plugged)
+        }
+    }
+
     private var lastPlayerIdWithNotificationEnabled: String? = null
 
     fun register() {
         stopWhenCall.register(stopWhenCallListener)
+
+        headsetManager.onHeadsetPluggedListener = onHeadsetPluggedListener
+        headsetManager.start()
 
         mediaButtonsReceiver = MediaButtonsReceiver(context,
                 onAction = {
@@ -181,6 +199,9 @@ class AssetsAudioPlayer(
                             "totalDurationMs" to totalDurationMs)
                     )
                 }
+                onSessionIdFound = { sessionId ->
+                    channel.invokeMethod(METHOD_AUDIO_SESSION_ID, sessionId)
+                }
                 onPlaying = {
                     channel.invokeMethod(METHOD_IS_PLAYING, it)
                 }
@@ -210,7 +231,7 @@ class AssetsAudioPlayer(
                     channel.invokeMethod(METHOD_ERROR, mapOf(
                             "type" to it.type,
                             "message" to it.message
-                        ))
+                    ))
                 }
             }
             return@getOrPut player
@@ -266,7 +287,7 @@ class AssetsAudioPlayer(
                         return
                     }
                     val removeNotification = args["removeNotification"] as? Boolean ?: true
-                    getOrCreatePlayer(id).stop(removeNotification= removeNotification)
+                    getOrCreatePlayer(id).stop(removeNotification = removeNotification)
                     result.success(null)
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
@@ -409,18 +430,18 @@ class AssetsAudioPlayer(
 
                     val audioMetas = fetchAudioMetas(args)
                     val notificationSettings = fetchNotificationSettings(args)
-                    
-                    if(!display){
+
+                    if (!display) {
                         notificationManager.stopNotification()
-                    } else if(id != null) {
+                    } else if (id != null) {
                         getOrCreatePlayer(id).forceNotificationForGroup(
-                            audioMetas = audioMetas,
-                            isPlaying = isPlaying,
-                            display = display,
-                            notificationSettings= notificationSettings
+                                audioMetas = audioMetas,
+                                isPlaying = isPlaying,
+                                display = display,
+                                notificationSettings = notificationSettings
                         )
                     }
-                   
+
                     result.success(null)
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
@@ -434,10 +455,13 @@ class AssetsAudioPlayer(
                         result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
                         return
                     }
-                    val path = args["path"] as? String ?: run {
-                        result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `path`", null)
+                    val path = (args["path"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument must be an String `path`", null)
                         return
+                    }).let {
+                        uriResolver.audioPath(it)
                     }
+
                     val assetPackage = args["package"] as? String
 
                     val audioType = args["audioType"] as? String ?: run {
@@ -459,7 +483,18 @@ class AssetsAudioPlayer(
                     val networkHeaders = args["networkHeaders"] as? Map<*, *>?
 
                     val notificationSettings = fetchNotificationSettings(args)
-                    val audioMetas = fetchAudioMetas(args)
+                    val audioMetas = fetchAudioMetas(args).let { meta ->
+                        meta.copy(
+                                image = meta.image?.let { img ->
+                                    img.copy(
+                                            imagePath = uriResolver.imagePath(img.imagePath)
+                                    )
+                                }
+                        )
+                    }
+
+                    val audioFocusStrategy = AudioFocusStrategy.from(args["audioFocusStrategy"] as? Map<*, *>)
+                    val headsetStrategy = HeadsetStrategy.from(args["headPhoneStrategy"] as? String)
 
                     getOrCreatePlayer(id).open(
                             assetAudioPath = path,
@@ -474,7 +509,9 @@ class AssetsAudioPlayer(
                             result = result,
                             playSpeed = playSpeed,
                             audioMetas = audioMetas,
-                            networkHeaders= networkHeaders,
+                            headsetStrategy = headsetStrategy,
+                            audioFocusStrategy = audioFocusStrategy,
+                            networkHeaders = networkHeaders,
                             context = context
                     )
                 } ?: run {

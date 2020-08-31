@@ -2,13 +2,13 @@ package com.github.florent37.assets_audio_player.notification
 
 import java.io.Serializable
 
-class ImageMetas(
+data class ImageMetas(
         val imageType: String?,
         val imagePackage: String?,
         val imagePath: String?
 ) : Serializable
 
-class AudioMetas(
+data class AudioMetas(
         val title: String?,
         val artist: String?,
         val album: String?,
