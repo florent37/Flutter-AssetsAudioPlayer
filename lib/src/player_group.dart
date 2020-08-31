@@ -117,7 +117,7 @@ class AssetsAudioPlayerGroup {
   }
 
   Future<Map> add(
-    Audio audio, {
+    Playlist playlist, {
     LoopMode loopMode = LoopMode.none,
     double volume,
     Duration seek,
@@ -127,7 +127,7 @@ class AssetsAudioPlayerGroup {
 
     try {
       await player.open(
-        audio,
+        playlist,
         showNotification: false,
         //not need here, we'll call another method `changeNotificationForGroup`
         seek: seek,
@@ -140,15 +140,15 @@ class AssetsAudioPlayerGroup {
         playSpeed: playSpeed,
         notificationSettings: _notificationSettings,
       );
-      await _addPlayer(audio, player);
-      return {"data": "opened"};
+      await _addPlayer(playlist, player);
+      return {"data": player};
     } on PlatformException catch (e) {
       return {"error": e.toString()};
     }
   }
 
-  Future<void> addAll(List<Audio> audios) async {
-    for (Audio audio in audios) await add(audio);
+  Future<void> addAll(List<Playlist> audios) async {
+    for (Playlist audio in audios) await add(audio);
   }
 
   Future<void> removeAudio(Audio audio) async {
@@ -161,7 +161,7 @@ class AssetsAudioPlayerGroup {
     await _onPlayersChanged();
   }
 
-  Future<void> _addPlayer(Audio audio, AssetsAudioPlayer player) async {
+  Future<void> _addPlayer(Playlist audios, AssetsAudioPlayer player) async {
     StreamSubscription finishedSubscription;
     finishedSubscription = player.playlistFinished.listen((finished) {
       if (finished) {
@@ -170,8 +170,9 @@ class AssetsAudioPlayerGroup {
         _removePlayer(player);
       }
     });
+
     _subscriptions.add(finishedSubscription);
-    _audiosWithPlayers[audio] = player;
+    _audiosWithPlayers[audios.audios[0]] = player;
     await _onPlayersChanged();
   }
 
