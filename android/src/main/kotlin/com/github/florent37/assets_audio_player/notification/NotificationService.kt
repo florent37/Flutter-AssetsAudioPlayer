@@ -16,6 +16,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.ACTION_SEEK_TO
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.media.session.MediaButtonReceiver
 import com.github.florent37.assets_audio_player.R
 import com.google.android.exoplayer2.C
 import kotlinx.coroutines.Dispatchers
@@ -110,6 +111,11 @@ class NotificationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        if (intent.action == Intent.ACTION_MEDIA_BUTTON) {
+            MediaButtonsReceiver.getMediaSessionCompat(applicationContext).let {
+                MediaButtonReceiver.handleIntent(it, intent)
+            }
+        }
         when (val notificationAction = intent.getSerializableExtra(EXTRA_NOTIFICATION_ACTION)) {
             is NotificationAction.Show -> {
                 displayNotification(notificationAction)
@@ -223,6 +229,7 @@ class NotificationService : Service() {
                         isPlaying = !action.isPlaying
                 ))
         val pendingToggleIntent = PendingIntent.getBroadcast(this, 0, toggleIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        MediaButtonReceiver.handleIntent(mediaSession, toggleIntent)
 
         val context = this
 
