@@ -51,6 +51,7 @@ class NotificationSettings {
   final AndroidResDrawable customPlayIcon;
   final AndroidResDrawable customPauseIcon;
   final AndroidResDrawable customStopIcon;
+  final AndroidResDrawable customPrevIcon;
 
   //endregion
 
@@ -69,6 +70,7 @@ class NotificationSettings {
     this.customPlayIcon,
     this.customPreviousIcon,
     this.customStopIcon,
+    this.customPrevIcon,
   });
 }
 
