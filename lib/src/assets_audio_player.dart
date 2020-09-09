@@ -1224,7 +1224,7 @@ class AssetsAudioPlayer {
         .invokeMethod('loopSingleAudio', {"id": this.id, "loop": loop});
   }
 
-  /// Tells the media player to play the current song
+  /// Tells the media player to pause the current song
   ///     _assetsAudioPlayer.pause();
   ///
   Future<void> pause() async {
