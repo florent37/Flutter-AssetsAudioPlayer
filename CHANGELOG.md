@@ -1,3 +1,9 @@
+## 2.0.10
+
+* Fixed AudioType.network networkHeaders
+* Improve documentation
+* CustomPrevIcon fixed
+
 ## 2.0.9+2
 
 * Renamed PhoneCallStrategy to AudioFocusStrategy
