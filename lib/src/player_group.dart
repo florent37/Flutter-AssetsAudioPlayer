@@ -124,6 +124,7 @@ class AssetsAudioPlayerGroup {
     return __notificationSettings;
   }
 
+
   Future<Map> add(
     Playlist playlist, {
     LoopMode loopMode = LoopMode.none,
@@ -132,6 +133,7 @@ class AssetsAudioPlayerGroup {
     double playSpeed,
   }) async {
     final player = AssetsAudioPlayer.newPlayer();
+
 
     try {
       await player.open(
@@ -148,11 +150,13 @@ class AssetsAudioPlayerGroup {
         playSpeed: playSpeed,
         notificationSettings: _notificationSettings,
       );
+
       await _addPlayer(playlist, player);
       return {"data": player};
     } on PlatformException catch (e) {
       return {"error": e.toString()};
     }
+
   }
 
   Future<void> addAll(List<Playlist> audios) async {
