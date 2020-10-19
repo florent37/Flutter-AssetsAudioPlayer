@@ -1119,7 +1119,7 @@ class Music : NSObject, FlutterPlugin {
                 guard let volume = args["volume"] as? Double else {
                     result(FlutterError(
                         code: "METHOD_CALL",
-                        message: call.method + " Arguments[volume] must be a String",
+                        message: call.method + " Arguments[volume] must be a Double",
                         details: nil)
                     )
                     break
