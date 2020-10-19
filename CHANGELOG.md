@@ -1,4 +1,4 @@
-## 2.0.10
+## 2.0.11
 
 * Fixed AudioType.network networkHeaders
 * Improve documentation
