@@ -685,7 +685,7 @@ bool _play = false;
 
 @override
 Widget build(BuildContext context) {
-  return Audio.assets(
+  return AudioWidget.assets(
      path: "assets/audios/country.mp3",
      play: _play,
      child: RaisedButton(
