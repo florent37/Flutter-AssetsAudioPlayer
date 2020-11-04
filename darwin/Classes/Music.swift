@@ -679,7 +679,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     
     private func addPlayerStatusListeners(item : AVQueuePlayer){
-        if #available(iOS 10.0, *){
+        if #available(iOS 10.0, OSX 10.12, *){
             observerStatus.append( item.observe(\.timeControlStatus, options: [.new]) { [weak self] (value, _) in
                 // show buffering
                 if(value.timeControlStatus == AVPlayer.TimeControlStatus.playing){
