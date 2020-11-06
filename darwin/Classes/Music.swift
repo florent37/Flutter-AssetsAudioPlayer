@@ -228,6 +228,19 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         
         
         self.deinitMediaPlayerNotifEvent()
+        
+         // added seekBar 
+        if #available(iOS 9.1, *) {
+            commandCenter.changePlaybackPositionCommand.isEnabled = true
+            commandCenter.changePlaybackPositionCommand.addTarget { event in
+                if let event = event as? MPChangePlaybackPositionCommandEvent {
+                    let time = CMTime(seconds: event.positionTime, preferredTimescale: 1000000)
+                    self.player?.seek(to: time)
+                }
+                return .success
+            }
+        }
+        
         // Add handler for Play Command
         commandCenter.playCommand.isEnabled = (self.notificationSettings ?? NotificationSettings()).playPauseEnabled
         self.targets["play"] = commandCenter.playCommand.addTarget { [unowned self] event in
