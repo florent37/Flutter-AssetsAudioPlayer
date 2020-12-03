@@ -21,6 +21,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.PluginRegistry
 
+
 internal val METHOD_POSITION = "player.position"
 internal val METHOD_VOLUME = "player.volume"
 internal val METHOD_FORWARD_REWIND_SPEED = "player.forwardRewind"
