@@ -1,3 +1,5 @@
+package com.github.florent37.assets_audio_player.notification
+
 import android.content.Context
 import android.content.Intent
 import android.util.Log
