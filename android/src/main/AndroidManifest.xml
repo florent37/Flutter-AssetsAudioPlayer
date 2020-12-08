@@ -7,7 +7,7 @@
     <application>
         <receiver android:name=".notification.NotificationActionReceiver"/>
 
-        <receiver android:name="CustomMediaButtonReceiver" >
+        <receiver android:name=".notification.CustomMediaButtonReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
