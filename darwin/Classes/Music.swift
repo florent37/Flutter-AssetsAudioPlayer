@@ -830,7 +830,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     func play(){
         if #available(iOS 10.0, *) {
-            self.player?.playImmediately(atRate: 1.0)
+            self.player?.playImmediately(atRate: self.rate)
         } else {
             self.player?.play()
             self.player?.rate = self.rate
