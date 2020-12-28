@@ -812,7 +812,6 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.updateNotifStatus(playing: self.playing, stopped: true, rate: self.player?.rate)
         
         self.player?.seek(to: CMTime.zero)
-        self.player = nil   
         self.playing = false
         self.currentTimeTimer?.invalidate()
         #if os(iOS)
@@ -826,6 +825,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         #if os(iOS)
         self.nowPlayingInfo.removeAll()
         #endif
+        self.player = nil
     }
     
     func play(){
