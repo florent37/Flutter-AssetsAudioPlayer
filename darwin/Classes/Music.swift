@@ -228,6 +228,19 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         
         
         self.deinitMediaPlayerNotifEvent()
+        
+         // added seekBar 
+        if #available(iOS 9.1, *) {
+            commandCenter.changePlaybackPositionCommand.isEnabled = true
+            commandCenter.changePlaybackPositionCommand.addTarget { event in
+                if let event = event as? MPChangePlaybackPositionCommandEvent {
+                    let time = CMTime(seconds: event.positionTime, preferredTimescale: 1000000)
+                    self.player?.seek(to: time)
+                }
+                return .success
+            }
+        }
+        
         // Add handler for Play Command
         commandCenter.playCommand.isEnabled = (self.notificationSettings ?? NotificationSettings()).playPauseEnabled
         self.targets["play"] = commandCenter.playCommand.addTarget { [unowned self] event in
@@ -349,7 +362,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         
         if ((self.notificationSettings ?? NotificationSettings()).seekBarEnabled) {
             self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = self.currentSongDurationMs / 1000
-            self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
+            self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime / 1000
         } else {
             self.nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = 0
             self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = 0
@@ -679,7 +692,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     
     private func addPlayerStatusListeners(item : AVQueuePlayer){
-        if #available(iOS 10.0, *){
+        if #available(iOS 10.0, OSX 10.12, *){
             observerStatus.append( item.observe(\.timeControlStatus, options: [.new]) { [weak self] (value, _) in
                 // show buffering
                 if(value.timeControlStatus == AVPlayer.TimeControlStatus.playing){
@@ -879,7 +892,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                 
                 if(self.displayMediaPlayerNotification){
                     #if os(iOS)
-                    self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime
+                    self.nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = _currentTime / 1000
                     self.nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.player!.rate
                     MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
                     #endif

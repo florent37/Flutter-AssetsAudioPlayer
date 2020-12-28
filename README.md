@@ -38,7 +38,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^2.0.10
+  assets_audio_player: ^2.0.13
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -685,7 +685,7 @@ bool _play = false;
 
 @override
 Widget build(BuildContext context) {
-  return Audio.assets(
+  return AudioWidget.assets(
      path: "assets/audios/country.mp3",
      play: _play,
      child: RaisedButton(
