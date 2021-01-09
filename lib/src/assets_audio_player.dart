@@ -36,7 +36,6 @@ const _DEFAULT_RESPECT_SILENT_MODE = false;
 const _DEFAULT_SHOW_NOTIFICATION = false;
 const _DEFAULT_PLAY_IN_BACKGROUND = PlayInBackground.enabled;
 const _DEFAULT_PLAYER = "DEFAULT_PLAYER";
-const _DEFAULT_NETWORK_SETTINGS = NetworkSettings();
 
 const METHOD_POSITION = "player.position";
 const METHOD_VOLUME = "player.volume";
@@ -178,7 +177,7 @@ class AssetsAudioPlayer {
   _CurrentPlaylist _playlist;
 
   final String id;
-  final NetworkSettings networkSettings = _DEFAULT_NETWORK_SETTINGS;
+  final NetworkSettings networkSettings = NetworkSettings();
 
   set cachePathProvider(AssetsAudioPlayerCache newValue) {
     if (newValue != null) {
@@ -999,6 +998,7 @@ class AssetsAudioPlayer {
           params["package"] = audio.package;
         }
         if (audio.audioType == AudioType.file ||
+            audio.audioType == AudioType.network ||
             audio.audioType == AudioType.liveStream) {
           params["networkHeaders"] =
               audio.networkHeaders ?? networkSettings.defaultHeaders;
@@ -1224,7 +1224,7 @@ class AssetsAudioPlayer {
         .invokeMethod('loopSingleAudio', {"id": this.id, "loop": loop});
   }
 
-  /// Tells the media player to play the current song
+  /// Tells the media player to pause the current song
   ///     _assetsAudioPlayer.pause();
   ///
   Future<void> pause() async {

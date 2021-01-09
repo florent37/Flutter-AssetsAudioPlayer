@@ -1,3 +1,13 @@
+## 2.0.13+1
+
+* fixed some innues on macos/ios
+
+## 2.0.12
+
+* Fixed AudioType.network networkHeaders
+* Improve documentation
+* CustomPrevIcon fixed
+
 ## 2.0.9+2
 
 * Renamed PhoneCallStrategy to AudioFocusStrategy

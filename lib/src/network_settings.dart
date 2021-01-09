@@ -1,5 +1,5 @@
 class NetworkSettings {
-  final Map defaultHeaders;
+  final Map<String, dynamic> defaultHeaders = Map();
 
-  const NetworkSettings({this.defaultHeaders = const {}});
+  NetworkSettings();
 }
