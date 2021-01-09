@@ -829,8 +829,12 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     }
     
     func play(){
-        self.player?.play()
-        self.player?.rate = self.rate
+        if #available(iOS 10.0, *) {
+            self.player?.playImmediately(atRate: self.rate)
+        } else {
+            self.player?.play()
+            self.player?.rate = self.rate
+        }
         self.currentTimeTimer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
         self.currentTimeTimer?.fire()
 //        self.playing = true
