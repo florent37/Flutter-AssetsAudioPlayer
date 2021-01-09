@@ -1,3 +1,8 @@
+## 2.0.13+2
+
+* fixed some innues on ios
+* fix crash issue on android
+
 ## 2.0.13+1
 
 * fixed some innues on macos/ios
