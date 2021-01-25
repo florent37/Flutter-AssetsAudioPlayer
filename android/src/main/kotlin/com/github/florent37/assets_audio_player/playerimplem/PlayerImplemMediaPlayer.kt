@@ -25,7 +25,6 @@ class PlayerImplemTesterMediaPlayer : PlayerImplemTester {
     }
 
     override fun stop() {
-        mediaPlayer?.stop()
         mediaPlayer?.release()
         mediaPlayer = null
     }

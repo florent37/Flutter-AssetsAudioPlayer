@@ -39,7 +39,6 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
     }
 
     override fun stop() {
-        mediaPlayer?.stop()
         mediaPlayer?.release()
         mediaPlayer = null
     }
