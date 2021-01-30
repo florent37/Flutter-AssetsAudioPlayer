@@ -1,6 +1,9 @@
+## 2.0.13+3
+
+* fix opened multiple instance for android problem.
 ## 2.0.13+2
 
-* fixed some innues on ios
+* fixed some issues on ios
 * fix crash issue on android
 
 ## 2.0.13+1
