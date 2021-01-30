@@ -23,7 +23,7 @@ dependencies:
   # validation, so we set a ^ constraint.
   # TODO(amirh): Revisit this (either update this part in the  design or the pub tool).
   # https://github.com/flutter/flutter/issues/46264
-  assets_audio_player_web: ^2.0.13+2
+  assets_audio_player_web: ^2.0.13+3
 
 dev_dependencies:
   flutter_test:
