@@ -17,15 +17,24 @@ import kotlin.coroutines.suspendCoroutine
 
 class PlayerImplemTesterMediaPlayer : PlayerImplemTester {
 
+    private var mediaPlayer :PlayerImplemMediaPlayer? = null
+
+
     private fun mapError(t: Throwable): AssetAudioPlayerThrowable {
         return AssetAudioPlayerThrowable.PlayerError(t)
     }
+
+    override fun stop() {
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
 
     override suspend fun open(configuration: PlayerFinderConfiguration): PlayerFinder.PlayerWithDuration {
         if(AssetsAudioPlayerPlugin.displayLogs) {
             Log.d("PlayerImplem", "trying to open with native mediaplayer")
         }
-        val mediaPlayer = PlayerImplemMediaPlayer(
+        mediaPlayer = PlayerImplemMediaPlayer(
                 onFinished = {
                     configuration.onFinished?.invoke()
                     //stop(pingListener = false)
@@ -38,7 +47,7 @@ class PlayerImplemTesterMediaPlayer : PlayerImplemTester {
                 }
         )
         try {
-            val durationMS = mediaPlayer.open(
+            val durationMS = mediaPlayer?.open(
                     context = configuration.context,
                     assetAudioPath = configuration.assetAudioPath,
                     audioType = configuration.audioType,
@@ -47,15 +56,15 @@ class PlayerImplemTesterMediaPlayer : PlayerImplemTester {
                     flutterAssets = configuration.flutterAssets
             )
             return PlayerFinder.PlayerWithDuration(
-                    player = mediaPlayer,
-                    duration = durationMS
+                    player = mediaPlayer!!,
+                    duration = durationMS!!
             )
         } catch (t: Throwable) {
             if(AssetsAudioPlayerPlugin.displayLogs) {
                 Log.d("PlayerImplem", "failed to open with native mediaplayer")
             }
 
-            mediaPlayer.release()
+            mediaPlayer?.release()
             throw  t
         }
     }
