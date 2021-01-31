@@ -44,7 +44,10 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
     }
 
     override suspend fun open(configuration: PlayerFinderConfiguration) : PlayerFinder.PlayerWithDuration {
-
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+        
         if(AssetsAudioPlayerPlugin.displayLogs) {
             Log.d("PlayerImplem", "trying to open with exoplayer($type)")
         }
