@@ -27,10 +27,10 @@ class NotificationActionReceiver : BroadcastReceiver() {
             }
             NotificationAction.ACTION_SELECT -> {
                 context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
-                var intent : Intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-                intent.setAction(NotificationAction.ACTION_SELECT)
-                intent.putExtra(NotificationService.TRACK_ID,trackID)
-                context.startActivity(intent)
+                var intent : Intent? = context.packageManager.getLaunchIntentForPackage(context.packageName)
+                intent?.action = NotificationAction.ACTION_SELECT
+                intent?.putExtra(NotificationService.TRACK_ID,trackID)
+                context.startActivity(intent!!)
             }
         }
     }

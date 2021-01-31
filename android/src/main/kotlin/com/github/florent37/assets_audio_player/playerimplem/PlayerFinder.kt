@@ -73,6 +73,7 @@ object PlayerFinder {
             throw NoPlayerFoundException()
         }
         try {
+             implemTester?.stop()
             //try the first
              implemTester = remainingImpls.first()
             val playerwithDuration = implemTester?.open(
