@@ -54,7 +54,7 @@ android {
         }
         debug {
             multiDexEnabled true
-        }	        }
+        }	        
     }
 }
 
