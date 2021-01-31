@@ -45,9 +45,9 @@ or
 assets_audio_player:
 git:
 url: https://github.com/florent37/Flutter-AssetsAudioPlayer.git
-ref: b49a4360f6a7f182d4a6e23ebcdbf43ad570913b
+ref: master
 
-
+ref can be latest commit id. 
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
