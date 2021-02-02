@@ -566,6 +566,11 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             
             self.setBuffering(true)
             self.isLiveStream = false
+            var isObservingCurrentItem = false
+
+            if isObservingCurrentItem {
+               observerStatus.removeAll()
+            }
             observerStatus.append( item.observe(\.status, changeHandler: { [weak self] (item, value) in
                 
                 switch item.status {
@@ -602,30 +607,32 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                     }
                     
                     self?._playingPath = assetPath
-                    //self?.setBuffering(false)
                     
                     self?.addPostPlayingBufferListeners(item: item)
+                    self?.setBuffering(false)
+                    if(isObservingCurrentItem) {
+                              if((self?.observerStatus.count ?? -1) > 0){
+                                                self?.observerStatus.removeAll()
+                            }
+                    }
+
+                    isObservingCurrentItem = false                    
                     self?.addPlayerStatusListeners(item: (self?.player)!);
-                    
                     result(nil)
                 case .failed:
                     var error = item.error
                     debugPrint("playback failed")
                     
-                    self?.stop()
+                      self?.setBuffering(false)
                     
-                    result(FlutterError(
-                        code: "PLAY_ERROR",
-                        message: "Cannot play "+assetPath,
-                        details: item.error?.localizedDescription)
-                    )
+                     self?.onError(AssetAudioPlayerError(type: "PLAY_ERROR", message: "playback failed duration is 0"))
                 @unknown default:
                     fatalError()
                 }
             }))
             
             
-            
+            isObservingCurrentItem = true
             if(self.player == nil){
                 //log("player is null")
                 return
@@ -735,9 +742,9 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         switch type {
             
         case .began:
-            // An interruption began. Update the UI as needed.
-            pause()
-            
+             self.pause();
+             print("handleInterruption :- Interruption starts. Status pause")          
+             break
         case .ended:
             // An interruption ended. Resume playback, if appropriate.
             
@@ -745,13 +752,18 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
             if options.contains(.shouldResume) {
                 if(self.audioFocusStrategy.resumeAfterInterruption) {
-                    self.invokeListenerPlayPause()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.play()
+                    print("handleInterruption :- Play")
+                }
                 }
                 // Interruption ended. Playback should resume.
             } else {
                 // Interruption ended. Playback should not resume.
+                self.pause()
+                print("handleInterruption :- Interruption ended. Playback should not resume")
             }
-            
+         break   
         default: ()
         }
         #endif
