@@ -278,6 +278,7 @@ class NotificationService : Service() {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentTitle(action.audioMetas.title)
                 .setContentText(action.audioMetas.artist)
+                .setOngoing(action.isPlaying)
                 .setOnlyAlertOnce(true)
                 .also {
                     if (!action.audioMetas.album.isNullOrEmpty()) {
@@ -296,9 +297,9 @@ class NotificationService : Service() {
         startForeground(NOTIFICATION_ID, notification)
 
         //fix for https://github.com/florent37/Flutter-AssetsAudioPlayer/issues/139
-        if (!action.isPlaying) {
-           stopForeground(false)
-        }
+        // if (!action.isPlaying) {
+        //    stopForeground(false)
+        // }
     }
 
     private fun createNotificationChannel() {
