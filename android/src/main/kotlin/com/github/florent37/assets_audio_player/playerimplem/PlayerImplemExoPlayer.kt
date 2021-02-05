@@ -328,7 +328,7 @@ class PlayerImplemExoPlayer(
             listener(id)
         } else {
             val listener = object : AudioListener {
-                override fun onAudioSessionId(audioSessionId: Int) {
+                override fun onAudioSessionIdChanged(audioSessionId: Int) {
                     listener(audioSessionId)
                     mediaPlayer?.audioComponent?.removeAudioListener(this)
                 }

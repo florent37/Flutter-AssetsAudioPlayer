@@ -2,15 +2,14 @@
 // Generated file. Do not edit.
 //
 
-// ignore: unused_import
-import 'dart:ui';
+// ignore_for_file: lines_longer_than_80_chars
 
 import 'package:assets_audio_player_web/web/assets_audio_player_web.dart';
 
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 // ignore: public_member_api_docs
-void registerPlugins(PluginRegistry registry) {
-  AssetsAudioPlayerWebPlugin.registerWith(registry.registrarFor(AssetsAudioPlayerWebPlugin));
-  registry.registerMessageHandler();
+void registerPlugins(Registrar registrar) {
+  AssetsAudioPlayerWebPlugin.registerWith(registrar);
+  registrar.registerMessageHandler();
 }
