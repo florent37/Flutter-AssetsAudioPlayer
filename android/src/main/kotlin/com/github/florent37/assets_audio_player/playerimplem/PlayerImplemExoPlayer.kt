@@ -29,6 +29,8 @@ class IncompatibleException(val audioType: String, val type: PlayerImplemTesterE
 
 class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
 
+    private var mediaPlayer :PlayerImplemExoPlayer? = null
+
     enum class Type {
         Default,
         HLS,
@@ -36,7 +38,15 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
         SmoothStreaming
     }
 
+    override fun stop(){
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
     override suspend fun open(configuration: PlayerFinderConfiguration) : PlayerFinder.PlayerWithDuration {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
         if(AssetsAudioPlayerPlugin.displayLogs) {
             Log.d("PlayerImplem", "trying to open with exoplayer($type)")
         }
@@ -47,7 +57,7 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
             }
         }
 
-        val mediaPlayer = PlayerImplemExoPlayer(
+        this.mediaPlayer = PlayerImplemExoPlayer(
                 onFinished = {
                     configuration.onFinished?.invoke()
                     //stop(pingListener = false)
@@ -62,7 +72,7 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
         )
 
         try {
-            val durationMS = mediaPlayer.open(
+            val durationMS = mediaPlayer?.open(
                     context = configuration.context,
                     assetAudioPath = configuration.assetAudioPath,
                     audioType = configuration.audioType,
@@ -71,14 +81,14 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
                     flutterAssets = configuration.flutterAssets
             )
             return PlayerFinder.PlayerWithDuration(
-                    player = mediaPlayer,
-                    duration = durationMS
+                    player = mediaPlayer!!,
+                    duration = durationMS!!
             )
         } catch (t: Throwable) {
             if(AssetsAudioPlayerPlugin.displayLogs) {
                 Log.d("PlayerImplem", "failed to open with exoplayer($type)")
             }
-            mediaPlayer.release()
+            mediaPlayer?.release()
             throw  t
         }
     }
@@ -169,7 +179,7 @@ class PlayerImplemExoPlayer(
                 val factory = DataSource.Factory { assetDataSource }
                 return ProgressiveMediaSource
                         .Factory(factory, DefaultExtractorsFactory())
-                        .createMediaSource(assetDataSource.uri)
+                        .createMediaSource(MediaItem.fromUri(assetDataSource.uri!!))
             }
         } catch (e: Exception) {
             throw e
@@ -318,7 +328,7 @@ class PlayerImplemExoPlayer(
             listener(id)
         } else {
             val listener = object : AudioListener {
-                override fun onAudioSessionId(audioSessionId: Int) {
+                override fun onAudioSessionIdChanged(audioSessionId: Int) {
                     listener(audioSessionId)
                     mediaPlayer?.audioComponent?.removeAudioListener(this)
                 }

@@ -766,7 +766,7 @@ class AssetsAudioPlayer {
 
   Future<void> _openPlaylistCurrent(
       {bool autoStart = true, Duration seek}) async {
-    if (_playlist != null && _isBuffering.value == false) {
+    if (_playlist != null) {
       return _open(
         _playlist.currentAudio(),
         forcedVolume: _playlist.volume,
