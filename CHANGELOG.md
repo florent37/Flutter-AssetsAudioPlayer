@@ -1,3 +1,6 @@
+## 2.0.13+7
+
+* fix version conflicts
 ## 2.0.13+6
 
 * fix android crash issue
