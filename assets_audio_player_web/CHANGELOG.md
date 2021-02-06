@@ -1,3 +1,6 @@
+## 2.0.13+6
+
+* fix android crash issue
 ## 2.0.13+5
 
 * fix opened multiple instance for android problem.
