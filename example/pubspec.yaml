@@ -10,10 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_neumorphic:
-    git:
-      url: https://github.com/kalismeras61/Flutter-Neumorphic.git
-      ref: 8b8b8441480fe0d573f51a029a3f6232828a0228
+  flutter_neumorphic: ^3.0.4+1
   rxdart: ^0.25.0
   # for local file test
   dio: 3.0.9
