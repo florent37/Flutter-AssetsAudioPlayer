@@ -1,3 +1,6 @@
+## 2.0.13+8
+
+* fix opening multiple audio player.
 ## 2.0.13+7
 
 * fix version conflicts
