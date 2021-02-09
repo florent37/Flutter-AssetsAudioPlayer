@@ -24,17 +24,12 @@ class PlayerImplemTesterMediaPlayer : PlayerImplemTester {
         return AssetAudioPlayerThrowable.PlayerError(t)
     }
 
-    override fun stop() {
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
-
 
     override suspend fun open(configuration: PlayerFinderConfiguration): PlayerFinder.PlayerWithDuration {
         if(AssetsAudioPlayerPlugin.displayLogs) {
             Log.d("PlayerImplem", "trying to open with native mediaplayer")
         }
-        mediaPlayer = PlayerImplemMediaPlayer(
+        val mediaPlayer = PlayerImplemMediaPlayer(
                 onFinished = {
                     configuration.onFinished?.invoke()
                     //stop(pingListener = false)
