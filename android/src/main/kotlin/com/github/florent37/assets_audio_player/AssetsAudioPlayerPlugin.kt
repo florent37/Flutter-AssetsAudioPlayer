@@ -51,7 +51,7 @@ class AssetsAudioPlayerPlugin : FlutterPlugin, PluginRegistry.NewIntentListener,
     var assetsAudioPlayer: AssetsAudioPlayer? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        Log.i("onAttachedToActivity");
+        log.i("onAttachedToActivity");
         instance = this
         notificationChannel = MethodChannel(flutterPluginBinding.binaryMessenger, "assets_audio_player_notification")
         assetsAudioPlayer = AssetsAudioPlayer(
@@ -63,7 +63,7 @@ class AssetsAudioPlayerPlugin : FlutterPlugin, PluginRegistry.NewIntentListener,
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        Log.i("onDetachedFromEngine");
+        log.i("onDetachedFromEngine");
         // assetsAudioPlayer?.unregister()
         instance = null
     }
