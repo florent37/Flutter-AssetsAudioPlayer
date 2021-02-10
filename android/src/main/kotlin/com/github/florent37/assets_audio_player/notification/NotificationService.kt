@@ -319,17 +319,20 @@ class NotificationService : Service() {
         }
     }
 
-    private fun hideNotif() {  log.i("hideNotif calledd");
+    private fun hideNotif() { 
+         Log.d("NotificationService","hideNotif");
         NotificationManagerCompat.from(applicationContext).cancel(NOTIFICATION_ID)
         stopForeground(true)
         stopSelf()
     }
 
-    override fun onTaskRemoved(rootIntent: Intent) {  log.i("onTaksRemoved calledd");
+    override fun onTaskRemoved(rootIntent: Intent) { 
+         Log.d("NotificationService","onTaskRemoved");
         hideNotif()
     }
 
-    override fun onCreate() {  log.i("onCreate calledd");
+    override fun onCreate() {  
+         Log.d("NotificationService","onCreate");
         super.onCreate()
     }
 
@@ -338,7 +341,7 @@ class NotificationService : Service() {
     }
 
     override fun onDestroy() {
-        log.i("onDestory calledd");
+       Log.d("NotificationService","onDestroy");
         super.onDestroy()
     }
 
