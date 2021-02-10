@@ -305,10 +305,10 @@ class NotificationService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
                     CHANNEL_ID,
-                    "Foreground Service Channel",
+                    "Media Playback",
                     android.app.NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "assets_audio_player"
+              
                 setShowBadge(false)
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
