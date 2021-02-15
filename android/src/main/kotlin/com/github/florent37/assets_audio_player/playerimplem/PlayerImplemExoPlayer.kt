@@ -29,7 +29,6 @@ class IncompatibleException(val audioType: String, val type: PlayerImplemTesterE
 
 class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
 
-    private var mediaPlayer :PlayerImplemExoPlayer? = null
 
     enum class Type {
         Default,
@@ -38,15 +37,8 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
         SmoothStreaming
     }
 
-    override fun stop(){
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
 
     override suspend fun open(configuration: PlayerFinderConfiguration) : PlayerFinder.PlayerWithDuration {
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = null
         if(AssetsAudioPlayerPlugin.displayLogs) {
             Log.d("PlayerImplem", "trying to open with exoplayer($type)")
         }
@@ -57,7 +49,7 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
             }
         }
 
-        this.mediaPlayer = PlayerImplemExoPlayer(
+        val mediaPlayer = PlayerImplemExoPlayer(
                 onFinished = {
                     configuration.onFinished?.invoke()
                     //stop(pingListener = false)
@@ -328,7 +320,7 @@ class PlayerImplemExoPlayer(
             listener(id)
         } else {
             val listener = object : AudioListener {
-                override fun onAudioSessionId(audioSessionId: Int) {
+                override fun onAudioSessionIdChanged(audioSessionId: Int) {
                     listener(audioSessionId)
                     mediaPlayer?.audioComponent?.removeAudioListener(this)
                 }

@@ -1,4 +1,13 @@
-## 2.0.13+3
+## 2.0.13+8
+
+* fix opening multiple audio player.
+## 2.0.13+7
+
+* fix version conflicts
+## 2.0.13+6
+
+* fix android crash issue
+## 2.0.13+5
 
 * fix opened multiple instance for android problem.
 ## 2.0.13+2
