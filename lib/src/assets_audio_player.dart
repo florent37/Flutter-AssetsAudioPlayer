@@ -63,6 +63,10 @@ class PlayerEditor {
   PlayerEditor._(this.assetsAudioPlayer);
 
   void onAudioRemovedAt(int index) {
+    if (index < assetsAudioPlayer._playlist.playlistIndex) {
+      assetsAudioPlayer._playlist.playlistIndex =
+          assetsAudioPlayer._playlist.playlistIndex - 1;
+    }
     assetsAudioPlayer._updatePlaylistIndexes();
     if (assetsAudioPlayer._playlist.playlistIndex == index) {
       assetsAudioPlayer._openPlaylistCurrent();
@@ -846,6 +850,7 @@ class AssetsAudioPlayer {
         return true;
       } else if (stopIfLast) {
         await stop();
+        _playlistFinished.value = true;
         return true;
       } else if (requestByUser) {
         //last element
@@ -858,7 +863,7 @@ class AssetsAudioPlayer {
             playlist: this._current.value.playlist,
           ));
         }
-
+        _playlistFinished.value = true;
         _playlist.returnToFirst();
         await _openPlaylistCurrent();
 
