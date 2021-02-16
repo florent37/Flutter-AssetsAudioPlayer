@@ -850,7 +850,6 @@ class AssetsAudioPlayer {
         return true;
       } else if (stopIfLast) {
         await stop();
-        _playlistFinished.value = true;
         return true;
       } else if (requestByUser) {
         //last element
@@ -863,7 +862,7 @@ class AssetsAudioPlayer {
             playlist: this._current.value.playlist,
           ));
         }
-        _playlistFinished.value = true;
+
         _playlist.returnToFirst();
         await _openPlaylistCurrent();
 
