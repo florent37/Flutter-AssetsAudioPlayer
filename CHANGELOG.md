@@ -1,3 +1,6 @@
+## 2.0.13+9
+
+* fix local properties issue
 ## 2.0.13+8
 
 * fix opening multiple audio player.
