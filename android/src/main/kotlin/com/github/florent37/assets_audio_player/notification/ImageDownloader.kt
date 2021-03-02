@@ -9,6 +9,7 @@ import android.net.Uri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.loader.FlutterLoader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -57,15 +58,14 @@ object ImageDownloader {
             try {
                 when (fileType) {
                     "asset" -> {
-                        val path = if(filePackage == null){
-                            FlutterLoader.getInstance().getLookupKeyForAsset(filePath)
+                        val loader: FlutterLoader = FlutterInjector.instance().flutterLoader()
+                        val path = "file:///android_asset/${if(filePackage == null){
+                            loader.getLookupKeyForAsset(filePath)
                         } else {
-                            FlutterLoader.getInstance().getLookupKeyForAsset(filePath, filePackage)
-                        }
+                            loader.getLookupKeyForAsset(filePath, filePackage)
+                        }}"
                         //Log.d("ImageDownloader", "path $path")
-                        val completePath = "file:///android_asset/$path" //or file://$path
-                        //Log.d("ImageDownloader", "completePath $completePath")
-                        val uri = Uri.parse(completePath)
+                        val uri = Uri.parse(path)
                         //Log.d("ImageDownloader", "uri $uri")
                         Glide.with(context)
                                 .asBitmap()
