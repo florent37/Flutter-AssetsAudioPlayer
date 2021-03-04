@@ -539,9 +539,9 @@ class ForwardHandler : Handler() {
         this.player = null
     }
 
-    override fun handleMessage(msg: Message?) {
+    override fun handleMessage(msg: Message) {
         super.handleMessage(msg)
-        if (msg?.what == MESSAGE_FORWARD) {
+        if (msg.what == MESSAGE_FORWARD) {
             this.player?.let {
                 it.seekBy((DELAY * speed).toLong())
                 sendEmptyMessageDelayed(MESSAGE_FORWARD, DELAY)
