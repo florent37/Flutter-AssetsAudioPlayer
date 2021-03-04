@@ -10,7 +10,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_neumorphic: ^3.0.4+1
+  flutter_neumorphic:
+    git:
+      url: https://github.com/kalismeras61/Flutter-Neumorphic.git
+      ref: master
+
   rxdart: ^0.25.0
   # for local file test
   dio: 3.0.9
@@ -38,6 +42,8 @@ dev_dependencies:
    path: ../
   #assets_audio_player_web:
   #  path: ../assets_audio_player_web
+
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
