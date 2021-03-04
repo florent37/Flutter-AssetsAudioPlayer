@@ -1,3 +1,9 @@
+## 2.0.14
+
+* update packages
+## 2.0.13+9
+
+* fix opening multiple audio player.
 ## 2.0.13+8
 
 * fix opening multiple audio player.
