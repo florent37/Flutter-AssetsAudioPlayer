@@ -38,6 +38,12 @@ class _MyHomePageState extends State<MyHomePage> {
   final AssetsAudioPlayer _player = AssetsAudioPlayer.newPlayer();
 
   final Playlist playlist = Playlist(audios: [
+    Audio(
+      "assets/audios/electronic.mp3",
+      metas: Metas(title: 'Test from assets',
+      image: MetasImage.asset("assets/images/country.jpg"),
+      ),
+    ),
     Audio.network(
       mp3Url,
       metas: Metas(title: 'hello world'),
