@@ -28,7 +28,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("sample"),
+        title: Text('sample'),
       ),
       body: SizedBox.expand(child: MyPageWithAudio()),
     );
@@ -42,28 +42,28 @@ class MyPageWithAudio extends StatefulWidget {
 
 class _MyPageWithAudioState extends State<MyPageWithAudio> {
   bool _play = false;
-  String _currentPosition = "";
+  String _currentPosition = '';
 
   @override
   Widget build(BuildContext context) {
     return AudioWidget.assets(
-      path: "assets/audios/country.mp3",
+      path: 'assets/audios/country.mp3',
       play: _play,
       onReadyToPlay: (total) {
         setState(() {
-          _currentPosition = "${Duration().mmSSFormat} / ${total.mmSSFormat}";
+          _currentPosition = '${Duration().mmSSFormat} / ${total.mmSSFormat}';
         });
       },
       onPositionChanged: (current, total) {
         setState(() {
-          _currentPosition = "${current.mmSSFormat} / ${total.mmSSFormat}";
+          _currentPosition = '${current.mmSSFormat} / ${total.mmSSFormat}';
         });
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          Text("Country music"),
+          Text('Country music'),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(

@@ -69,7 +69,7 @@ class WebPlayerHtml extends WebPlayer {
       if (durationMs != _durationMs) {
         _durationMs = durationMs;
         channel.invokeMethod(
-            WebPlayer.methodCurrent, {"totalDurationMs": durationMs});
+            WebPlayer.methodCurrent, {'totalDurationMs': durationMs});
       }
 
       if (_position != currentPosition) {
@@ -150,7 +150,7 @@ class WebPlayerHtml extends WebPlayer {
       if (durationMs != _durationMs) {
         _durationMs = durationMs;
         channel.invokeMethod(
-            WebPlayer.methodCurrent, {"totalDurationMs": durationMs});
+            WebPlayer.methodCurrent, {'totalDurationMs': durationMs});
       }
 
       if (seek != null) {
@@ -169,7 +169,7 @@ class WebPlayerHtml extends WebPlayer {
 
   @override
   void seek({double to}) {
-    print("Final Seeking To $to from ${_audioElement.currentTime}");
+    print('Final Seeking To $to from ${_audioElement.currentTime}');
     if (_audioElement != null && to != null) {
       /// Explainer on the `/1000`
       /// The value being sent down from the plugin

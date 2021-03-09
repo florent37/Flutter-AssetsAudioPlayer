@@ -7,14 +7,14 @@ import 'package:flutter/services.dart';
 abstract class WebPlayer {
   final MethodChannel channel;
 
-  static final methodPosition = "player.position";
-  static final methodVolume = "player.volume";
-  static final methodPlaySpeed = "player.playSpeed";
-  static final methodFinished = "player.finished";
-  static final methodIsPlaying = "player.isPlaying";
-  static final methodIsBuffering = "player.isBuffering";
-  static final methodCurrent = "player.current";
-  static final methodForwardRewindSpeed = "player.forwardRewind";
+  static final methodPosition = 'player.position';
+  static final methodVolume = 'player.volume';
+  static final methodPlaySpeed = 'player.playSpeed';
+  static final methodFinished = 'player.finished';
+  static final methodIsPlaying = 'player.isPlaying';
+  static final methodIsBuffering = 'player.isBuffering';
+  static final methodCurrent = 'player.current';
+  static final methodForwardRewindSpeed = 'player.forwardRewind';
 
   WebPlayer({this.channel});
 
@@ -39,20 +39,20 @@ abstract class WebPlayer {
   void stop();
 
   String findAssetPath(String path, String audioType) {
-    if (audioType == "network" ||
-        audioType == "liveStream" ||
-        audioType == "file") {
+    if (audioType == 'network' ||
+        audioType == 'liveStream' ||
+        audioType == 'file') {
       return path;
     }
     //in web, assets are packaged in a /assets/ folder
-    //if you want "/asset/3" as described in pubspec
+    //if you want '/asset/3' as described in pubspec
     //it will be in /assets/asset/3
 
-    /* for release mode, need to change the "url", remove the /#/ and add /asset before */
-    if (path.startsWith("/")) {
-      path = path.replaceFirst("/", "");
+    /* for release mode, need to change the 'url', remove the /#/ and add /asset before */
+    if (path.startsWith('/')) {
+      path = path.replaceFirst('/', '');
     }
-    path = (window.location.href.replaceAll("/#/", "") + "/assets/" + path);
+    path = (window.location.href.replaceAll('/#/', '') + '/assets/' + path);
     return path;
   }
 

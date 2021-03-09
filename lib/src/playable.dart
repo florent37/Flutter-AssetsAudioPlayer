@@ -28,13 +28,13 @@ enum AudioType {
 String audioTypeDescription(AudioType audioType) {
   switch (audioType) {
     case AudioType.network:
-      return "network";
+      return 'network';
     case AudioType.liveStream:
-      return "liveStream";
+      return 'liveStream';
     case AudioType.file:
-      return "file";
+      return 'file';
     case AudioType.asset:
-      return "asset";
+      return 'asset';
   }
 }
 
@@ -47,11 +47,11 @@ enum ImageType {
 String imageTypeDescription(ImageType imageType) {
   switch (imageType) {
     case ImageType.network:
-      return "network";
+      return 'network';
     case ImageType.file:
-      return "file";
+      return 'file';
     case ImageType.asset:
-      return "asset";
+      return 'asset';
   }
 }
 
@@ -400,25 +400,25 @@ class Playlist extends Playable {
 void writeAudioMetasInto(
     Map<String, dynamic> params, /* nullable */ Metas metas) {
   if (metas != null) {
-    if (metas.title != null) params["song.title"] = metas.title;
-    if (metas.artist != null) params["song.artist"] = metas.artist;
-    if (metas.album != null) params["song.album"] = metas.album;
+    if (metas.title != null) params['song.title'] = metas.title;
+    if (metas.artist != null) params['song.artist'] = metas.artist;
+    if (metas.album != null) params['song.album'] = metas.album;
     writeAudioImageMetasInto(params, metas.image);
     writeAudioImageMetasInto(params, metas.onImageLoadFail,
-        suffix: ".onLoadFail");
+        suffix: '.onLoadFail');
     if (metas.id != null) {
-      params["song.trackID"] = metas.id;
+      params['song.trackID'] = metas.id;
     }
   }
 }
 
 void writeAudioImageMetasInto(
     Map<String, dynamic> params, /* nullable */ MetasImage metasImage,
-    {String suffix = ""}) {
+    {String suffix = ''}) {
   if (metasImage != null) {
-    params["song.image$suffix"] = metasImage.path;
-    params["song.imageType$suffix"] = imageTypeDescription(metasImage.type);
-    params.addIfNotNull("song.imagePackage$suffix", metasImage.package);
+    params['song.image$suffix'] = metasImage.path;
+    params['song.imageType$suffix'] = imageTypeDescription(metasImage.type);
+    params.addIfNotNull('song.imagePackage$suffix', metasImage.package);
   }
 }
 

@@ -2,7 +2,7 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 
 final streamUrl =
-    "http://media.emit.com/pbs/tomorrow-land/202005081300/aac_mid.m4a";
+    'http://media.emit.com/pbs/tomorrow-land/202005081300/aac_mid.m4a';
 
 void main() => runApp(MyApp());
 
@@ -76,11 +76,11 @@ class _PlayerState extends State<Player> {
       await _player.open(
         Audio.liveStream(this.widget.streamPath,
             metas: Metas(
-                title: "title",
-                album: "album",
-                artist: "artist",
+                title: 'title',
+                album: 'album',
+                artist: 'artist',
                 image: MetasImage.network(
-                    "https://i.pinimg.com/564x/e3/77/94/e377940a4c2417221d04c47e5a52d2d4.jpg"))),
+                    'https://i.pinimg.com/564x/e3/77/94/e377940a4c2417221d04c47e5a52d2d4.jpg'))),
         autoStart: false,
         showNotification: true,
         notificationSettings: NotificationSettings(
@@ -105,7 +105,7 @@ class _PlayerState extends State<Player> {
                   SizedBox(
                     height: 8,
                   ),
-                  Text("Buffering"),
+                  Text('Buffering'),
                 ],
               );
             } else {

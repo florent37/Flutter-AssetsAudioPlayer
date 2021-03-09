@@ -35,22 +35,22 @@ const _DEFAULT_AUTO_START = true;
 const _DEFAULT_RESPECT_SILENT_MODE = false;
 const _DEFAULT_SHOW_NOTIFICATION = false;
 const _DEFAULT_PLAY_IN_BACKGROUND = PlayInBackground.enabled;
-const _DEFAULT_PLAYER = "DEFAULT_PLAYER";
+const _DEFAULT_PLAYER = 'DEFAULT_PLAYER';
 
-const METHOD_POSITION = "player.position";
-const METHOD_VOLUME = "player.volume";
-const METHOD_FINISHED = "player.finished";
-const METHOD_IS_PLAYING = "player.isPlaying";
-const METHOD_IS_BUFFERING = "player.isBuffering";
-const METHOD_CURRENT = "player.current";
-const METHOD_FORWARD_REWIND_SPEED = "player.forwardRewind";
-const METHOD_NOTIFICATION_NEXT = "player.next";
-const METHOD_NOTIFICATION_PREV = "player.prev";
-const METHOD_NOTIFICATION_STOP = "player.stop";
-const METHOD_NOTIFICATION_PLAY_OR_PAUSE = "player.playOrPause";
-const METHOD_PLAY_SPEED = "player.playSpeed";
-const METHOD_ERROR = "player.error";
-const METHOD_AUDIO_SESSION_ID = "player.audioSessionId";
+const METHOD_POSITION = 'player.position';
+const METHOD_VOLUME = 'player.volume';
+const METHOD_FINISHED = 'player.finished';
+const METHOD_IS_PLAYING = 'player.isPlaying';
+const METHOD_IS_BUFFERING = 'player.isBuffering';
+const METHOD_CURRENT = 'player.current';
+const METHOD_FORWARD_REWIND_SPEED = 'player.forwardRewind';
+const METHOD_NOTIFICATION_NEXT = 'player.next';
+const METHOD_NOTIFICATION_PREV = 'player.prev';
+const METHOD_NOTIFICATION_STOP = 'player.stop';
+const METHOD_NOTIFICATION_PLAY_OR_PAUSE = 'player.playOrPause';
+const METHOD_PLAY_SPEED = 'player.playSpeed';
+const METHOD_ERROR = 'player.error';
+const METHOD_AUDIO_SESSION_ID = 'player.audioSessionId';
 
 enum PlayerState {
   play,
@@ -85,7 +85,7 @@ class PlayerEditor {
     if (assetsAudioPlayer._playlist.playlistIndex == index) {
       final currentPosition = assetsAudioPlayer.currentPosition.value;
       final isPlaying = assetsAudioPlayer.isPlaying.value ?? false;
-      //print("onAudioReplacedAt/ currentPosition : $currentPosition");
+      //print('onAudioReplacedAt/ currentPosition : $currentPosition');
       if (keepPlayingPositionIfCurrent && currentPosition != null) {
         assetsAudioPlayer._openPlaylistCurrent(
             seek: currentPosition, autoStart: isPlaying);
@@ -106,7 +106,7 @@ class PlayerEditor {
 ///     AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
 ///
 ///     _assetsAudioPlayer.open(Audio(
-///         "/assets/audio/myAudio.mp3",
+///         '/assets/audio/myAudio.mp3',
 ///     ))
 ///
 /// Don't forget to declare the audio folder in your `pubspec.yaml`
@@ -144,7 +144,7 @@ class AssetsAudioPlayer {
         const MethodChannel('assets_audio_player_notification');
     _notificationOpenChannel.setMethodCallHandler((call) async {
       switch (call.method) {
-        case "selectNotification":
+        case 'selectNotification':
           {
             final String audioId = call.arguments;
             __onNotificationClicked.value =
@@ -272,7 +272,7 @@ class AssetsAudioPlayer {
   ///         stream: _assetsAudioPlayer.currentPosition,
   ///         builder: (context, asyncSnapshot) {
   ///             final bool isPlaying = asyncSnapshot.data;
-  ///             return Text(isPlaying ? "Pause" : "Play");
+  ///             return Text(isPlaying ? 'Pause' : 'Play');
   ///         }),
   ValueStream<bool> get isPlaying => _isPlaying.stream;
   String get getCurrentAudioTitle => _current.value.audio.audio.metas.title;
@@ -370,7 +370,7 @@ class AssetsAudioPlayer {
   ///         stream: _assetsAudioPlayer.volume,
   ///         builder: (context, asyncSnapshot) {
   ///             final double volume = asyncSnapshot.data;
-  ///             return Text("volume: ${volume.toString()});
+  ///             return Text('volume: ${volume.toString()});
   ///         }),
   ValueStream<double> get volume => _volume.stream;
 
@@ -394,7 +394,7 @@ class AssetsAudioPlayer {
       _realtimePlayingInfos.stream;
 
   AssetsAudioPlayerErrorHandler
-      onErrorDo; //custom error Handler, default value in "_init"
+      onErrorDo; //custom error Handler, default value in '_init'
 
   BehaviorSubject<double> _playSpeed = BehaviorSubject.seeded(1.0);
 
@@ -423,7 +423,7 @@ class AssetsAudioPlayer {
     _showNotification = newValue;
 
     /* await */ _sendChannel.invokeMethod(
-        'showNotification', {"id": this.id, "show": _showNotification});
+        'showNotification', {'id': this.id, 'show': _showNotification});
   }
 
   Future<void> setLoopMode(LoopMode value) async {
@@ -512,10 +512,10 @@ class AssetsAudioPlayer {
 
     _recieveChannel = MethodChannel('assets_audio_player/$id');
     _recieveChannel.setMethodCallHandler((MethodCall call) async {
-      //print("received call ${call.method} with arguments ${call.arguments}");
+      //print('received call ${call.method} with arguments ${call.arguments}');
       switch (call.method) {
         case 'log':
-          print("log: " + call.arguments);
+          print('log: ' + call.arguments);
           break;
         case METHOD_FINISHED:
           _onFinished(call.arguments);
@@ -557,7 +557,7 @@ class AssetsAudioPlayer {
             _playerState.value = PlayerState.stop;
           } else {
             final totalDurationMs =
-                _toDuration(call.arguments["totalDurationMs"]);
+                _toDuration(call.arguments['totalDurationMs']);
 
             final playingAudio = PlayingAudio(
               audio: _lastOpenedAssetsAudio,
@@ -745,9 +745,9 @@ class AssetsAudioPlayer {
                   800; //< 800ms
           final newJustStarted = newValue < 800; //<800ms
 
-          //print("old: ${oldValue.inMilliseconds}, dur : ${completeDuration.inMilliseconds}");
+          //print('old: ${oldValue.inMilliseconds}, dur : ${completeDuration.inMilliseconds}');
           if (newJustStarted && oldEndReached) {
-            //print("loop");
+            //print('loop');
             final finishedPlay = Playing(
               audio: current.audio,
               index: current.index,
@@ -883,8 +883,8 @@ class AssetsAudioPlayer {
   }
 
   void _handleOnError(Map args) async {
-    final String errorType = args["type"];
-    final String errorMessage = args["message"];
+    final String errorType = args['type'];
+    final String errorMessage = args['message'];
     final AssetsAudioPlayerError error = AssetsAudioPlayerError(
       errorType: parseAssetsAudioPlayerErrorType(errorType),
       message: errorMessage,
@@ -987,30 +987,30 @@ class AssetsAudioPlayer {
 
       try {
         Map<String, dynamic> params = {
-          "id": this.id,
-          "audioType": audioTypeDescription(audio.audioType),
-          "path": audio.path,
-          "autoStart": autoStart,
-          "respectSilentMode": respectSilentMode,
-          "headPhoneStrategy": describeHeadPhoneStrategy(headPhoneStrategy),
-          "audioFocusStrategy": describeAudioFocusStrategy(focusStrategy),
-          "displayNotification": showNotification,
-          "volume": forcedVolume ?? this.volume.value ?? defaultVolume,
-          "playSpeed": playSpeed ??
+          'id': this.id,
+          'audioType': audioTypeDescription(audio.audioType),
+          'path': audio.path,
+          'autoStart': autoStart,
+          'respectSilentMode': respectSilentMode,
+          'headPhoneStrategy': describeHeadPhoneStrategy(headPhoneStrategy),
+          'audioFocusStrategy': describeAudioFocusStrategy(focusStrategy),
+          'displayNotification': showNotification,
+          'volume': forcedVolume ?? this.volume.value ?? defaultVolume,
+          'playSpeed': playSpeed ??
               audio.playSpeed ??
               this.playSpeed.value ??
               defaultPlaySpeed,
         };
         if (seek != null) {
-          params["seek"] = seek.inMilliseconds.round();
+          params['seek'] = seek.inMilliseconds.round();
         }
         if (audio.package != null) {
-          params["package"] = audio.package;
+          params['package'] = audio.package;
         }
         if (audio.audioType == AudioType.file ||
             audio.audioType == AudioType.network ||
             audio.audioType == AudioType.liveStream) {
-          params["networkHeaders"] =
+          params['networkHeaders'] =
               audio.networkHeaders ?? networkSettings.defaultHeaders;
         }
 
@@ -1049,8 +1049,8 @@ class AssetsAudioPlayer {
     if (_lastOpenedAssetsAudio != null) {
       if (_lastOpenedAssetsAudio.path == audio.path) {
         final Map<String, dynamic> params = {
-          "id": this.id,
-          "path": audio.path,
+          'id': this.id,
+          'path': audio.path,
         };
 
         writeAudioMetasInto(params, audio.metas);
@@ -1064,9 +1064,9 @@ class AssetsAudioPlayer {
       {Metas metas, bool showNotifications = true}) async {
     if (_lastOpenedAssetsAudio != null) {
       final Map<String, dynamic> params = {
-        "id": this.id,
-        "path": _lastOpenedAssetsAudio.path,
-        "showNotification": showNotifications,
+        'id': this.id,
+        'path': _lastOpenedAssetsAudio.path,
+        'showNotification': showNotifications,
       };
 
       writeAudioMetasInto(params, metas);
@@ -1120,7 +1120,7 @@ class AssetsAudioPlayer {
   ///
   ///     AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
   ///
-  ///     _assetsAudioPlayer.open(Audio("assets/audios/song1.mp3"))
+  ///     _assetsAudioPlayer.open(Audio('assets/audios/song1.mp3'))
   ///
   /// Don't forget to declare the audio folder in your `pubspec.yaml`
   ///
@@ -1225,13 +1225,13 @@ class AssetsAudioPlayer {
 
   Future<void> _play() async {
     await _sendChannel.invokeMethod('play', {
-      "id": this.id,
+      'id': this.id,
     });
   }
 
   Future<void> _loopSingleAudio(bool loop) async {
     await _sendChannel
-        .invokeMethod('loopSingleAudio', {"id": this.id, "loop": loop});
+        .invokeMethod('loopSingleAudio', {'id': this.id, 'loop': loop});
   }
 
   /// Tells the media player to pause the current song
@@ -1244,7 +1244,7 @@ class AssetsAudioPlayer {
     } else {
       if (!_stopped) {
         await _sendChannel.invokeMethod('pause', {
-          "id": this.id,
+          'id': this.id,
         });
         _lastSeek = _currentPosition.value;
       }
@@ -1260,8 +1260,8 @@ class AssetsAudioPlayer {
     if (to != _lastSeek || force) {
       _lastSeek = to;
       await _sendChannel.invokeMethod('seek', {
-        "id": this.id,
-        "to": to.inMilliseconds.round(),
+        'id': this.id,
+        'to': to.inMilliseconds.round(),
       });
     }
   }
@@ -1284,8 +1284,8 @@ class AssetsAudioPlayer {
         _wasPlayingBeforeForwardRewind = this.isPlaying.value;
       }
       await _sendChannel.invokeMethod('forwardRewind', {
-        "id": this.id,
-        "speed": speed,
+        'id': this.id,
+        'speed': speed,
       });
     }
   }
@@ -1340,8 +1340,8 @@ class AssetsAudioPlayer {
   ///
   Future<void> setVolume(double volume) async {
     await _sendChannel.invokeMethod('volume', {
-      "id": this.id,
-      "volume": volume.clamp(minVolume, maxVolume),
+      'id': this.id,
+      'volume': volume.clamp(minVolume, maxVolume),
     });
   }
 
@@ -1355,7 +1355,7 @@ class AssetsAudioPlayer {
   Future<void> _stop({bool removeNotification = true}) async {
     _stopped = true;
     await _sendChannel.invokeMethod(
-        'stop', {"id": this.id, "removeNotification": removeNotification});
+        'stop', {'id': this.id, 'removeNotification': removeNotification});
   }
 
   /// Change the current play speed (rate) of the MediaPlayer
@@ -1369,8 +1369,8 @@ class AssetsAudioPlayer {
   ///
   Future<void> setPlaySpeed(double playSpeed) async {
     await _sendChannel.invokeMethod('playSpeed', {
-      "id": this.id,
-      "playSpeed":
+      'id': this.id,
+      'playSpeed':
           (playSpeed ?? defaultPlaySpeed).clamp(minPlaySpeed, maxPlaySpeed),
     });
   }
@@ -1396,7 +1396,7 @@ class AssetsAudioPlayer {
 
   //returns the file path
   Future<String> _copyToTmpMemory({String package, String assetSource}) async {
-    final String fileName = "${package ?? ""}$assetSource";
+    final String fileName = '${package ?? ''}$assetSource';
     final completePath = '${(await getTemporaryDirectory()).path}/$fileName';
     final file = File(completePath);
     if (await file.exists()) {

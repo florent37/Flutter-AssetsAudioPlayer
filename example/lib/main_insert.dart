@@ -12,25 +12,25 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State {
   static final rock = Audio(
-    "assets/audios/rock.mp3",
+    'assets/audios/rock.mp3',
     metas: Metas(
-      id: "Rock",
-      title: "Rock",
-      artist: "Florent Champigny",
-      album: "RockAlbum",
+      id: 'Rock',
+      title: 'Rock',
+      artist: 'Florent Champigny',
+      album: 'RockAlbum',
       image: MetasImage.network(
-          "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+          'https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png'),
     ),
   );
 
   static final country = Audio(
-    "assets/audios/country.mp3",
+    'assets/audios/country.mp3',
     metas: Metas(
-      id: "Country",
-      title: "Country",
-      artist: "Florent Champigny",
-      album: "CountryAlbum",
-      image: MetasImage.asset("assets/images/country.jpg"),
+      id: 'Country',
+      title: 'Country',
+      artist: 'Florent Champigny',
+      album: 'CountryAlbum',
+      image: MetasImage.asset('assets/images/country.jpg'),
     ),
   );
 

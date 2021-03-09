@@ -43,7 +43,7 @@ class _MyAppState extends State<MyApp> {
             metas: Metas(
               artist: s.artist,
               album: s.album,
-              image: MetasImage.asset("assets/images/country.jpg"),
+              image: MetasImage.asset('assets/images/country.jpg'),
               title: s.title,
             )))
         .toList();
@@ -57,34 +57,34 @@ class _MyAppState extends State<MyApp> {
   }
 
   //final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
-  AssetsAudioPlayer get _assetsAudioPlayer => AssetsAudioPlayer.withId("music");
+  AssetsAudioPlayer get _assetsAudioPlayer => AssetsAudioPlayer.withId('music');
   final List<StreamSubscription> _subscriptions = [];
 
   @override
   void initState() {
     //_subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
-    //  print("finished : $data");
+    //  print('finished : $data');
     //}));
     _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
-      print("playlistAudioFinished : $data");
+      print('playlistAudioFinished : $data');
     }));
     _subscriptions.add(_assetsAudioPlayer.audioSessionId.listen((sessionId) {
-      print("audioSessionId : $sessionId");
+      print('audioSessionId : $sessionId');
     }));
     //_subscriptions.add(_assetsAudioPlayer.current.listen((data) {
-    //  print("current : $data");
+    //  print('current : $data');
     //}));
     //_subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
-    //  print("onReadyToPlay : $audio");
+    //  print('onReadyToPlay : $audio');
     //}));
     //_subscriptions.add(_assetsAudioPlayer.isBuffering.listen((isBuffering) {
-    //  print("isBuffering : $isBuffering");
+    //  print('isBuffering : $isBuffering');
     //}));
     //_subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
-    //  print("playerState : $playerState");
+    //  print('playerState : $playerState');
     //}));
     //_subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
-    //  print("isplaying : $isplaying");
+    //  print('isplaying : $isplaying');
     //}));
     _subscriptions
         .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
@@ -97,7 +97,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     _assetsAudioPlayer.dispose();
-    print("dispose");
+    print('dispose');
     super.dispose();
   }
 
@@ -168,7 +168,7 @@ class _MyAppState extends State<MyApp> {
                           margin: EdgeInsets.all(18),
                           onPressed: () {
                             AssetsAudioPlayer.playAndForget(
-                                Audio("assets/audios/horn.mp3"));
+                                Audio('assets/audios/horn.mp3'));
                           },
                           child: Icon(
                             Icons.add_alert,
@@ -227,7 +227,7 @@ class _MyAppState extends State<MyApp> {
                           if (infos == null) {
                             return SizedBox();
                           }
-                          //print("infos: $infos");
+                          //print('infos: $infos');
                           return Column(
                             children: [
                               PositionSeekWidget(
@@ -241,7 +241,7 @@ class _MyAppState extends State<MyApp> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   NeumorphicButton(
-                                    child: Text("-10"),
+                                    child: Text('-10'),
                                     onPressed: () {
                                       _assetsAudioPlayer
                                           .seekBy(Duration(seconds: -10));
@@ -251,7 +251,7 @@ class _MyAppState extends State<MyApp> {
                                     width: 12,
                                   ),
                                   NeumorphicButton(
-                                    child: Text("+10"),
+                                    child: Text('+10'),
                                     onPressed: () {
                                       _assetsAudioPlayer
                                           .seekBy(Duration(seconds: 10));
@@ -299,11 +299,11 @@ class _MyAppState extends State<MyApp> {
                                 //}
                                 //prevEnabled: false,
                                 //customNextAction: (player) {
-                                //  print("next");
+                                //  print('next');
                                 //}
-                                //customStopIcon: AndroidResDrawable(name: "ic_stop_custom"),
-                                //customPauseIcon: AndroidResDrawable(name:"ic_pause_custom"),
-                                //customPlayIcon: AndroidResDrawable(name:"ic_play_custom"),
+                                //customStopIcon: AndroidResDrawable(name: 'ic_stop_custom'),
+                                //customPauseIcon: AndroidResDrawable(name:'ic_pause_custom'),
+                                //customPlayIcon: AndroidResDrawable(name:'ic_play_custom'),
                                 ),
                           );
                         } catch (e) {

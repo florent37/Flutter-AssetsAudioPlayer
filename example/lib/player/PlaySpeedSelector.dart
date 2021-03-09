@@ -13,7 +13,7 @@ class PlaySpeedSelector extends StatelessWidget {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: <Widget>[
           Text(
-            "PlaySpeed ",
+            'PlaySpeed ',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           _button(0.5),
@@ -35,7 +35,7 @@ class PlaySpeedSelector extends StatelessWidget {
         style: NeumorphicRadioStyle(
           boxShape: NeumorphicBoxShape.circle(),
         ),
-        child: Text("x$value"),
+        child: Text('x$value'),
         onChanged: (v) {
           this.onChange(v);
         },

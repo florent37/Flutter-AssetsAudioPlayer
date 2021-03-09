@@ -76,23 +76,23 @@ class NotificationSettings {
 
 void writeNotificationSettingsInto(
     Map<String, dynamic> params, NotificationSettings notificationSettings) {
-  params["notif.settings.nextEnabled"] = notificationSettings.nextEnabled;
-  params["notif.settings.stopEnabled"] = notificationSettings.stopEnabled;
-  params["notif.settings.playPauseEnabled"] =
+  params['notif.settings.nextEnabled'] = notificationSettings.nextEnabled;
+  params['notif.settings.stopEnabled'] = notificationSettings.stopEnabled;
+  params['notif.settings.playPauseEnabled'] =
       notificationSettings.playPauseEnabled;
-  params["notif.settings.prevEnabled"] = notificationSettings.prevEnabled;
-  params["notif.settings.seekBarEnabled"] = notificationSettings.seekBarEnabled;
+  params['notif.settings.prevEnabled'] = notificationSettings.prevEnabled;
+  params['notif.settings.seekBarEnabled'] = notificationSettings.seekBarEnabled;
 
   params.addIfNotNull(
-      "notif.settings.playIcon", notificationSettings.customPlayIcon?.name);
+      'notif.settings.playIcon', notificationSettings.customPlayIcon?.name);
   params.addIfNotNull(
-      "notif.settings.pauseIcon", notificationSettings.customPauseIcon?.name);
+      'notif.settings.pauseIcon', notificationSettings.customPauseIcon?.name);
   params.addIfNotNull(
-      "notif.settings.nextIcon", notificationSettings.customNextIcon?.name);
-  params.addIfNotNull("notif.settings.previousIcon",
+      'notif.settings.nextIcon', notificationSettings.customNextIcon?.name);
+  params.addIfNotNull('notif.settings.previousIcon',
       notificationSettings.customPreviousIcon?.name);
   params.addIfNotNull(
-      "notif.settings.stopIcon", notificationSettings.customStopIcon?.name);
+      'notif.settings.stopIcon', notificationSettings.customStopIcon?.name);
 }
 
 class ClickedNotification {

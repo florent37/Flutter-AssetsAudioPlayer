@@ -18,9 +18,9 @@ class AssetsAudioPlayerCache {
 
 String removeHttpSpecialCharsFromStrings(String from) {
   return from
-      .replaceAll(RegExp(r"/"), "_")
-      .replaceAll(RegExp(r":"), "_")
-      .replaceAll(RegExp(r"%"), "_");
+      .replaceAll(RegExp(r'/'), '_')
+      .replaceAll(RegExp(r':'), '_')
+      .replaceAll(RegExp(r'%'), '_');
 }
 
 AssetsAudioPlayerCache defaultAssetsAudioPlayerCache = AssetsAudioPlayerCache(

@@ -51,7 +51,7 @@ class PlayingControls extends StatelessWidget {
           ),
           Center(
             child: Text(
-              "1",
+              '1',
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
           ),

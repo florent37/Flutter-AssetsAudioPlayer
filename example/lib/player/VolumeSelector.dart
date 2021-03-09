@@ -14,7 +14,7 @@ class VolumeSelector extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            "Volume ",
+            'Volume ',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           Expanded(

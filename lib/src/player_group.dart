@@ -225,9 +225,9 @@ class AssetsAudioPlayerGroup {
   }) async {
     if (playerGroup != null) {
       final Map<String, dynamic> params = {
-        "id": firstPlayerId,
-        "isPlaying": isPlaying,
-        "display": display,
+        'id': firstPlayerId,
+        'isPlaying': isPlaying,
+        'display': display,
       };
 
       writeAudioMetasInto(params, metas);

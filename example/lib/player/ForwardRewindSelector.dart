@@ -13,7 +13,7 @@ class ForwardRewindSelector extends StatelessWidget {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: <Widget>[
           Text(
-            "Forward/Rewind ",
+            'Forward/Rewind ',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           _button(-2),
@@ -33,7 +33,7 @@ class ForwardRewindSelector extends StatelessWidget {
         style: NeumorphicRadioStyle(
           boxShape: NeumorphicBoxShape.circle(),
         ),
-        child: Text("x$value"),
+        child: Text('x$value'),
         onChanged: (v) {
           this.onChange(v);
         },

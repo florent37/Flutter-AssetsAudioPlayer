@@ -16,20 +16,20 @@ class _MyAppState extends State {
   @override
   void initState() {
     _assetsAudioPlayer.playlistFinished.listen((data) {
-      print("finished : $data");
+      print('finished : $data');
     });
     _assetsAudioPlayer.playlistAudioFinished.listen((data) {
-      print("playlistAudioFinished : $data");
+      print('playlistAudioFinished : $data');
     });
     _assetsAudioPlayer.current.listen((data) {
-      print("current : $data");
+      print('current : $data');
     });
     _assetsAudioPlayer.onReadyToPlay.listen((audio) {
-      print("onReadyToPlay : $audio");
+      print('onReadyToPlay : $audio');
     });
     _assetsAudioPlayer.open(
         Audio(
-          "assets/audios/water.mp3",
+          'assets/audios/water.mp3',
         ),
         loopMode: LoopMode.playlist);
     super.initState();

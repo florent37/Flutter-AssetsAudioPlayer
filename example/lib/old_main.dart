@@ -11,9 +11,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final audios = <Audio>[
-    Audio("assets/audios/song1.mp3"),
-    Audio("assets/audios/song2.mp3"),
-    Audio("assets/audios/song3.mp3"),
+    Audio('assets/audios/song1.mp3'),
+    Audio('assets/audios/song2.mp3'),
+    Audio('assets/audios/song3.mp3'),
   ];
 
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
@@ -21,13 +21,13 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     _assetsAudioPlayer.playlistFinished.listen((data) {
-      print("finished : $data");
+      print('finished : $data');
     });
     _assetsAudioPlayer.playlistAudioFinished.listen((data) {
-      print("playlistAudioFinished : $data");
+      print('playlistAudioFinished : $data');
     });
     _assetsAudioPlayer.current.listen((data) {
-      print("current : $data");
+      print('current : $data');
     });
     super.initState();
   }
@@ -41,11 +41,11 @@ class _MyAppState extends State<MyApp> {
   String loopModeText(LoopMode loopMode) {
     switch (loopMode) {
       case LoopMode.none:
-        return "Not looping";
+        return 'Not looping';
       case LoopMode.single:
-        return "Looping single";
+        return 'Looping single';
       case LoopMode.playlist:
-        return "Looping playlist";
+        return 'Looping playlist';
     }
   }
 
@@ -66,14 +66,14 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () {
                   _assetsAudioPlayer.open(Playlist(audios: this.audios));
                 },
-                child: Text("Playlist test"),
+                child: Text('Playlist test'),
               ),
               ElevatedButton(
                 onPressed: () {
                   AssetsAudioPlayer.newPlayer()
-                      .open(Audio("assets/audios/cat.wav"));
+                      .open(Audio('assets/audios/cat.wav'));
                 },
-                child: Text("Small Song in parallel"),
+                child: Text('Small Song in parallel'),
               ),
               Expanded(
                 child: StreamBuilder(
@@ -85,7 +85,7 @@ class _MyAppState extends State<MyApp> {
                       return ListView.builder(
                         itemBuilder: (context, position) {
                           return ListTile(
-                              title: Text(audios[position].path.split("/").last,
+                              title: Text(audios[position].path.split('/').last,
                                   style: TextStyle(
                                     color: audios[position].path ==
                                             playing?.audio?.assetAudioPath
@@ -120,7 +120,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                   SizedBox(width: 20),
                   ElevatedButton(
-                    child: Text("Seek to 2:00"),
+                    child: Text('Seek to 2:00'),
                     onPressed: () {
                       _assetsAudioPlayer.seek(Duration(minutes: 2));
                     },
@@ -139,7 +139,7 @@ class _MyAppState extends State<MyApp> {
                       return Text(durationToString(duration));
                     },
                   ),
-                  Text(" - "),
+                  Text(' - '),
                   StreamBuilder(
                     stream: _assetsAudioPlayer.current,
                     builder: (BuildContext context,
@@ -161,8 +161,8 @@ class _MyAppState extends State<MyApp> {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text("volume : ${((volume * 100).round()) / 100.0}"),
-                        Text(" - "),
+                        Text('volume : ${((volume * 100).round()) / 100.0}'),
+                        Text(' - '),
                         Expanded(
                           child: Slider(
                             min: AssetsAudioPlayer.minVolume,
@@ -219,13 +219,13 @@ class _MyAppState extends State<MyApp> {
 
 String durationToString(Duration duration) {
   String twoDigits(int n) {
-    if (n >= 10) return "$n";
-    return "0$n";
+    if (n >= 10) return '$n';
+    return '0$n';
   }
 
   String twoDigitMinutes =
       twoDigits(duration.inMinutes.remainder(Duration.minutesPerHour));
   String twoDigitSeconds =
       twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute));
-  return "$twoDigitMinutes:$twoDigitSeconds";
+  return '$twoDigitMinutes:$twoDigitSeconds';
 }

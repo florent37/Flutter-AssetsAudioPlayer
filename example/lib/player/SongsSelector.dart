@@ -53,7 +53,7 @@ class SongsSelector extends StatelessWidget {
               onPressed: () {
                 this.onPlaylistSelected(this.audios);
               },
-              child: Center(child: Text("All as playlist")),
+              child: Center(child: Text('All as playlist')),
             ),
           ),
           SizedBox(

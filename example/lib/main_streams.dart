@@ -29,72 +29,72 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final audios = <Audio>[
     Audio.network(
-      "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3",
+      'https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3',
       metas: Metas(
-        title: "Online",
-        artist: "Florent Champigny",
-        album: "OnlineAlbum",
+        title: 'Online',
+        artist: 'Florent Champigny',
+        album: 'OnlineAlbum',
         image: MetasImage.network(
-            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+            'https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg'),
       ),
     ),
     Audio(
-      "assets/audios/rock.mp3",
+      'assets/audios/rock.mp3',
       metas: Metas(
-        title: "Rock",
-        artist: "Florent Champigny",
-        album: "RockAlbum",
+        title: 'Rock',
+        artist: 'Florent Champigny',
+        album: 'RockAlbum',
         image: MetasImage.network(
-            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+            'https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png'),
       ),
     ),
     Audio(
-      "assets/audios/country.mp3",
+      'assets/audios/country.mp3',
       metas: Metas(
-        title: "Country",
-        artist: "Florent Champigny",
-        album: "CountryAlbum",
-        image: MetasImage.asset("assets/images/country.jpg"),
+        title: 'Country',
+        artist: 'Florent Champigny',
+        album: 'CountryAlbum',
+        image: MetasImage.asset('assets/images/country.jpg'),
       ),
     ),
     Audio(
-      "assets/audios/electronic.mp3",
+      'assets/audios/electronic.mp3',
       metas: Metas(
-        title: "Electronic",
-        artist: "Florent Champigny",
-        album: "ElectronicAlbum",
+        title: 'Electronic',
+        artist: 'Florent Champigny',
+        album: 'ElectronicAlbum',
         image: MetasImage.network(
-            "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
+            'https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg'),
       ),
     ),
     Audio(
-      "assets/audios/hiphop.mp3",
+      'assets/audios/hiphop.mp3',
       metas: Metas(
-        title: "HipHop",
-        artist: "Florent Champigny",
-        album: "HipHopAlbum",
+        title: 'HipHop',
+        artist: 'Florent Champigny',
+        album: 'HipHopAlbum',
         image: MetasImage.network(
-            "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg"),
+            'https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg'),
       ),
     ),
     Audio(
-      "assets/audios/pop.mp3",
+      'assets/audios/pop.mp3',
       metas: Metas(
-        title: "Pop",
-        artist: "Florent Champigny",
-        album: "PopAlbum",
+        title: 'Pop',
+        artist: 'Florent Champigny',
+        album: 'PopAlbum',
         image: MetasImage.network(
-            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+            'https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg'),
       ),
     ),
     Audio(
-      "assets/audios/instrumental.mp3",
+      'assets/audios/instrumental.mp3',
       metas: Metas(
-        title: "Instrumental",
-        artist: "Florent Champigny",
-        album: "InstrumentalAlbum",
+        title: 'Instrumental',
+        artist: 'Florent Champigny',
+        album: 'InstrumentalAlbum',
         image: MetasImage.network(
-            "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
+            'https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg'),
       ),
     ),
   ];
@@ -105,16 +105,16 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     _subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
-      print("finished : $data");
+      print('finished : $data');
     }));
     _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
-      print("playlistAudioFinished : $data");
+      print('playlistAudioFinished : $data');
     }));
     _subscriptions.add(_assetsAudioPlayer.current.listen((data) {
-      print("current : $data");
+      print('current : $data');
     }));
     _subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
-      print("onRedayToPlay : $audio");
+      print('onRedayToPlay : $audio');
     }));
     super.initState();
   }
@@ -194,7 +194,7 @@ class _MyAppState extends State<MyApp> {
                         margin: EdgeInsets.all(18),
                         onPressed: () {
                           AssetsAudioPlayer.playAndForget(
-                              Audio("assets/audios/horn.mp3"));
+                              Audio('assets/audios/horn.mp3'));
                         },
                         child: Icon(
                           Icons.add_alert,
@@ -259,7 +259,7 @@ class _MyAppState extends State<MyApp> {
                                 }
                                 final RealtimePlayingInfos infos =
                                     snapshot.data;
-                                //print("infos: $infos");
+                                //print('infos: $infos');
                                 return PositionSeekWidget(
                                   currentPosition: infos.currentPosition,
                                   duration: infos.duration,

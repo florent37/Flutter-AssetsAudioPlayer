@@ -25,7 +25,7 @@ typedef AssetsAudioPlayerGroupErrorHandler = Function(
 
 AssetsAudioPlayerErrorType parseAssetsAudioPlayerErrorType(String type) {
   switch (type) {
-    case "network":
+    case 'network':
       return AssetsAudioPlayerErrorType.Network;
     default:
       return AssetsAudioPlayerErrorType.Player;

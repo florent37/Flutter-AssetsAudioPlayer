@@ -12,13 +12,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State {
   final audio = Audio.liveStream(
-    "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p",
+    'http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p',
     metas: Metas(
-      title: "Online",
-      artist: "Florent Champigny",
-      album: "OnlineAlbum",
+      title: 'Online',
+      artist: 'Florent Champigny',
+      album: 'OnlineAlbum',
       image: MetasImage.network(
-          "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+          'https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg'),
     ),
   );
 
@@ -39,8 +39,8 @@ class _MyAppState extends State {
             child: Text('Click'),
             onPressed: () {
               this.audio.updateMetas(
-                    title: "Online 2",
-                    artist: "My artist",
+                    title: 'Online 2',
+                    artist: 'My artist',
                   );
             },
           ),

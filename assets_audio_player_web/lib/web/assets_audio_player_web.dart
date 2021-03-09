@@ -49,56 +49,56 @@ class AssetsAudioPlayerWebPlugin {
   Future<dynamic> handleMethodCall(MethodCall call) async {
     //print(call.method);
     switch (call.method) {
-      case "isPlaying":
-        final String id = call.arguments["id"];
+      case 'isPlaying':
+        final String id = call.arguments['id'];
         return Future.value(_getOrCreate(id).isPlaying());
-      case "play":
-        final String id = call.arguments["id"];
+      case 'play':
+        final String id = call.arguments['id'];
         _getOrCreate(id).play();
         return Future.value(true);
-      case "pause":
-        final String id = call.arguments["id"];
+      case 'pause':
+        final String id = call.arguments['id'];
         _getOrCreate(id).pause();
         return Future.value(true);
-      case "stop":
-        final String id = call.arguments["id"];
+      case 'stop':
+        final String id = call.arguments['id'];
         _getOrCreate(id).stop();
         return Future.value(true);
-      case "volume":
-        final String id = call.arguments["id"];
-        final double volume = call.arguments["volume"];
+      case 'volume':
+        final String id = call.arguments['id'];
+        final double volume = call.arguments['volume'];
         _getOrCreate(id).volume = volume;
         return Future.value(true);
-      case "playSpeed":
-        final String id = call.arguments["id"];
-        final double playSpeed = call.arguments["playSpeed"];
+      case 'playSpeed':
+        final String id = call.arguments['id'];
+        final double playSpeed = call.arguments['playSpeed'];
         _getOrCreate(id).playSpeed = playSpeed;
         return Future.value(true);
-      case "forwardRewind":
-        final String id = call.arguments["id"];
-        final double speed = call.arguments["speed"];
+      case 'forwardRewind':
+        final String id = call.arguments['id'];
+        final double speed = call.arguments['speed'];
         _getOrCreate(id).forwardRewind(speed);
         return Future.value(true);
-      case "loopSingleAudio":
-        final String id = call.arguments["id"];
-        final bool loop = call.arguments["loop"];
+      case 'loopSingleAudio':
+        final String id = call.arguments['id'];
+        final bool loop = call.arguments['loop'];
         _getOrCreate(id).loopSingleAudio(loop);
         return Future.value(true);
-      case "seek":
-        final String id = call.arguments["id"];
-        final double to = call.arguments["to"];
+      case 'seek':
+        final String id = call.arguments['id'];
+        final double to = call.arguments['to'];
         _getOrCreate(id).seek(
           to: to,
         );
         return Future.value(true);
-      case "open":
-        final String id = call.arguments["id"];
-        final String path = call.arguments["path"];
-        final String audioType = call.arguments["audioType"];
-        final double volume = call.arguments["volume"];
-        final double seek = call.arguments["seek"];
-        final bool autoStart = call.arguments["autoStart"] ?? true;
-        final Map networkHeaders = call.arguments["networkHeaders"];
+      case 'open':
+        final String id = call.arguments['id'];
+        final String path = call.arguments['path'];
+        final String audioType = call.arguments['audioType'];
+        final double volume = call.arguments['volume'];
+        final double seek = call.arguments['seek'];
+        final bool autoStart = call.arguments['autoStart'] ?? true;
+        final Map networkHeaders = call.arguments['networkHeaders'];
         return _getOrCreate(id).open(
           path: path,
           audioType: audioType,

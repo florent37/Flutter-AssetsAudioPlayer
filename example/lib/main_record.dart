@@ -103,7 +103,7 @@ class RecorderExampleState extends State<RecorderExample> {
               TextButton(
                 onPressed:
                     _currentStatus != RecordingStatus.Unset ? _stop : null,
-                child: Text("Stop", style: TextStyle(color: Colors.white)),
+                child: Text('Stop', style: TextStyle(color: Colors.white)),
                 style: TextButton.styleFrom(
                   primary: Colors.blueAccent.withOpacity(0.5),
                 ),
@@ -113,21 +113,21 @@ class RecorderExampleState extends State<RecorderExample> {
               ),
               TextButton(
                 onPressed: onPlayAudio,
-                child: Text("Play", style: TextStyle(color: Colors.white)),
+                child: Text('Play', style: TextStyle(color: Colors.white)),
                 style: TextButton.styleFrom(
                   primary: Colors.blueAccent.withOpacity(0.5),
                 ),
               ),
             ],
           ),
-          Text("Status : $_currentStatus"),
+          Text('Status : $_currentStatus'),
           Text('Avg Power: ${_current?.metering?.averagePower}'),
           Text('Peak Power: ${_current?.metering?.peakPower}'),
-          Text("File path of the record: ${_current?.path}"),
-          Text("Format: ${_current?.audioFormat}"),
-          Text("isMeteringEnabled: ${_current?.metering?.isMeteringEnabled}"),
-          Text("Extension : ${_current?.extension}"),
-          Text("Audio recording duration : ${_current?.duration.toString()}")
+          Text('File path of the record: ${_current?.path}'),
+          Text('Format: ${_current?.audioFormat}'),
+          Text('isMeteringEnabled: ${_current?.metering?.isMeteringEnabled}'),
+          Text('Extension : ${_current?.extension}'),
+          Text('Audio recording duration : ${_current?.duration.toString()}')
         ]),
       ),
     );
@@ -145,7 +145,7 @@ class RecorderExampleState extends State<RecorderExample> {
           appDocDirectory = await getExternalStorageDirectory();
         }
 
-        // can add extension like ".mp4" ".wav" ".m4a" ".aac"
+        // can add extension like '.mp4' '.wav' '.m4a' '.aac'
         customPath = appDocDirectory.path +
             customPath +
             DateTime.now().millisecondsSinceEpoch.toString();
@@ -160,7 +160,7 @@ class RecorderExampleState extends State<RecorderExample> {
         // after initialization
         var current = await _recorder.current(channel: 0);
         print(current);
-        // should be "Initialized", if all working fine
+        // should be 'Initialized', if all working fine
         setState(() {
           _current = current;
           _currentStatus = current.status;
@@ -168,7 +168,7 @@ class RecorderExampleState extends State<RecorderExample> {
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("You must accept permissions")));
+            SnackBar(content: Text('You must accept permissions')));
       }
     } catch (e) {
       print(e);
@@ -213,10 +213,10 @@ class RecorderExampleState extends State<RecorderExample> {
 
   _stop() async {
     var result = await _recorder.stop();
-    print("Stop recording: ${result.path}");
-    print("Stop recording: ${result.duration}");
+    print('Stop recording: ${result.path}');
+    print('Stop recording: ${result.duration}');
     File file = widget.localFileSystem.file(result.path);
-    print("File length: ${await file.length()}");
+    print('File length: ${await file.length()}');
     setState(() {
       _current = result;
       _currentStatus = _current.status;
@@ -224,7 +224,7 @@ class RecorderExampleState extends State<RecorderExample> {
   }
 
   Widget _buildText(RecordingStatus status) {
-    var text = "";
+    var text = '';
     switch (_currentStatus) {
       case RecordingStatus.Initialized:
         {

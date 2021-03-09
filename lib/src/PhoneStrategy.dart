@@ -3,11 +3,11 @@ enum HeadPhoneStrategy { none, pauseOnUnplug, pauseOnUnplugPlayOnPlug }
 String describeHeadPhoneStrategy(HeadPhoneStrategy strategy) {
   switch (strategy) {
     case HeadPhoneStrategy.none:
-      return "none";
+      return 'none';
     case HeadPhoneStrategy.pauseOnUnplug:
-      return "pauseOnUnplug";
+      return 'pauseOnUnplug';
     case HeadPhoneStrategy.pauseOnUnplugPlayOnPlug:
-      return "pauseOnUnplugPlayOnPlug";
+      return 'pauseOnUnplugPlayOnPlug';
   }
 }
 
@@ -35,8 +35,8 @@ class AudioFocusStrategy {
 
 Map<String, dynamic> describeAudioFocusStrategy(AudioFocusStrategy strategy) {
   return {
-    "request": strategy.request,
-    "resumeAfterInterruption": strategy.resumeAfterInterruption,
-    "resumeOthersPlayersAfterDone": strategy.resumeOthersPlayersAfterDone,
+    'request': strategy.request,
+    'resumeAfterInterruption': strategy.resumeAfterInterruption,
+    'resumeOthersPlayersAfterDone': strategy.resumeOthersPlayersAfterDone,
   };
 }

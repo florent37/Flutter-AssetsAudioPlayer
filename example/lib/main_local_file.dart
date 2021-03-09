@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 final mp3Url =
-    "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3";
+    'https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3';
 var dio = Dio();
 
 void main() => runApp(MyApp());
@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return ElevatedButton.icon(
         onPressed: () async {
           final tempDir = await getTemporaryDirectory();
-          final downloadPath = tempDir.path + "/#downloaded.mp3";
+          final downloadPath = tempDir.path + '/#downloaded.mp3';
           print('full path $downloadPath');
 
           await downloadFileTo(
@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (total != -1) {
                   setState(() {
                     downloadingProgress =
-                        (received / total * 100).toStringAsFixed(0) + "%";
+                        (received / total * 100).toStringAsFixed(0) + '%';
                   });
                 }
               });
