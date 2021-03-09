@@ -47,7 +47,6 @@ class _MyAppState extends State<MyApp> {
       case LoopMode.playlist:
         return "Looping playlist";
     }
-    return "";
   }
 
   @override

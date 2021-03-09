@@ -9,7 +9,6 @@ String describeHeadPhoneStrategy(HeadPhoneStrategy strategy) {
     case HeadPhoneStrategy.pauseOnUnplugPlayOnPlug:
       return "pauseOnUnplugPlayOnPlug";
   }
-  return null;
 }
 
 class AudioFocusStrategy {

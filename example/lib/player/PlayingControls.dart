@@ -58,21 +58,6 @@ class PlayingControls extends StatelessWidget {
         ],
       );
     }
-    return NeumorphicRadio(
-      style: NeumorphicRadioStyle(
-        boxShape: NeumorphicBoxShape.circle(),
-      ),
-      padding: EdgeInsets.all(12),
-      value: LoopMode.playlist,
-      groupValue: this.loopMode,
-      child: Icon(
-        Icons.loop,
-        size: 18,
-      ),
-      onChanged: (newValue) {
-        toggleLoop();
-      },
-    );
   }
 
   @override

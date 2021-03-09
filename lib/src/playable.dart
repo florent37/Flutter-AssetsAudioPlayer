@@ -36,7 +36,6 @@ String audioTypeDescription(AudioType audioType) {
     case AudioType.asset:
       return "asset";
   }
-  return null;
 }
 
 enum ImageType {
@@ -54,7 +53,6 @@ String imageTypeDescription(ImageType imageType) {
     case ImageType.asset:
       return "asset";
   }
-  return null;
 }
 
 @immutable

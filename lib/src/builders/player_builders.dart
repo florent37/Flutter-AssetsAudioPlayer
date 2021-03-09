@@ -116,7 +116,6 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
             return this.widget.builder(context, snap.data);
           },
         );
-        break;
       case _PlayingBuilderType.isBuffering:
         return StreamBuilder(
           stream: widget.player.isBuffering,
@@ -125,7 +124,6 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
             return this.widget.builder(context, snap.data);
           },
         );
-        break;
       case _PlayingBuilderType.loopMode:
         return StreamBuilder(
           stream: widget.player.loopMode,
@@ -134,7 +132,6 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
             return this.widget.builder(context, snap.data);
           },
         );
-        break;
       case _PlayingBuilderType.volume:
         return StreamBuilder(
           stream: widget.player.volume,
@@ -143,7 +140,6 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
             return this.widget.builder(context, snap.data);
           },
         );
-        break;
       case _PlayingBuilderType.currentPosition:
         return StreamBuilder(
           stream: widget.player.currentPosition,
@@ -152,7 +148,6 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
             return this.widget.builder(context, snap.data);
           },
         );
-        break;
       case _PlayingBuilderType.playSpeed:
         return StreamBuilder(
           stream: widget.player.playSpeed,
@@ -161,7 +156,6 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
             return this.widget.builder(context, snap.data);
           },
         );
-        break;
       case _PlayingBuilderType.forwardRewindSpeed:
         return StreamBuilder(
           stream: widget.player.forwardRewindSpeed,
@@ -170,7 +164,6 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
             return this.widget.builder(context, snap.data);
           },
         );
-        break;
       case _PlayingBuilderType.current:
         return StreamBuilder(
           stream: widget.player.current,
@@ -179,7 +172,6 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
             return this.widget.builder(context, snap.data);
           },
         );
-        break;
       case _PlayingBuilderType.realtimePlayingInfos:
         return StreamBuilder(
           stream: widget.player.realtimePlayingInfos,
@@ -188,7 +180,6 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
             return this.widget.builder(context, snap.data);
           },
         );
-        break;
       case _PlayingBuilderType.playerState:
         return StreamBuilder(
           stream: widget.player.playerState,
@@ -197,9 +188,7 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
             return this.widget.builder(context, snap.data);
           },
         );
-        break;
     }
-    return SizedBox();
   }
 }
 
@@ -230,7 +219,6 @@ class _PlayerBuilderGroupState extends State<PlayerGroupBuilder> {
             return this.widget.builder(context, snap.data);
           },
         );
-        break;
       default: /* do nothing */
     }
     return SizedBox();
