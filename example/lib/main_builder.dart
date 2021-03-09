@@ -31,7 +31,8 @@ class _MyAppState extends State<MyApp> {
         title: "Online",
         artist: "Florent Champigny",
         album: "OnlineAlbum",
-        image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+        image: MetasImage.network(
+            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
       ),
     ),
     Audio(
@@ -40,7 +41,8 @@ class _MyAppState extends State<MyApp> {
         title: "Rock",
         artist: "Florent Champigny",
         album: "RockAlbum",
-        image: MetasImage.network("https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+        image: MetasImage.network(
+            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
       ),
     ),
     Audio(
@@ -58,7 +60,8 @@ class _MyAppState extends State<MyApp> {
         title: "Electronic",
         artist: "Florent Champigny",
         album: "ElectronicAlbum",
-        image: MetasImage.network("https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
+        image: MetasImage.network(
+            "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
       ),
     ),
     Audio(
@@ -67,7 +70,8 @@ class _MyAppState extends State<MyApp> {
         title: "HipHop",
         artist: "Florent Champigny",
         album: "HipHopAlbum",
-        image: MetasImage.network("https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg"),
+        image: MetasImage.network(
+            "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg"),
       ),
     ),
     Audio(
@@ -76,7 +80,8 @@ class _MyAppState extends State<MyApp> {
         title: "Pop",
         artist: "Florent Champigny",
         album: "PopAlbum",
-        image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+        image: MetasImage.network(
+            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
       ),
     ),
     Audio(
@@ -85,7 +90,8 @@ class _MyAppState extends State<MyApp> {
         title: "Instrumental",
         artist: "Florent Champigny",
         album: "InstrumentalAlbum",
-        image: MetasImage.network("https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
+        image: MetasImage.network(
+            "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
       ),
     ),
   ];
@@ -141,7 +147,8 @@ class _MyAppState extends State<MyApp> {
                     _assetsAudioPlayer.builderCurrent(
                       builder: (BuildContext context, Playing playing) {
                         if (playing != null) {
-                          final myAudio = find(this.audios, playing.audio.assetAudioPath);
+                          final myAudio =
+                              find(this.audios, playing.audio.assetAudioPath);
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Neumorphic(
@@ -151,19 +158,20 @@ class _MyAppState extends State<MyApp> {
                                 surfaceIntensity: 1,
                                 shape: NeumorphicShape.concave,
                               ),
-                              child: myAudio.metas.image.type == ImageType.network
-                                  ? Image.network(
-                                      myAudio.metas.image.path,
-                                      height: 150,
-                                      width: 150,
-                                      fit: BoxFit.contain,
-                                    )
-                                  : Image.asset(
-                                      myAudio.metas.image.path,
-                                      height: 150,
-                                      width: 150,
-                                      fit: BoxFit.contain,
-                                    ),
+                              child:
+                                  myAudio.metas.image.type == ImageType.network
+                                      ? Image.network(
+                                          myAudio.metas.image.path,
+                                          height: 150,
+                                          width: 150,
+                                          fit: BoxFit.contain,
+                                        )
+                                      : Image.asset(
+                                          myAudio.metas.image.path,
+                                          height: 150,
+                                          width: 150,
+                                          fit: BoxFit.contain,
+                                        ),
                             ),
                           );
                         }
@@ -179,7 +187,8 @@ class _MyAppState extends State<MyApp> {
                         padding: EdgeInsets.all(18),
                         margin: EdgeInsets.all(18),
                         onPressed: () {
-                          AssetsAudioPlayer.playAndForget(Audio("assets/audios/horn.mp3"));
+                          AssetsAudioPlayer.playAndForget(
+                              Audio("assets/audios/horn.mp3"));
                         },
                         child: Icon(
                           Icons.add_alert,
@@ -227,7 +236,8 @@ class _MyAppState extends State<MyApp> {
                               });
                         },
                       ),
-                      _assetsAudioPlayer.builderRealtimePlayingInfos(builder: (context, infos) {
+                      _assetsAudioPlayer.builderRealtimePlayingInfos(
+                          builder: (context, infos) {
                         if (infos == null) {
                           return SizedBox();
                         }
@@ -247,7 +257,8 @@ class _MyAppState extends State<MyApp> {
                                 NeumorphicButton(
                                   child: Text("-10"),
                                   onPressed: () {
-                                    _assetsAudioPlayer.seekBy(Duration(seconds: -10));
+                                    _assetsAudioPlayer
+                                        .seekBy(Duration(seconds: -10));
                                   },
                                 ),
                                 SizedBox(
@@ -256,7 +267,8 @@ class _MyAppState extends State<MyApp> {
                                 NeumorphicButton(
                                   child: Text("+10"),
                                   onPressed: () {
-                                    _assetsAudioPlayer.seekBy(Duration(seconds: 10));
+                                    _assetsAudioPlayer
+                                        .seekBy(Duration(seconds: 10));
                                   },
                                 ),
                               ],
@@ -271,7 +283,8 @@ class _MyAppState extends State<MyApp> {
                   height: 20,
                 ),
                 Expanded(
-                  child: _assetsAudioPlayer.builderCurrent(builder: (BuildContext context, Playing playing) {
+                  child: _assetsAudioPlayer.builderCurrent(
+                      builder: (BuildContext context, Playing playing) {
                     return SongsSelector(
                       audios: this.audios,
                       onPlaylistSelected: (myAudios) {

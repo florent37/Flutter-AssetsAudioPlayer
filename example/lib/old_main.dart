@@ -38,8 +38,8 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  String loopModeText(LoopMode loopMode){
-    switch(loopMode){
+  String loopModeText(LoopMode loopMode) {
+    switch (loopMode) {
       case LoopMode.none:
         return "Not looping";
       case LoopMode.single:
@@ -109,8 +109,8 @@ class _MyAppState extends State<MyApp> {
                   StreamBuilder(
                     stream: _assetsAudioPlayer.loopMode,
                     initialData: LoopMode.none,
-                    builder:
-                        (BuildContext context, AsyncSnapshot<LoopMode> snapshot) {
+                    builder: (BuildContext context,
+                        AsyncSnapshot<LoopMode> snapshot) {
                       return RaisedButton(
                         child: Text(loopModeText(snapshot.data)),
                         onPressed: () {

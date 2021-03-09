@@ -42,15 +42,15 @@ class _MyAppState extends State<MyApp> {
     /// create a FlutterAudioQuery instance.
     final FlutterAudioQuery audioQuery = FlutterAudioQuery();
     final songs = await audioQuery.getSongs();
-    final fetechedAudios = songs.map((s) => Audio.file(
-      s.filePath,
-      metas: Metas(
-        artist: s.artist,
-        album: s.album,
-        image: MetasImage.asset("assets/images/country.jpg"),
-        title: s.title,
-      )
-    )).toList();
+    final fetechedAudios = songs
+        .map((s) => Audio.file(s.filePath,
+            metas: Metas(
+              artist: s.artist,
+              album: s.album,
+              image: MetasImage.asset("assets/images/country.jpg"),
+              title: s.title,
+            )))
+        .toList();
     fetechedAudios.forEach((element) {
       print(element.path);
       //print(element.metas.image.path);
@@ -215,8 +215,7 @@ class _MyAppState extends State<MyApp> {
                                     },
                                     onNext: () {
                                       //_assetsAudioPlayer.forward(Duration(seconds: 10));
-                                      _assetsAudioPlayer.next(
-                                        keepLoopMode: true
+                                      _assetsAudioPlayer.next(keepLoopMode: true
                                           /*keepLoopMode: false*/);
                                     },
                                     onPrevious: () {
@@ -281,8 +280,10 @@ class _MyAppState extends State<MyApp> {
                         _assetsAudioPlayer.open(
                           Playlist(audios: myAudios),
                           showNotification: true,
-                          headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplugPlayOnPlug,
-                          audioFocusStrategy: AudioFocusStrategy.request(resumeAfterInterruption: true),
+                          headPhoneStrategy:
+                              HeadPhoneStrategy.pauseOnUnplugPlayOnPlug,
+                          audioFocusStrategy: AudioFocusStrategy.request(
+                              resumeAfterInterruption: true),
                         );
                       },
                       onSelected: (myAudio) async {
@@ -295,19 +296,19 @@ class _MyAppState extends State<MyApp> {
                             audioFocusStrategy: AudioFocusStrategy.none(),
                             headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
                             notificationSettings: NotificationSettings(
-                              //seekBarEnabled: false,
-                              //stopEnabled: true,
-                              //customStopAction: (player){
-                              //  player.stop();
-                              //}
-                              //prevEnabled: false,
-                              //customNextAction: (player) {
-                              //  print("next");
-                              //}
-                              //customStopIcon: AndroidResDrawable(name: "ic_stop_custom"),
-                              //customPauseIcon: AndroidResDrawable(name:"ic_pause_custom"),
-                              //customPlayIcon: AndroidResDrawable(name:"ic_play_custom"),
-                            ),
+                                //seekBarEnabled: false,
+                                //stopEnabled: true,
+                                //customStopAction: (player){
+                                //  player.stop();
+                                //}
+                                //prevEnabled: false,
+                                //customNextAction: (player) {
+                                //  print("next");
+                                //}
+                                //customStopIcon: AndroidResDrawable(name: "ic_stop_custom"),
+                                //customPauseIcon: AndroidResDrawable(name:"ic_pause_custom"),
+                                //customPlayIcon: AndroidResDrawable(name:"ic_play_custom"),
+                                ),
                           );
                         } catch (e) {
                           print(e);

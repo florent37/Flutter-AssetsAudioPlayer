@@ -37,7 +37,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String downloadingProgress;
   final AssetsAudioPlayer _player = AssetsAudioPlayer.newPlayer();
 
-
   final Playlist playlist = Playlist(audios: [
     Audio.network(mp3Url, metas: Metas(title: 'hello world')),
   ]);
@@ -70,7 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
         progressFunction: (received, total) {
           if (total != -1) {
             setState(() {
-              downloadingProgress = (received / total * 100).toStringAsFixed(0) + "%";
+              downloadingProgress =
+                  (received / total * 100).toStringAsFixed(0) + "%";
             });
           }
         });
@@ -78,8 +78,9 @@ class _MyHomePageState extends State<MyHomePage> {
       print("downloaded, switching to file type $downloadPath");
       playlist.replaceAt(
         0,
-            (oldAudio) {
-          return oldAudio.copyWith(audioType: AudioType.file, path: downloadPath);
+        (oldAudio) {
+          return oldAudio.copyWith(
+              audioType: AudioType.file, path: downloadPath);
         },
         keepPlayingPositionIfCurrent: true,
       );
@@ -97,7 +98,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            if (downloadingProgress != null) Text(this.downloadingProgress) else SizedBox(),
+            if (downloadingProgress != null)
+              Text(this.downloadingProgress)
+            else
+              SizedBox(),
             _playingButton(),
           ],
         ),
@@ -105,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _playingButton(){
+  Widget _playingButton() {
     return PlayerBuilder.isPlaying(
       player: _player,
       builder: (context, isPlaying) {
@@ -120,7 +124,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-Future downloadFileTo({Dio dio, String url, String savePath, Function(int received, int total) progressFunction}) async {
+Future downloadFileTo(
+    {Dio dio,
+    String url,
+    String savePath,
+    Function(int received, int total) progressFunction}) async {
   try {
     final Response response = await dio.get(
       url,

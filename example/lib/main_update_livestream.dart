@@ -22,7 +22,6 @@ class _MyAppState extends State {
     ),
   );
 
-
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
 
   @override
@@ -39,11 +38,10 @@ class _MyAppState extends State {
           child: RaisedButton(
             child: Text('Click'),
             onPressed: () {
-
               this.audio.updateMetas(
-                title: "Online 2",
-                artist: "My artist",
-              );
+                    title: "Online 2",
+                    artist: "My artist",
+                  );
             },
           ),
         ),

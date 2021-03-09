@@ -100,9 +100,9 @@ class RecorderExampleState extends State<RecorderExample> {
                   ),
                   new FlatButton(
                     onPressed:
-                    _currentStatus != RecordingStatus.Unset ? _stop : null,
+                        _currentStatus != RecordingStatus.Unset ? _stop : null,
                     child:
-                    new Text("Stop", style: TextStyle(color: Colors.white)),
+                        new Text("Stop", style: TextStyle(color: Colors.white)),
                     color: Colors.blueAccent.withOpacity(0.5),
                   ),
                   SizedBox(
@@ -111,7 +111,7 @@ class RecorderExampleState extends State<RecorderExample> {
                   new FlatButton(
                     onPressed: onPlayAudio,
                     child:
-                    new Text("Play", style: TextStyle(color: Colors.white)),
+                        new Text("Play", style: TextStyle(color: Colors.white)),
                     color: Colors.blueAccent.withOpacity(0.5),
                   ),
                 ],
@@ -252,6 +252,6 @@ class RecorderExampleState extends State<RecorderExample> {
 
   void onPlayAudio() async {
     final AssetsAudioPlayer assetsAudioPlayer = AssetsAudioPlayer();
-    await assetsAudioPlayer.open( Audio.file(_current.path));
+    await assetsAudioPlayer.open(Audio.file(_current.path));
   }
 }

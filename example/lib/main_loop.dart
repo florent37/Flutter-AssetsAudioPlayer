@@ -27,9 +27,11 @@ class _MyAppState extends State {
     _assetsAudioPlayer.onReadyToPlay.listen((audio) {
       print("onReadyToPlay : $audio");
     });
-    _assetsAudioPlayer.open(Audio(
-      "assets/audios/water.mp3",
-    ), loopMode: LoopMode.playlist);
+    _assetsAudioPlayer.open(
+        Audio(
+          "assets/audios/water.mp3",
+        ),
+        loopMode: LoopMode.playlist);
     super.initState();
   }
 
@@ -40,9 +42,8 @@ class _MyAppState extends State {
         body: Center(
           child: _assetsAudioPlayer.builderCurrentPosition(
               builder: (BuildContext context, Duration position) {
-                return Text(position.toString());
-              }
-          ),
+            return Text(position.toString());
+          }),
         ),
       ),
     );

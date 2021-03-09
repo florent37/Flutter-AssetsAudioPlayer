@@ -50,7 +50,10 @@ class PlayingControls extends StatelessWidget {
             color: Colors.black,
           ),
           Center(
-            child: Text("1", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
+            child: Text(
+              "1",
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       );
@@ -105,7 +108,9 @@ class PlayingControls extends StatelessWidget {
           padding: EdgeInsets.all(24),
           onPressed: this.onPlay,
           child: Icon(
-            isPlaying ? AssetAudioPlayerIcons.pause : AssetAudioPlayerIcons.play,
+            isPlaying
+                ? AssetAudioPlayerIcons.pause
+                : AssetAudioPlayerIcons.play,
             size: 32,
           ),
         ),
@@ -123,7 +128,7 @@ class PlayingControls extends StatelessWidget {
         SizedBox(
           width: 45,
         ),
-        if(onStop != null)
+        if (onStop != null)
           NeumorphicButton(
             style: NeumorphicStyle(
               boxShape: NeumorphicBoxShape.circle(),

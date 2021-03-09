@@ -29,7 +29,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   String downloadingProgress;
 
   final AssetsAudioPlayer _player = AssetsAudioPlayer.newPlayer();
@@ -43,9 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            playerWidget(context)
-          ],
+          children: <Widget>[playerWidget(context)],
         ),
       ),
     );
@@ -58,8 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
       print(infos.percent);
     });
     _player.open(
-        Audio.network(mp3Url, cached: true),
-        autoStart: true,
+      Audio.network(mp3Url, cached: true),
+      autoStart: true,
     );
   }
 
@@ -68,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return PlayerBuilder.current(
       player: _player,
       builder: (context, current) {
-        if(current == null){
+        if (current == null) {
           return SizedBox();
         }
         return PlayerBuilder.isPlaying(

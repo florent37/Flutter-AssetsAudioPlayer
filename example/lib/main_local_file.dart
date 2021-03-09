@@ -51,7 +51,8 @@ class _MyHomePageState extends State<MyHomePage> {
               progressFunction: (received, total) {
                 if (total != -1) {
                   setState(() {
-                    downloadingProgress = (received / total * 100).toStringAsFixed(0) + "%";
+                    downloadingProgress =
+                        (received / total * 100).toStringAsFixed(0) + "%";
                   });
                 }
               });
@@ -81,12 +82,10 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             if (downloadedFilePath == null && downloadingProgress == null)
               _downloadButton()
-            else
-              if(downloadingProgress != null)
-                Text(this.downloadingProgress)
-              else
-                if (downloadedFilePath != null)
-                  Player(this.downloadedFilePath),
+            else if (downloadingProgress != null)
+              Text(this.downloadingProgress)
+            else if (downloadedFilePath != null)
+              Player(this.downloadedFilePath),
           ],
         ),
       ),
@@ -112,8 +111,7 @@ class _PlayerState extends State<Player> {
     _player.open(
         Audio.file(this.widget.localPath, metas: Metas(title: 'hello world')),
         autoStart: false,
-        showNotification: true
-    );
+        showNotification: true);
   }
 
   @override
@@ -132,7 +130,11 @@ class _PlayerState extends State<Player> {
   }
 }
 
-Future downloadFileTo({Dio dio, String url, String savePath, Function(int received, int total) progressFunction}) async {
+Future downloadFileTo(
+    {Dio dio,
+    String url,
+    String savePath,
+    Function(int received, int total) progressFunction}) async {
   try {
     final Response response = await dio.get(
       url,

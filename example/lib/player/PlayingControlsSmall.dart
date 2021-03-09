@@ -56,7 +56,7 @@ class PlayingControlsSmall extends StatelessWidget {
             size: 32,
           ),
         ),
-        if(onStop != null)
+        if (onStop != null)
           NeumorphicButton(
             style: NeumorphicStyle(
               boxShape: NeumorphicBoxShape.circle(),

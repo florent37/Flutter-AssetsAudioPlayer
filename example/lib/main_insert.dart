@@ -11,8 +11,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State {
-
-  static final rock =  Audio(
+  static final rock = Audio(
     "assets/audios/rock.mp3",
     metas: Metas(
       id: "Rock",
@@ -24,7 +23,7 @@ class _MyAppState extends State {
     ),
   );
 
-  static final country =  Audio(
+  static final country = Audio(
     "assets/audios/country.mp3",
     metas: Metas(
       id: "Country",
@@ -35,7 +34,7 @@ class _MyAppState extends State {
     ),
   );
 
-  final playlist  = Playlist(audios: [rock]);
+  final playlist = Playlist(audios: [rock]);
 
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
 
@@ -71,11 +70,10 @@ class _MyAppState extends State {
                   this.playlist.insert(3, country);
                 },
               ),
-
               RaisedButton(
                 child: Text('Replace 0'),
                 onPressed: () {
-                  this.playlist.replaceAt(0, (audio){
+                  this.playlist.replaceAt(0, (audio) {
                     return country;
                   });
                 },
@@ -83,7 +81,7 @@ class _MyAppState extends State {
               RaisedButton(
                 child: Text('Replace 0 seek'),
                 onPressed: () {
-                  this.playlist.replaceAt(0, (audio){
+                  this.playlist.replaceAt(0, (audio) {
                     return country;
                   }, keepPlayingPositionIfCurrent: true);
                 },

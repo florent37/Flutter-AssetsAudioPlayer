@@ -29,7 +29,7 @@ class HomeState extends State<Home> {
     });
     assetsAudioPlayer.playlistFinished.listen((finished) {
       print(finished.toString());
-      if(finished) {
+      if (finished) {
         setState(() {
           playlistCount++;
         });
@@ -52,7 +52,8 @@ class HomeState extends State<Home> {
                 assetsAudioPlayer.open(
                   currentAudio,
                   showNotification: true,
-                  notificationSettings: NotificationSettings(prevEnabled: false),
+                  notificationSettings:
+                      NotificationSettings(prevEnabled: false),
                   loopMode: LoopMode.single,
                   autoStart: false,
                 );
@@ -79,10 +80,12 @@ class HomeState extends State<Home> {
               player: assetsAudioPlayer,
               builder: (context, loopMode) {
                 return RaisedButton(
-                  child: Text(loopMode == LoopMode.playlist ? "looping" : "not-looping"),
+                  child: Text(loopMode == LoopMode.playlist
+                      ? "looping"
+                      : "not-looping"),
                   onPressed: () {
                     setState(() {
-                      if(loopMode == LoopMode.playlist){
+                      if (loopMode == LoopMode.playlist) {
                         assetsAudioPlayer.setLoopMode(LoopMode.none);
                       } else {
                         assetsAudioPlayer.setLoopMode(LoopMode.playlist);
