@@ -138,7 +138,7 @@ class Metas {
     MetasImage image,
     MetasImage onImageLoadFail,
   }) {
-    return new Metas(
+    return Metas(
       id: id ?? this.id,
       title: title ?? this.title,
       artist: artist ?? this.artist,
@@ -308,7 +308,7 @@ class Playlist extends Playable {
     List<Audio> audios,
     int startIndex,
   }) {
-    return new Playlist(
+    return Playlist(
       audios: audios ?? this.audios,
       startIndex: startIndex ?? this._startIndex,
     );
