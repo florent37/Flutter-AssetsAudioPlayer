@@ -1,21 +1,21 @@
 name: assets_audio_player
 description: Play music/audio stored in assets files directly from Flutter & Network, Radio, LiveStream, Local files. Compatible with Android, iOS, web and MacOs
-version: 2.0.14
+version: 3.0.0
 
 #author: Florent Champigny <champigny.florent@gmail.com>
 homepage: https://github.com/florent37/Flutter-AssetsAudioPlayer
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
-  flutter: ">=1.12.13+hotfix.6 <2.0.0"
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.0.0"
 
 dependencies:
   flutter:
       sdk: flutter
-  rxdart: ^0.25.0
-  uuid: ^2.2.2
-  http: ^0.12.2 #to download / cache network files
-  path_provider: ^1.6.27 # removed this because it cancel flutter/android/ios on pub.dev path_provider: ^1.6.10
+  rxdart: ^0.26.0
+  uuid: ^3.0.1
+  http: ^0.13.0 #to download / cache network files
+  path_provider: ^2.0.1 # removed this because it cancel flutter/android/ios on pub.dev path_provider: ^1.6.10
 
 
   # The design on https://flutter.dev/go/federated-plugins was to leave
@@ -23,7 +23,7 @@ dependencies:
   # validation, so we set a ^ constraint.
   # TODO(amirh): Revisit this (either update this part in the  design or the pub tool).
   # https://github.com/flutter/flutter/issues/46264
-  assets_audio_player_web: ^2.0.13+9
+  assets_audio_player_web: ^3.0.0
 
 dev_dependencies:
   flutter_test:
