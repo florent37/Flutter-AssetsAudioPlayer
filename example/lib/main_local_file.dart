@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String downloadingProgress;
 
   Widget _downloadButton() {
-    return RaisedButton.icon(
+    return ElevatedButton.icon(
         onPressed: () async {
           final tempDir = await getTemporaryDirectory();
           final downloadPath = tempDir.path + "/#downloaded.mp3";

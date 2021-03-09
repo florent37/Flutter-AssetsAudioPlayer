@@ -63,13 +63,13 @@ class _MyAppState extends State<MyApp> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () {
                   _assetsAudioPlayer.open(Playlist(audios: this.audios));
                 },
                 child: Text("Playlist test"),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () {
                   AssetsAudioPlayer.newPlayer()
                       .open(Audio("assets/audios/cat.wav"));
@@ -111,7 +111,7 @@ class _MyAppState extends State<MyApp> {
                     initialData: LoopMode.none,
                     builder: (BuildContext context,
                         AsyncSnapshot<LoopMode> snapshot) {
-                      return RaisedButton(
+                      return ElevatedButton(
                         child: Text(loopModeText(snapshot.data)),
                         onPressed: () {
                           _assetsAudioPlayer.toggleLoop();
@@ -120,7 +120,7 @@ class _MyAppState extends State<MyApp> {
                     },
                   ),
                   SizedBox(width: 20),
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text("Seek to 2:00"),
                     onPressed: () {
                       _assetsAudioPlayer.seek(Duration(minutes: 2));

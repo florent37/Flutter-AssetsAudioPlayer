@@ -35,7 +35,7 @@ class _MyAppState extends State {
     return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: RaisedButton(
+          child: ElevatedButton(
             child: Text('Click'),
             onPressed: () {
               this.audio.updateMetas(

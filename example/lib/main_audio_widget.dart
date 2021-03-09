@@ -66,10 +66,12 @@ class _MyPageWithAudioState extends State<MyPageWithAudio> {
           Text("Country music"),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: RaisedButton(
-              shape: CircleBorder(),
-              padding: EdgeInsets.all(14),
-              color: Theme.of(context).primaryColor,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(14),
+                primary: Theme.of(context).primaryColor,
+              ),
               child: Icon(
                 _play ? Icons.pause : Icons.play_arrow,
                 color: Colors.white,

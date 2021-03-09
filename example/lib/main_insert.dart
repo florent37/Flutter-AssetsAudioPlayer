@@ -52,25 +52,25 @@ class _MyAppState extends State {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RaisedButton(
+              ElevatedButton(
                 child: Text('Insert rock 0'),
                 onPressed: () {
                   this.playlist.insert(0, rock);
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text('Insert country 0'),
                 onPressed: () {
                   this.playlist.insert(0, country);
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text('Insert 3'),
                 onPressed: () {
                   this.playlist.insert(3, country);
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text('Replace 0'),
                 onPressed: () {
                   this.playlist.replaceAt(0, (audio) {
@@ -78,7 +78,7 @@ class _MyAppState extends State {
                   });
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text('Replace 0 seek'),
                 onPressed: () {
                   this.playlist.replaceAt(0, (audio) {
