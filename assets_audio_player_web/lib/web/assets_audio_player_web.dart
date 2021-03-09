@@ -39,10 +39,10 @@ class AssetsAudioPlayerWebPlugin {
     final MethodChannel channel = MethodChannel(
       'assets_audio_player',
       const StandardMethodCodec(),
-      registrar.messenger,
+      registrar,
     );
 
-    final instance = AssetsAudioPlayerWebPlugin(messenger: registrar.messenger);
+    final instance = AssetsAudioPlayerWebPlugin(messenger: registrar);
     channel.setMethodCallHandler(instance.handleMethodCall);
   }
 

@@ -171,7 +171,7 @@ class RecorderExampleState extends State<RecorderExample> {
           print(_currentStatus);
         });
       } else {
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
             new SnackBar(content: new Text("You must accept permissions")));
       }
     } catch (e) {
