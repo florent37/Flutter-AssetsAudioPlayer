@@ -6,8 +6,8 @@ import 'package:flutter/foundation.dart';
 
 class CacheDownloadInfos {
   const CacheDownloadInfos({
-    @required this.received,
-    @required this.total,
+    required this.received,
+    required this.total,
   });
 
   final int received;

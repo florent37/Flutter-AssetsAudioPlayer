@@ -1522,7 +1522,7 @@ class _CurrentPlaylist {
   bool get isSingleAudio => playlist.audios.length == 1;
 
   _CurrentPlaylist({
-    @required this.playlist,
+    required this.playlist,
     this.volume,
     this.respectSilentMode,
     this.showNotification,

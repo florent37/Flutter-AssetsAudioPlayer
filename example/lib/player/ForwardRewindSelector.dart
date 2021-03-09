@@ -42,7 +42,7 @@ class ForwardRewindSelector extends StatelessWidget {
   }
 
   const ForwardRewindSelector({
-    @required this.speed,
-    @required this.onChange,
+    required this.speed,
+    required this.onChange,
   });
 }

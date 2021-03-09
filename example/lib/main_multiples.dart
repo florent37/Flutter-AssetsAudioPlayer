@@ -119,7 +119,7 @@ class PlayerWidget extends StatefulWidget {
   _PlayerWidgetState createState() => _PlayerWidgetState();
 
   const PlayerWidget({
-    @required this.myAudio,
+    required this.myAudio,
   });
 }
 

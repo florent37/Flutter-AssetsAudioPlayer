@@ -98,10 +98,10 @@ class Playing {
   final ReadingPlaylist playlist;
 
   Playing({
-    @required this.audio,
-    @required this.index,
-    @required this.hasNext,
-    @required this.playlist,
+    required this.audio,
+    required this.index,
+    required this.hasNext,
+    required this.playlist,
   });
 
   @override
@@ -138,13 +138,13 @@ class RealtimePlayingInfos {
   final bool isShuffling;
 
   RealtimePlayingInfos({
-    @required this.playerId,
-    @required this.current,
-    @required this.currentPosition,
-    @required this.volume,
-    @required this.isPlaying,
-    @required this.loopMode,
-    @required this.isBuffering,
+    required this.playerId,
+    required this.current,
+    required this.currentPosition,
+    required this.volume,
+    required this.isPlaying,
+    required this.loopMode,
+    required this.isBuffering,
     this.isShuffling,
   }) : this.duration = current?.audio?.duration ?? Duration();
 

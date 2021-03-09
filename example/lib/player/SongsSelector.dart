@@ -10,10 +10,10 @@ class SongsSelector extends StatelessWidget {
   final Function(List<Audio>) onPlaylistSelected;
 
   SongsSelector(
-      {@required this.playing,
-      @required this.audios,
-      @required this.onSelected,
-      @required this.onPlaylistSelected});
+      {required this.playing,
+      required this.audios,
+      required this.onSelected,
+      required this.onPlaylistSelected});
 
   Widget _image(Audio item) {
     if (item.metas.image == null) {

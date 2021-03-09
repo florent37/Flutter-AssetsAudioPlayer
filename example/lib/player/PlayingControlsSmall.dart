@@ -12,10 +12,10 @@ class PlayingControlsSmall extends StatelessWidget {
   final Function() toggleLoop;
 
   PlayingControlsSmall({
-    @required this.isPlaying,
-    @required this.loopMode,
+    required this.isPlaying,
+    required this.loopMode,
     this.toggleLoop,
-    @required this.onPlay,
+    required this.onPlay,
     this.onStop,
   });
 

@@ -13,11 +13,11 @@ class ErrorHandler {
   final int playlistIndex;
 
   const ErrorHandler({
-    @required this.error,
-    @required this.player,
-    @required this.currentPosition,
-    @required this.playlist,
-    @required this.playlistIndex,
+    required this.error,
+    required this.player,
+    required this.currentPosition,
+    required this.playlist,
+    required this.playlistIndex,
   });
 }
 
@@ -39,8 +39,8 @@ class AssetsAudioPlayerError {
   final String message;
 
   const AssetsAudioPlayerError({
-    @required this.errorType,
-    @required this.message,
+    required this.errorType,
+    required this.message,
   });
 
   @override

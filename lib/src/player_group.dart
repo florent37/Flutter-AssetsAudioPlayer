@@ -61,7 +61,7 @@ class AssetsAudioPlayerGroup {
 
   AssetsAudioPlayerGroup({
     this.showNotification = _DEFAULT_SHOW_NOTIFICATION,
-    @required this.updateNotification,
+    required this.updateNotification,
     this.notificationStopEnabled = _DEFAULT_NOTIFICATION_STOP_ENABLED,
     this.onNotificationOpened,
     this.onNotificationPlay,

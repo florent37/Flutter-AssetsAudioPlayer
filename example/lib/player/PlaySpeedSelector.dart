@@ -44,7 +44,7 @@ class PlaySpeedSelector extends StatelessWidget {
   }
 
   const PlaySpeedSelector({
-    @required this.playSpeed,
-    @required this.onChange,
+    required this.playSpeed,
+    required this.onChange,
   });
 }

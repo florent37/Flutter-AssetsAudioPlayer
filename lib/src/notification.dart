@@ -8,7 +8,7 @@ typedef NotificationAction = void Function(AssetsAudioPlayer player);
 class AndroidResDrawable {
   final String name;
 
-  AndroidResDrawable({@required this.name});
+  AndroidResDrawable({required this.name});
 }
 
 @immutable

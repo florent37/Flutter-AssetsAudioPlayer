@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:assets_audio_player/src/playable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 typedef CachePathProvider = Future<String> Function(Audio audio, String key);
@@ -9,8 +8,8 @@ typedef AudioKeyTransformer = Future<String> Function(Audio audio);
 
 class AssetsAudioPlayerCache {
   AssetsAudioPlayerCache({
-    @required this.cachePathProvider,
-    @required this.audioKeyTransformer,
+    required this.cachePathProvider,
+    required this.audioKeyTransformer,
   });
 
   final CachePathProvider cachePathProvider;

@@ -7,9 +7,9 @@ class PositionSeekWidget extends StatefulWidget {
   final Function(Duration) seekTo;
 
   const PositionSeekWidget({
-    @required this.currentPosition,
-    @required this.duration,
-    @required this.seekTo,
+    required this.currentPosition,
+    required this.duration,
+    required this.seekTo,
   });
 
   @override

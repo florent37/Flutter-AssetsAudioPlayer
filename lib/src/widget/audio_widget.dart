@@ -33,8 +33,8 @@ class AudioWidget extends StatefulWidget {
 
   AudioWidget.assets({
     Key key,
-    @required this.child,
-    @required String path,
+    required this.child,
+    required String path,
     String package,
     this.volume = 1.0,
     this.play = true,
@@ -48,8 +48,8 @@ class AudioWidget extends StatefulWidget {
 
   AudioWidget.network({
     Key key,
-    @required this.child,
-    @required String url,
+    required this.child,
+    required String url,
     this.volume = 1.0,
     this.play = true,
     this.loopMode = LoopMode.none,
@@ -62,8 +62,8 @@ class AudioWidget extends StatefulWidget {
 
   AudioWidget.file({
     Key key,
-    @required this.child,
-    @required String path,
+    required this.child,
+    required String path,
     this.volume = 1.0,
     this.play = true,
     this.loopMode = LoopMode.none,

@@ -35,7 +35,7 @@ class VolumeSelector extends StatelessWidget {
   }
 
   const VolumeSelector({
-    @required this.volume,
-    @required this.onChange,
+    required this.volume,
+    required this.onChange,
   });
 }

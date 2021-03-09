@@ -41,63 +41,61 @@ class PlayerBuilder extends StatefulWidget {
   final _PlayingBuilderType builderType;
 
   const PlayerBuilder.isPlaying(
-      {Key key, @required this.player, @required PlayingWidgetBuilder builder})
+      {Key key, required this.player, required PlayingWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.isPlaying,
         super(key: key);
 
   const PlayerBuilder.isBuffering(
-      {Key key, @required this.player, @required PlayingWidgetBuilder builder})
+      {Key key, required this.player, required PlayingWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.isBuffering,
         super(key: key);
 
   const PlayerBuilder.loopMode(
-      {Key key, @required this.player, @required LoopModeWidgetBuilder builder})
+      {Key key, required this.player, required LoopModeWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.loopMode,
         super(key: key);
 
   const PlayerBuilder.realtimePlayingInfos(
-      {Key key, @required this.player, @required RealtimeWidgetBuilder builder})
+      {Key key, required this.player, required RealtimeWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.realtimePlayingInfos,
         super(key: key);
 
   const PlayerBuilder.volume(
-      {Key key, @required this.player, @required VolumeWidgetBuilder builder})
+      {Key key, required this.player, required VolumeWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.volume,
         super(key: key);
 
   const PlayerBuilder.playSpeed(
-      {Key key,
-      @required this.player,
-      @required PlaySpeedWidgetBuilder builder})
+      {Key key, required this.player, required PlaySpeedWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.playSpeed,
         super(key: key);
 
   const PlayerBuilder.currentPosition(
-      {Key key, @required this.player, @required PositionWidgetBuilder builder})
+      {Key key, required this.player, required PositionWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.currentPosition,
         super(key: key);
 
   const PlayerBuilder.forwardRewindSpeed(
-      {Key key, @required this.player, ForwardRewindSpeedWidgetBuilder builder})
+      {Key key, required this.player, ForwardRewindSpeedWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.forwardRewindSpeed,
         super(key: key);
 
   const PlayerBuilder.current(
-      {Key key, @required this.player, @required CurrentWidgetBuilder builder})
+      {Key key, required this.player, required CurrentWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.current,
         super(key: key);
 
   const PlayerBuilder.playerState(
-      {Key key, @required this.player, @required PlayerStateBuilder builder})
+      {Key key, required this.player, required PlayerStateBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.playerState,
         super(key: key);
@@ -211,7 +209,7 @@ class PlayerGroupBuilder extends StatefulWidget {
   final _PlayingBuilderType builderType;
 
   const PlayerGroupBuilder.isPlaying(
-      {Key key, @required this.player, @required PlayingWidgetBuilder builder})
+      {Key key, required this.player, required PlayingWidgetBuilder builder})
       : this.builder = builder,
         this.builderType = _PlayingBuilderType.isPlaying,
         super(key: key);
