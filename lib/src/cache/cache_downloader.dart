@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:flutter/foundation.dart';
 
 class CacheDownloadInfos {
   const CacheDownloadInfos({

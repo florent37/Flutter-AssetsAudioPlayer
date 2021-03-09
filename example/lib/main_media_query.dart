@@ -1,16 +1,12 @@
 import 'dart:async';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:assets_audio_player_example/player/PlaySpeedSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:rxdart/subjects.dart';
 
-import 'player/ForwardRewindSelector.dart';
 import 'player/PlayingControls.dart';
 import 'player/PositionSeekWidget.dart';
 import 'player/SongsSelector.dart';
-import 'player/VolumeSelector.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 
 void main() {
