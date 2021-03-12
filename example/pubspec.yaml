@@ -24,6 +24,9 @@ dependencies:
 
   flutter_audio_query: ^0.3.5+6
 
+dependency_overrides:
+  file: ^6.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
