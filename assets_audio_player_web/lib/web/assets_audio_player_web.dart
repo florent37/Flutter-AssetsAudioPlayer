@@ -39,9 +39,11 @@ class AssetsAudioPlayerWebPlugin {
     final MethodChannel channel = MethodChannel(
       'assets_audio_player',
       const StandardMethodCodec(),
+      // ignore: deprecated_member_use
       registrar.messenger,
     );
 
+    // ignore: deprecated_member_use
     final instance = AssetsAudioPlayerWebPlugin(messenger: registrar.messenger);
     channel.setMethodCallHandler(instance.handleMethodCall);
   }
