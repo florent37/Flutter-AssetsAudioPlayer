@@ -7,7 +7,7 @@ homepage: https://github.com/florent37/Flutter-AssetsAudioPlayer
 
 environment:
   sdk: ">=2.6.0 <3.0.0"
-  flutter: ">=1.17.0 <2.0.0"
+  flutter: ">=1.24.0 <2.0.0"
 
 dependencies:
   flutter:
@@ -23,7 +23,7 @@ dependencies:
   # validation, so we set a ^ constraint.
   # TODO(amirh): Revisit this (either update this part in the  design or the pub tool).
   # https://github.com/flutter/flutter/issues/46264
-  assets_audio_player_web: ^2.0.15
+  assets_audio_player_web: ^2.0.14
 
 dev_dependencies:
   flutter_test:
