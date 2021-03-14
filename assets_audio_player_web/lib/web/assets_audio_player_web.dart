@@ -11,7 +11,7 @@ class AssetsAudioPlayerWebPlugin {
   final Map<String, WebPlayer> _players = Map();
   final BinaryMessenger messenger;
 
-  AssetsAudioPlayerWebPlugin({this.messenger});
+  AssetsAudioPlayerWebPlugin({required this.messenger});
 
   WebPlayer _newPlayer(String id, MethodChannel channel) {
     return WebPlayerHtml(
@@ -21,7 +21,7 @@ class AssetsAudioPlayerWebPlugin {
 
   WebPlayer _getOrCreate(String id) {
     if (_players.containsKey(id)) {
-      return _players[id];
+      return _players[id]!;
     } else {
       final WebPlayer newPlayer = _newPlayer(
           id,
@@ -51,7 +51,7 @@ class AssetsAudioPlayerWebPlugin {
     switch (call.method) {
       case 'isPlaying':
         final String id = call.arguments['id'];
-        return Future.value(_getOrCreate(id).isPlaying());
+        return Future.value(_getOrCreate(id).isPlaying);
       case 'play':
         final String id = call.arguments['id'];
         _getOrCreate(id).play();

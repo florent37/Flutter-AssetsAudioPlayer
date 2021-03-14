@@ -16,21 +16,21 @@ abstract class WebPlayer {
   static final methodCurrent = 'player.current';
   static final methodForwardRewindSpeed = 'player.forwardRewind';
 
-  WebPlayer({this.channel});
+  WebPlayer({required this.channel});
 
-  get volume;
+  num get volume;
 
-  set volume(double volume);
+  set volume(num volume);
 
-  get playSpeed;
+  num get playSpeed;
 
-  set playSpeed(double playSpeed);
+  set playSpeed(num playSpeed);
 
-  get isPlaying;
+  bool get isPlaying;
 
   set isPlaying(bool value);
 
-  double get currentPosition;
+  num get currentPosition;
 
   void play();
 
@@ -44,9 +44,9 @@ abstract class WebPlayer {
         audioType == 'file') {
       return path;
     }
-    //in web, assets are packaged in a /assets/ folder
-    //if you want '/asset/3' as described in pubspec
-    //it will be in /assets/asset/3
+    // in web, assets are packaged in a /assets/ folder
+    // if you want '/asset/3' as described in pubspec
+    // it will be in /assets/asset/3
 
     /* for release mode, need to change the 'url', remove the /#/ and add /asset before */
     if (path.startsWith('/')) {
@@ -57,13 +57,13 @@ abstract class WebPlayer {
   }
 
   Future<void> open({
-    String path,
-    String audioType,
-    double volume,
-    double seek,
-    bool autoStart,
-    double playSpeed,
-    Map networkHeaders,
+    required String path,
+    required String audioType,
+    bool autoStart = false,
+    double volume = 1,
+    double? seek,
+    double? playSpeed,
+    Map? networkHeaders,
   });
 
   void seek({double to});

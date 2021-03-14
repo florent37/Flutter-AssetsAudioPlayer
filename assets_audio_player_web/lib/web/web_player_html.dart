@@ -8,32 +8,32 @@ import 'abstract_web_player.dart';
 /// Web Player
 class WebPlayerHtml extends WebPlayer {
   @override
-  WebPlayerHtml({MethodChannel channel}) : super(channel: channel);
+  WebPlayerHtml({required MethodChannel channel}) : super(channel: channel);
 
-  StreamSubscription _onEndListener;
-  StreamSubscription _onCanPlayListener;
+  StreamSubscription? _onEndListener;
+  StreamSubscription? _onCanPlayListener;
 
   void _clearListeners() {
     _onEndListener?.cancel();
     _onCanPlayListener?.cancel();
   }
 
-  html.AudioElement _audioElement;
+  html.AudioElement? _audioElement;
 
   @override
-  get volume => _audioElement?.volume ?? 1.0;
+  num get volume => _audioElement?.volume ?? 1.0;
 
   @override
-  set volume(double volume) {
+  set volume(num volume) {
     _audioElement?.volume = volume;
     channel.invokeMethod(WebPlayer.methodVolume, volume);
   }
 
   @override
-  get playSpeed => _audioElement?.playbackRate ?? 1.0;
+  num get playSpeed => _audioElement?.playbackRate ?? 1.0;
 
   @override
-  set playSpeed(double playSpeed) {
+  set playSpeed(num playSpeed) {
     _audioElement?.playbackRate = playSpeed;
     channel.invokeMethod(WebPlayer.methodPlaySpeed, playSpeed);
   }
@@ -41,7 +41,7 @@ class WebPlayerHtml extends WebPlayer {
   bool _isPlaying = false;
 
   @override
-  get isPlaying => _isPlaying;
+  bool get isPlaying => _isPlaying;
 
   @override
   set isPlaying(bool value) {
@@ -55,17 +55,17 @@ class WebPlayerHtml extends WebPlayer {
   }
 
   @override
-  double get currentPosition => _audioElement.currentTime;
+  num get currentPosition => _audioElement?.currentTime ?? 0;
 
   var __listenPosition = false;
 
-  double _durationMs;
-  double _position;
+  num? _durationMs;
+  num? _position;
 
   void _listenPosition() async {
     __listenPosition = true;
     Future.doWhile(() {
-      final durationMs = _audioElement.duration * 1000;
+      final durationMs = _audioElement?.duration ?? 0 * 1000;
       if (durationMs != _durationMs) {
         _durationMs = durationMs;
         channel.invokeMethod(
@@ -92,7 +92,7 @@ class WebPlayerHtml extends WebPlayer {
     if (_audioElement != null) {
       isPlaying = true;
       forwardHandler?.stop();
-      _audioElement.play();
+      _audioElement?.play();
     }
   }
 
@@ -101,7 +101,7 @@ class WebPlayerHtml extends WebPlayer {
     if (_audioElement != null) {
       isPlaying = false;
       forwardHandler?.stop();
-      _audioElement.pause();
+      _audioElement?.pause();
     }
   }
 
@@ -115,38 +115,40 @@ class WebPlayerHtml extends WebPlayer {
     if (_audioElement != null) {
       isPlaying = false;
       pause();
-      _audioElement.currentTime = 0;
+      _audioElement?.currentTime = 0;
       channel.invokeMethod(WebPlayer.methodPosition, 0);
     }
   }
 
   @override
   Future<void> open({
-    String path,
-    String audioType,
-    double volume,
-    double seek,
-    bool autoStart,
-    double playSpeed,
-    Map networkHeaders,
+    required String path,
+    required String audioType,
+    bool autoStart = false,
+    double volume = 1,
+    double? seek,
+    double? playSpeed,
+    Map? networkHeaders,
   }) async {
     stop();
     _durationMs = null;
     _position = null;
     _audioElement = html.AudioElement(findAssetPath(path, audioType));
 
-    //it seems html audielement cannot take networkHeaders :'(
+    // it seems html audielement cannot take networkHeaders :'(
 
-    _onEndListener = _audioElement.onEnded.listen((event) {
+    _onEndListener = _audioElement?.onEnded.listen((event) {
       channel.invokeMethod(WebPlayer.methodFinished, true);
     });
-    _onCanPlayListener = _audioElement.onCanPlay.listen((event) {
+
+    _onCanPlayListener = _audioElement?.onCanPlay.listen((event) {
       if (autoStart) {
         play();
       }
-      this.volume = volume;
 
-      final durationMs = _audioElement.duration * 1000;
+      this.volume = volume;
+      final durationMs = _audioElement?.duration ?? 0 * 1000;
+
       if (durationMs != _durationMs) {
         _durationMs = durationMs;
         channel.invokeMethod(
@@ -158,18 +160,18 @@ class WebPlayerHtml extends WebPlayer {
       }
 
       if (playSpeed != null) {
-        this.playSpeed(playSpeed);
+        this.playSpeed = playSpeed;
       }
 
-      //single event
+      // single event
       _onCanPlayListener?.cancel();
       _onCanPlayListener = null;
     });
   }
 
   @override
-  void seek({double to}) {
-    print('Final Seeking To $to from ${_audioElement.currentTime}');
+  void seek({double? to}) {
+    print('Final Seeking To $to from ${_audioElement?.currentTime}');
     if (_audioElement != null && to != null) {
       /// Explainer on the `/1000`
       /// The value being sent down from the plugin
@@ -185,23 +187,21 @@ class WebPlayerHtml extends WebPlayer {
     _audioElement?.loop = loop;
   }
 
-  void seekBy({double by}) {
+  void seekBy({required double by}) {
     final current = currentPosition;
     final to = current + by;
     seek(to: to);
   }
 
-  ForwardHandler forwardHandler;
+  ForwardHandler? forwardHandler;
   @override
   void forwardRewind(double speed) {
     pause();
     channel.invokeMethod(WebPlayer.methodForwardRewindSpeed, speed);
-    if (forwardHandler != null) {
-      forwardHandler.stop();
-    }
+    forwardHandler?.stop();
     forwardHandler = ForwardHandler();
-    _listenPosition(); //for this usecase, enable listen position
-    forwardHandler.start(this, speed);
+    _listenPosition(); // for this usecase, enable listen position
+    forwardHandler?.start(this, speed);
   }
 }
 
