@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_neumorphic: ^3.0.4+1
+  flutter_neumorphic: ^3.1.0
   rxdart: ^0.26.0
   # for local file test
   dio: ^4.0.0-beta7
@@ -20,12 +20,18 @@ dependencies:
   provider: ^5.0.0
 
   file: ^6.1.0
-  flutter_audio_recorder: ^0.5.5
 
-  flutter_audio_query: ^0.3.5+6
+  # flutter_audio_recorder: ^0.5.5
+  flutter_audio_recorder:
+    git:
+      url: https://github.com/fayeed/flutter_audio_recorder
+      ref: sound-null-safety
 
-dependency_overrides:
-  file: ^6.1.0
+  # flutter_audio_query: ^0.3.5+6
+  flutter_audio_query:
+    git:
+      url: https://github.com/Mayb3Nots/flutter_audio_query
+      ref: master
 
 dev_dependencies:
   flutter_test:
