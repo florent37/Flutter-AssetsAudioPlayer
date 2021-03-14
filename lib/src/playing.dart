@@ -26,7 +26,7 @@ class PlayingAudio {
   final Duration duration;
 
   const PlayingAudio({
-    this.audio,
+    required this.audio,
     this.duration = Duration.zero,
   });
 
@@ -52,14 +52,14 @@ class PlayingAudio {
 @immutable
 class ReadingPlaylist {
   final List<Audio> audios;
-  final int nextIndex;
-  final int previousIndex;
+  final int? nextIndex;
+  final int? previousIndex;
   final int currentIndex;
 
   const ReadingPlaylist({
+    required this.audios,
     this.previousIndex,
     this.nextIndex,
-    this.audios,
     this.currentIndex = 0,
   });
 
@@ -84,8 +84,8 @@ class ReadingPlaylist {
 
 @immutable
 class Playing {
-  //TODO rename
-  ///the opened asset
+  // TODO rename
+  /// the opened asset
   final PlayingAudio audio;
 
   /// this audio index in playlist
@@ -135,7 +135,7 @@ class RealtimePlayingInfos {
   final bool isPlaying;
   final LoopMode loopMode;
   final bool isBuffering;
-  final bool isShuffling;
+  final bool? isShuffling;
 
   RealtimePlayingInfos({
     required this.playerId,
@@ -146,7 +146,7 @@ class RealtimePlayingInfos {
     required this.loopMode,
     required this.isBuffering,
     this.isShuffling,
-  }) : this.duration = current?.audio?.duration ?? Duration();
+  }) : this.duration = current.audio.duration;
 
   double get playingPercent => this.duration.inMilliseconds == 0
       ? 0

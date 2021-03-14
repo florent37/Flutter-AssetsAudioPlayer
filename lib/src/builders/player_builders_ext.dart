@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 
 extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
   PlayerBuilder builderIsPlaying({
-    Key key,
+    Key? key,
     required PlayingWidgetBuilder builder,
   }) =>
       PlayerBuilder.isPlaying(
@@ -13,7 +13,7 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
       );
 
   PlayerBuilder builderIsBuffering({
-    Key key,
+    Key? key,
     required IsBufferingWidgetBuilder builder,
   }) =>
       PlayerBuilder.isBuffering(
@@ -23,7 +23,7 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
       );
 
   PlayerBuilder builderLoopMode({
-    Key key,
+    Key? key,
     required LoopModeWidgetBuilder builder,
   }) =>
       PlayerBuilder.loopMode(
@@ -33,7 +33,7 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
       );
 
   PlayerBuilder builderRealtimePlayingInfos({
-    Key key,
+    Key? key,
     required RealtimeWidgetBuilder builder,
   }) =>
       PlayerBuilder.realtimePlayingInfos(
@@ -43,7 +43,7 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
       );
 
   PlayerBuilder builderVolume({
-    Key key,
+    Key? key,
     required VolumeWidgetBuilder builder,
   }) =>
       PlayerBuilder.volume(
@@ -53,7 +53,7 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
       );
 
   PlayerBuilder builderPlaySpeed({
-    Key key,
+    Key? key,
     required PlaySpeedWidgetBuilder builder,
   }) =>
       PlayerBuilder.playSpeed(
@@ -63,7 +63,7 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
       );
 
   PlayerBuilder builderCurrentPosition({
-    Key key,
+    Key? key,
     required PositionWidgetBuilder builder,
   }) =>
       PlayerBuilder.currentPosition(
@@ -73,7 +73,7 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
       );
 
   PlayerBuilder builderForwardRewindSpeed({
-    Key key,
+    Key? key,
     required ForwardRewindSpeedWidgetBuilder builder,
   }) =>
       PlayerBuilder.forwardRewindSpeed(
@@ -83,7 +83,7 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
       );
 
   PlayerBuilder builderCurrent({
-    Key key,
+    Key? key,
     required CurrentWidgetBuilder builder,
   }) =>
       PlayerBuilder.current(
@@ -93,7 +93,7 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
       );
 
   PlayerBuilder builderPlayerState({
-    Key key,
+    Key? key,
     required PlayerStateBuilder builder,
   }) =>
       PlayerBuilder.playerState(
@@ -105,7 +105,7 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
 
 extension AssetAudioPlayerGroupBuilder on AssetsAudioPlayerGroup {
   PlayerGroupBuilder builderIsPlaying({
-    Key key,
+    Key? key,
     required PlayingWidgetBuilder builder,
   }) =>
       PlayerGroupBuilder.isPlaying(

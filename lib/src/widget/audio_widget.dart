@@ -12,63 +12,63 @@ class AudioWidget extends StatefulWidget {
   final double volume;
   final bool play;
   final LoopMode loopMode;
-  final Function(Duration current, Duration total) onPositionChanged;
+  final Function(Duration current, Duration total)? onPositionChanged;
 
-  final Function(Duration totalDuration) onReadyToPlay;
-  final Function() onFinished;
+  final Function(Duration totalDuration)? onReadyToPlay;
+  final Function()? onFinished;
   final Duration initialPosition;
 
   AudioWidget({
-    Key key,
-    this.audio,
-    this.child,
+    Key? key,
+    required this.audio,
+    required this.child,
     this.volume = 1.0,
     this.play = true,
     this.loopMode = LoopMode.none,
     this.onPositionChanged,
-    this.initialPosition,
+    this.initialPosition = const Duration(),
     this.onReadyToPlay,
     this.onFinished,
   }) : super(key: key);
 
   AudioWidget.assets({
-    Key key,
+    Key? key,
     required this.child,
     required String path,
-    String package,
+    String? package,
     this.volume = 1.0,
     this.play = true,
     this.loopMode = LoopMode.none,
     this.onPositionChanged,
-    this.initialPosition,
+    this.initialPosition = const Duration(),
     this.onReadyToPlay,
     this.onFinished,
   })  : this.audio = Audio(path, package: package),
         super(key: key);
 
   AudioWidget.network({
-    Key key,
+    Key? key,
     required this.child,
     required String url,
     this.volume = 1.0,
     this.play = true,
     this.loopMode = LoopMode.none,
     this.onPositionChanged,
-    this.initialPosition,
+    this.initialPosition = const Duration(),
     this.onReadyToPlay,
     this.onFinished,
   })  : this.audio = Audio.network(url),
         super(key: key);
 
   AudioWidget.file({
-    Key key,
+    Key? key,
     required this.child,
     required String path,
     this.volume = 1.0,
     this.play = true,
     this.loopMode = LoopMode.none,
     this.onPositionChanged,
-    this.initialPosition,
+    this.initialPosition = const Duration(),
     this.onReadyToPlay,
     this.onFinished,
   })  : this.audio = Audio.network(path),
@@ -78,16 +78,15 @@ class AudioWidget extends StatefulWidget {
   _AudioWidgetState createState() => _AudioWidgetState();
 
   AudioWidget copyWith({
-    Widget child,
-    Audio audio,
-    double volume,
-    bool play,
-    LoopMode loopMode,
-    Function(Duration current, Duration total) onPositionChanged,
-    Function(Duration totalDuration) onReadyToPlay,
-    Function() onFinished,
-    Duration initialPosition,
-    bool controlledByPlaylist,
+    Widget? child,
+    Audio? audio,
+    double? volume,
+    bool? play,
+    LoopMode? loopMode,
+    Function(Duration current, Duration total)? onPositionChanged,
+    Function(Duration totalDuration)? onReadyToPlay,
+    Function()? onFinished,
+    Duration? initialPosition,
   }) {
     return AudioWidget(
       child: child ?? this.child,
@@ -104,12 +103,11 @@ class AudioWidget extends StatefulWidget {
 }
 
 class _AudioWidgetState extends State<AudioWidget> {
-  AssetsAudioPlayer _player;
-  StreamSubscription _currentPositionSubscription;
-  StreamSubscription _onReadyToPlaySubscription;
-  StreamSubscription _playlistAudioFinishedSubscription;
-
-  Duration _totalDuration;
+  late AssetsAudioPlayer _player;
+  StreamSubscription? _currentPositionSubscription;
+  StreamSubscription? _onReadyToPlaySubscription;
+  StreamSubscription? _playlistAudioFinishedSubscription;
+  late Duration _totalDuration;
 
   @override
   void initState() {
@@ -128,9 +126,9 @@ class _AudioWidgetState extends State<AudioWidget> {
     _onReadyToPlaySubscription?.cancel();
     _onReadyToPlaySubscription = null;
     _onReadyToPlaySubscription = _player.onReadyToPlay.listen((audio) {
+      _totalDuration = audio?.duration ?? const Duration();
       if (widget.onReadyToPlay != null) {
-        _totalDuration = audio.duration;
-        widget.onReadyToPlay(_totalDuration);
+        widget.onReadyToPlay!(_totalDuration);
       }
     });
 
@@ -139,13 +137,13 @@ class _AudioWidgetState extends State<AudioWidget> {
     _playlistAudioFinishedSubscription =
         _player.playlistAudioFinished.listen((event) {
       if (widget.onFinished != null) {
-        widget.onFinished();
+        widget.onFinished!();
       }
     });
 
     _currentPositionSubscription = _player.currentPosition.listen((current) {
-      if (current != null && _totalDuration != null) {
-        widget.onPositionChanged(current, _totalDuration);
+      if (widget.onPositionChanged != null) {
+        widget.onPositionChanged!(current, _totalDuration);
       }
     });
   }

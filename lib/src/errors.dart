@@ -6,16 +6,16 @@ enum AssetsAudioPlayerErrorType { Network, Player }
 class ErrorHandler {
   final AssetsAudioPlayerError error;
   final AssetsAudioPlayer player;
-  final Duration currentPosition;
-  final Playlist playlist;
-  final int playlistIndex;
+  final Duration? currentPosition;
+  final Playlist? playlist;
+  final int? playlistIndex;
 
   const ErrorHandler({
     required this.error,
     required this.player,
-    required this.currentPosition,
-    required this.playlist,
-    required this.playlistIndex,
+    this.currentPosition,
+    this.playlist,
+    this.playlistIndex,
   });
 }
 

@@ -26,11 +26,11 @@ class _DownloadWaiter {
   _DownloadWaiter({this.downloadInfosListener});
 
   final Completer completer = Completer();
-  final CacheDownloadListener downloadInfosListener;
+  final CacheDownloadListener? downloadInfosListener;
 
   void pingInfos(CacheDownloadInfos infos) {
     if (downloadInfosListener != null) {
-      downloadInfosListener(infos);
+      downloadInfosListener!(infos);
     }
   }
 }
@@ -43,9 +43,9 @@ class CacheDownloader {
   }
 
   Future<void> downloadAndSave({
-    String url,
-    String savePath,
-    Map<String, dynamic> headers,
+    required String url,
+    required String savePath,
+    Map<String, String>? headers,
   }) async {
     final http.Client client = http.Client();
     final uri = Uri.parse(url);
@@ -72,7 +72,7 @@ class CacheDownloader {
         downloadedLength += chunk.length;
         final CacheDownloadInfos infos = CacheDownloadInfos(
           received: downloadedLength,
-          total: r.contentLength,
+          total: r.contentLength ?? 0,
         );
         for (final _DownloadWaiter waiter in _waiters) {
           waiter.pingInfos(infos);

@@ -31,19 +31,19 @@ class AssetsAudioPlayerGroup {
 
   final PlayInBackground playInBackground;
 
-  AssetsAudioPlayerGroupErrorHandler onErrorDo; //custom error Handler
+  AssetsAudioPlayerGroupErrorHandler? onErrorDo; // custom error Handler
 
   final PlayerGroupMetasCallback updateNotification;
 
-  final PlayerGroupCallback onNotificationOpened;
+  final PlayerGroupCallback? onNotificationOpened;
 
-  final PlayerGroupCallback onNotificationPlay;
-  final PlayerGroupCallback onNotificationPause;
-  final PlayerGroupCallback onNotificationStop;
+  final PlayerGroupCallback? onNotificationPlay;
+  final PlayerGroupCallback? onNotificationPause;
+  final PlayerGroupCallback? onNotificationStop;
 
   final Map<Audio, AssetsAudioPlayer> _audiosWithPlayers = {};
 
-  //copy of _audiosWithPlayers
+  // copy of _audiosWithPlayers
   Map<Audio, AssetsAudioPlayer> get audiosWithPlayers =>
       Map.from(_audiosWithPlayers);
 
@@ -56,7 +56,9 @@ class AssetsAudioPlayerGroup {
 
   ValueStream<bool> get isPlaying => _isPlaying.stream;
 
-  //TODO add streams for audio finished
+  NotificationSettings? __notificationSettings;
+
+  // TODO add streams for audio finished
 
   AssetsAudioPlayerGroup({
     this.showNotification = _DEFAULT_SHOW_NOTIFICATION,
@@ -69,7 +71,7 @@ class AssetsAudioPlayerGroup {
     this.respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE,
     this.playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
   }) {
-    //default action, can be overriden using player.onErrorDo = (error, player) { ACTION };
+    // default action, can be overriden using player.onErrorDo = (error, player) { ACTION };
     this.onErrorDo = (group, errorHandler) {
       print(errorHandler.error.message);
       errorHandler.player.stop();
@@ -79,7 +81,7 @@ class AssetsAudioPlayerGroup {
   List<PlayingAudio> get playingAudios {
     final List<PlayingAudio> audios = <PlayingAudio>[];
     for (final player in players) {
-      final audio = player.current?.value?.audio;
+      final audio = player.current.value?.audio;
       if (audio != null) {
         audios.add(audio);
       }
@@ -87,9 +89,7 @@ class AssetsAudioPlayerGroup {
     return audios;
   }
 
-  NotificationSettings __notificationSettings;
-
-  //intialize the first time
+  // intialize the first time
   NotificationSettings get _notificationSettings {
     if (__notificationSettings == null) {
       __notificationSettings = NotificationSettings(
@@ -98,15 +98,15 @@ class AssetsAudioPlayerGroup {
           nextEnabled: false,
           prevEnabled: false,
           customPlayPauseAction: (player) {
-            if (player.isPlaying.value) {
+            if (player.isPlaying.value == true) {
               if (this.onNotificationPause != null) {
-                this.onNotificationPause(this, playingAudios);
+                this.onNotificationPause!(this, playingAudios);
               } else {
                 _pause();
               }
             } else {
               if (this.onNotificationPlay != null) {
-                this.onNotificationPlay(this, playingAudios);
+                this.onNotificationPlay!(this, playingAudios);
               } else {
                 _play();
               }
@@ -114,30 +114,30 @@ class AssetsAudioPlayerGroup {
           },
           customStopAction: (player) {
             if (this.onNotificationStop != null) {
-              this.onNotificationStop(this, playingAudios);
+              this.onNotificationStop!(this, playingAudios);
             } else {
               _stop();
             }
           });
     }
-    return __notificationSettings;
+    return __notificationSettings!;
   }
 
   Future<void> add(
     Audio audio, {
     LoopMode loopMode = LoopMode.none,
-    double volume,
-    Duration seek,
-    double playSpeed,
+    double? volume,
+    Duration? seek,
+    double? playSpeed,
   }) async {
     final player = AssetsAudioPlayer.newPlayer();
     player.open(
       audio,
       showNotification: false,
-      //not need here, we'll call another method `changeNotificationForGroup`
+      // not need here, we'll call another method `changeNotificationForGroup`
       seek: seek,
-      autoStart: isPlaying.value,
-      //need to play() for player group
+      autoStart: isPlaying.value ?? false,
+      // need to play() for player group
       volume: volume,
       loopMode: loopMode,
       respectSilentMode: respectSilentMode,
@@ -163,7 +163,7 @@ class AssetsAudioPlayerGroup {
   }
 
   Future<void> _addPlayer(Audio audio, AssetsAudioPlayer player) async {
-    StreamSubscription finishedSubscription;
+    late StreamSubscription finishedSubscription;
     finishedSubscription = player.playlistFinished.listen((finished) {
       if (finished) {
         finishedSubscription.cancel();
@@ -183,71 +183,66 @@ class AssetsAudioPlayerGroup {
 
   void _onPlayerError(ErrorHandler errorHandler) {
     if (this.onErrorDo != null) {
-      this.onErrorDo(this, errorHandler);
+      this.onErrorDo!(this, errorHandler);
     }
   }
 
-  ///Called when an audio is added or removed (/finished)
+  /// Called when an audio is added or removed (/finished)
   Future<void> _onPlayersChanged() async {
-    if (updateNotification != null) {
-      final bool isPlaying = this.isPlaying.value;
-      final newNotificationsMetas =
-          await updateNotification(this, playingAudios);
+    final bool isPlaying = this.isPlaying.value ?? false;
+    final newNotificationsMetas = await updateNotification(this, playingAudios);
 
-      String firstPlayerId;
-      if (audios.isNotEmpty) {
-        firstPlayerId = players.first?.id;
-      }
-
-      changeNotificationForGroup(
-        //TODO find a way to protect it
-        this,
-        isPlaying: isPlaying,
-        firstPlayerId: firstPlayerId,
-        display: playingAudios.isNotEmpty,
-        notificationSettings: this._notificationSettings,
-        metas: Metas(
-          title: newNotificationsMetas.title,
-          artist: newNotificationsMetas.subTitle,
-          image: newNotificationsMetas.image,
-        ),
-      );
+    String? firstPlayerId;
+    if (audios.isNotEmpty) {
+      firstPlayerId = players.first.id;
     }
+
+    changeNotificationForGroup(
+      // TODO find a way to protect it
+      this,
+      isPlaying: isPlaying,
+      firstPlayerId: firstPlayerId,
+      display: playingAudios.isNotEmpty,
+      notificationSettings: this._notificationSettings,
+      metas: Metas(
+        title: newNotificationsMetas.title,
+        artist: newNotificationsMetas.subTitle,
+        image: newNotificationsMetas.image,
+      ),
+    );
   }
 
   Future<void> changeNotificationForGroup(
     AssetsAudioPlayerGroup playerGroup, {
-    Metas metas,
-    bool display,
-    String firstPlayerId,
-    NotificationSettings notificationSettings,
+    required NotificationSettings notificationSettings,
+    Metas? metas,
+    bool? display,
+    String? firstPlayerId,
     bool isPlaying = true,
   }) async {
-    if (playerGroup != null) {
-      final Map<String, dynamic> params = {
-        'id': firstPlayerId,
-        'isPlaying': isPlaying,
-        'display': display,
-      };
+    final Map<String, dynamic> params = {
+      'id': firstPlayerId,
+      'isPlaying': isPlaying,
+      'display': display,
+    };
 
-      writeAudioMetasInto(params, metas);
-      writeNotificationSettingsInto(params, notificationSettings);
+    writeAudioMetasInto(params, metas);
+    writeNotificationSettingsInto(params, notificationSettings);
 
-      await _sendChannel.invokeMethod('forceNotificationForGroup', params);
-    }
+    await _sendChannel.invokeMethod('forceNotificationForGroup', params);
   }
 
   Future<void> play() {
     return _play();
   }
 
-  Future<void> _play({AssetsAudioPlayer except}) async {
+  Future<void> _play({AssetsAudioPlayer? except}) async {
     for (AssetsAudioPlayer player in players) {
       if (player != except) {
         await player.play();
       }
     }
-    _isPlaying.value = true;
+    _isPlaying.add(true);
     await _onPlayersChanged();
   }
 
@@ -255,13 +250,13 @@ class AssetsAudioPlayerGroup {
     return _pause();
   }
 
-  Future<void> _pause({AssetsAudioPlayer except}) async {
+  Future<void> _pause({AssetsAudioPlayer? except}) async {
     for (AssetsAudioPlayer player in players) {
       if (player != except) {
         await player.pause();
       }
     }
-    _isPlaying.value = false;
+    _isPlaying.add(false);
     await _onPlayersChanged();
   }
 
@@ -269,7 +264,7 @@ class AssetsAudioPlayerGroup {
     return _stop();
   }
 
-  Future<void> _stop({AssetsAudioPlayer except}) async {
+  Future<void> _stop({AssetsAudioPlayer? except}) async {
     //copy _players because _stop remove the player from the list
     final List<AssetsAudioPlayer> copyList = List.from(players);
     for (AssetsAudioPlayer player in copyList) {
@@ -277,7 +272,7 @@ class AssetsAudioPlayerGroup {
         await player.stop();
       }
     }
-    _isPlaying.value = false;
+    _isPlaying.add(false);
     await _onPlayersChanged();
   }
 
@@ -294,7 +289,7 @@ class AssetsAudioPlayerGroup {
   }
 
   Future<void> playOrPause() async {
-    if (isPlaying.value) {
+    if (isPlaying.value == true) {
       await pause();
     } else {
       await play();

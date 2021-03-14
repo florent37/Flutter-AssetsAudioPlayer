@@ -7,7 +7,7 @@ import 'cache_downloader.dart';
 AssetsAudioPlayerCacheManager _instance = AssetsAudioPlayerCacheManager._();
 
 class AssetsAudioPlayerCacheManager {
-  //singleton
+  // singleton
   AssetsAudioPlayerCacheManager._();
   factory AssetsAudioPlayerCacheManager() => _instance;
 
@@ -31,11 +31,11 @@ class AssetsAudioPlayerCacheManager {
         await _download(audio, path, cacheDownloadListener);
         return audio.copyWith(path: path, audioType: AudioType.file);
       } catch (t) {
-        //TODO
+        // TODO
       }
     }
 
-    return audio; //do not change anything if error
+    return audio; // do not change anything if error
   }
 
   Future<bool> _fileExists(String path) async {
@@ -50,9 +50,9 @@ class AssetsAudioPlayerCacheManager {
   ) async {
     print(intoPath);
     if (_downloadingElements.containsKey(intoPath)) {
-      //is already downloading it
+      // is already downloading it
       final downloader = _downloadingElements[intoPath];
-      await downloader.wait(cacheDownloadListener);
+      await downloader?.wait(cacheDownloadListener);
     } else {
       try {
         final downloader = CacheDownloader();
@@ -60,15 +60,15 @@ class AssetsAudioPlayerCacheManager {
         downloader.downloadAndSave(
           url: audio.path,
           savePath: intoPath,
-          headers: audio.networkHeaders ?? {},
+          headers: audio.networkHeaders,
         );
         await downloader.wait(cacheDownloadListener);
-        //download finished
+        // download finished
         _downloadingElements.remove(intoPath);
       } catch (t) {
-        //on error, remove also the downloader
+        // on error, remove also the downloader
         _downloadingElements.remove(intoPath);
-        //then throw again the exception
+        // then throw again the exception
         throw t;
       }
     }

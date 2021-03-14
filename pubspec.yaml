@@ -14,7 +14,7 @@ dependencies:
       sdk: flutter
   rxdart: ^0.26.0
   uuid: ^3.0.1
-  http: ^0.13.0 #to download / cache network files
+  http: ^0.13.0 # to download / cache network files
   path_provider: ^2.0.1 # removed this because it cancel flutter/android/ios on pub.dev path_provider: ^1.6.10
 
 
@@ -45,6 +45,6 @@ flutter:
       web:
         default_package: assets_audio_player_web
       # moved to assets_audio_player_web
-      #web:
+      # web:
       #  pluginClass: AssetsAudioPlayerPlugin
       #  fileName: assets_audio_player_web.dart

@@ -32,26 +32,26 @@ class NotificationSettings {
 
   //region customizers
   /// null for default behavior
-  final NotificationAction customNextAction;
+  final NotificationAction? customNextAction;
 
   /// null for default behavior
-  final NotificationAction customPlayPauseAction;
+  final NotificationAction? customPlayPauseAction;
 
   /// null for default behavior
-  final NotificationAction customPrevAction;
+  final NotificationAction? customPrevAction;
 
   /// null for default behavior
-  final NotificationAction customStopAction;
+  final NotificationAction? customStopAction;
 
   //no custom action for stop
 
   //custom icon
-  final AndroidResDrawable customNextIcon;
-  final AndroidResDrawable customPreviousIcon;
-  final AndroidResDrawable customPlayIcon;
-  final AndroidResDrawable customPauseIcon;
-  final AndroidResDrawable customStopIcon;
-  final AndroidResDrawable customPrevIcon;
+  final AndroidResDrawable? customNextIcon;
+  final AndroidResDrawable? customPreviousIcon;
+  final AndroidResDrawable? customPlayIcon;
+  final AndroidResDrawable? customPauseIcon;
+  final AndroidResDrawable? customStopIcon;
+  final AndroidResDrawable? customPrevIcon;
 
   //endregion
 
@@ -98,7 +98,7 @@ void writeNotificationSettingsInto(
 class ClickedNotification {
   final String audioId;
 
-  ClickedNotification({this.audioId});
+  ClickedNotification({required this.audioId});
 }
 
 class ClickedNotificationWrapper {
