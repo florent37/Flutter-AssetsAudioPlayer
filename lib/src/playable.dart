@@ -5,7 +5,7 @@ import 'package:uuid/uuid.dart';
 import 'utils.dart';
 
 class Playable {
-  final Set<PlayerEditor> _currentlyOpenedIn = Set();
+  final Set<PlayerEditor> _currentlyOpenedIn = {};
 
   Set<PlayerEditor> get currentlyOpenedIn => Set.from(_currentlyOpenedIn);
 
@@ -111,9 +111,7 @@ class Metas {
     this.extra,
     this.onImageLoadFail,
   }) {
-    if (this.id == null) {
-      this.id = Uuid().v4();
-    }
+    id ??= Uuid().v4();
   }
 
   @override
@@ -161,7 +159,7 @@ class Audio extends Playable {
   final String? package;
   final AudioType audioType;
   Metas _metas;
-  Map<String, String>? _networkHeaders;
+  final Map<String, String>? _networkHeaders;
   final bool? cached; // download audio then play it
   final double? playSpeed;
 
@@ -255,7 +253,7 @@ class Audio extends Playable {
     Map<String, dynamic>? extra,
     MetasImage? image,
   }) {
-    this._metas = _metas.copyWith(
+    _metas = _metas.copyWith(
       title: title,
       artist: artist,
       album: album,
@@ -280,8 +278,8 @@ class Audio extends Playable {
       path: path ?? this.path,
       package: package ?? this.package,
       audioType: audioType ?? this.audioType,
-      metas: metas ?? this._metas,
-      headers: headers ?? this._networkHeaders,
+      metas: metas ?? _metas,
+      headers: headers ?? _networkHeaders,
       playSpeed: playSpeed ?? this.playSpeed,
       cached: cached ?? this.cached,
     );
@@ -298,7 +296,7 @@ class Playlist extends Playable {
   int get startIndex => _startIndex;
 
   set startIndex(int newValue) {
-    if (newValue < this.audios.length) {
+    if (newValue < audios.length) {
       _startIndex = newValue;
     }
   }
@@ -316,15 +314,15 @@ class Playlist extends Playable {
   }) {
     return Playlist(
       audios: audios ?? this.audios,
-      startIndex: startIndex ?? this._startIndex,
+      startIndex: startIndex ?? _startIndex,
     );
   }
 
   int get numberOfItems => audios.length;
 
   Playlist add(Audio audio) {
-    this.audios.add(audio);
-    final index = this.audios.length - 1;
+    audios.add(audio);
+    final index = audios.length - 1;
     super.currentlyOpenedIn.forEach((playerEditor) {
       playerEditor.onAudioAddedAt(index);
     });
@@ -333,13 +331,13 @@ class Playlist extends Playable {
 
   Playlist insert(int index, Audio audio) {
     if (index >= 0) {
-      if (index < this.audios.length) {
-        this.audios.insert(index, audio);
+      if (index < audios.length) {
+        audios.insert(index, audio);
         super.currentlyOpenedIn.forEach((playerEditor) {
           playerEditor.onAudioAddedAt(index);
         });
       } else {
-        return this.add(audio);
+        return add(audio);
       }
     }
     return this;
@@ -347,10 +345,10 @@ class Playlist extends Playable {
 
   Playlist replaceAt(int index, PlaylistAudioReplacer replacer,
       {bool keepPlayingPositionIfCurrent = false}) {
-    if (index < this.audios.length) {
-      final oldElement = this.audios.elementAt(index);
+    if (index < audios.length) {
+      final oldElement = audios.elementAt(index);
       final newElement = replacer(oldElement);
-      this.audios[index] = newElement;
+      audios[index] = newElement;
       super.currentlyOpenedIn.forEach((playerEditor) {
         playerEditor.onAudioReplacedAt(index, keepPlayingPositionIfCurrent);
       });
@@ -364,8 +362,8 @@ class Playlist extends Playable {
   }
 
   bool remove(Audio audio) {
-    final index = this.audios.indexOf(audio);
-    final bool removed = this.audios.remove(audio);
+    final index = audios.indexOf(audio);
+    final removed = audios.remove(audio);
     super.currentlyOpenedIn.forEach((playerEditor) {
       playerEditor.onAudioRemovedAt(index);
     });
@@ -374,7 +372,7 @@ class Playlist extends Playable {
   }
 
   Audio removeAtIndex(int index) {
-    Audio removedAudio = this.audios.removeAt(index);
+    final removedAudio = audios.removeAt(index);
     super.currentlyOpenedIn.forEach((playerEditor) {
       playerEditor.onAudioRemovedAt(index);
     });
@@ -382,7 +380,7 @@ class Playlist extends Playable {
   }
 
   bool contains(Audio audio) {
-    return this.audios.contains(audio);
+    return audios.contains(audio);
   }
 
   @override

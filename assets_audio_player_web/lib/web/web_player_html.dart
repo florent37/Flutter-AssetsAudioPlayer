@@ -64,7 +64,7 @@ class WebPlayerHtml extends WebPlayer {
 
   void _listenPosition() async {
     __listenPosition = true;
-    Future.doWhile(() {
+    await Future.doWhile(() {
       final durationMs = _audioElement?.duration ?? 0 * 1000;
       if (durationMs != _durationMs) {
         _durationMs = durationMs;
@@ -177,7 +177,7 @@ class WebPlayerHtml extends WebPlayer {
       /// The value being sent down from the plugin
       /// is in `milliseconds` and `AudioElement` uses seconds.
       /// This is to convert it.
-      double toInSeconds = to / 1000;
+      final toInSeconds = to / 1000;
       _audioElement?.currentTime = toInSeconds;
     }
   }

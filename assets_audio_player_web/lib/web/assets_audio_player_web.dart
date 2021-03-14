@@ -8,7 +8,7 @@ import 'abstract_web_player.dart';
 
 /// Web plugin
 class AssetsAudioPlayerWebPlugin {
-  final Map<String, WebPlayer> _players = Map();
+  final Map<String, WebPlayer> _players = {};
   final BinaryMessenger messenger;
 
   AssetsAudioPlayerWebPlugin({required this.messenger});
@@ -23,12 +23,12 @@ class AssetsAudioPlayerWebPlugin {
     if (_players.containsKey(id)) {
       return _players[id]!;
     } else {
-      final WebPlayer newPlayer = _newPlayer(
+      final newPlayer = _newPlayer(
           id,
           MethodChannel(
             'assets_audio_player/' + id,
             const StandardMethodCodec(),
-            this.messenger,
+            messenger,
           ));
       _players[id] = newPlayer;
       return newPlayer;
@@ -36,7 +36,7 @@ class AssetsAudioPlayerWebPlugin {
   }
 
   static void registerWith(Registrar registrar) {
-    final MethodChannel channel = MethodChannel(
+    final channel = MethodChannel(
       'assets_audio_player',
       const StandardMethodCodec(),
       registrar,

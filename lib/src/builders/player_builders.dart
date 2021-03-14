@@ -42,64 +42,64 @@ class PlayerBuilder extends StatefulWidget {
 
   const PlayerBuilder.isPlaying(
       {Key? key, required this.player, required PlayingWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.isPlaying,
+      : builder = builder,
+        builderType = _PlayingBuilderType.isPlaying,
         super(key: key);
 
   const PlayerBuilder.isBuffering(
       {Key? key, required this.player, required PlayingWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.isBuffering,
+      : builder = builder,
+        builderType = _PlayingBuilderType.isBuffering,
         super(key: key);
 
   const PlayerBuilder.loopMode(
       {Key? key, required this.player, required LoopModeWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.loopMode,
+      : builder = builder,
+        builderType = _PlayingBuilderType.loopMode,
         super(key: key);
 
   const PlayerBuilder.realtimePlayingInfos(
       {Key? key, required this.player, required RealtimeWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.realtimePlayingInfos,
+      : builder = builder,
+        builderType = _PlayingBuilderType.realtimePlayingInfos,
         super(key: key);
 
   const PlayerBuilder.volume(
       {Key? key, required this.player, required VolumeWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.volume,
+      : builder = builder,
+        builderType = _PlayingBuilderType.volume,
         super(key: key);
 
   const PlayerBuilder.playSpeed(
       {Key? key, required this.player, required PlaySpeedWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.playSpeed,
+      : builder = builder,
+        builderType = _PlayingBuilderType.playSpeed,
         super(key: key);
 
   const PlayerBuilder.currentPosition(
       {Key? key, required this.player, required PositionWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.currentPosition,
+      : builder = builder,
+        builderType = _PlayingBuilderType.currentPosition,
         super(key: key);
 
   const PlayerBuilder.forwardRewindSpeed(
       {Key? key,
       required this.player,
       ForwardRewindSpeedWidgetBuilder? builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.forwardRewindSpeed,
+      : builder = builder,
+        builderType = _PlayingBuilderType.forwardRewindSpeed,
         super(key: key);
 
   const PlayerBuilder.current(
       {Key? key, required this.player, required CurrentWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.current,
+      : builder = builder,
+        builderType = _PlayingBuilderType.current,
         super(key: key);
 
   const PlayerBuilder.playerState(
       {Key? key, required this.player, required PlayerStateBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.playerState,
+      : builder = builder,
+        builderType = _PlayingBuilderType.playerState,
         super(key: key);
 
   @override
@@ -115,7 +115,7 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.isPlaying,
           initialData: false,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
       case _PlayingBuilderType.isBuffering:
@@ -123,7 +123,7 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.isBuffering,
           initialData: false,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
       case _PlayingBuilderType.loopMode:
@@ -131,7 +131,7 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.loopMode,
           initialData: LoopMode.none,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
       case _PlayingBuilderType.volume:
@@ -139,7 +139,7 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.volume,
           initialData: AssetsAudioPlayer.defaultVolume,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
       case _PlayingBuilderType.currentPosition:
@@ -147,7 +147,7 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.currentPosition,
           initialData: Duration.zero,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
       case _PlayingBuilderType.playSpeed:
@@ -155,7 +155,7 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.playSpeed,
           initialData: AssetsAudioPlayer.defaultPlaySpeed,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
       case _PlayingBuilderType.forwardRewindSpeed:
@@ -163,7 +163,7 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.forwardRewindSpeed,
           initialData: null,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
       case _PlayingBuilderType.current:
@@ -171,7 +171,7 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.current,
           initialData: null,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
       case _PlayingBuilderType.realtimePlayingInfos:
@@ -179,7 +179,7 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.realtimePlayingInfos,
           initialData: null,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
       case _PlayingBuilderType.playerState:
@@ -187,7 +187,7 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.playerState,
           initialData: PlayerState.stop,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
     }
@@ -201,12 +201,12 @@ class PlayerGroupBuilder extends StatefulWidget {
 
   const PlayerGroupBuilder.isPlaying(
       {Key? key, required this.player, required PlayingWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.isPlaying,
+      : builder = builder,
+        builderType = _PlayingBuilderType.isPlaying,
         super(key: key);
 
   @override
-  createState() => _PlayerBuilderGroupState();
+  _PlayerBuilderGroupState createState() => _PlayerBuilderGroupState();
 }
 
 class _PlayerBuilderGroupState extends State<PlayerGroupBuilder> {
@@ -218,7 +218,7 @@ class _PlayerBuilderGroupState extends State<PlayerGroupBuilder> {
           stream: widget.player.isPlaying,
           initialData: false,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
       default: /* do nothing */

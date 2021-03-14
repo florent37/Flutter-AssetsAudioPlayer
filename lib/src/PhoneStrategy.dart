@@ -18,9 +18,9 @@ class AudioFocusStrategy {
 
   /// Don't request focus
   AudioFocusStrategy.none()
-      : this.request = false,
-        this.resumeAfterInterruption = false,
-        this.resumeOthersPlayersAfterDone = false;
+      : request = false,
+        resumeAfterInterruption = false,
+        resumeOthersPlayersAfterDone = false;
 
   /// Request focus
   ///
@@ -30,7 +30,7 @@ class AudioFocusStrategy {
   const AudioFocusStrategy.request(
       {this.resumeAfterInterruption = false,
       this.resumeOthersPlayersAfterDone = false})
-      : this.request = true;
+      : request = true;
 }
 
 Map<String, dynamic> describeAudioFocusStrategy(AudioFocusStrategy strategy) {

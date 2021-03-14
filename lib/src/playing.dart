@@ -146,11 +146,11 @@ class RealtimePlayingInfos {
     required this.loopMode,
     required this.isBuffering,
     this.isShuffling,
-  }) : this.duration = current.audio.duration;
+  }) : duration = current.audio.duration;
 
-  double get playingPercent => this.duration.inMilliseconds == 0
+  double get playingPercent => duration.inMilliseconds == 0
       ? 0
-      : this.currentPosition.inMilliseconds / this.duration.inMilliseconds;
+      : currentPosition.inMilliseconds / duration.inMilliseconds;
 
   @override
   bool operator ==(Object other) =>

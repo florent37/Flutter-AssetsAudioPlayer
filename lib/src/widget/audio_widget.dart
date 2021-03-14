@@ -43,7 +43,7 @@ class AudioWidget extends StatefulWidget {
     this.initialPosition = const Duration(),
     this.onReadyToPlay,
     this.onFinished,
-  })  : this.audio = Audio(path, package: package),
+  })  : audio = Audio(path, package: package),
         super(key: key);
 
   AudioWidget.network({
@@ -57,7 +57,7 @@ class AudioWidget extends StatefulWidget {
     this.initialPosition = const Duration(),
     this.onReadyToPlay,
     this.onFinished,
-  })  : this.audio = Audio.network(url),
+  })  : audio = Audio.network(url),
         super(key: key);
 
   AudioWidget.file({
@@ -71,7 +71,7 @@ class AudioWidget extends StatefulWidget {
     this.initialPosition = const Duration(),
     this.onReadyToPlay,
     this.onFinished,
-  })  : this.audio = Audio.network(path),
+  })  : audio = Audio.network(path),
         super(key: key);
 
   @override
@@ -89,7 +89,6 @@ class AudioWidget extends StatefulWidget {
     Duration? initialPosition,
   }) {
     return AudioWidget(
-      child: child ?? this.child,
       audio: audio ?? this.audio,
       loopMode: loopMode ?? this.loopMode,
       volume: volume ?? this.volume,
@@ -98,6 +97,7 @@ class AudioWidget extends StatefulWidget {
       onReadyToPlay: onReadyToPlay ?? this.onReadyToPlay,
       onFinished: onFinished ?? this.onFinished,
       initialPosition: initialPosition ?? this.initialPosition,
+      child: child ?? this.child,
     );
   }
 }

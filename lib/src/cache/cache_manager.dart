@@ -11,7 +11,7 @@ class AssetsAudioPlayerCacheManager {
   AssetsAudioPlayerCacheManager._();
   factory AssetsAudioPlayerCacheManager() => _instance;
 
-  Map<String, CacheDownloader> _downloadingElements = Map();
+  final Map<String, CacheDownloader> _downloadingElements = {};
 
   Future<Audio> transform(
     AssetsAudioPlayerCache cache,
@@ -22,8 +22,8 @@ class AssetsAudioPlayerCacheManager {
       return audio;
     }
 
-    final String key = await cache.audioKeyTransformer(audio);
-    final String path = await cache.cachePathProvider(audio, key);
+    final key = await cache.audioKeyTransformer(audio);
+    final path = await cache.cachePathProvider(audio, key);
     if (await _fileExists(path)) {
       return audio.copyWith(path: path, audioType: AudioType.file);
     } else {
@@ -39,7 +39,7 @@ class AssetsAudioPlayerCacheManager {
   }
 
   Future<bool> _fileExists(String path) async {
-    final File file = File(path);
+    final file = File(path);
     return await file.exists();
   }
 
@@ -57,7 +57,7 @@ class AssetsAudioPlayerCacheManager {
       try {
         final downloader = CacheDownloader();
         _downloadingElements[intoPath] = downloader;
-        downloader.downloadAndSave(
+        await downloader.downloadAndSave(
           url: audio.path,
           savePath: intoPath,
           headers: audio.networkHeaders,
@@ -69,7 +69,7 @@ class AssetsAudioPlayerCacheManager {
         // on error, remove also the downloader
         _downloadingElements.remove(intoPath);
         // then throw again the exception
-        throw t;
+        rethrow;
       }
     }
   }

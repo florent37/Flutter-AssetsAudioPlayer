@@ -13,10 +13,11 @@ class CacheDownloadInfos {
   final int total;
 
   double get percent {
-    if (total == 0)
+    if (total == 0) {
       return 0;
-    else
+    } else {
       return received / total;
+    }
   }
 }
 
@@ -47,47 +48,47 @@ class CacheDownloader {
     required String savePath,
     Map<String, String>? headers,
   }) async {
-    final http.Client client = http.Client();
+    final client = http.Client();
     final uri = Uri.parse(url);
-    final http.Request request = http.Request('GET', uri);
+    final request = http.Request('GET', uri);
 
-    if (headers != null && !headers.isEmpty) {
+    if (headers != null && headers.isNotEmpty) {
       request.headers.addAll(headers);
     }
 
     request.followRedirects = false;
 
-    final Future<http.StreamedResponse> response = client.send(request);
+    final response = client.send(request);
 
-    final File file = File(savePath);
-    final RandomAccessFile raf = file.openSync(mode: FileMode.write);
-    final List<List<int>> responseChunk = <List<int>>[];
-    int downloadedLength = 0;
+    final file = File(savePath);
+    final raf = file.openSync(mode: FileMode.write);
+    final responseChunk = <List<int>>[];
+    var downloadedLength = 0;
 
-    final Completer completer = Completer();
+    final completer = Completer();
     response.asStream().listen((http.StreamedResponse r) {
       r.stream.listen((List<int> chunk) {
         raf.writeFromSync(chunk);
         responseChunk.add(chunk);
         downloadedLength += chunk.length;
-        final CacheDownloadInfos infos = CacheDownloadInfos(
+        final infos = CacheDownloadInfos(
           received: downloadedLength,
           total: r.contentLength ?? 0,
         );
-        for (final _DownloadWaiter waiter in _waiters) {
+        for (final waiter in _waiters) {
           waiter.pingInfos(infos);
         }
       }, onDone: () async {
         await raf.close();
 
-        for (final _DownloadWaiter waiter in _waiters) {
+        for (final waiter in _waiters) {
           waiter.completer.complete();
         }
         _dispose();
 
         completer.complete();
       }, onError: (dynamic e) {
-        for (final _DownloadWaiter waiter in _waiters) {
+        for (final waiter in _waiters) {
           waiter.completer.completeError(e);
         }
         _dispose();
@@ -100,7 +101,7 @@ class CacheDownloader {
 
   Future<String> wait(CacheDownloadListener downloadListener) async {
     final waiter = _DownloadWaiter(downloadInfosListener: downloadListener);
-    this._waiters.add(waiter);
+    _waiters.add(waiter);
     return await waiter.completer.future;
   }
 }
