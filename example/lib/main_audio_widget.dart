@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({Key key}) : super(key: key);
+  MyHomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -72,15 +72,15 @@ class _MyPageWithAudioState extends State<MyPageWithAudio> {
                 padding: EdgeInsets.all(14),
                 primary: Theme.of(context).primaryColor,
               ),
-              child: Icon(
-                _play ? Icons.pause : Icons.play_arrow,
-                color: Colors.white,
-              ),
               onPressed: () {
                 setState(() {
                   _play = !_play;
                 });
               },
+              child: Icon(
+                _play ? Icons.pause : Icons.play_arrow,
+                color: Colors.white,
+              ),
             ),
           ),
           Text(_currentPosition),

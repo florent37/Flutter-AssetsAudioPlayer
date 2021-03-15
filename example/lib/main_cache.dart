@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -29,7 +29,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String downloadingProgress;
+  String? downloadingProgress;
 
   final AssetsAudioPlayer _player = AssetsAudioPlayer.newPlayer();
 
@@ -60,11 +60,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  @override
   Widget playerWidget(BuildContext context) {
     return PlayerBuilder.current(
       player: _player,
-      builder: (context, current) {
+      builder: (context, Playing? current) {
         if (current == null) {
           return SizedBox();
         }
@@ -72,10 +71,10 @@ class _MyHomePageState extends State<MyHomePage> {
           player: _player,
           builder: (context, isPlaying) {
             return FloatingActionButton(
-              child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
               onPressed: () {
                 _player.playOrPause();
               },
+              child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
             );
           },
         );

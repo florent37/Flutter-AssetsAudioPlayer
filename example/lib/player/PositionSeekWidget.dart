@@ -17,7 +17,7 @@ class PositionSeekWidget extends StatefulWidget {
 }
 
 class _PositionSeekWidgetState extends State<PositionSeekWidget> {
-  Duration _visibleValue;
+  late Duration _visibleValue;
   bool listenOnlyUserInterraction = false;
   double get percent => widget.duration.inMilliseconds == 0
       ? 0
@@ -90,9 +90,9 @@ String durationToString(Duration duration) {
     return '0$n';
   }
 
-  String twoDigitMinutes =
+  final twoDigitMinutes =
       twoDigits(duration.inMinutes.remainder(Duration.minutesPerHour));
-  String twoDigitSeconds =
+  final twoDigitSeconds =
       twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute));
   return '$twoDigitMinutes:$twoDigitSeconds';
 }

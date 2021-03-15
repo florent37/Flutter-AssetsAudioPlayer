@@ -150,38 +150,37 @@ class _MyAppState extends State<MyApp> {
                     StreamBuilder(
                       stream: _assetsAudioPlayer.current,
                       builder: (BuildContext context,
-                          AsyncSnapshot<Playing> snapshot) {
-                        final Playing playing = snapshot.data;
-                        if (playing != null) {
-                          final myAudio =
-                              find(this.audios, playing.audio.assetAudioPath);
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Neumorphic(
-                              style: NeumorphicStyle(
-                                depth: 8,
-                                surfaceIntensity: 1,
-                                shape: NeumorphicShape.concave,
-                                boxShape: NeumorphicBoxShape.circle(),
-                              ),
-                              child:
-                                  myAudio.metas.image.type == ImageType.network
-                                      ? Image.network(
-                                          myAudio.metas.image.path,
-                                          height: 150,
-                                          width: 150,
-                                          fit: BoxFit.contain,
-                                        )
-                                      : Image.asset(
-                                          myAudio.metas.image.path,
-                                          height: 150,
-                                          width: 150,
-                                          fit: BoxFit.contain,
-                                        ),
+                          AsyncSnapshot<Playing?> snapshot) {
+                        if (!snapshot.hasData) return const SizedBox();
+                        final playing = snapshot.data!;
+                        final myAudio =
+                            find(audios, playing.audio.assetAudioPath);
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Neumorphic(
+                            style: NeumorphicStyle(
+                              depth: 8,
+                              surfaceIntensity: 1,
+                              shape: NeumorphicShape.concave,
+                              boxShape: NeumorphicBoxShape.circle(),
                             ),
-                          );
-                        }
-                        return SizedBox();
+                            child: myAudio.metas.image?.path == null
+                                ? const SizedBox()
+                                : myAudio.metas.image?.type == ImageType.network
+                                    ? Image.network(
+                                        myAudio.metas.image!.path,
+                                        height: 150,
+                                        width: 150,
+                                        fit: BoxFit.contain,
+                                      )
+                                    : Image.asset(
+                                        myAudio.metas.image!.path,
+                                        height: 150,
+                                        width: 150,
+                                        fit: BoxFit.contain,
+                                      ),
+                          ),
+                        );
                       },
                     ),
                     Align(
@@ -212,23 +211,30 @@ class _MyAppState extends State<MyApp> {
                 ),
                 StreamBuilder(
                     stream: _assetsAudioPlayer.current,
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return SizedBox();
-                      }
-                      final Playing playing = snapshot.data;
+                    builder: (context, AsyncSnapshot<Playing?> snapshot) {
+                      if (!snapshot.hasData) return const SizedBox();
+
+                      final playing = snapshot.data!;
                       return Column(
                         children: <Widget>[
                           StreamBuilder(
                             stream: _assetsAudioPlayer.loopMode,
                             initialData: LoopMode.none,
-                            builder: (context, snapshotLooping) {
-                              final LoopMode loopMode = snapshotLooping.data;
+                            builder: (context,
+                                AsyncSnapshot<LoopMode> snapshotLooping) {
+                              if (!snapshotLooping.hasData) {
+                                return const SizedBox();
+                              }
+                              final loopMode = snapshotLooping.data!;
                               return StreamBuilder(
                                   stream: _assetsAudioPlayer.isPlaying,
                                   initialData: false,
-                                  builder: (context, snapshotPlaying) {
-                                    final isPlaying = snapshotPlaying.data;
+                                  builder: (context,
+                                      AsyncSnapshot<bool> snapshotPlaying) {
+                                    if (!snapshotPlaying.hasData) {
+                                      return const SizedBox();
+                                    }
+                                    final isPlaying = snapshotPlaying.data!;
                                     return PlayingControls(
                                       loopMode: loopMode,
                                       isPlaying: isPlaying,
@@ -253,13 +259,14 @@ class _MyAppState extends State<MyApp> {
                           ),
                           StreamBuilder(
                               stream: _assetsAudioPlayer.realtimePlayingInfos,
-                              builder: (context, snapshot) {
+                              builder: (context,
+                                  AsyncSnapshot<RealtimePlayingInfos>
+                                      snapshot) {
                                 if (!snapshot.hasData) {
-                                  return SizedBox();
+                                  return const SizedBox();
                                 }
-                                final RealtimePlayingInfos infos =
-                                    snapshot.data;
-                                //print('infos: $infos');
+                                final infos = snapshot.data!;
+                                // print('infos: $infos');
                                 return PositionSeekWidget(
                                   currentPosition: infos.currentPosition,
                                   duration: infos.duration,
@@ -278,10 +285,11 @@ class _MyAppState extends State<MyApp> {
                   child: StreamBuilder(
                       stream: _assetsAudioPlayer.current,
                       builder: (BuildContext context,
-                          AsyncSnapshot<Playing> snapshot) {
-                        final Playing playing = snapshot.data;
+                          AsyncSnapshot<Playing?> snapshot) {
+                        if (!snapshot.hasData) return const SizedBox();
+                        final playing = snapshot.data!;
                         return SongsSelector(
-                          audios: this.audios,
+                          audios: audios,
                           onPlaylistSelected: (myAudios) {
                             _assetsAudioPlayer.open(
                               Playlist(audios: myAudios),
@@ -303,8 +311,9 @@ class _MyAppState extends State<MyApp> {
                 StreamBuilder(
                     stream: _assetsAudioPlayer.volume,
                     initialData: AssetsAudioPlayer.defaultVolume,
-                    builder: (context, snapshot) {
-                      final double volume = snapshot.data;
+                    builder: (context, AsyncSnapshot<double> snapshot) {
+                      if (!snapshot.hasData) return const SizedBox();
+                      final volume = snapshot.data!;
                       return VolumeSelector(
                         volume: volume,
                         onChange: (v) {
@@ -315,8 +324,9 @@ class _MyAppState extends State<MyApp> {
                 StreamBuilder(
                     stream: _assetsAudioPlayer.forwardRewindSpeed,
                     initialData: null,
-                    builder: (context, snapshot) {
-                      final double speed = snapshot.data;
+                    builder: (context, AsyncSnapshot<double?> snapshot) {
+                      if (!snapshot.hasData) return const SizedBox();
+                      final speed = snapshot.data!;
                       return ForwardRewindSelector(
                         speed: speed,
                         onChange: (v) {
@@ -327,8 +337,9 @@ class _MyAppState extends State<MyApp> {
                 StreamBuilder(
                     stream: _assetsAudioPlayer.playSpeed,
                     initialData: AssetsAudioPlayer.defaultPlaySpeed,
-                    builder: (context, snapshot) {
-                      final double playSpeed = snapshot.data;
+                    builder: (context, AsyncSnapshot<double> snapshot) {
+                      if (!snapshot.hasData) return const SizedBox();
+                      final playSpeed = snapshot.data!;
                       return PlaySpeedSelector(
                         playSpeed: playSpeed,
                         onChange: (v) {

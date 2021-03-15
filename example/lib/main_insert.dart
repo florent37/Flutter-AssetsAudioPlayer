@@ -40,7 +40,7 @@ class _MyAppState extends State {
 
   @override
   void initState() {
-    _assetsAudioPlayer.open(this.playlist, showNotification: true);
+    _assetsAudioPlayer.open(playlist, showNotification: true);
     super.initState();
   }
 
@@ -53,38 +53,38 @@ class _MyAppState extends State {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
+                onPressed: () {
+                  playlist.insert(0, rock);
+                },
                 child: Text('Insert rock 0'),
-                onPressed: () {
-                  this.playlist.insert(0, rock);
-                },
               ),
               ElevatedButton(
+                onPressed: () {
+                  playlist.insert(0, country);
+                },
                 child: Text('Insert country 0'),
-                onPressed: () {
-                  this.playlist.insert(0, country);
-                },
               ),
               ElevatedButton(
+                onPressed: () {
+                  playlist.insert(3, country);
+                },
                 child: Text('Insert 3'),
-                onPressed: () {
-                  this.playlist.insert(3, country);
-                },
               ),
               ElevatedButton(
-                child: Text('Replace 0'),
                 onPressed: () {
-                  this.playlist.replaceAt(0, (audio) {
+                  playlist.replaceAt(0, (audio) {
                     return country;
                   });
                 },
+                child: Text('Replace 0'),
               ),
               ElevatedButton(
-                child: Text('Replace 0 seek'),
                 onPressed: () {
-                  this.playlist.replaceAt(0, (audio) {
+                  playlist.replaceAt(0, (audio) {
                     return country;
                   }, keepPlayingPositionIfCurrent: true);
                 },
+                child: Text('Replace 0 seek'),
               ),
             ],
           ),

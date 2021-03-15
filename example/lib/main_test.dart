@@ -47,7 +47,6 @@ class HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
-              child: Text('load'),
               onPressed: () {
                 assetsAudioPlayer.open(
                   currentAudio,
@@ -58,12 +57,12 @@ class HomeState extends State<Home> {
                   autoStart: false,
                 );
               },
+              child: Text('load'),
             ),
             PlayerBuilder.isPlaying(
               player: assetsAudioPlayer,
               builder: (context, isPlaying) {
                 return ElevatedButton(
-                  child: Text(isPlaying ? 'Pause' : 'Play'),
                   onPressed: () {
                     setState(() {
                       if (isPlaying) {
@@ -73,6 +72,7 @@ class HomeState extends State<Home> {
                       }
                     });
                   },
+                  child: Text(isPlaying ? 'Pause' : 'Play'),
                 );
               },
             ),
@@ -80,9 +80,6 @@ class HomeState extends State<Home> {
               player: assetsAudioPlayer,
               builder: (context, loopMode) {
                 return ElevatedButton(
-                  child: Text(loopMode == LoopMode.playlist
-                      ? 'looping'
-                      : 'not-looping'),
                   onPressed: () {
                     setState(() {
                       if (loopMode == LoopMode.playlist) {
@@ -92,6 +89,9 @@ class HomeState extends State<Home> {
                       }
                     });
                   },
+                  child: Text(loopMode == LoopMode.playlist
+                      ? 'looping'
+                      : 'not-looping'),
                 );
               },
             ),

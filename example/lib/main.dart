@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -34,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String downloadingProgress;
+  String? downloadingProgress;
   final AssetsAudioPlayer _player = AssetsAudioPlayer.newPlayer();
 
   final Playlist playlist = Playlist(audios: [
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         keepPlayingPositionIfCurrent: true,
       );
-      this.downloadingProgress = null;
+      downloadingProgress = null;
     });
   }
 
@@ -106,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             if (downloadingProgress != null)
-              Text(this.downloadingProgress)
+              Text(downloadingProgress!)
             else
               SizedBox(),
             _playingButton(),
@@ -121,10 +121,10 @@ class _MyHomePageState extends State<MyHomePage> {
       player: _player,
       builder: (context, isPlaying) {
         return FloatingActionButton(
-          child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
           onPressed: () {
             _player.playOrPause();
           },
+          child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
         );
       },
     );
@@ -132,24 +132,24 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 Future downloadFileTo(
-    {Dio dio,
-    String url,
-    String savePath,
-    Function(int received, int total) progressFunction}) async {
+    {required Dio dio,
+    required String url,
+    required String savePath,
+    Function(int received, int total)? progressFunction}) async {
   try {
-    final Response response = await dio.get(
+    final response = await dio.get(
       url,
       onReceiveProgress: progressFunction,
-      //Received data with List<int>
+      // Received data with List<int>
       options: Options(
           responseType: ResponseType.bytes,
           followRedirects: false,
           validateStatus: (status) {
-            return status < 500;
+            return (status ?? 0) < 500;
           }),
     );
     print(response.headers);
-    final File file = File(savePath);
+    final file = File(savePath);
     var raf = file.openSync(mode: FileMode.write);
     // response.data is List<int> type
     raf.writeFromSync(response.data);

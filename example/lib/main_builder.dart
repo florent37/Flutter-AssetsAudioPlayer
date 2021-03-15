@@ -145,10 +145,10 @@ class _MyAppState extends State<MyApp> {
                   fit: StackFit.passthrough,
                   children: <Widget>[
                     _assetsAudioPlayer.builderCurrent(
-                      builder: (BuildContext context, Playing playing) {
+                      builder: (BuildContext context, Playing? playing) {
                         if (playing != null) {
                           final myAudio =
-                              find(this.audios, playing.audio.assetAudioPath);
+                              find(audios, playing.audio.assetAudioPath);
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Neumorphic(
@@ -158,16 +158,18 @@ class _MyAppState extends State<MyApp> {
                                 surfaceIntensity: 1,
                                 shape: NeumorphicShape.concave,
                               ),
-                              child:
-                                  myAudio.metas.image.type == ImageType.network
+                              child: myAudio.metas.image?.path == null
+                                  ? const SizedBox()
+                                  : myAudio.metas.image?.type ==
+                                          ImageType.network
                                       ? Image.network(
-                                          myAudio.metas.image.path,
+                                          myAudio.metas.image!.path,
                                           height: 150,
                                           width: 150,
                                           fit: BoxFit.contain,
                                         )
                                       : Image.asset(
-                                          myAudio.metas.image.path,
+                                          myAudio.metas.image!.path,
                                           height: 150,
                                           width: 150,
                                           fit: BoxFit.contain,
@@ -204,7 +206,8 @@ class _MyAppState extends State<MyApp> {
                 SizedBox(
                   height: 20,
                 ),
-                _assetsAudioPlayer.builderCurrent(builder: (context, playing) {
+                _assetsAudioPlayer.builderCurrent(
+                    builder: (context, Playing? playing) {
                   if (playing == null) {
                     return SizedBox();
                   }
@@ -237,7 +240,7 @@ class _MyAppState extends State<MyApp> {
                         },
                       ),
                       _assetsAudioPlayer.builderRealtimePlayingInfos(
-                          builder: (context, infos) {
+                          builder: (context, RealtimePlayingInfos? infos) {
                         if (infos == null) {
                           return SizedBox();
                         }
@@ -255,21 +258,21 @@ class _MyAppState extends State<MyApp> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 NeumorphicButton(
-                                  child: Text('-10'),
                                   onPressed: () {
                                     _assetsAudioPlayer
                                         .seekBy(Duration(seconds: -10));
                                   },
+                                  child: Text('-10'),
                                 ),
                                 SizedBox(
                                   width: 12,
                                 ),
                                 NeumorphicButton(
-                                  child: Text('+10'),
                                   onPressed: () {
                                     _assetsAudioPlayer
                                         .seekBy(Duration(seconds: 10));
                                   },
+                                  child: Text('+10'),
                                 ),
                               ],
                             )
@@ -286,7 +289,7 @@ class _MyAppState extends State<MyApp> {
                   child: _assetsAudioPlayer.builderCurrent(
                       builder: (BuildContext context, Playing playing) {
                     return SongsSelector(
-                      audios: this.audios,
+                      audios: audios,
                       onPlaylistSelected: (myAudios) {
                         _assetsAudioPlayer.open(
                           Playlist(audios: myAudios),

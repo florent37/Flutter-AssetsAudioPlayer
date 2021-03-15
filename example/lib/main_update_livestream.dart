@@ -26,7 +26,7 @@ class _MyAppState extends State {
 
   @override
   void initState() {
-    _assetsAudioPlayer.open(this.audio, showNotification: true);
+    _assetsAudioPlayer.open(audio, showNotification: true);
     super.initState();
   }
 
@@ -36,13 +36,13 @@ class _MyAppState extends State {
       home: Scaffold(
         body: Center(
           child: ElevatedButton(
-            child: Text('Click'),
             onPressed: () {
-              this.audio.updateMetas(
-                    title: 'Online 2',
-                    artist: 'My artist',
-                  );
+              audio.updateMetas(
+                title: 'Online 2',
+                artist: 'My artist',
+              );
             },
+            child: Text('Click'),
           ),
         ),
       ),

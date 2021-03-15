@@ -29,16 +29,16 @@ class PlaySpeedSelector extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: NeumorphicRadio(
-        groupValue: this.playSpeed,
+        groupValue: playSpeed,
         padding: EdgeInsets.all(12.0),
         value: value,
         style: NeumorphicRadioStyle(
           boxShape: NeumorphicBoxShape.circle(),
         ),
-        child: Text('x$value'),
-        onChanged: (v) {
-          this.onChange(v);
+        onChanged: (double? v) {
+          if (v != null) onChange(v);
         },
+        child: Text('x$value'),
       ),
     );
   }

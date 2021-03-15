@@ -2,6 +2,7 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:assets_audio_player_example/player/PlayingControlsSmall.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'player/PositionSeekWidget.dart';
 import 'player/model/MyAudio.dart';
@@ -95,8 +96,7 @@ class _MyAppState extends State<MyApp> {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 48.0),
               child: Column(
-                children: this
-                    .audios
+                children: audios
                     .map(
                       (e) => PlayerWidget(
                         myAudio: e,
@@ -124,100 +124,102 @@ class PlayerWidget extends StatefulWidget {
 }
 
 class _PlayerWidgetState extends State<PlayerWidget> {
-  AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer.newPlayer();
+  final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer.newPlayer();
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: _assetsAudioPlayer.loopMode,
-        initialData: false,
-        builder: (context, snapshotLooping) {
-          final LoopMode loopMode = snapshotLooping.data;
-          return StreamBuilder(
-              stream: _assetsAudioPlayer.isPlaying,
-              initialData: false,
-              builder: (context, snapshotPlaying) {
-                final isPlaying = snapshotPlaying.data;
-                return Neumorphic(
-                  margin: EdgeInsets.all(8),
-                  style: NeumorphicStyle(
-                    boxShape:
-                        NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
-                  ),
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
+      stream: _assetsAudioPlayer.loopMode,
+      builder: (context, AsyncSnapshot<LoopMode> snapshotLooping) {
+        if (!snapshotLooping.hasData) return const SizedBox();
+        final loopMode = snapshotLooping.data!;
+        return StreamBuilder(
+          stream: _assetsAudioPlayer.isPlaying,
+          initialData: false,
+          builder: (context, AsyncSnapshot<bool> snapshotPlaying) {
+            if (!snapshotPlaying.hasData) return const SizedBox();
+            final isPlaying = snapshotPlaying.data!;
+            return Neumorphic(
+              margin: EdgeInsets.all(8),
+              style: NeumorphicStyle(
+                boxShape:
+                    NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
+              ),
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: <Widget>[
+                  Row(
                     children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 3,
-                            child: Row(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Neumorphic(
-                                    style: NeumorphicStyle(
-                                      boxShape: NeumorphicBoxShape.circle(),
-                                      depth: 8,
-                                      surfaceIntensity: 1,
-                                      shape: NeumorphicShape.concave,
-                                    ),
-                                    child: Image.network(
-                                      widget.myAudio.imageUrl,
-                                      height: 50,
-                                      width: 50,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+                      Expanded(
+                        flex: 3,
+                        child: Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Neumorphic(
+                                style: NeumorphicStyle(
+                                  boxShape: NeumorphicBoxShape.circle(),
+                                  depth: 8,
+                                  surfaceIntensity: 1,
+                                  shape: NeumorphicShape.concave,
                                 ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(this.widget.myAudio.name),
-                                  ),
+                                child: Image.network(
+                                  widget.myAudio.imageUrl,
+                                  height: 50,
+                                  width: 50,
+                                  fit: BoxFit.cover,
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: PlayingControlsSmall(
-                              loopMode: loopMode,
-                              isPlaying: isPlaying,
-                              toggleLoop: () {
-                                _assetsAudioPlayer.toggleLoop();
-                              },
-                              onPlay: () {
-                                if (_assetsAudioPlayer.current.value == null) {
-                                  _assetsAudioPlayer.open(widget.myAudio.audio,
-                                      autoStart: true);
-                                } else {
-                                  _assetsAudioPlayer.playOrPause();
-                                }
-                              },
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(widget.myAudio.name),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                      StreamBuilder(
-                          stream: _assetsAudioPlayer.realtimePlayingInfos,
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return SizedBox();
+                      Expanded(
+                        flex: 2,
+                        child: PlayingControlsSmall(
+                          loopMode: loopMode,
+                          isPlaying: isPlaying,
+                          toggleLoop: () {
+                            _assetsAudioPlayer.toggleLoop();
+                          },
+                          onPlay: () {
+                            if (_assetsAudioPlayer.current.value == null) {
+                              _assetsAudioPlayer.open(widget.myAudio.audio,
+                                  autoStart: true);
+                            } else {
+                              _assetsAudioPlayer.playOrPause();
                             }
-                            RealtimePlayingInfos infos = snapshot.data;
-                            return PositionSeekWidget(
-                              seekTo: (to) {
-                                _assetsAudioPlayer.seek(to);
-                              },
-                              duration: infos.duration,
-                              currentPosition: infos.currentPosition,
-                            );
-                          }),
+                          },
+                        ),
+                      ),
                     ],
                   ),
-                );
-              });
-        });
+                  StreamBuilder(
+                      stream: _assetsAudioPlayer.realtimePlayingInfos,
+                      builder: (context,
+                          AsyncSnapshot<RealtimePlayingInfos> snapshot) {
+                        if (!snapshot.hasData) return const SizedBox();
+                        final infos = snapshot.data!;
+                        return PositionSeekWidget(
+                          seekTo: (to) {
+                            _assetsAudioPlayer.seek(to);
+                          },
+                          duration: infos.duration,
+                          currentPosition: infos.currentPosition,
+                        );
+                      }),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }

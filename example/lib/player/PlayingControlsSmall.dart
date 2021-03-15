@@ -8,8 +8,8 @@ class PlayingControlsSmall extends StatelessWidget {
   final bool isPlaying;
   final LoopMode loopMode;
   final Function() onPlay;
-  final Function() onStop;
-  final Function() toggleLoop;
+  final Function()? onStop;
+  final Function()? toggleLoop;
 
   PlayingControlsSmall({
     required this.isPlaying,
@@ -31,14 +31,14 @@ class PlayingControlsSmall extends StatelessWidget {
           ),
           padding: EdgeInsets.all(12),
           value: LoopMode.playlist,
-          groupValue: this.loopMode,
+          groupValue: loopMode,
+          onChanged: (newValue) {
+            if (toggleLoop != null) toggleLoop!();
+          },
           child: Icon(
             Icons.loop,
             size: 18,
           ),
-          onChanged: (newValue) {
-            toggleLoop();
-          },
         ),
         SizedBox(
           width: 12,
@@ -48,7 +48,7 @@ class PlayingControlsSmall extends StatelessWidget {
             boxShape: NeumorphicBoxShape.circle(),
           ),
           padding: EdgeInsets.all(16),
-          onPressed: this.onPlay,
+          onPressed: onPlay,
           child: Icon(
             isPlaying
                 ? AssetAudioPlayerIcons.pause
@@ -62,7 +62,7 @@ class PlayingControlsSmall extends StatelessWidget {
               boxShape: NeumorphicBoxShape.circle(),
             ),
             padding: EdgeInsets.all(16),
-            onPressed: this.onPlay,
+            onPressed: onPlay,
             child: Icon(
               AssetAudioPlayerIcons.stop,
               size: 32,

@@ -5,10 +5,10 @@ extension FormatString on Duration {
       return '0$n';
     }
 
-    String twoDigitMinutes =
-        twoDigits(this.inMinutes.remainder(Duration.minutesPerHour));
-    String twoDigitSeconds =
-        twoDigits(this.inSeconds.remainder(Duration.secondsPerMinute));
+    final twoDigitMinutes =
+        twoDigits(inMinutes.remainder(Duration.minutesPerHour));
+    final twoDigitSeconds =
+        twoDigits(inSeconds.remainder(Duration.secondsPerMinute));
     return '$twoDigitMinutes:$twoDigitSeconds';
   }
 }

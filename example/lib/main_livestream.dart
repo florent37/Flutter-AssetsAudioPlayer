@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -29,8 +29,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String downloadedFilePath;
-  String downloadingProgress;
+  String? downloadedFilePath;
+  String? downloadingProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class _PlayerState extends State<Player> {
         error.player.stop();
       };
       await _player.open(
-        Audio.liveStream(this.widget.streamPath,
+        Audio.liveStream(widget.streamPath,
             metas: Metas(
                 title: 'title',
                 album: 'album',
@@ -117,7 +117,6 @@ class _PlayerState extends State<Player> {
           player: _player,
           builder: (context, isPlaying) {
             return FloatingActionButton(
-              child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
               onPressed: () async {
                 try {
                   await _player.playOrPause();
@@ -125,6 +124,7 @@ class _PlayerState extends State<Player> {
                   print(t);
                 }
               },
+              child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
             );
           },
         ),

@@ -6,13 +6,13 @@ import '../asset_audio_player_icons.dart';
 
 class PlayingControls extends StatelessWidget {
   final bool isPlaying;
-  final LoopMode loopMode;
+  final LoopMode? loopMode;
   final bool isPlaylist;
-  final Function() onPrevious;
+  final Function()? onPrevious;
   final Function() onPlay;
-  final Function() onNext;
-  final Function() toggleLoop;
-  final Function() onStop;
+  final Function()? onNext;
+  final Function()? toggleLoop;
+  final Function()? onStop;
 
   PlayingControls({
     required this.isPlaying,
@@ -68,7 +68,7 @@ class PlayingControls extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-            toggleLoop();
+            if (toggleLoop != null) toggleLoop!();
           },
           child: _loopIcon(context),
         ),
@@ -80,7 +80,7 @@ class PlayingControls extends StatelessWidget {
             boxShape: NeumorphicBoxShape.circle(),
           ),
           padding: EdgeInsets.all(18),
-          onPressed: isPlaylist ? this.onPrevious : null,
+          onPressed: isPlaylist ? onPrevious : null,
           child: Icon(AssetAudioPlayerIcons.to_start),
         ),
         SizedBox(
@@ -91,7 +91,7 @@ class PlayingControls extends StatelessWidget {
             boxShape: NeumorphicBoxShape.circle(),
           ),
           padding: EdgeInsets.all(24),
-          onPressed: this.onPlay,
+          onPressed: onPlay,
           child: Icon(
             isPlaying
                 ? AssetAudioPlayerIcons.pause
@@ -107,8 +107,8 @@ class PlayingControls extends StatelessWidget {
             boxShape: NeumorphicBoxShape.circle(),
           ),
           padding: EdgeInsets.all(18),
+          onPressed: isPlaylist ? onNext : null,
           child: Icon(AssetAudioPlayerIcons.to_end),
-          onPressed: isPlaylist ? this.onNext : null,
         ),
         SizedBox(
           width: 45,
@@ -119,7 +119,7 @@ class PlayingControls extends StatelessWidget {
               boxShape: NeumorphicBoxShape.circle(),
             ),
             padding: EdgeInsets.all(16),
-            onPressed: this.onStop,
+            onPressed: onStop,
             child: Icon(
               AssetAudioPlayerIcons.stop,
               size: 32,

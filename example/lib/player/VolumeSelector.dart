@@ -25,7 +25,7 @@ class VolumeSelector extends StatelessWidget {
               style:
                   SliderStyle(variant: Colors.grey, accent: Colors.grey[500]),
               onChanged: (value) {
-                this.onChange(value);
+                onChange(value);
               },
             ),
           )

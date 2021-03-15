@@ -122,7 +122,7 @@ class _MyAppState extends State<MyApp> {
                     height: 20,
                   ),
                   _assetsAudioPlayerGroup.builderIsPlaying(
-                      builder: (context, isPlaying) {
+                      builder: (context, bool? isPlaying) {
                     if (isPlaying == null) {
                       return SizedBox();
                     }

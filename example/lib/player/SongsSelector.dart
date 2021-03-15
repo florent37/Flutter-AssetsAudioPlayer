@@ -22,13 +22,13 @@ class SongsSelector extends StatelessWidget {
 
     return item.metas.image?.type == ImageType.network
         ? Image.network(
-            item.metas.image.path,
+            item.metas.image!.path,
             height: 40,
             width: 40,
             fit: BoxFit.cover,
           )
         : Image.asset(
-            item.metas.image.path,
+            item.metas.image!.path,
             height: 40,
             width: 40,
             fit: BoxFit.cover,
@@ -51,7 +51,7 @@ class SongsSelector extends StatelessWidget {
             widthFactor: 1,
             child: NeumorphicButton(
               onPressed: () {
-                this.onPlaylistSelected(this.audios);
+                onPlaylistSelected(audios);
               },
               child: Center(child: Text('All as playlist')),
             ),
@@ -64,9 +64,8 @@ class SongsSelector extends StatelessWidget {
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, position) {
-                final item = this.audios[position];
-                final isPlaying =
-                    item.path == this.playing?.audio?.assetAudioPath;
+                final item = audios[position];
+                final isPlaying = item.path == playing.audio.assetAudioPath;
                 return Neumorphic(
                   margin: EdgeInsets.all(4),
                   style: NeumorphicStyle(
@@ -80,16 +79,16 @@ class SongsSelector extends StatelessWidget {
                         clipBehavior: Clip.antiAlias,
                         child: _image(item),
                       ),
-                      title: Text(item.metas.title,
+                      title: Text(item.metas.title.toString(),
                           style: TextStyle(
                             color: isPlaying ? Colors.blue : Colors.black,
                           )),
                       onTap: () {
-                        this.onSelected(item);
+                        onSelected(item);
                       }),
                 );
               },
-              itemCount: this.audios.length,
+              itemCount: audios.length,
             ),
           ),
         ],
