@@ -7,10 +7,9 @@ import com.github.florent37.assets_audio_player.AssetsAudioPlayerPlugin
 
 class NotificationActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        val playerId = intent.getStringExtra(NotificationService.EXTRA_PLAYER_ID)
+        val playerId = intent.getStringExtra(NotificationService.EXTRA_PLAYER_ID) ?: return
         val trackID = if (intent.getStringExtra(NotificationService.TRACK_ID) == null) "" else intent.getStringExtra(NotificationService.TRACK_ID)
-        val player = AssetsAudioPlayerPlugin.instance?.assetsAudioPlayer?.getPlayer(playerId)
-                ?: return
+        val player = AssetsAudioPlayerPlugin.instance?.assetsAudioPlayer?.getPlayer(playerId) ?: return
         when (intent.action) {
              NotificationAction.ACTION_PREV -> player.prev()
              NotificationAction.ACTION_STOP -> {
@@ -27,10 +26,10 @@ class NotificationActionReceiver : BroadcastReceiver() {
             }
             NotificationAction.ACTION_SELECT -> {
                 context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
-                var intent : Intent? = context.packageManager.getLaunchIntentForPackage(context.packageName)
-                intent?.action = NotificationAction.ACTION_SELECT
-                intent?.putExtra(NotificationService.TRACK_ID,trackID)
-                context.startActivity(intent!!)
+                context.startActivity(context.packageManager.getLaunchIntentForPackage(context.packageName)!!.apply {
+                    action = NotificationAction.ACTION_SELECT
+                    putExtra(NotificationService.TRACK_ID, trackID)
+                })
             }
         }
     }

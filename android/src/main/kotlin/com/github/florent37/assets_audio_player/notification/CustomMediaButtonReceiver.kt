@@ -12,7 +12,7 @@ class CustomMediaButtonReceiver : MediaButtonReceiver() {
         try {
             super.onReceive(context, intent)
         } catch (e: Exception) {
-            Log.e(javaClass.name, e.message)
+            Log.e(javaClass.name, e.message ?: "unknown error")
         }
     }
 }

@@ -6,6 +6,7 @@
 
 * update android 30 and fixed local assets issue
 * should fix android alarm manager issue
+
 ## 2.0.14
 
 * update packages

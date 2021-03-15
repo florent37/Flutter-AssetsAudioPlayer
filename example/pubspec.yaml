@@ -15,10 +15,8 @@ dependencies:
   # for local file test
   dio: ^4.0.0-beta7
   path_provider: ^2.0.1
-
   http: ^0.13.0
   provider: ^5.0.0
-
   file: ^6.1.0
 
   # flutter_audio_recorder: ^0.5.5
@@ -48,6 +46,8 @@ dev_dependencies:
    path: ../
   # assets_audio_player_web:
   #  path: ../assets_audio_player_web
+
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

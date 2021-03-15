@@ -51,6 +51,7 @@ class AssetsAudioPlayerPlugin : FlutterPlugin, PluginRegistry.NewIntentListener,
     var assetsAudioPlayer: AssetsAudioPlayer? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        if(instance != null)return // bug fix
         instance = this
         notificationChannel = MethodChannel(flutterPluginBinding.binaryMessenger, "assets_audio_player_notification")
         assetsAudioPlayer = AssetsAudioPlayer(
