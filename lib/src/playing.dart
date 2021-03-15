@@ -128,7 +128,7 @@ class Playing {
 class RealtimePlayingInfos {
   final String playerId;
 
-  final Playing current;
+  final Playing? current;
   final Duration duration;
   final Duration currentPosition;
   final double volume;
@@ -146,7 +146,7 @@ class RealtimePlayingInfos {
     required this.loopMode,
     required this.isBuffering,
     this.isShuffling,
-  }) : duration = current.audio.duration;
+  }) : duration = current?.audio.duration ?? Duration();
 
   double get playingPercent => duration.inMilliseconds == 0
       ? 0
