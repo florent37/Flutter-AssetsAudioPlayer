@@ -124,33 +124,43 @@ class AssetsAudioPlayerGroup {
     return __notificationSettings;
   }
 
-  Future<void> add(
-    Audio audio, {
+
+  Future<Map> add(
+    Playlist playlist, {
     LoopMode loopMode = LoopMode.none,
     double volume,
     Duration seek,
     double playSpeed,
   }) async {
     final player = AssetsAudioPlayer.newPlayer();
-    player.open(
-      audio,
-      showNotification: false,
-      //not need here, we'll call another method `changeNotificationForGroup`
-      seek: seek,
-      autoStart: isPlaying.value,
-      //need to play() for player group
-      volume: volume,
-      loopMode: loopMode,
-      respectSilentMode: respectSilentMode,
-      playInBackground: playInBackground,
-      playSpeed: playSpeed,
-      notificationSettings: _notificationSettings,
-    );
-    await _addPlayer(audio, player);
+
+
+    try {
+      await player.open(
+        playlist,
+        showNotification: false,
+        //not need here, we'll call another method `changeNotificationForGroup`
+        seek: seek,
+        autoStart: isPlaying.value,
+        //need to play() for player group
+        volume: volume,
+        loopMode: loopMode,
+        respectSilentMode: respectSilentMode,
+        playInBackground: playInBackground,
+        playSpeed: playSpeed,
+        notificationSettings: _notificationSettings,
+      );
+
+      await _addPlayer(playlist, player);
+      return {"data": player};
+    } on PlatformException catch (e) {
+      return {"error": e.toString()};
+    }
+
   }
 
-  Future<void> addAll(List<Audio> audios) async {
-    for (Audio audio in audios) await add(audio);
+  Future<void> addAll(List<Playlist> audios) async {
+    for (Playlist audio in audios) await add(audio);
   }
 
   Future<void> removeAudio(Audio audio) async {
@@ -163,7 +173,7 @@ class AssetsAudioPlayerGroup {
     await _onPlayersChanged();
   }
 
-  Future<void> _addPlayer(Audio audio, AssetsAudioPlayer player) async {
+  Future<void> _addPlayer(Playlist audios, AssetsAudioPlayer player) async {
     StreamSubscription finishedSubscription;
     finishedSubscription = player.playlistFinished.listen((finished) {
       if (finished) {
@@ -172,13 +182,9 @@ class AssetsAudioPlayerGroup {
         _removePlayer(player);
       }
     });
+
     _subscriptions.add(finishedSubscription);
-    _audiosWithPlayers[audio] = player;
-
-    player.onErrorDo = (errorHandler) {
-      _onPlayerError(errorHandler);
-    };
-
+    _audiosWithPlayers[audios.audios[0]] = player;
     await _onPlayersChanged();
   }
 

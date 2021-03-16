@@ -1358,6 +1358,10 @@ class AssetsAudioPlayer {
         'stop', {"id": this.id, "removeNotification": removeNotification});
   }
 
+  void setBufferingOff() {
+    _isBuffering.add(false);
+  }
+
   /// Change the current play speed (rate) of the MediaPlayer
   ///
   ///     _assetsAudioPlayer.setPlaySpeed(0.4);

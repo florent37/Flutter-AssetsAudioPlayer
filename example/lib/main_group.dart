@@ -27,7 +27,8 @@ class _MyAppState extends State<MyApp> {
         title: "Online",
         artist: "Florent Champigny",
         album: "OnlineAlbum",
-        image: MetasImage.network("https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+        image: MetasImage.network(
+            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
       ),
     ),
     Audio(
@@ -36,7 +37,8 @@ class _MyAppState extends State<MyApp> {
         title: "Rock",
         artist: "Florent Champigny",
         album: "RockAlbum",
-        image: MetasImage.network("https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+        image: MetasImage.network(
+            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
       ),
     ),
     Audio(
@@ -54,20 +56,20 @@ class _MyAppState extends State<MyApp> {
         title: "Electronic",
         artist: "Florent Champigny",
         album: "ElectronicAlbum",
-        image: MetasImage.network("https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
+        image: MetasImage.network(
+            "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
       ),
     ),
   ];
 
-  final AssetsAudioPlayerGroup _assetsAudioPlayerGroup = AssetsAudioPlayerGroup(
-    updateNotification: (player, playing) async {
-      return PlayerGroupMetas(
-        title: "title",
-        subTitle: "subtitle ${playing.length}",
-        image: MetasImage.asset("assets/images/country.jpg"),
-      );
-    }
-  );
+  final AssetsAudioPlayerGroup _assetsAudioPlayerGroup =
+      AssetsAudioPlayerGroup(updateNotification: (player, playing) async {
+    return PlayerGroupMetas(
+      title: "title",
+      subTitle: "subtitle ${playing.length}",
+      image: MetasImage.asset("assets/images/country.jpg"),
+    );
+  });
   //final List<StreamSubscription> _subscriptions = [];
 
   @override
@@ -89,7 +91,7 @@ class _MyAppState extends State<MyApp> {
       print("playerState : $playerState");
     }));
     */
-    _assetsAudioPlayerGroup.addAll(audios);
+    // _assetsAudioPlayerGroup.addAll(audios);
     super.initState();
   }
 
@@ -119,7 +121,8 @@ class _MyAppState extends State<MyApp> {
                   SizedBox(
                     height: 20,
                   ),
-                  _assetsAudioPlayerGroup.builderIsPlaying(builder: (context, isPlaying) {
+                  _assetsAudioPlayerGroup.builderIsPlaying(
+                      builder: (context, isPlaying) {
                     if (isPlaying == null) {
                       return SizedBox();
                     }
