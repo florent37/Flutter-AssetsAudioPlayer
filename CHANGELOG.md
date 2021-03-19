@@ -1,3 +1,6 @@
+## 3.0.0+1
+
+* Fix web player
 ## 3.0.0
 
 * Fix some issues
