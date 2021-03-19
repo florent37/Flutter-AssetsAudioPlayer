@@ -94,7 +94,7 @@ class _MyAppState extends State<MyApp> {
         artist: 'Florent Champigny',
         album: 'InstrumentalAlbum',
         image: MetasImage.network(
-            'https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg'),
+            'https://99designs-blog.imgix.net/blog/wp-content/uploads/2017/12/attachment_68585523.jpg'),
       ),
     ),
   ];
