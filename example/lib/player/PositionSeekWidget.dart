@@ -7,9 +7,9 @@ class PositionSeekWidget extends StatefulWidget {
   final Function(Duration) seekTo;
 
   const PositionSeekWidget({
-    @required this.currentPosition,
-    @required this.duration,
-    @required this.seekTo,
+    required this.currentPosition,
+    required this.duration,
+    required this.seekTo,
   });
 
   @override
@@ -17,7 +17,7 @@ class PositionSeekWidget extends StatefulWidget {
 }
 
 class _PositionSeekWidgetState extends State<PositionSeekWidget> {
-  Duration _visibleValue;
+  late Duration _visibleValue;
   bool listenOnlyUserInterraction = false;
   double get percent => widget.duration.inMilliseconds == 0
       ? 0
@@ -86,13 +86,13 @@ class _PositionSeekWidgetState extends State<PositionSeekWidget> {
 
 String durationToString(Duration duration) {
   String twoDigits(int n) {
-    if (n >= 10) return "$n";
-    return "0$n";
+    if (n >= 10) return '$n';
+    return '0$n';
   }
 
-  String twoDigitMinutes =
+  final twoDigitMinutes =
       twoDigits(duration.inMinutes.remainder(Duration.minutesPerHour));
-  String twoDigitSeconds =
+  final twoDigitSeconds =
       twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute));
-  return "$twoDigitMinutes:$twoDigitSeconds";
+  return '$twoDigitMinutes:$twoDigitSeconds';
 }

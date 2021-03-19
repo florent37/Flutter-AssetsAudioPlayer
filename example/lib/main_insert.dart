@@ -11,37 +11,36 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State {
-
-  static final rock =  Audio(
-    "assets/audios/rock.mp3",
+  static final rock = Audio(
+    'assets/audios/rock.mp3',
     metas: Metas(
-      id: "Rock",
-      title: "Rock",
-      artist: "Florent Champigny",
-      album: "RockAlbum",
+      id: 'Rock',
+      title: 'Rock',
+      artist: 'Florent Champigny',
+      album: 'RockAlbum',
       image: MetasImage.network(
-          "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+          'https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png'),
     ),
   );
 
-  static final country =  Audio(
-    "assets/audios/country.mp3",
+  static final country = Audio(
+    'assets/audios/country.mp3',
     metas: Metas(
-      id: "Country",
-      title: "Country",
-      artist: "Florent Champigny",
-      album: "CountryAlbum",
-      image: MetasImage.asset("assets/images/country.jpg"),
+      id: 'Country',
+      title: 'Country',
+      artist: 'Florent Champigny',
+      album: 'CountryAlbum',
+      image: MetasImage.asset('assets/images/country.jpg'),
     ),
   );
 
-  final playlist  = Playlist(audios: [rock]);
+  final playlist = Playlist(audios: [rock]);
 
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
 
   @override
   void initState() {
-    _assetsAudioPlayer.open(this.playlist, showNotification: true);
+    _assetsAudioPlayer.open(playlist, showNotification: true);
     super.initState();
   }
 
@@ -53,40 +52,39 @@ class _MyAppState extends State {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RaisedButton(
+              ElevatedButton(
+                onPressed: () {
+                  playlist.insert(0, rock);
+                },
                 child: Text('Insert rock 0'),
-                onPressed: () {
-                  this.playlist.insert(0, rock);
-                },
               ),
-              RaisedButton(
+              ElevatedButton(
+                onPressed: () {
+                  playlist.insert(0, country);
+                },
                 child: Text('Insert country 0'),
-                onPressed: () {
-                  this.playlist.insert(0, country);
-                },
               ),
-              RaisedButton(
+              ElevatedButton(
+                onPressed: () {
+                  playlist.insert(3, country);
+                },
                 child: Text('Insert 3'),
-                onPressed: () {
-                  this.playlist.insert(3, country);
-                },
               ),
-
-              RaisedButton(
-                child: Text('Replace 0'),
+              ElevatedButton(
                 onPressed: () {
-                  this.playlist.replaceAt(0, (audio){
+                  playlist.replaceAt(0, (audio) {
                     return country;
                   });
                 },
+                child: Text('Replace 0'),
               ),
-              RaisedButton(
-                child: Text('Replace 0 seek'),
+              ElevatedButton(
                 onPressed: () {
-                  this.playlist.replaceAt(0, (audio){
+                  playlist.replaceAt(0, (audio) {
                     return country;
                   }, keepPlayingPositionIfCurrent: true);
                 },
+                child: Text('Replace 0 seek'),
               ),
             ],
           ),

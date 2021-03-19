@@ -6,21 +6,21 @@ import '../asset_audio_player_icons.dart';
 
 class PlayingControls extends StatelessWidget {
   final bool isPlaying;
-  final LoopMode loopMode;
+  final LoopMode? loopMode;
   final bool isPlaylist;
-  final Function() onPrevious;
+  final Function()? onPrevious;
   final Function() onPlay;
-  final Function() onNext;
-  final Function() toggleLoop;
-  final Function() onStop;
+  final Function()? onNext;
+  final Function()? toggleLoop;
+  final Function()? onStop;
 
   PlayingControls({
-    @required this.isPlaying,
+    required this.isPlaying,
     this.isPlaylist = false,
     this.loopMode,
     this.toggleLoop,
     this.onPrevious,
-    @required this.onPlay,
+    required this.onPlay,
     this.onNext,
     this.onStop,
   });
@@ -50,26 +50,14 @@ class PlayingControls extends StatelessWidget {
             color: Colors.black,
           ),
           Center(
-            child: Text("1", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
+            child: Text(
+              '1',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       );
     }
-    return NeumorphicRadio(
-      style: NeumorphicRadioStyle(
-        boxShape: NeumorphicBoxShape.circle(),
-      ),
-      padding: EdgeInsets.all(12),
-      value: LoopMode.playlist,
-      groupValue: this.loopMode,
-      child: Icon(
-        Icons.loop,
-        size: 18,
-      ),
-      onChanged: (newValue) {
-        toggleLoop();
-      },
-    );
   }
 
   @override
@@ -80,7 +68,7 @@ class PlayingControls extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-            toggleLoop();
+            if (toggleLoop != null) toggleLoop!();
           },
           child: _loopIcon(context),
         ),
@@ -92,7 +80,7 @@ class PlayingControls extends StatelessWidget {
             boxShape: NeumorphicBoxShape.circle(),
           ),
           padding: EdgeInsets.all(18),
-          onPressed: isPlaylist ? this.onPrevious : null,
+          onPressed: isPlaylist ? onPrevious : null,
           child: Icon(AssetAudioPlayerIcons.to_start),
         ),
         SizedBox(
@@ -103,9 +91,11 @@ class PlayingControls extends StatelessWidget {
             boxShape: NeumorphicBoxShape.circle(),
           ),
           padding: EdgeInsets.all(24),
-          onPressed: this.onPlay,
+          onPressed: onPlay,
           child: Icon(
-            isPlaying ? AssetAudioPlayerIcons.pause : AssetAudioPlayerIcons.play,
+            isPlaying
+                ? AssetAudioPlayerIcons.pause
+                : AssetAudioPlayerIcons.play,
             size: 32,
           ),
         ),
@@ -117,19 +107,19 @@ class PlayingControls extends StatelessWidget {
             boxShape: NeumorphicBoxShape.circle(),
           ),
           padding: EdgeInsets.all(18),
+          onPressed: isPlaylist ? onNext : null,
           child: Icon(AssetAudioPlayerIcons.to_end),
-          onPressed: isPlaylist ? this.onNext : null,
         ),
         SizedBox(
           width: 45,
         ),
-        if(onStop != null)
+        if (onStop != null)
           NeumorphicButton(
             style: NeumorphicStyle(
               boxShape: NeumorphicBoxShape.circle(),
             ),
             padding: EdgeInsets.all(16),
-            onPressed: this.onStop,
+            onPressed: onStop,
             child: Icon(
               AssetAudioPlayerIcons.stop,
               size: 32,

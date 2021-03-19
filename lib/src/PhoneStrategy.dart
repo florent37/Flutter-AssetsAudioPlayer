@@ -3,13 +3,12 @@ enum HeadPhoneStrategy { none, pauseOnUnplug, pauseOnUnplugPlayOnPlug }
 String describeHeadPhoneStrategy(HeadPhoneStrategy strategy) {
   switch (strategy) {
     case HeadPhoneStrategy.none:
-      return "none";
+      return 'none';
     case HeadPhoneStrategy.pauseOnUnplug:
-      return "pauseOnUnplug";
+      return 'pauseOnUnplug';
     case HeadPhoneStrategy.pauseOnUnplugPlayOnPlug:
-      return "pauseOnUnplugPlayOnPlug";
+      return 'pauseOnUnplugPlayOnPlug';
   }
-  return null;
 }
 
 class AudioFocusStrategy {
@@ -19,9 +18,9 @@ class AudioFocusStrategy {
 
   /// Don't request focus
   AudioFocusStrategy.none()
-      : this.request = false,
-        this.resumeAfterInterruption = false,
-        this.resumeOthersPlayersAfterDone = false;
+      : request = false,
+        resumeAfterInterruption = false,
+        resumeOthersPlayersAfterDone = false;
 
   /// Request focus
   ///
@@ -31,13 +30,13 @@ class AudioFocusStrategy {
   const AudioFocusStrategy.request(
       {this.resumeAfterInterruption = false,
       this.resumeOthersPlayersAfterDone = false})
-      : this.request = true;
+      : request = true;
 }
 
 Map<String, dynamic> describeAudioFocusStrategy(AudioFocusStrategy strategy) {
   return {
-    "request": strategy.request,
-    "resumeAfterInterruption": strategy.resumeAfterInterruption,
-    "resumeOthersPlayersAfterDone": strategy.resumeOthersPlayersAfterDone,
+    'request': strategy.request,
+    'resumeAfterInterruption': strategy.resumeAfterInterruption,
+    'resumeOthersPlayersAfterDone': strategy.resumeOthersPlayersAfterDone,
   };
 }

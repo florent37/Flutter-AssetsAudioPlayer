@@ -11,9 +11,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final audios = <Audio>[
-    Audio("assets/audios/song1.mp3"),
-    Audio("assets/audios/song2.mp3"),
-    Audio("assets/audios/song3.mp3"),
+    Audio('assets/audios/song1.mp3'),
+    Audio('assets/audios/song2.mp3'),
+    Audio('assets/audios/song3.mp3'),
   ];
 
   final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
@@ -21,13 +21,13 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     _assetsAudioPlayer.playlistFinished.listen((data) {
-      print("finished : $data");
+      print('finished : $data');
     });
     _assetsAudioPlayer.playlistAudioFinished.listen((data) {
-      print("playlistAudioFinished : $data");
+      print('playlistAudioFinished : $data');
     });
     _assetsAudioPlayer.current.listen((data) {
-      print("current : $data");
+      print('current : $data');
     });
     super.initState();
   }
@@ -38,16 +38,15 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  String loopModeText(LoopMode loopMode){
-    switch(loopMode){
+  String loopModeText(LoopMode loopMode) {
+    switch (loopMode) {
       case LoopMode.none:
-        return "Not looping";
+        return 'Not looping';
       case LoopMode.single:
-        return "Looping single";
+        return 'Looping single';
       case LoopMode.playlist:
-        return "Looping playlist";
+        return 'Looping playlist';
     }
-    return "";
   }
 
   @override
@@ -63,33 +62,33 @@ class _MyAppState extends State<MyApp> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () {
-                  _assetsAudioPlayer.open(Playlist(audios: this.audios));
+                  _assetsAudioPlayer.open(Playlist(audios: audios));
                 },
-                child: Text("Playlist test"),
+                child: Text('Playlist test'),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () {
                   AssetsAudioPlayer.newPlayer()
-                      .open(Audio("assets/audios/cat.wav"));
+                      .open(Audio('assets/audios/cat.wav'));
                 },
-                child: Text("Small Song in parallel"),
+                child: Text('Small Song in parallel'),
               ),
               Expanded(
                 child: StreamBuilder(
                     stream: _assetsAudioPlayer.current,
                     builder: (BuildContext context,
-                        AsyncSnapshot<Playing> snapshot) {
-                      final Playing playing = snapshot.data;
-
+                        AsyncSnapshot<Playing?> snapshot) {
+                      if (!snapshot.hasData) return const SizedBox();
+                      final playing = snapshot.data!;
                       return ListView.builder(
                         itemBuilder: (context, position) {
                           return ListTile(
-                              title: Text(audios[position].path.split("/").last,
+                              title: Text(audios[position].path.split('/').last,
                                   style: TextStyle(
                                     color: audios[position].path ==
-                                            playing?.audio?.assetAudioPath
+                                            playing.audio.assetAudioPath
                                         ? Colors.blue
                                         : Colors.black,
                                   )),
@@ -109,22 +108,24 @@ class _MyAppState extends State<MyApp> {
                   StreamBuilder(
                     stream: _assetsAudioPlayer.loopMode,
                     initialData: LoopMode.none,
-                    builder:
-                        (BuildContext context, AsyncSnapshot<LoopMode> snapshot) {
-                      return RaisedButton(
-                        child: Text(loopModeText(snapshot.data)),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<LoopMode> snapshot) {
+                      if (!snapshot.hasData) return const SizedBox();
+                      final loopMode = snapshot.data!;
+                      return ElevatedButton(
                         onPressed: () {
                           _assetsAudioPlayer.toggleLoop();
                         },
+                        child: Text(loopModeText(loopMode)),
                       );
                     },
                   ),
                   SizedBox(width: 20),
-                  RaisedButton(
-                    child: Text("Seek to 2:00"),
+                  ElevatedButton(
                     onPressed: () {
                       _assetsAudioPlayer.seek(Duration(minutes: 2));
                     },
+                    child: Text('Seek to 2:00'),
                   ),
                 ],
               ),
@@ -135,19 +136,22 @@ class _MyAppState extends State<MyApp> {
                     stream: _assetsAudioPlayer.currentPosition,
                     initialData: const Duration(),
                     builder: (BuildContext context,
-                        AsyncSnapshot<Duration> snapshot) {
-                      Duration duration = snapshot.data;
+                        AsyncSnapshot<Duration?> snapshot) {
+                      var duration = Duration();
+                      if (snapshot.hasData) {
+                        duration = snapshot.data!;
+                      }
                       return Text(durationToString(duration));
                     },
                   ),
-                  Text(" - "),
+                  Text(' - '),
                   StreamBuilder(
                     stream: _assetsAudioPlayer.current,
                     builder: (BuildContext context,
-                        AsyncSnapshot<Playing> snapshot) {
-                      Duration duration = Duration();
+                        AsyncSnapshot<Playing?> snapshot) {
+                      var duration = Duration();
                       if (snapshot.hasData) {
-                        duration = snapshot.data.audio.duration;
+                        duration = snapshot.data!.audio.duration;
                       }
                       return Text(durationToString(duration));
                     },
@@ -157,13 +161,14 @@ class _MyAppState extends State<MyApp> {
               StreamBuilder(
                   stream: _assetsAudioPlayer.volume,
                   initialData: AssetsAudioPlayer.defaultVolume,
-                  builder: (context, snapshot) {
-                    final double volume = snapshot.data;
+                  builder: (context, AsyncSnapshot<double> snapshot) {
+                    if (!snapshot.hasData) return const SizedBox();
+                    final volume = snapshot.data!;
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text("volume : ${((volume * 100).round()) / 100.0}"),
-                        Text(" - "),
+                        Text('volume : ${((volume * 100).round()) / 100.0}'),
+                        Text(' - '),
                         Expanded(
                           child: Slider(
                             min: AssetsAudioPlayer.minVolume,
@@ -196,7 +201,7 @@ class _MyAppState extends State<MyApp> {
                         onPressed: () {
                           _assetsAudioPlayer.playOrPause();
                         },
-                        icon: Icon(snapshot.data
+                        icon: Icon(snapshot.data == true
                             ? AssetAudioPlayerIcons.pause
                             : AssetAudioPlayerIcons.play),
                       );
@@ -220,13 +225,13 @@ class _MyAppState extends State<MyApp> {
 
 String durationToString(Duration duration) {
   String twoDigits(int n) {
-    if (n >= 10) return "$n";
-    return "0$n";
+    if (n >= 10) return '$n';
+    return '0$n';
   }
 
-  String twoDigitMinutes =
+  final twoDigitMinutes =
       twoDigits(duration.inMinutes.remainder(Duration.minutesPerHour));
-  String twoDigitSeconds =
+  final twoDigitSeconds =
       twoDigits(duration.inSeconds.remainder(Duration.secondsPerMinute));
-  return "$twoDigitMinutes:$twoDigitSeconds";
+  return '$twoDigitMinutes:$twoDigitSeconds';
 }

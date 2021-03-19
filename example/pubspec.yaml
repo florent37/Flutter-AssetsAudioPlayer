@@ -1,45 +1,50 @@
 name: assets_audio_player_example
 description: Demonstrates how to use the assets_audio_player plugin.
 publish_to: 'none'
-version: 2.0.7+4
+version: 3.0.0
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
-  flutter: ">=1.17.0"
+  sdk: '>=2.12.0 <3.0.0'
+  flutter: '>=2.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_neumorphic:
-    git:
-      url: https://github.com/kalismeras61/Flutter-Neumorphic.git
-      ref: master
-  rxdart: ^0.25.0
+  flutter_neumorphic: ^3.1.0
+  rxdart: ^0.26.0
   # for local file test
-  dio: 3.0.9
-  path_provider: ^1.6.8
+  dio: ^4.0.0-beta7
+  path_provider: ^2.0.1
+  http: ^0.13.0
+  provider: ^5.0.0
+  file: ^6.1.0
 
-  http: ^0.12.2
-  provider: ^4.1.2
+  # flutter_audio_recorder: ^0.5.5
+  flutter_audio_recorder:
+    git:
+      url: https://github.com/fayeed/flutter_audio_recorder
+      ref: sound-null-safety
 
-  file: ^5.0.4
-  flutter_audio_recorder: 0.5.5
-
-  flutter_audio_query: ^0.3.4+1
+  # flutter_audio_query: ^0.3.5+6
+  flutter_audio_query:
+    git:
+      url: https://github.com/Mayb3Nots/flutter_audio_query
+      ref: master
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_web_compilers: '>=1.0.0 <2.0.0'
+  build_web_compilers: '>=2.0.0 <3.0.0'
+  pedantic: ^1.11.0
 
   # uncomment to use remote repos
-  #assets_audio_player: ^2.0.1
-  # assets_audio_player_web: 1.3.5+3
+  # assets_audio_player: ^3.0.0
+  # assets_audio_player_web: ^3.0.0
 
   # uncomment to match local repos
   assets_audio_player:
    path: ../
-  #assets_audio_player_web:
+  # assets_audio_player_web:
   #  path: ../assets_audio_player_web
 
 

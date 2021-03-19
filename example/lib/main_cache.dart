@@ -2,7 +2,7 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 
 final mp3Url =
-    "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3";
+    'https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3';
 
 void main() => runApp(MyApp());
 
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -29,8 +29,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  String downloadingProgress;
+  String? downloadingProgress;
 
   final AssetsAudioPlayer _player = AssetsAudioPlayer.newPlayer();
 
@@ -43,9 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            playerWidget(context)
-          ],
+          children: <Widget>[playerWidget(context)],
         ),
       ),
     );
@@ -58,27 +55,26 @@ class _MyHomePageState extends State<MyHomePage> {
       print(infos.percent);
     });
     _player.open(
-        Audio.network(mp3Url, cached: true),
-        autoStart: true,
+      Audio.network(mp3Url, cached: true),
+      autoStart: true,
     );
   }
 
-  @override
   Widget playerWidget(BuildContext context) {
     return PlayerBuilder.current(
       player: _player,
-      builder: (context, current) {
-        if(current == null){
+      builder: (context, Playing? current) {
+        if (current == null) {
           return SizedBox();
         }
         return PlayerBuilder.isPlaying(
           player: _player,
           builder: (context, isPlaying) {
             return FloatingActionButton(
-              child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
               onPressed: () {
                 _player.playOrPause();
               },
+              child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
             );
           },
         );

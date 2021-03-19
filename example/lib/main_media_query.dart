@@ -1,16 +1,12 @@
 import 'dart:async';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:assets_audio_player_example/player/PlaySpeedSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:rxdart/subjects.dart';
 
-import 'player/ForwardRewindSelector.dart';
 import 'player/PlayingControls.dart';
 import 'player/PositionSeekWidget.dart';
 import 'player/SongsSelector.dart';
-import 'player/VolumeSelector.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 
 void main() {
@@ -40,55 +36,59 @@ class _MyAppState extends State<MyApp> {
 
   void fetchAudios() async {
     /// create a FlutterAudioQuery instance.
-    final FlutterAudioQuery audioQuery = FlutterAudioQuery();
+    final audioQuery = FlutterAudioQuery();
     final songs = await audioQuery.getSongs();
-    final fetechedAudios = songs.map((s) => Audio.file(
-      s.filePath,
-      metas: Metas(
-        artist: s.artist,
-        album: s.album,
-        image: MetasImage.asset("assets/images/country.jpg"),
-        title: s.title,
-      )
-    )).toList();
-    fetechedAudios.forEach((element) {
+    final fetchedAudios = <Audio>[];
+    for (final song in songs) {
+      if (song.filePath != null) {
+        final file = Audio.file(song.filePath!,
+            metas: Metas(
+              artist: song.artist,
+              album: song.album,
+              image: MetasImage.asset('assets/images/country.jpg'),
+              title: song.title,
+            ));
+        fetchedAudios.add(file);
+      }
+    }
+    fetchedAudios.forEach((element) {
       print(element.path);
-      //print(element.metas.image.path);
+      // print(element.metas.image?.path);
     });
     setState(() {
-      this.audios = fetechedAudios;
+      audios = fetchedAudios;
     });
   }
 
   //final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
-  AssetsAudioPlayer get _assetsAudioPlayer => AssetsAudioPlayer.withId("music");
+  AssetsAudioPlayer get _assetsAudioPlayer => AssetsAudioPlayer.withId('music');
   final List<StreamSubscription> _subscriptions = [];
 
   @override
   void initState() {
     //_subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
-    //  print("finished : $data");
+    //  print('finished : $data');
     //}));
     _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
-      print("playlistAudioFinished : $data");
+      print('playlistAudioFinished : $data');
     }));
     _subscriptions.add(_assetsAudioPlayer.audioSessionId.listen((sessionId) {
-      print("audioSessionId : $sessionId");
+      print('audioSessionId : $sessionId');
     }));
     //_subscriptions.add(_assetsAudioPlayer.current.listen((data) {
-    //  print("current : $data");
+    //  print('current : $data');
     //}));
     //_subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
-    //  print("onReadyToPlay : $audio");
+    //  print('onReadyToPlay : $audio');
     //}));
     //_subscriptions.add(_assetsAudioPlayer.isBuffering.listen((isBuffering) {
-    //  print("isBuffering : $isBuffering");
+    //  print('isBuffering : $isBuffering');
     //}));
     //_subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
-    //  print("playerState : $playerState");
+    //  print('playerState : $playerState');
     //}));
     //_subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
-    //  print("isplaying : $isplaying");
+    //  print('isplaying : $isplaying');
     //}));
     _subscriptions
         .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
@@ -101,7 +101,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     _assetsAudioPlayer.dispose();
-    print("dispose");
+    print('dispose');
     super.dispose();
   }
 
@@ -129,10 +129,10 @@ class _MyAppState extends State<MyApp> {
                     fit: StackFit.passthrough,
                     children: <Widget>[
                       _assetsAudioPlayer.builderCurrent(
-                        builder: (BuildContext context, Playing playing) {
+                        builder: (BuildContext context, Playing? playing) {
                           if (playing != null) {
                             final myAudio =
-                                find(this.audios, playing.audio.assetAudioPath);
+                                find(audios, playing.audio.assetAudioPath);
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Neumorphic(
@@ -142,24 +142,26 @@ class _MyAppState extends State<MyApp> {
                                   shape: NeumorphicShape.concave,
                                   boxShape: NeumorphicBoxShape.circle(),
                                 ),
-                                child: myAudio.metas.image.type ==
-                                        ImageType.network
-                                    ? Image.network(
-                                        myAudio.metas.image.path,
-                                        height: 150,
-                                        width: 150,
-                                        fit: BoxFit.contain,
-                                      )
-                                    : Image.asset(
-                                        myAudio.metas.image.path,
-                                        height: 150,
-                                        width: 150,
-                                        fit: BoxFit.contain,
-                                      ),
+                                child: myAudio.metas.image?.path == null
+                                    ? const SizedBox()
+                                    : myAudio.metas.image?.type ==
+                                            ImageType.network
+                                        ? Image.network(
+                                            myAudio.metas.image!.path,
+                                            height: 150,
+                                            width: 150,
+                                            fit: BoxFit.contain,
+                                          )
+                                        : Image.asset(
+                                            myAudio.metas.image!.path,
+                                            height: 150,
+                                            width: 150,
+                                            fit: BoxFit.contain,
+                                          ),
                               ),
                             );
                           }
-                          return SizedBox();
+                          return const SizedBox();
                         },
                       ),
                       Align(
@@ -172,7 +174,7 @@ class _MyAppState extends State<MyApp> {
                           margin: EdgeInsets.all(18),
                           onPressed: () {
                             AssetsAudioPlayer.playAndForget(
-                                Audio("assets/audios/horn.mp3"));
+                                Audio('assets/audios/horn.mp3'));
                           },
                           child: Icon(
                             Icons.add_alert,
@@ -189,9 +191,9 @@ class _MyAppState extends State<MyApp> {
                     height: 20,
                   ),
                   _assetsAudioPlayer.builderCurrent(
-                      builder: (context, playing) {
+                      builder: (context, Playing? playing) {
                     if (playing == null) {
-                      return SizedBox();
+                      return const SizedBox();
                     }
                     return Column(
                       children: <Widget>[
@@ -215,8 +217,7 @@ class _MyAppState extends State<MyApp> {
                                     },
                                     onNext: () {
                                       //_assetsAudioPlayer.forward(Duration(seconds: 10));
-                                      _assetsAudioPlayer.next(
-                                        keepLoopMode: true
+                                      _assetsAudioPlayer.next(keepLoopMode: true
                                           /*keepLoopMode: false*/);
                                     },
                                     onPrevious: () {
@@ -228,11 +229,11 @@ class _MyAppState extends State<MyApp> {
                           },
                         ),
                         _assetsAudioPlayer.builderRealtimePlayingInfos(
-                            builder: (context, infos) {
+                            builder: (context, RealtimePlayingInfos? infos) {
                           if (infos == null) {
-                            return SizedBox();
+                            return const SizedBox();
                           }
-                          //print("infos: $infos");
+                          //print('infos: $infos');
                           return Column(
                             children: [
                               PositionSeekWidget(
@@ -246,21 +247,21 @@ class _MyAppState extends State<MyApp> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   NeumorphicButton(
-                                    child: Text("-10"),
                                     onPressed: () {
                                       _assetsAudioPlayer
                                           .seekBy(Duration(seconds: -10));
                                     },
+                                    child: Text('-10'),
                                   ),
                                   SizedBox(
                                     width: 12,
                                   ),
                                   NeumorphicButton(
-                                    child: Text("+10"),
                                     onPressed: () {
                                       _assetsAudioPlayer
                                           .seekBy(Duration(seconds: 10));
                                     },
+                                    child: Text('+10'),
                                   ),
                                 ],
                               )
@@ -276,13 +277,15 @@ class _MyAppState extends State<MyApp> {
                   _assetsAudioPlayer.builderCurrent(
                       builder: (BuildContext context, Playing playing) {
                     return SongsSelector(
-                      audios: this.audios,
+                      audios: audios,
                       onPlaylistSelected: (myAudios) {
                         _assetsAudioPlayer.open(
                           Playlist(audios: myAudios),
                           showNotification: true,
-                          headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplugPlayOnPlug,
-                          audioFocusStrategy: AudioFocusStrategy.request(resumeAfterInterruption: true),
+                          headPhoneStrategy:
+                              HeadPhoneStrategy.pauseOnUnplugPlayOnPlug,
+                          audioFocusStrategy: AudioFocusStrategy.request(
+                              resumeAfterInterruption: true),
                         );
                       },
                       onSelected: (myAudio) async {
@@ -295,19 +298,19 @@ class _MyAppState extends State<MyApp> {
                             audioFocusStrategy: AudioFocusStrategy.none(),
                             headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
                             notificationSettings: NotificationSettings(
-                              //seekBarEnabled: false,
-                              //stopEnabled: true,
-                              //customStopAction: (player){
-                              //  player.stop();
-                              //}
-                              //prevEnabled: false,
-                              //customNextAction: (player) {
-                              //  print("next");
-                              //}
-                              //customStopIcon: AndroidResDrawable(name: "ic_stop_custom"),
-                              //customPauseIcon: AndroidResDrawable(name:"ic_pause_custom"),
-                              //customPlayIcon: AndroidResDrawable(name:"ic_play_custom"),
-                            ),
+                                //seekBarEnabled: false,
+                                //stopEnabled: true,
+                                //customStopAction: (player){
+                                //  player.stop();
+                                //}
+                                //prevEnabled: false,
+                                //customNextAction: (player) {
+                                //  print('next');
+                                //}
+                                //customStopIcon: AndroidResDrawable(name: 'ic_stop_custom'),
+                                //customPauseIcon: AndroidResDrawable(name:'ic_pause_custom'),
+                                //customPlayIcon: AndroidResDrawable(name:'ic_play_custom'),
+                                ),
                           );
                         } catch (e) {
                           print(e);

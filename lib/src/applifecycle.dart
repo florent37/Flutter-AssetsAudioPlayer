@@ -3,10 +3,10 @@ import 'package:flutter/widgets.dart';
 enum PlayInBackground { enabled, disabledPause, disabledRestoreOnForeground }
 
 class AppLifecycleObserver with WidgetsBindingObserver {
-  bool isActive;
-  final Function() onForeground;
-  final Function() onBackground;
-  final Function(bool isActive) onChanged;
+  bool isActive = false;
+  final Function()? onForeground;
+  final Function()? onBackground;
+  final Function(bool isActive)? onChanged;
 
   AppLifecycleObserver({this.onForeground, this.onBackground, this.onChanged});
 
@@ -24,15 +24,15 @@ class AppLifecycleObserver with WidgetsBindingObserver {
 
     if (lastActive != isActive) {
       if (onChanged != null) {
-        onChanged(isActive);
+        onChanged!(isActive);
       }
       if (isActive) {
         if (onForeground != null) {
-          onForeground();
+          onForeground!();
         }
       } else {
         if (onBackground != null) {
-          onBackground();
+          onBackground!();
         }
       }
     }

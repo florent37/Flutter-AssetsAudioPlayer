@@ -14,7 +14,7 @@ class VolumeSelector extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            "Volume ",
+            'Volume ',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           Expanded(
@@ -25,7 +25,7 @@ class VolumeSelector extends StatelessWidget {
               style:
                   SliderStyle(variant: Colors.grey, accent: Colors.grey[500]),
               onChanged: (value) {
-                this.onChange(value);
+                onChange(value);
               },
             ),
           )
@@ -35,7 +35,7 @@ class VolumeSelector extends StatelessWidget {
   }
 
   const VolumeSelector({
-    @required this.volume,
-    @required this.onChange,
+    required this.volume,
+    required this.onChange,
   });
 }

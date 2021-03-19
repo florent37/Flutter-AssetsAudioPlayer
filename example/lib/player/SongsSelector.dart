@@ -9,26 +9,30 @@ class SongsSelector extends StatelessWidget {
   final Function(Audio) onSelected;
   final Function(List<Audio>) onPlaylistSelected;
 
-  SongsSelector({@required this.playing, @required this.audios, @required this.onSelected, @required this.onPlaylistSelected});
+  SongsSelector(
+      {required this.playing,
+      required this.audios,
+      required this.onSelected,
+      required this.onPlaylistSelected});
 
   Widget _image(Audio item) {
-    if(item.metas.image == null){
+    if (item.metas.image == null) {
       return SizedBox(height: 40, width: 40);
     }
 
     return item.metas.image?.type == ImageType.network
         ? Image.network(
-      item.metas.image.path,
-      height: 40,
-      width: 40,
-      fit: BoxFit.cover,
-    )
+            item.metas.image!.path,
+            height: 40,
+            width: 40,
+            fit: BoxFit.cover,
+          )
         : Image.asset(
-      item.metas.image.path,
-      height: 40,
-      width: 40,
-      fit: BoxFit.cover,
-    );
+            item.metas.image!.path,
+            height: 40,
+            width: 40,
+            fit: BoxFit.cover,
+          );
   }
 
   @override
@@ -47,24 +51,27 @@ class SongsSelector extends StatelessWidget {
             widthFactor: 1,
             child: NeumorphicButton(
               onPressed: () {
-                this.onPlaylistSelected(this.audios);
+                onPlaylistSelected(audios);
               },
-              child: Center(child: Text("All as playlist")),
+              child: Center(child: Text('All as playlist')),
             ),
           ),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           Flexible(
             child: ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, position) {
-                final item = this.audios[position];
-                final isPlaying = item.path == this.playing?.audio?.assetAudioPath;
+                final item = audios[position];
+                final isPlaying = item.path == playing.audio.assetAudioPath;
                 return Neumorphic(
                   margin: EdgeInsets.all(4),
                   style: NeumorphicStyle(
                     depth: isPlaying ? -4 : 0,
-                    boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
+                    boxShape:
+                        NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
                   ),
                   child: ListTile(
                       leading: Material(
@@ -72,16 +79,16 @@ class SongsSelector extends StatelessWidget {
                         clipBehavior: Clip.antiAlias,
                         child: _image(item),
                       ),
-                      title: Text(item.metas.title,
+                      title: Text(item.metas.title.toString(),
                           style: TextStyle(
                             color: isPlaying ? Colors.blue : Colors.black,
                           )),
                       onTap: () {
-                        this.onSelected(item);
+                        onSelected(item);
                       }),
                 );
               },
-              itemCount: this.audios.length,
+              itemCount: audios.length,
             ),
           ),
         ],

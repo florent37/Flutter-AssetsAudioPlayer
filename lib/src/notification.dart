@@ -8,7 +8,7 @@ typedef NotificationAction = void Function(AssetsAudioPlayer player);
 class AndroidResDrawable {
   final String name;
 
-  AndroidResDrawable({@required this.name});
+  AndroidResDrawable({required this.name});
 }
 
 @immutable
@@ -32,26 +32,26 @@ class NotificationSettings {
 
   //region customizers
   /// null for default behavior
-  final NotificationAction customNextAction;
+  final NotificationAction? customNextAction;
 
   /// null for default behavior
-  final NotificationAction customPlayPauseAction;
+  final NotificationAction? customPlayPauseAction;
 
   /// null for default behavior
-  final NotificationAction customPrevAction;
+  final NotificationAction? customPrevAction;
 
   /// null for default behavior
-  final NotificationAction customStopAction;
+  final NotificationAction? customStopAction;
 
   //no custom action for stop
 
   //custom icon
-  final AndroidResDrawable customNextIcon;
-  final AndroidResDrawable customPreviousIcon;
-  final AndroidResDrawable customPlayIcon;
-  final AndroidResDrawable customPauseIcon;
-  final AndroidResDrawable customStopIcon;
-  final AndroidResDrawable customPrevIcon;
+  final AndroidResDrawable? customNextIcon;
+  final AndroidResDrawable? customPreviousIcon;
+  final AndroidResDrawable? customPlayIcon;
+  final AndroidResDrawable? customPauseIcon;
+  final AndroidResDrawable? customStopIcon;
+  final AndroidResDrawable? customPrevIcon;
 
   //endregion
 
@@ -76,29 +76,29 @@ class NotificationSettings {
 
 void writeNotificationSettingsInto(
     Map<String, dynamic> params, NotificationSettings notificationSettings) {
-  params["notif.settings.nextEnabled"] = notificationSettings.nextEnabled;
-  params["notif.settings.stopEnabled"] = notificationSettings.stopEnabled;
-  params["notif.settings.playPauseEnabled"] =
+  params['notif.settings.nextEnabled'] = notificationSettings.nextEnabled;
+  params['notif.settings.stopEnabled'] = notificationSettings.stopEnabled;
+  params['notif.settings.playPauseEnabled'] =
       notificationSettings.playPauseEnabled;
-  params["notif.settings.prevEnabled"] = notificationSettings.prevEnabled;
-  params["notif.settings.seekBarEnabled"] = notificationSettings.seekBarEnabled;
+  params['notif.settings.prevEnabled'] = notificationSettings.prevEnabled;
+  params['notif.settings.seekBarEnabled'] = notificationSettings.seekBarEnabled;
 
   params.addIfNotNull(
-      "notif.settings.playIcon", notificationSettings.customPlayIcon?.name);
+      'notif.settings.playIcon', notificationSettings.customPlayIcon?.name);
   params.addIfNotNull(
-      "notif.settings.pauseIcon", notificationSettings.customPauseIcon?.name);
+      'notif.settings.pauseIcon', notificationSettings.customPauseIcon?.name);
   params.addIfNotNull(
-      "notif.settings.nextIcon", notificationSettings.customNextIcon?.name);
-  params.addIfNotNull("notif.settings.previousIcon",
+      'notif.settings.nextIcon', notificationSettings.customNextIcon?.name);
+  params.addIfNotNull('notif.settings.previousIcon',
       notificationSettings.customPreviousIcon?.name);
   params.addIfNotNull(
-      "notif.settings.stopIcon", notificationSettings.customStopIcon?.name);
+      'notif.settings.stopIcon', notificationSettings.customStopIcon?.name);
 }
 
 class ClickedNotification {
   final String audioId;
 
-  ClickedNotification({this.audioId});
+  ClickedNotification({required this.audioId});
 }
 
 class ClickedNotificationWrapper {
