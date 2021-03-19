@@ -1,7 +1,8 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 
-final streamUrl = "http://media.emit.com/pbs/tomorrow-land/202005081300/aac_mid.m4a";
+final streamUrl =
+    'http://media.emit.com/pbs/tomorrow-land/202005081300/aac_mid.m4a';
 
 void main() => runApp(MyApp());
 
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -28,8 +29,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String downloadedFilePath;
-  String downloadingProgress;
+  String? downloadedFilePath;
+  String? downloadingProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -73,22 +74,19 @@ class _PlayerState extends State<Player> {
         error.player.stop();
       };
       await _player.open(
-        Audio.liveStream(this.widget.streamPath, metas: Metas(
-            title: "title",
-            album: "album",
-            artist: "artist",
-            image: MetasImage.network("https://i.pinimg.com/564x/e3/77/94/e377940a4c2417221d04c47e5a52d2d4.jpg")
-        )),
+        Audio.liveStream(widget.streamPath,
+            metas: Metas(
+                title: 'title',
+                album: 'album',
+                artist: 'artist',
+                image: MetasImage.network(
+                    'https://i.pinimg.com/564x/e3/77/94/e377940a4c2417221d04c47e5a52d2d4.jpg'))),
         autoStart: false,
         showNotification: true,
-
         notificationSettings: NotificationSettings(
-            nextEnabled: false,
-            prevEnabled: false,
-            stopEnabled: false
-        ),
+            nextEnabled: false, prevEnabled: false, stopEnabled: false),
       );
-    } catch(t) {
+    } catch (t) {
       print(t);
     }
   }
@@ -104,8 +102,10 @@ class _PlayerState extends State<Player> {
               return Column(
                 children: [
                   CircularProgressIndicator(),
-                  SizedBox(height: 8,),
-                  Text("Buffering"),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text('Buffering'),
                 ],
               );
             } else {
@@ -117,7 +117,6 @@ class _PlayerState extends State<Player> {
           player: _player,
           builder: (context, isPlaying) {
             return FloatingActionButton(
-              child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
               onPressed: () async {
                 try {
                   await _player.playOrPause();
@@ -125,6 +124,7 @@ class _PlayerState extends State<Player> {
                   print(t);
                 }
               },
+              child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
             );
           },
         ),

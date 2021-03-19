@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 final mp3Url =
-    "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3";
+    'https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3';
 var dio = Dio();
 
 void main() => runApp(MyApp());
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -34,39 +34,43 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String downloadedFilePath;
-  String downloadingProgress;
+  String? downloadedFilePath;
+  String? downloadingProgress;
 
   Widget _downloadButton() {
-    return RaisedButton.icon(
-        onPressed: () async {
-          final tempDir = await getTemporaryDirectory();
-          final downloadPath = tempDir.path + "/#downloaded.mp3";
-          print('full path $downloadPath');
+    return ElevatedButton.icon(
+      onPressed: () async {
+        final tempDir = await getTemporaryDirectory();
+        final downloadPath = tempDir.path + '/#downloaded.mp3';
+        print('full path $downloadPath');
 
-          await downloadFileTo(
-              dio: dio,
-              url: mp3Url,
-              savePath: downloadPath,
-              progressFunction: (received, total) {
-                if (total != -1) {
-                  setState(() {
-                    downloadingProgress = (received / total * 100).toStringAsFixed(0) + "%";
-                  });
-                }
-              });
-          setState(() {
-            this.downloadingProgress = null;
-            this.downloadedFilePath = downloadPath;
-          });
-        },
-        icon: Icon(
-          Icons.file_download,
-          color: Colors.white,
-        ),
-        color: Colors.green,
-        textColor: Colors.white,
-        label: Text('Dowload'));
+        await downloadFileTo(
+            dio: dio,
+            url: mp3Url,
+            savePath: downloadPath,
+            progressFunction: (received, total) {
+              if (total != -1) {
+                setState(() {
+                  downloadingProgress =
+                      (received / total * 100).toStringAsFixed(0) + '%';
+                });
+              }
+            });
+        setState(() {
+          downloadingProgress = null;
+          downloadedFilePath = downloadPath;
+        });
+      },
+      icon: Icon(
+        Icons.file_download,
+        color: Colors.white,
+      ),
+      style: ElevatedButton.styleFrom(primary: Colors.green),
+      label: Text(
+        'Dowload',
+        style: TextStyle(color: Colors.white),
+      ),
+    );
   }
 
   @override
@@ -81,12 +85,10 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             if (downloadedFilePath == null && downloadingProgress == null)
               _downloadButton()
-            else
-              if(downloadingProgress != null)
-                Text(this.downloadingProgress)
-              else
-                if (downloadedFilePath != null)
-                  Player(this.downloadedFilePath),
+            else if (downloadingProgress != null)
+              Text(downloadingProgress!)
+            else if (downloadedFilePath != null)
+              Player(downloadedFilePath!),
           ],
         ),
       ),
@@ -110,10 +112,9 @@ class _PlayerState extends State<Player> {
   void initState() {
     super.initState();
     _player.open(
-        Audio.file(this.widget.localPath, metas: Metas(title: 'hello world')),
+        Audio.file(widget.localPath, metas: Metas(title: 'hello world')),
         autoStart: false,
-        showNotification: true
-    );
+        showNotification: true);
   }
 
   @override
@@ -122,19 +123,23 @@ class _PlayerState extends State<Player> {
       player: _player,
       builder: (context, isPlaying) {
         return FloatingActionButton(
-          child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
           onPressed: () {
             _player.playOrPause();
           },
+          child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
         );
       },
     );
   }
 }
 
-Future downloadFileTo({Dio dio, String url, String savePath, Function(int received, int total) progressFunction}) async {
+Future downloadFileTo(
+    {required Dio dio,
+    required String url,
+    required String savePath,
+    Function(int received, int total)? progressFunction}) async {
   try {
-    final Response response = await dio.get(
+    final response = await dio.get(
       url,
       onReceiveProgress: progressFunction,
       //Received data with List<int>
@@ -142,11 +147,11 @@ Future downloadFileTo({Dio dio, String url, String savePath, Function(int receiv
           responseType: ResponseType.bytes,
           followRedirects: false,
           validateStatus: (status) {
-            return status < 500;
+            return (status ?? 0) < 500;
           }),
     );
     print(response.headers);
-    final File file = File(savePath);
+    final file = File(savePath);
     var raf = file.openSync(mode: FileMode.write);
     // response.data is List<int> type
     raf.writeFromSync(response.data);

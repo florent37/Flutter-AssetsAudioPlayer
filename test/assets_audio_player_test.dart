@@ -2,7 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('assets_audio_player');
+  const channel = MethodChannel('assets_audio_player');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -15,5 +15,4 @@ void main() {
   tearDown(() {
     channel.setMockMethodCallHandler(null);
   });
-
 }

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 final mp3Url =
-    "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3";
+    'https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3';
 var dio = Dio();
 
 void main() => runApp(MyApp());
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -34,9 +34,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String downloadingProgress;
+  String? downloadingProgress;
   final AssetsAudioPlayer _player = AssetsAudioPlayer.newPlayer();
-
 
   final Playlist playlist = Playlist(audios: [
     Audio.network(mp3Url, metas: Metas(title: 'hello world')),
@@ -46,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _player.currentPosition.listen((event) {
-      print("_player.currentPosition: $event");
+      print('_player.currentPosition: $event');
     });
     _player.open(
       playlist,
@@ -58,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _downloadInParallel() async {
     final tempDir = await getTemporaryDirectory();
-    final downloadPath = tempDir.path + "/downloaded.mp3";
+    final downloadPath = tempDir.path + '/downloaded.mp3';
     print('full path $downloadPath');
 
     await Future.delayed(Duration(seconds: 3));
@@ -70,20 +69,22 @@ class _MyHomePageState extends State<MyHomePage> {
         progressFunction: (received, total) {
           if (total != -1) {
             setState(() {
-              downloadingProgress = (received / total * 100).toStringAsFixed(0) + "%";
+              downloadingProgress =
+                  (received / total * 100).toStringAsFixed(0) + '%';
             });
           }
         });
     setState(() {
-      print("downloaded, switching to file type $downloadPath");
+      print('downloaded, switching to file type $downloadPath');
       playlist.replaceAt(
         0,
-            (oldAudio) {
-          return oldAudio.copyWith(audioType: AudioType.file, path: downloadPath);
+        (oldAudio) {
+          return oldAudio.copyWith(
+              audioType: AudioType.file, path: downloadPath);
         },
         keepPlayingPositionIfCurrent: true,
       );
-      this.downloadingProgress = null;
+      downloadingProgress = null;
     });
   }
 
@@ -97,7 +98,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            if (downloadingProgress != null) Text(this.downloadingProgress) else SizedBox(),
+            if (downloadingProgress != null)
+              Text(downloadingProgress!)
+            else
+              SizedBox(),
             _playingButton(),
           ],
         ),
@@ -105,24 +109,28 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _playingButton(){
+  Widget _playingButton() {
     return PlayerBuilder.isPlaying(
       player: _player,
       builder: (context, isPlaying) {
         return FloatingActionButton(
-          child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
           onPressed: () {
             _player.playOrPause();
           },
+          child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
         );
       },
     );
   }
 }
 
-Future downloadFileTo({Dio dio, String url, String savePath, Function(int received, int total) progressFunction}) async {
+Future downloadFileTo(
+    {required Dio dio,
+    required String url,
+    required String savePath,
+    Function(int received, int total)? progressFunction}) async {
   try {
-    final Response response = await dio.get(
+    final response = await dio.get(
       url,
       onReceiveProgress: progressFunction,
       //Received data with List<int>
@@ -130,11 +138,11 @@ Future downloadFileTo({Dio dio, String url, String savePath, Function(int receiv
           responseType: ResponseType.bytes,
           followRedirects: false,
           validateStatus: (status) {
-            return status < 500;
+            return (status ?? 0) < 500;
           }),
     );
     print(response.headers);
-    final File file = File(savePath);
+    final file = File(savePath);
     var raf = file.openSync(mode: FileMode.write);
     // response.data is List<int> type
     raf.writeFromSync(response.data);

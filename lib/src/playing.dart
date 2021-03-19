@@ -26,7 +26,7 @@ class PlayingAudio {
   final Duration duration;
 
   const PlayingAudio({
-    this.audio,
+    required this.audio,
     this.duration = Duration.zero,
   });
 
@@ -52,14 +52,14 @@ class PlayingAudio {
 @immutable
 class ReadingPlaylist {
   final List<Audio> audios;
-  final int nextIndex;
-  final int previousIndex;
+  final int? nextIndex;
+  final int? previousIndex;
   final int currentIndex;
 
   const ReadingPlaylist({
+    required this.audios,
     this.previousIndex,
     this.nextIndex,
-    this.audios,
     this.currentIndex = 0,
   });
 
@@ -84,8 +84,8 @@ class ReadingPlaylist {
 
 @immutable
 class Playing {
-  //TODO rename
-  ///the opened asset
+  // TODO rename
+  /// the opened asset
   final PlayingAudio audio;
 
   /// this audio index in playlist
@@ -98,10 +98,10 @@ class Playing {
   final ReadingPlaylist playlist;
 
   Playing({
-    @required this.audio,
-    @required this.index,
-    @required this.hasNext,
-    @required this.playlist,
+    required this.audio,
+    required this.index,
+    required this.hasNext,
+    required this.playlist,
   });
 
   @override
@@ -128,29 +128,29 @@ class Playing {
 class RealtimePlayingInfos {
   final String playerId;
 
-  final Playing current;
+  final Playing? current;
   final Duration duration;
   final Duration currentPosition;
   final double volume;
   final bool isPlaying;
   final LoopMode loopMode;
   final bool isBuffering;
-  final bool isShuffling;
+  final bool? isShuffling;
 
   RealtimePlayingInfos({
-    @required this.playerId,
-    @required this.current,
-    @required this.currentPosition,
-    @required this.volume,
-    @required this.isPlaying,
-    @required this.loopMode,
-    @required this.isBuffering,
+    required this.playerId,
+    required this.current,
+    required this.currentPosition,
+    required this.volume,
+    required this.isPlaying,
+    required this.loopMode,
+    required this.isBuffering,
     this.isShuffling,
-  }) : this.duration = current?.audio?.duration ?? Duration();
+  }) : duration = current?.audio.duration ?? Duration();
 
-  double get playingPercent => this.duration.inMilliseconds == 0
+  double get playingPercent => duration.inMilliseconds == 0
       ? 0
-      : this.currentPosition.inMilliseconds / this.duration.inMilliseconds;
+      : currentPosition.inMilliseconds / duration.inMilliseconds;
 
   @override
   bool operator ==(Object other) =>

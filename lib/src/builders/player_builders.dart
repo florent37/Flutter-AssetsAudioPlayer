@@ -41,65 +41,65 @@ class PlayerBuilder extends StatefulWidget {
   final _PlayingBuilderType builderType;
 
   const PlayerBuilder.isPlaying(
-      {Key key, @required this.player, @required PlayingWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.isPlaying,
+      {Key? key, required this.player, required PlayingWidgetBuilder builder})
+      : builder = builder,
+        builderType = _PlayingBuilderType.isPlaying,
         super(key: key);
 
   const PlayerBuilder.isBuffering(
-      {Key key, @required this.player, @required PlayingWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.isBuffering,
+      {Key? key, required this.player, required PlayingWidgetBuilder builder})
+      : builder = builder,
+        builderType = _PlayingBuilderType.isBuffering,
         super(key: key);
 
   const PlayerBuilder.loopMode(
-      {Key key, @required this.player, @required LoopModeWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.loopMode,
+      {Key? key, required this.player, required LoopModeWidgetBuilder builder})
+      : builder = builder,
+        builderType = _PlayingBuilderType.loopMode,
         super(key: key);
 
   const PlayerBuilder.realtimePlayingInfos(
-      {Key key, @required this.player, @required RealtimeWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.realtimePlayingInfos,
+      {Key? key, required this.player, required RealtimeWidgetBuilder builder})
+      : builder = builder,
+        builderType = _PlayingBuilderType.realtimePlayingInfos,
         super(key: key);
 
   const PlayerBuilder.volume(
-      {Key key, @required this.player, @required VolumeWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.volume,
+      {Key? key, required this.player, required VolumeWidgetBuilder builder})
+      : builder = builder,
+        builderType = _PlayingBuilderType.volume,
         super(key: key);
 
   const PlayerBuilder.playSpeed(
-      {Key key,
-      @required this.player,
-      @required PlaySpeedWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.playSpeed,
+      {Key? key, required this.player, required PlaySpeedWidgetBuilder builder})
+      : builder = builder,
+        builderType = _PlayingBuilderType.playSpeed,
         super(key: key);
 
   const PlayerBuilder.currentPosition(
-      {Key key, @required this.player, @required PositionWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.currentPosition,
+      {Key? key, required this.player, required PositionWidgetBuilder builder})
+      : builder = builder,
+        builderType = _PlayingBuilderType.currentPosition,
         super(key: key);
 
   const PlayerBuilder.forwardRewindSpeed(
-      {Key key, @required this.player, ForwardRewindSpeedWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.forwardRewindSpeed,
+      {Key? key,
+      required this.player,
+      ForwardRewindSpeedWidgetBuilder? builder})
+      : builder = builder,
+        builderType = _PlayingBuilderType.forwardRewindSpeed,
         super(key: key);
 
   const PlayerBuilder.current(
-      {Key key, @required this.player, @required CurrentWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.current,
+      {Key? key, required this.player, required CurrentWidgetBuilder builder})
+      : builder = builder,
+        builderType = _PlayingBuilderType.current,
         super(key: key);
 
   const PlayerBuilder.playerState(
-      {Key key, @required this.player, @required PlayerStateBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.playerState,
+      {Key? key, required this.player, required PlayerStateBuilder builder})
+      : builder = builder,
+        builderType = _PlayingBuilderType.playerState,
         super(key: key);
 
   @override
@@ -115,93 +115,115 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.isPlaying,
           initialData: false,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
-        break;
       case _PlayingBuilderType.isBuffering:
         return StreamBuilder(
           stream: widget.player.isBuffering,
           initialData: false,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
-        break;
       case _PlayingBuilderType.loopMode:
         return StreamBuilder(
           stream: widget.player.loopMode,
           initialData: LoopMode.none,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
-        break;
       case _PlayingBuilderType.volume:
         return StreamBuilder(
           stream: widget.player.volume,
           initialData: AssetsAudioPlayer.defaultVolume,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
-        break;
       case _PlayingBuilderType.currentPosition:
         return StreamBuilder(
           stream: widget.player.currentPosition,
           initialData: Duration.zero,
-          builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            builder: (context, snap) {
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
-        break;
       case _PlayingBuilderType.playSpeed:
         return StreamBuilder(
           stream: widget.player.playSpeed,
           initialData: AssetsAudioPlayer.defaultPlaySpeed,
-          builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+           builder: (context, snap) {
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
-        break;
       case _PlayingBuilderType.forwardRewindSpeed:
         return StreamBuilder(
           stream: widget.player.forwardRewindSpeed,
-          initialData: null,
-          builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+           builder: (context, snap) {
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
-        break;
       case _PlayingBuilderType.current:
         return StreamBuilder(
           stream: widget.player.current,
-          initialData: null,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
-        break;
       case _PlayingBuilderType.realtimePlayingInfos:
         return StreamBuilder(
           stream: widget.player.realtimePlayingInfos,
-          initialData: null,
-          builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+           builder: (context, snap) {
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
-        break;
       case _PlayingBuilderType.playerState:
         return StreamBuilder(
           stream: widget.player.playerState,
           initialData: PlayerState.stop,
-          builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            builder: (context, snap) {
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
-        break;
     }
-    return SizedBox();
   }
 }
 
@@ -211,13 +233,13 @@ class PlayerGroupBuilder extends StatefulWidget {
   final _PlayingBuilderType builderType;
 
   const PlayerGroupBuilder.isPlaying(
-      {Key key, @required this.player, @required PlayingWidgetBuilder builder})
-      : this.builder = builder,
-        this.builderType = _PlayingBuilderType.isPlaying,
+      {Key? key, required this.player, required PlayingWidgetBuilder builder})
+      : builder = builder,
+        builderType = _PlayingBuilderType.isPlaying,
         super(key: key);
 
   @override
-  createState() => _PlayerBuilderGroupState();
+  _PlayerBuilderGroupState createState() => _PlayerBuilderGroupState();
 }
 
 class _PlayerBuilderGroupState extends State<PlayerGroupBuilder> {
@@ -229,10 +251,9 @@ class _PlayerBuilderGroupState extends State<PlayerGroupBuilder> {
           stream: widget.player.isPlaying,
           initialData: false,
           builder: (context, snap) {
-            return this.widget.builder(context, snap.data);
+            return widget.builder(context, snap.data);
           },
         );
-        break;
       default: /* do nothing */
     }
     return SizedBox();

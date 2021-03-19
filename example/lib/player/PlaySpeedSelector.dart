@@ -13,7 +13,7 @@ class PlaySpeedSelector extends StatelessWidget {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: <Widget>[
           Text(
-            "PlaySpeed ",
+            'PlaySpeed ',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           _button(0.5),
@@ -29,22 +29,22 @@ class PlaySpeedSelector extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: NeumorphicRadio(
-        groupValue: this.playSpeed,
+        groupValue: playSpeed,
         padding: EdgeInsets.all(12.0),
         value: value,
         style: NeumorphicRadioStyle(
           boxShape: NeumorphicBoxShape.circle(),
         ),
-        child: Text("x$value"),
-        onChanged: (v) {
-          this.onChange(v);
+        onChanged: (double? v) {
+          if (v != null) onChange(v);
         },
+        child: Text('x$value'),
       ),
     );
   }
 
   const PlaySpeedSelector({
-    @required this.playSpeed,
-    @required this.onChange,
+    required this.playSpeed,
+    required this.onChange,
   });
 }

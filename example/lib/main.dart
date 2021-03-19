@@ -33,125 +33,125 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final audios = <Audio>[
     //Audio.network(
-    //  "https://d14nt81hc5bide.cloudfront.net/U7ZRzzHfk8pvmW28sziKKPzK",
+    //  'https://d14nt81hc5bide.cloudfront.net/U7ZRzzHfk8pvmW28sziKKPzK',
     //  metas: Metas(
-    //    id: "Invalid",
-    //    title: "Invalid",
-    //    artist: "Florent Champigny",
-    //    album: "OnlineAlbum",
+    //    id: 'Invalid',
+    //    title: 'Invalid',
+    //    artist: 'Florent Champigny',
+    //    album: 'OnlineAlbum',
     //    image: MetasImage.network(
-    //        "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+    //        'https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg'),
     //  ),
     //),
     Audio.network(
-      "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3",
+      'https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Music_for_Video/springtide/Sounds_strange_weird_but_unmistakably_romantic_Vol1/springtide_-_03_-_We_Are_Heading_to_the_East.mp3',
       metas: Metas(
-          id: "Online",
-          title: "Online",
-          artist: "Florent Champigny",
-          album: "OnlineAlbum",
-          // image: MetasImage.network("https://www.google.com")
-          image: MetasImage.network(
-              "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
-          ),
+        id: 'Online',
+        title: 'Online',
+        artist: 'Florent Champigny',
+        album: 'OnlineAlbum',
+        // image: MetasImage.network('https://www.google.com')
+        image: MetasImage.network(
+            'https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg'),
+      ),
     ),
     Audio(
-      "assets/audios/rock.mp3",
+      'assets/audios/rock.mp3',
       //playSpeed: 2.0,
       metas: Metas(
-        id: "Rock",
-        title: "Rock",
-        artist: "Florent Champigny",
-        album: "RockAlbum",
+        id: 'Rock',
+        title: 'Rock',
+        artist: 'Florent Champigny',
+        album: 'RockAlbum',
         image: MetasImage.network(
-            "https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png"),
+            'https://static.radio.fr/images/broadcasts/cb/ef/2075/c300.png'),
       ),
     ),
     Audio(
-      "assets/audios/2 country.mp3",
+      'assets/audios/2 country.mp3',
       metas: Metas(
-        id: "Country",
-        title: "Country",
-        artist: "Florent Champigny",
-        album: "CountryAlbum",
-        image: MetasImage.asset("assets/images/country.jpg"),
+        id: 'Country',
+        title: 'Country',
+        artist: 'Florent Champigny',
+        album: 'CountryAlbum',
+        image: MetasImage.asset('assets/images/country.jpg'),
       ),
     ),
     Audio(
-      "assets/audios/electronic.mp3",
+      'assets/audios/electronic.mp3',
       metas: Metas(
-        id: "Electronics",
-        title: "Electronic",
-        artist: "Florent Champigny",
-        album: "ElectronicAlbum",
+        id: 'Electronics',
+        title: 'Electronic',
+        artist: 'Florent Champigny',
+        album: 'ElectronicAlbum',
         image: MetasImage.network(
-            "https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg"),
+            'https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg'),
       ),
     ),
     Audio(
-      "assets/audios/hiphop.mp3",
+      'assets/audios/hiphop.mp3',
       metas: Metas(
-        id: "Hiphop",
-        title: "HipHop",
-        artist: "Florent Champigny",
-        album: "HipHopAlbum",
+        id: 'Hiphop',
+        title: 'HipHop',
+        artist: 'Florent Champigny',
+        album: 'HipHopAlbum',
         image: MetasImage.network(
-            "https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg"),
+            'https://beyoudancestudio.ch/wp-content/uploads/2019/01/apprendre-danser.hiphop-1.jpg'),
       ),
     ),
     Audio(
-      "assets/audios/pop.mp3",
+      'assets/audios/pop.mp3',
       metas: Metas(
-        id: "Pop",
-        title: "Pop",
-        artist: "Florent Champigny",
-        album: "PopAlbum",
+        id: 'Pop',
+        title: 'Pop',
+        artist: 'Florent Champigny',
+        album: 'PopAlbum',
         image: MetasImage.network(
-            "https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg"),
+            'https://image.shutterstock.com/image-vector/pop-music-text-art-colorful-600w-515538502.jpg'),
       ),
     ),
     Audio(
-      "assets/audios/instrumental.mp3",
+      'assets/audios/instrumental.mp3',
       metas: Metas(
-        id: "Instrumental",
-        title: "Instrumental",
-        artist: "Florent Champigny",
-        album: "InstrumentalAlbum",
+        id: 'Instrumental',
+        title: 'Instrumental',
+        artist: 'Florent Champigny',
+        album: 'InstrumentalAlbum',
         image: MetasImage.network(
-            "https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg"),
+            'https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg'),
       ),
     ),
   ];
 
   //final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
-  AssetsAudioPlayer get _assetsAudioPlayer => AssetsAudioPlayer.withId("music");
+  AssetsAudioPlayer get _assetsAudioPlayer => AssetsAudioPlayer.withId('music');
   final List<StreamSubscription> _subscriptions = [];
 
   @override
   void initState() {
     //_subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
-    //  print("finished : $data");
+    //  print('finished : $data');
     //}));
     _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
-      print("playlistAudioFinished : $data");
+      print('playlistAudioFinished : $data');
     }));
     _subscriptions.add(_assetsAudioPlayer.audioSessionId.listen((sessionId) {
-      print("audioSessionId : $sessionId");
+      print('audioSessionId : $sessionId');
     }));
     //_subscriptions.add(_assetsAudioPlayer.current.listen((data) {
-    //  print("current : $data");
+    //  print('current : $data');
     //}));
     //_subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
-    //  print("onReadyToPlay : $audio");
+    //  print('onReadyToPlay : $audio');
     //}));
     //_subscriptions.add(_assetsAudioPlayer.isBuffering.listen((isBuffering) {
-    //  print("isBuffering : $isBuffering");
+    //  print('isBuffering : $isBuffering');
     //}));
     //_subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
-    //  print("playerState : $playerState");
+    //  print('playerState : $playerState');
     //}));
     //_subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
-    //  print("isplaying : $isplaying");
+    //  print('isplaying : $isplaying');
     //}));
     _subscriptions
         .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
@@ -163,7 +163,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     _assetsAudioPlayer.dispose();
-    print("dispose");
+    print('dispose');
     super.dispose();
   }
 
@@ -191,10 +191,10 @@ class _MyAppState extends State<MyApp> {
                     fit: StackFit.passthrough,
                     children: <Widget>[
                       _assetsAudioPlayer.builderCurrent(
-                        builder: (BuildContext context, Playing playing) {
+                        builder: (BuildContext context, Playing? playing) {
                           if (playing != null) {
                             final myAudio =
-                                find(this.audios, playing.audio.assetAudioPath);
+                                find(audios, playing.audio.assetAudioPath);
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Neumorphic(
@@ -204,20 +204,22 @@ class _MyAppState extends State<MyApp> {
                                   shape: NeumorphicShape.concave,
                                   boxShape: NeumorphicBoxShape.circle(),
                                 ),
-                                child: myAudio.metas.image.type ==
-                                        ImageType.network
-                                    ? Image.network(
-                                        myAudio.metas.image.path,
-                                        height: 150,
-                                        width: 150,
-                                        fit: BoxFit.contain,
-                                      )
-                                    : Image.asset(
-                                        myAudio.metas.image.path,
-                                        height: 150,
-                                        width: 150,
-                                        fit: BoxFit.contain,
-                                      ),
+                                child: myAudio.metas.image?.path == null
+                                    ? const SizedBox()
+                                    : myAudio.metas.image?.type ==
+                                            ImageType.network
+                                        ? Image.network(
+                                            myAudio.metas.image!.path,
+                                            height: 150,
+                                            width: 150,
+                                            fit: BoxFit.contain,
+                                          )
+                                        : Image.asset(
+                                            myAudio.metas.image!.path,
+                                            height: 150,
+                                            width: 150,
+                                            fit: BoxFit.contain,
+                                          ),
                               ),
                             );
                           }
@@ -234,7 +236,7 @@ class _MyAppState extends State<MyApp> {
                           margin: EdgeInsets.all(18),
                           onPressed: () {
                             AssetsAudioPlayer.playAndForget(
-                                Audio("assets/audios/horn.mp3"));
+                                Audio('assets/audios/horn.mp3'));
                           },
                           child: Icon(
                             Icons.add_alert,
@@ -251,7 +253,7 @@ class _MyAppState extends State<MyApp> {
                     height: 20,
                   ),
                   _assetsAudioPlayer.builderCurrent(
-                      builder: (context, playing) {
+                      builder: (context, Playing? playing) {
                     if (playing == null) {
                       return SizedBox();
                     }
@@ -277,8 +279,7 @@ class _MyAppState extends State<MyApp> {
                                     },
                                     onNext: () {
                                       //_assetsAudioPlayer.forward(Duration(seconds: 10));
-                                      _assetsAudioPlayer.next(
-                                        keepLoopMode: true
+                                      _assetsAudioPlayer.next(keepLoopMode: true
                                           /*keepLoopMode: false*/);
                                     },
                                     onPrevious: () {
@@ -290,11 +291,11 @@ class _MyAppState extends State<MyApp> {
                           },
                         ),
                         _assetsAudioPlayer.builderRealtimePlayingInfos(
-                            builder: (context, infos) {
+                            builder: (context, RealtimePlayingInfos? infos) {
                           if (infos == null) {
                             return SizedBox();
                           }
-                          //print("infos: $infos");
+                          //print('infos: $infos');
                           return Column(
                             children: [
                               PositionSeekWidget(
@@ -308,21 +309,21 @@ class _MyAppState extends State<MyApp> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   NeumorphicButton(
-                                    child: Text("-10"),
                                     onPressed: () {
                                       _assetsAudioPlayer
                                           .seekBy(Duration(seconds: -10));
                                     },
+                                    child: Text('-10'),
                                   ),
                                   SizedBox(
                                     width: 12,
                                   ),
                                   NeumorphicButton(
-                                    child: Text("+10"),
                                     onPressed: () {
                                       _assetsAudioPlayer
                                           .seekBy(Duration(seconds: 10));
                                     },
+                                    child: Text('+10'),
                                   ),
                                 ],
                               )
@@ -338,13 +339,15 @@ class _MyAppState extends State<MyApp> {
                   _assetsAudioPlayer.builderCurrent(
                       builder: (BuildContext context, Playing playing) {
                     return SongsSelector(
-                      audios: this.audios,
+                      audios: audios,
                       onPlaylistSelected: (myAudios) {
                         _assetsAudioPlayer.open(
                           Playlist(audios: myAudios),
                           showNotification: true,
-                          headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplugPlayOnPlug,
-                          audioFocusStrategy: AudioFocusStrategy.request(resumeAfterInterruption: true),
+                          headPhoneStrategy:
+                              HeadPhoneStrategy.pauseOnUnplugPlayOnPlug,
+                          audioFocusStrategy: AudioFocusStrategy.request(
+                              resumeAfterInterruption: true),
                         );
                       },
                       onSelected: (myAudio) async {
@@ -355,24 +358,23 @@ class _MyAppState extends State<MyApp> {
                             showNotification: true,
                             playInBackground: PlayInBackground.enabled,
                             audioFocusStrategy: AudioFocusStrategy.request(
-                              resumeAfterInterruption: true,
-                              resumeOthersPlayersAfterDone: true
-                            ),
+                                resumeAfterInterruption: true,
+                                resumeOthersPlayersAfterDone: true),
                             headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
                             notificationSettings: NotificationSettings(
-                              //seekBarEnabled: false,
-                              //stopEnabled: true,
-                              //customStopAction: (player){
-                              //  player.stop();
-                              //}
-                              //prevEnabled: false,
-                              //customNextAction: (player) {
-                              //  print("next");
-                              //}
-                              //customStopIcon: AndroidResDrawable(name: "ic_stop_custom"),
-                              //customPauseIcon: AndroidResDrawable(name:"ic_pause_custom"),
-                              //customPlayIcon: AndroidResDrawable(name:"ic_play_custom"),
-                            ),
+                                //seekBarEnabled: false,
+                                //stopEnabled: true,
+                                //customStopAction: (player){
+                                //  player.stop();
+                                //}
+                                //prevEnabled: false,
+                                //customNextAction: (player) {
+                                //  print('next');
+                                //}
+                                //customStopIcon: AndroidResDrawable(name: 'ic_stop_custom'),
+                                //customPauseIcon: AndroidResDrawable(name:'ic_pause_custom'),
+                                //customPlayIcon: AndroidResDrawable(name:'ic_play_custom'),
+                                ),
                           );
                         } catch (e) {
                           print(e);

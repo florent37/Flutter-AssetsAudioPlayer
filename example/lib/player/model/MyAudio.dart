@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 
 class MyAudio {
@@ -7,8 +6,8 @@ class MyAudio {
   final String imageUrl;
 
   const MyAudio({
-    @required this.audio,
-    @required this.name,
-    @required this.imageUrl,
+    required this.audio,
+    required this.name,
+    required this.imageUrl,
   });
 }

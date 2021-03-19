@@ -29,7 +29,7 @@ class HomeState extends State<Home> {
     });
     assetsAudioPlayer.playlistFinished.listen((finished) {
       print(finished.toString());
-      if(finished) {
+      if (finished) {
         setState(() {
           playlistCount++;
         });
@@ -46,23 +46,23 @@ class HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            RaisedButton(
-              child: Text("load"),
+            ElevatedButton(
               onPressed: () {
                 assetsAudioPlayer.open(
                   currentAudio,
                   showNotification: true,
-                  notificationSettings: NotificationSettings(prevEnabled: false),
+                  notificationSettings:
+                      NotificationSettings(prevEnabled: false),
                   loopMode: LoopMode.single,
                   autoStart: false,
                 );
               },
+              child: Text('load'),
             ),
             PlayerBuilder.isPlaying(
               player: assetsAudioPlayer,
               builder: (context, isPlaying) {
-                return RaisedButton(
-                  child: Text(isPlaying ? "Pause" : "Play"),
+                return ElevatedButton(
                   onPressed: () {
                     setState(() {
                       if (isPlaying) {
@@ -72,23 +72,26 @@ class HomeState extends State<Home> {
                       }
                     });
                   },
+                  child: Text(isPlaying ? 'Pause' : 'Play'),
                 );
               },
             ),
             PlayerBuilder.loopMode(
               player: assetsAudioPlayer,
               builder: (context, loopMode) {
-                return RaisedButton(
-                  child: Text(loopMode == LoopMode.playlist ? "looping" : "not-looping"),
+                return ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      if(loopMode == LoopMode.playlist){
+                      if (loopMode == LoopMode.playlist) {
                         assetsAudioPlayer.setLoopMode(LoopMode.none);
                       } else {
                         assetsAudioPlayer.setLoopMode(LoopMode.playlist);
                       }
                     });
                   },
+                  child: Text(loopMode == LoopMode.playlist
+                      ? 'looping'
+                      : 'not-looping'),
                 );
               },
             ),

@@ -7,30 +7,30 @@ import 'package:flutter/services.dart';
 abstract class WebPlayer {
   final MethodChannel channel;
 
-  static final methodPosition = "player.position";
-  static final methodVolume = "player.volume";
-  static final methodPlaySpeed = "player.playSpeed";
-  static final methodFinished = "player.finished";
-  static final methodIsPlaying = "player.isPlaying";
-  static final methodIsBuffering = "player.isBuffering";
-  static final methodCurrent = "player.current";
-  static final methodForwardRewindSpeed = "player.forwardRewind";
+  static final methodPosition = 'player.position';
+  static final methodVolume = 'player.volume';
+  static final methodPlaySpeed = 'player.playSpeed';
+  static final methodFinished = 'player.finished';
+  static final methodIsPlaying = 'player.isPlaying';
+  static final methodIsBuffering = 'player.isBuffering';
+  static final methodCurrent = 'player.current';
+  static final methodForwardRewindSpeed = 'player.forwardRewind';
 
-  WebPlayer({this.channel});
+  WebPlayer({required this.channel});
 
-  get volume;
+  num get volume;
 
-  set volume(double volume);
+  set volume(num volume);
 
-  get playSpeed;
+  num get playSpeed;
 
-  set playSpeed(double playSpeed);
+  set playSpeed(num playSpeed);
 
-  get isPlaying;
+  bool get isPlaying;
 
   set isPlaying(bool value);
 
-  double get currentPosition;
+  num get currentPosition;
 
   void play();
 
@@ -39,31 +39,31 @@ abstract class WebPlayer {
   void stop();
 
   String findAssetPath(String path, String audioType) {
-    if (audioType == "network" ||
-        audioType == "liveStream" ||
-        audioType == "file") {
+    if (audioType == 'network' ||
+        audioType == 'liveStream' ||
+        audioType == 'file') {
       return path;
     }
-    //in web, assets are packaged in a /assets/ folder
-    //if you want "/asset/3" as described in pubspec
-    //it will be in /assets/asset/3
+    // in web, assets are packaged in a /assets/ folder
+    // if you want '/asset/3' as described in pubspec
+    // it will be in /assets/asset/3
 
-    /* for release mode, need to change the "url", remove the /#/ and add /asset before */
-    if (path.startsWith("/")) {
-      path = path.replaceFirst("/", "");
+    /* for release mode, need to change the 'url', remove the /#/ and add /asset before */
+    if (path.startsWith('/')) {
+      path = path.replaceFirst('/', '');
     }
-    path = (window.location.href.replaceAll("/#/", "") + "/assets/" + path);
+    path = (window.location.href.replaceAll('/#/', '') + '/assets/' + path);
     return path;
   }
 
   Future<void> open({
-    String path,
-    String audioType,
-    double volume,
-    double seek,
-    bool autoStart,
-    double playSpeed,
-    Map networkHeaders,
+    required String path,
+    required String audioType,
+    bool autoStart = false,
+    double volume = 1,
+    double? seek,
+    double? playSpeed,
+    Map? networkHeaders,
   });
 
   void seek({double to});
