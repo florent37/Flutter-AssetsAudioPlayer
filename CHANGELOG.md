@@ -1,8 +1,6 @@
-## 3.0.0-nullsafety.1
+## 3.0.0
 
 * Fix some issues
-## 3.0.0-nullsafety.0
-
 * Migrate to null safety
 
 ## 2.0.15
