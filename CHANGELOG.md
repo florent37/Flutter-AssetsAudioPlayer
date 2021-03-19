@@ -1,3 +1,6 @@
+## 3.0.2
+
+* Fix version issue
 ## 3.0.1
 
 * Fix web player
