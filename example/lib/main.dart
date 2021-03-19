@@ -85,7 +85,7 @@ class _MyAppState extends State<MyApp> {
         artist: 'Florent Champigny',
         album: 'ElectronicAlbum',
         image: MetasImage.network(
-            'https://i.ytimg.com/vi/nVZNy0ybegI/maxresdefault.jpg'),
+            'https://99designs-blog.imgix.net/blog/wp-content/uploads/2017/12/attachment_68585523.jpg'),
       ),
     ),
     Audio(
@@ -118,7 +118,7 @@ class _MyAppState extends State<MyApp> {
         artist: 'Florent Champigny',
         album: 'InstrumentalAlbum',
         image: MetasImage.network(
-            'https://i.ytimg.com/vi/zv_0dSfknBc/maxresdefault.jpg'),
+            'https://99designs-blog.imgix.net/blog/wp-content/uploads/2017/12/attachment_68585523.jpg'),
       ),
     ),
   ];
@@ -138,25 +138,16 @@ class _MyAppState extends State<MyApp> {
     _subscriptions.add(_assetsAudioPlayer.audioSessionId.listen((sessionId) {
       print('audioSessionId : $sessionId');
     }));
-    //_subscriptions.add(_assetsAudioPlayer.current.listen((data) {
-    //  print('current : $data');
-    //}));
-    //_subscriptions.add(_assetsAudioPlayer.onReadyToPlay.listen((audio) {
-    //  print('onReadyToPlay : $audio');
-    //}));
-    //_subscriptions.add(_assetsAudioPlayer.isBuffering.listen((isBuffering) {
-    //  print('isBuffering : $isBuffering');
-    //}));
-    //_subscriptions.add(_assetsAudioPlayer.playerState.listen((playerState) {
-    //  print('playerState : $playerState');
-    //}));
-    //_subscriptions.add(_assetsAudioPlayer.isPlaying.listen((isplaying) {
-    //  print('isplaying : $isplaying');
-    //}));
     _subscriptions
         .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
       return false;
     }));
+    _assetsAudioPlayer.open(
+      Playlist(audios: audios, startIndex: 0),
+      showNotification: true,
+      autoStart: false,
+
+    );
     super.initState();
   }
 
@@ -191,39 +182,36 @@ class _MyAppState extends State<MyApp> {
                     fit: StackFit.passthrough,
                     children: <Widget>[
                       _assetsAudioPlayer.builderCurrent(
-                        builder: (BuildContext context, Playing? playing) {
-                          if (playing != null) {
-                            final myAudio =
-                                find(audios, playing.audio.assetAudioPath);
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Neumorphic(
-                                style: NeumorphicStyle(
-                                  depth: 8,
-                                  surfaceIntensity: 1,
-                                  shape: NeumorphicShape.concave,
-                                  boxShape: NeumorphicBoxShape.circle(),
-                                ),
-                                child: myAudio.metas.image?.path == null
-                                    ? const SizedBox()
-                                    : myAudio.metas.image?.type ==
-                                            ImageType.network
-                                        ? Image.network(
-                                            myAudio.metas.image!.path,
-                                            height: 150,
-                                            width: 150,
-                                            fit: BoxFit.contain,
-                                          )
-                                        : Image.asset(
-                                            myAudio.metas.image!.path,
-                                            height: 150,
-                                            width: 150,
-                                            fit: BoxFit.contain,
-                                          ),
+                        builder: (BuildContext context, Playing playing) {
+                          final myAudio =
+                              find(audios, playing.audio.assetAudioPath);
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Neumorphic(
+                              style: NeumorphicStyle(
+                                depth: 8,
+                                surfaceIntensity: 1,
+                                shape: NeumorphicShape.concave,
+                                boxShape: NeumorphicBoxShape.circle(),
                               ),
-                            );
-                          }
-                          return SizedBox();
+                              child: myAudio.metas.image?.path == null
+                                  ? const SizedBox()
+                                  : myAudio.metas.image?.type ==
+                                          ImageType.network
+                                      ? Image.network(
+                                          myAudio.metas.image!.path,
+                                          height: 150,
+                                          width: 150,
+                                          fit: BoxFit.contain,
+                                        )
+                                      : Image.asset(
+                                          myAudio.metas.image!.path,
+                                          height: 150,
+                                          width: 150,
+                                          fit: BoxFit.contain,
+                                        ),
+                            ),
+                          );
                         },
                       ),
                       Align(
@@ -253,10 +241,7 @@ class _MyAppState extends State<MyApp> {
                     height: 20,
                   ),
                   _assetsAudioPlayer.builderCurrent(
-                      builder: (context, Playing? playing) {
-                    if (playing == null) {
-                      return SizedBox();
-                    }
+                      builder: (context, Playing playing) {
                     return Column(
                       children: <Widget>[
                         _assetsAudioPlayer.builderLoopMode(
