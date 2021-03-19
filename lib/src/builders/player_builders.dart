@@ -123,7 +123,11 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.isBuffering,
           initialData: false,
           builder: (context, snap) {
-            return widget.builder(context, snap.data);
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
       case _PlayingBuilderType.loopMode:
@@ -131,7 +135,11 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.loopMode,
           initialData: LoopMode.none,
           builder: (context, snap) {
-            return widget.builder(context, snap.data);
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
       case _PlayingBuilderType.volume:
@@ -139,55 +147,80 @@ class _PlayerBuilderState extends State<PlayerBuilder> {
           stream: widget.player.volume,
           initialData: AssetsAudioPlayer.defaultVolume,
           builder: (context, snap) {
-            return widget.builder(context, snap.data);
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
       case _PlayingBuilderType.currentPosition:
         return StreamBuilder(
           stream: widget.player.currentPosition,
           initialData: Duration.zero,
-          builder: (context, snap) {
-            return widget.builder(context, snap.data);
+            builder: (context, snap) {
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
       case _PlayingBuilderType.playSpeed:
         return StreamBuilder(
           stream: widget.player.playSpeed,
           initialData: AssetsAudioPlayer.defaultPlaySpeed,
-          builder: (context, snap) {
-            return widget.builder(context, snap.data);
+           builder: (context, snap) {
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
       case _PlayingBuilderType.forwardRewindSpeed:
         return StreamBuilder(
           stream: widget.player.forwardRewindSpeed,
-          initialData: null,
-          builder: (context, snap) {
-            return widget.builder(context, snap.data);
+           builder: (context, snap) {
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
       case _PlayingBuilderType.current:
         return StreamBuilder(
           stream: widget.player.current,
-          initialData: null,
           builder: (context, snap) {
-            return widget.builder(context, snap.data);
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
       case _PlayingBuilderType.realtimePlayingInfos:
         return StreamBuilder(
           stream: widget.player.realtimePlayingInfos,
-          initialData: null,
-          builder: (context, snap) {
-            return widget.builder(context, snap.data);
+           builder: (context, snap) {
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
       case _PlayingBuilderType.playerState:
         return StreamBuilder(
           stream: widget.player.playerState,
           initialData: PlayerState.stop,
-          builder: (context, snap) {
-            return widget.builder(context, snap.data);
+            builder: (context, snap) {
+            if (snap.hasData) {
+              return widget.builder(context, snap.data)!;
+            } else {
+              return SizedBox();
+            }
           },
         );
     }
