@@ -129,9 +129,11 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    super.initState();
     //_subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
     //  print('finished : $data');
     //}));
+    openPlayer();
     _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
       print('playlistAudioFinished : $data');
     }));
@@ -142,13 +144,14 @@ class _MyAppState extends State<MyApp> {
         .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
       return false;
     }));
-    _assetsAudioPlayer.open(
+  }
+
+  void openPlayer() async {
+    await _assetsAudioPlayer.open(
       Playlist(audios: audios, startIndex: 0),
       showNotification: true,
       autoStart: false,
-
     );
-    super.initState();
   }
 
   @override

@@ -18,9 +18,9 @@ class NotificationSettings(
 ) : Serializable {
     fun numberEnabled() : Int {
         var number = 0
-        if(nextEnabled) number++
         if(playPauseEnabled) number++
         if(prevEnabled) number++
+        if(nextEnabled) number++
         if(stopEnabled) number++
         return number
     }
