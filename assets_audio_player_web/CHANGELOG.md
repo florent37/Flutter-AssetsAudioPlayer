@@ -1,3 +1,6 @@
+## 3.0.3
+
+* Fix notification issue
 ## 3.0.2
 
 * Fix version issue
