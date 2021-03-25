@@ -304,7 +304,7 @@ class NotificationService : Service() {
         startForeground(NOTIFICATION_ID, notification)
 
         //fix for https://github.com/florent37/Flutter-AssetsAudioPlayer/issues/139
-        if (!action.isPlaying) {
+        if (!action.isPlaying && Build.VERSION.SDK_INT >= 24) {
            stopForeground(2)
         }
 
