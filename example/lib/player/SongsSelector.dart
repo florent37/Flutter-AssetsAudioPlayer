@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 class SongsSelector extends StatelessWidget {
-  final Playing playing;
+  final Playing? playing;
   final List<Audio> audios;
   final Function(Audio) onSelected;
   final Function(List<Audio>) onPlaylistSelected;
@@ -65,7 +65,7 @@ class SongsSelector extends StatelessWidget {
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, position) {
                 final item = audios[position];
-                final isPlaying = item.path == playing.audio.assetAudioPath;
+                final isPlaying = item.path == playing?.audio.assetAudioPath;
                 return Neumorphic(
                   margin: EdgeInsets.all(4),
                   style: NeumorphicStyle(

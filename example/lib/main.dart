@@ -133,7 +133,7 @@ class _MyAppState extends State<MyApp> {
     //_subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
     //  print('finished : $data');
     //}));
-    openPlayer();
+    //openPlayer();
     _subscriptions.add(_assetsAudioPlayer.playlistAudioFinished.listen((data) {
       print('playlistAudioFinished : $data');
     }));
@@ -244,7 +244,7 @@ class _MyAppState extends State<MyApp> {
                     height: 20,
                   ),
                   _assetsAudioPlayer.builderCurrent(
-                      builder: (context, Playing playing) {
+                      builder: (context, Playing? playing) {
                     return Column(
                       children: <Widget>[
                         _assetsAudioPlayer.builderLoopMode(
@@ -325,7 +325,7 @@ class _MyAppState extends State<MyApp> {
                     height: 20,
                   ),
                   _assetsAudioPlayer.builderCurrent(
-                      builder: (BuildContext context, Playing playing) {
+                      builder: (BuildContext context, Playing? playing) {
                     return SongsSelector(
                       audios: audios,
                       onPlaylistSelected: (myAudios) {

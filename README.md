@@ -38,7 +38,7 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^2.0.13+6
+  assets_audio_player: ^3.0.3+1
   
 or
 

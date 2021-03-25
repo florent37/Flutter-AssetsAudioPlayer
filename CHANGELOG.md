@@ -1,3 +1,5 @@
+## 3.0.3+1
+* fixed no function for stopForeground
 ## 3.0.3
 
 * Fix notification issue
