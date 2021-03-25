@@ -1,5 +1,6 @@
 ## 3.0.3+2
 * update build number
+
 ## 3.0.3+1
 * fixed no function for stopForeground
 ## 3.0.3
