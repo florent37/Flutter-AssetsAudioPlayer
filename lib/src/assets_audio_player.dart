@@ -422,6 +422,8 @@ class AssetsAudioPlayer {
 
   bool _stopped = false;
 
+  List<int>? get shuffledIndexList => _playlist?.indexList;
+
   bool _respectSilentMode = _DEFAULT_RESPECT_SILENT_MODE;
 
   bool get respectSilentMode => _respectSilentMode;
