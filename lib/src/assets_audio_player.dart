@@ -413,6 +413,8 @@ class AssetsAudioPlayer {
 
   ValueStream<double> get forwardRewindSpeed => _forwardRewindSpeed.stream;
 
+  Playing? get currentPlaying => current.value;
+
   Duration? _lastSeek;
 
   /// returns the looping state : true -> looping, false -> not looping
