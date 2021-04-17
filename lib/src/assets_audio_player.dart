@@ -415,6 +415,8 @@ class AssetsAudioPlayer {
 
   Playing? get currentPlaying => current.value;
 
+  PlayerState? get currentPlayerState => _playerState.value;
+
   Duration? _lastSeek;
 
   /// returns the looping state : true -> looping, false -> not looping
