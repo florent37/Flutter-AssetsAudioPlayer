@@ -290,7 +290,7 @@ typedef PlaylistAudioReplacer = Audio Function(Audio oldAudio);
 
 class Playlist extends Playable {
   final List<Audio> audios = [];
-
+  String? id;
   int _startIndex = 0;
 
   int get startIndex => _startIndex;
@@ -301,11 +301,12 @@ class Playlist extends Playable {
     }
   }
 
-  Playlist({List<Audio>? audios, int startIndex = 0}) {
+  Playlist({List<Audio>? audios, int startIndex = 0, String? id}) {
     if (audios != null) {
       this.audios.addAll(audios);
     }
     this.startIndex = startIndex;
+    this.id = id;
   }
 
   Playlist copyWith({
@@ -389,7 +390,8 @@ class Playlist extends Playable {
       other is Playlist &&
           runtimeType == other.runtimeType &&
           audios == other.audios &&
-          startIndex == other.startIndex;
+          startIndex == other.startIndex &&
+          id == other.id;
 
   @override
   int get hashCode => audios.hashCode ^ startIndex.hashCode;
