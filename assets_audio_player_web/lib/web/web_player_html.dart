@@ -65,7 +65,7 @@ class WebPlayerHtml extends WebPlayer {
   void _listenPosition() async {
     __listenPosition = true;
     await Future.doWhile(() {
-      final durationMs = _audioElement?.duration ?? 0 * 1000;
+      final durationMs = (_audioElement?.duration ?? 0) * 1000;
       if (durationMs != _durationMs) {
         _durationMs = durationMs;
         channel.invokeMethod(
@@ -147,7 +147,7 @@ class WebPlayerHtml extends WebPlayer {
       }
 
       this.volume = volume;
-      final durationMs = _audioElement?.duration ?? 0 * 1000;
+      final durationMs = (_audioElement?.duration ?? 0) * 1000;
 
       if (durationMs != _durationMs) {
         _durationMs = durationMs;
