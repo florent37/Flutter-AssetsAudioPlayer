@@ -914,8 +914,8 @@ class AssetsAudioPlayer {
   }
 
   void _handleOnError(Map args) async {
-    final String errorType = args['type'];
-    final String errorMessage = args['message'];
+    final String errorType = args['type'] ?? 'Unknown';
+    final String errorMessage = args['message'] ?? 'No error message found';
     final error = AssetsAudioPlayerError(
       errorType: parseAssetsAudioPlayerErrorType(errorType),
       message: errorMessage,
