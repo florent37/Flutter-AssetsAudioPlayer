@@ -541,7 +541,7 @@ class AssetsAudioPlayer {
           print('log: ' + call.arguments);
           break;
         case METHOD_FINISHED:
-          await _onFinished(call.arguments);
+          await _onFinished();
           break;
         case METHOD_NOTIFICATION_NEXT:
           _notificationNext();
@@ -903,7 +903,7 @@ class AssetsAudioPlayer {
     return false;
   }
 
-  Future<void> _onFinished(bool isFinished) async {
+  Future<void> _onFinished() async {
     final nextDone = await _next(stopIfLast: false, requestByUser: false);
     if (nextDone) {
       _playlistFinished.add(false); // continue playing the playlist

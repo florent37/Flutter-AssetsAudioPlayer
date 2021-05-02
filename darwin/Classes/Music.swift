@@ -928,7 +928,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             self.player?.play()
         } else {
             playing = false
-            self.channel.invokeMethod(Music.METHOD_FINISHED, arguments: true)
+            self.channel.invokeMethod(Music.METHOD_FINISHED)
             self._deinit()
         }
     }

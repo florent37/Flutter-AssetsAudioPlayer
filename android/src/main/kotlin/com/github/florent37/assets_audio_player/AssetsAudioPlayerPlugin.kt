@@ -212,7 +212,7 @@ class AssetsAudioPlayer(
                     channel.invokeMethod(METHOD_IS_BUFFERING, it)
                 }
                 onFinished = {
-                    channel.invokeMethod(METHOD_FINISHED, null)
+                    channel.invokeMethod(METHOD_FINISHED)
                 }
 
                 onPrev = {
