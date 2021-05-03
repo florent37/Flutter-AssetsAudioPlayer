@@ -895,7 +895,7 @@ class AssetsAudioPlayer {
     return false;
   }
 
-  Future<void> _onFinished(bool isFinished) async {
+  Future<void> _onFinished(bool? isFinished) async {
     final nextDone = await _next(stopIfLast: false, requestByUser: false);
     if (nextDone) {
       _playlistFinished.add(false); // continue playing the playlist
