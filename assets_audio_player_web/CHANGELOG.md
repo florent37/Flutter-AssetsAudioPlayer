@@ -1,3 +1,5 @@
+## 3.0.3+3
+* fix duration issue
 ## 3.0.3+2
 * update build number
 ## 3.0.3+1

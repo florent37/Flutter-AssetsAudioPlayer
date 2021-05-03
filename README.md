@@ -463,7 +463,7 @@ on iOS, it will use `MPNowPlayingInfoCenter`
 1. Add metas inside your audio
 
 ```dart
-final audio = Audio("/assets/audio/country.mp3", 
+final audio = Audio.network("/assets/audio/country.mp3", 
     metas: Metas(
             title:  "Country",
             artist: "Florent Champigny",

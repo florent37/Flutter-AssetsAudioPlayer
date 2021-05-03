@@ -1,6 +1,6 @@
 name: assets_audio_player
 description: Play music/audio stored in assets files directly from Flutter & Network, Radio, LiveStream, Local files. Compatible with Android, iOS, web and macOS.
-version: 3.0.3+2
+version: 3.0.3+3
 
 #author: Florent Champigny <champigny.florent@gmail.com>
 homepage: https://github.com/florent37/Flutter-AssetsAudioPlayer
@@ -24,7 +24,7 @@ dependencies:
   # TODO(amirh): Revisit this (either update this part in the  design or the pub tool).
   # https://github.com/flutter/flutter/issues/46264
   # assets_audio_player_web: ^3.0.0-nullsafety.0
-  assets_audio_player_web: ^3.0.3
+  assets_audio_player_web: ^3.0.3+3
 
 dev_dependencies:
   flutter_test:
