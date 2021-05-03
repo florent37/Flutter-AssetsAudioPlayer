@@ -48,7 +48,6 @@ class RecorderExampleState extends State<RecorderExample> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _init();
   }

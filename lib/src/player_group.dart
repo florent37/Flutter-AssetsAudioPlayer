@@ -58,7 +58,6 @@ class AssetsAudioPlayerGroup {
 
   NotificationSettings? __notificationSettings;
 
-  // TODO add streams for audio finished
 
   AssetsAudioPlayerGroup({
     this.showNotification = _DEFAULT_SHOW_NOTIFICATION,
@@ -198,7 +197,6 @@ class AssetsAudioPlayerGroup {
     }
 
     await changeNotificationForGroup(
-      // TODO find a way to protect it
       this,
       isPlaying: isPlaying,
       firstPlayerId: firstPlayerId,

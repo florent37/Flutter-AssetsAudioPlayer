@@ -84,7 +84,6 @@ class ReadingPlaylist {
 
 @immutable
 class Playing {
-  // TODO rename
   /// the opened asset
   final PlayingAudio audio;
 

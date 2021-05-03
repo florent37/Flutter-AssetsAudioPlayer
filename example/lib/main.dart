@@ -144,6 +144,7 @@ class _MyAppState extends State<MyApp> {
         .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
       return false;
     }));
+    openPlayer();
   }
 
   void openPlayer() async {

@@ -895,7 +895,7 @@ class AssetsAudioPlayer {
     return false;
   }
 
-  Future<void> _onFinished(bool isFinished) async {
+  Future<void> _onFinished(bool? isFinished) async {
     final nextDone = await _next(stopIfLast: false, requestByUser: false);
     if (nextDone) {
       _playlistFinished.add(false); // continue playing the playlist
@@ -906,8 +906,8 @@ class AssetsAudioPlayer {
   }
 
   void _handleOnError(Map args) async {
-    final String errorType = args['type'];
-    final String errorMessage = args['message'];
+    final String errorType = args['type'] ?? 'Unknown';
+    final String errorMessage = args['message'] ?? 'Something went wrong!';
     final error = AssetsAudioPlayerError(
       errorType: parseAssetsAudioPlayerErrorType(errorType),
       message: errorMessage,
