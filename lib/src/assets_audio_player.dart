@@ -90,7 +90,7 @@ class PlayerEditor {
     assetsAudioPlayer._updatePlaylistIndexes();
     if (assetsAudioPlayer._playlist!.playlistIndex == index) {
       final currentPosition = assetsAudioPlayer.currentPosition.value;
-      final isPlaying = assetsAudioPlayer.isPlaying.value ?? false;
+      final isPlaying = assetsAudioPlayer.isPlaying.valueOrNull ?? false;
       //print('onAudioReplacedAt/ currentPosition : $currentPosition');
       if (keepPlayingPositionIfCurrent && currentPosition != null) {
         assetsAudioPlayer._openPlaylistCurrent(
@@ -418,7 +418,7 @@ class AssetsAudioPlayer {
   /// returns the looping state : true -> looping, false -> not looping
   LoopMode? get currentLoopMode => _loopMode.value;
 
-  bool get shuffle => _shuffle.value ?? false;
+  bool get shuffle => _shuffle.valueOrNull ?? false;
 
   bool _stopped = false;
 
@@ -650,7 +650,7 @@ class AssetsAudioPlayer {
             pause();
             break;
           case PlayInBackground.disabledRestoreOnForeground:
-            _wasPlayingBeforeEnterBackground = isPlaying.value ?? false;
+            _wasPlayingBeforeEnterBackground = isPlaying.valueOrNull ?? false;
             pause();
             break;
         }
@@ -724,8 +724,8 @@ class AssetsAudioPlayer {
   Future<bool> previous({bool keepLoopMode = true}) async {
     if (_playlist != null) {
       // more than 5 sec played, go back to the start of audio
-      if (_currentPosition.value != null &&
-          _currentPosition.value!.inSeconds >= 5) {
+      if (_currentPosition.valueOrNull != null &&
+          _currentPosition.valueOrNull!.inSeconds >= 5) {
         await seek(Duration.zero, force: true);
       } else if (_playlist!.hasPrev()) {
         if (!keepLoopMode) {
@@ -746,7 +746,7 @@ class AssetsAudioPlayer {
   }
 
   void _onPositionReceived(dynamic argument) {
-    final oldValue = _currentPosition.value;
+    final oldValue = _currentPosition.valueOrNull;
     int? newValue;
     if (argument is int) {
       final value = argument;
@@ -1022,10 +1022,10 @@ class AssetsAudioPlayer {
           'headPhoneStrategy': describeHeadPhoneStrategy(_headPhoneStrategy),
           'audioFocusStrategy': describeAudioFocusStrategy(_audioFocusStrategy),
           'displayNotification': _showNotification,
-          'volume': forcedVolume ?? volume.value ?? defaultVolume,
+          'volume': forcedVolume ?? volume.valueOrNull ?? defaultVolume,
           'playSpeed': playSpeed ??
               audio.playSpeed ??
-              this.playSpeed.value ??
+              this.playSpeed.valueOrNull ??
               defaultPlaySpeed,
         };
         if (seek != null) {
@@ -1218,7 +1218,7 @@ class AssetsAudioPlayer {
   ///     _assetsAudioPlayer.playOfPause();
   ///
   Future<void> playOrPause() async {
-    final playing = _isPlaying.value ?? true;
+    final playing = _isPlaying.valueOrNull ?? true;
     if (playing) {
       await pause();
     } else {
@@ -1326,7 +1326,7 @@ class AssetsAudioPlayer {
     if (playing != null) {
       final totalDuration = playing.audio.duration;
 
-      final currentPosition = this.currentPosition.value ?? Duration();
+      final currentPosition = this.currentPosition.valueOrNull ?? Duration();
 
       if (by.inMilliseconds >= 0) {
         final nextPosition = currentPosition + by;
@@ -1340,7 +1340,7 @@ class AssetsAudioPlayer {
         await seek(currentPositionCapped);
       } else {
         // only if playing a song
-        final currentPosition = this.currentPosition.value ?? Duration();
+        final currentPosition = this.currentPosition.valueOrNull ?? Duration();
         final nextPosition = currentPosition + by;
 
         // don't seek less that 0
