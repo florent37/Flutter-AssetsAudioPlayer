@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_neumorphic: ^3.1.0
-  rxdart: ^0.26.0
+  rxdart: ^0.27.0
   # for local file test
   dio: ^4.0.0-beta7
   path_provider: ^2.0.1

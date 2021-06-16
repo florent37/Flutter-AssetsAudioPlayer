@@ -58,7 +58,6 @@ class AssetsAudioPlayerGroup {
 
   NotificationSettings? __notificationSettings;
 
-
   AssetsAudioPlayerGroup({
     this.showNotification = _DEFAULT_SHOW_NOTIFICATION,
     required this.updateNotification,
@@ -133,7 +132,7 @@ class AssetsAudioPlayerGroup {
       showNotification: false,
       // not need here, we'll call another method `changeNotificationForGroup`
       seek: seek,
-      autoStart: isPlaying.value ?? false,
+      autoStart: isPlaying.valueOrNull ?? false,
       // need to play() for player group
       volume: volume,
       loopMode: loopMode,
@@ -188,7 +187,7 @@ class AssetsAudioPlayerGroup {
 
   /// Called when an audio is added or removed (/finished)
   Future<void> _onPlayersChanged() async {
-    final isPlaying = this.isPlaying.value ?? false;
+    final isPlaying = this.isPlaying.valueOrNull ?? false;
     final newNotificationsMetas = await updateNotification(this, playingAudios);
 
     String? firstPlayerId;
