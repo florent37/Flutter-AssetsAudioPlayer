@@ -89,7 +89,7 @@ class PlayerEditor {
   void onAudioReplacedAt(int index, bool keepPlayingPositionIfCurrent) {
     assetsAudioPlayer._updatePlaylistIndexes();
     if (assetsAudioPlayer._playlist!.playlistIndex == index) {
-      final currentPosition = assetsAudioPlayer.currentPosition.value;
+      final currentPosition = assetsAudioPlayer.currentPosition.valueOrNull;
       final isPlaying = assetsAudioPlayer.isPlaying.valueOrNull ?? false;
       //print('onAudioReplacedAt/ currentPosition : $currentPosition');
       if (keepPlayingPositionIfCurrent && currentPosition != null) {
@@ -559,7 +559,7 @@ class AssetsAudioPlayer {
           break;
         case METHOD_CURRENT:
           if (call.arguments == null) {
-            final current = _current.value;
+            final current = _current.valueOrNull;
             if (current != null) {
               final finishedPlay = Playing(
                 audio: current.audio,
@@ -842,7 +842,7 @@ class AssetsAudioPlayer {
         }
       }
       if (_playlist!.hasNext()) {
-        final curr = _current.value;
+        final curr = _current.valueOrNull;
         if (curr != null) {
           _playlistAudioFinished.add(Playing(
             audio: curr.audio,
@@ -857,7 +857,7 @@ class AssetsAudioPlayer {
         return true;
       } else if (loopMode.value == LoopMode.playlist) {
         //last element
-        final curr = _current.value;
+        final curr = _current.valueOrNull;
         if (curr != null) {
           _playlistAudioFinished.add(Playing(
             audio: curr.audio,
@@ -876,7 +876,7 @@ class AssetsAudioPlayer {
         return true;
       } else if (requestByUser) {
         //last element
-        final curr = _current.value;
+        final curr = _current.valueOrNull;
         if (curr != null) {
           _playlistAudioFinished.add(Playing(
             audio: curr.audio,
@@ -1322,7 +1322,7 @@ class AssetsAudioPlayer {
   ///
   Future<void> seekBy(Duration by) async {
     // only if playing a song
-    final playing = current.value;
+    final playing = current.valueOrNull;
     if (playing != null) {
       final totalDuration = playing.audio.duration;
 
