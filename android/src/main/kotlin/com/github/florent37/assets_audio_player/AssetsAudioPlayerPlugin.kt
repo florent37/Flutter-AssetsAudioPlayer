@@ -484,6 +484,8 @@ class AssetsAudioPlayer(
                     val respectSilentMode = args["respectSilentMode"] as? Boolean ?: false
                     val seek = args["seek"] as? Int?
                     val networkHeaders = args["networkHeaders"] as? Map<*, *>?
+                    val drmConfiguration = args["drmConfiguration"] as? Map<*, *>?
+
 
                     val notificationSettings = fetchNotificationSettings(args)
                     val audioMetas = fetchAudioMetas(args).let { meta ->
@@ -515,7 +517,8 @@ class AssetsAudioPlayer(
                             headsetStrategy = headsetStrategy,
                             audioFocusStrategy = audioFocusStrategy,
                             networkHeaders = networkHeaders,
-                            context = context
+                            context = context,
+                            drmConfiguration = drmConfiguration
                     )
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)

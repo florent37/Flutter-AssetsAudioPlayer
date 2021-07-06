@@ -160,7 +160,8 @@ class Player(
              audioFocusStrategy: AudioFocusStrategy,
              networkHeaders: Map<*, *>?,
              result: MethodChannel.Result,
-             context: Context
+             context: Context,
+             drmConfiguration: Map<*, *>?
     ) {
         try {
             stop(pingListener = false)
@@ -193,7 +194,8 @@ class Player(
                         },
                         onPlaying = onPlaying,
                         onBuffering = onBuffering,
-                        onError= onError
+                        onError= onError,
+                        drmConfiguration = drmConfiguration
                         )
                 )
 
