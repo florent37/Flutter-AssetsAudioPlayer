@@ -1041,6 +1041,16 @@ class AssetsAudioPlayer {
               audio.networkHeaders ?? networkSettings.defaultHeaders;
         }
 
+        if(audio.drmConfiguration != null){
+          var drmMap  ={};
+          drmMap['drmType'] = audio.drmConfiguration!.drmType.toString();
+          if(audio.drmConfiguration!.drmType==DrmType.clearKey){
+            drmMap['clearKey'] = audio.drmConfiguration!.clearKey;
+          }
+          params['drmConfiguration'] = drmMap;
+
+        }
+
         //region notifs
         final notifSettings = notificationSettings ?? NotificationSettings();
         writeNotificationSettingsInto(params, notifSettings);

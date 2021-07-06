@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
@@ -154,6 +157,53 @@ class Metas {
   }
 }
 
+//Placeholder for future DRM Types
+enum DrmType{ token, widevine, fairplay, clearKey }
+
+class DrmConfiguration{
+   final DrmType drmType;
+   final String? clearKey;
+
+   DrmConfiguration._(this.drmType,{this.clearKey});
+
+   factory DrmConfiguration.clearKey({String? clearKey, Map<String,String>? keys}){
+     if(keys!=null) clearKey  = _generate(keys);
+     var drmConfiguration = DrmConfiguration._(DrmType.clearKey,clearKey: clearKey);
+     return drmConfiguration;
+   }
+
+
+    static String _generate(Map<String, String> keys,
+       {String type = 'temporary'}) {
+     Map keyMap = <String, dynamic>{'type': type};
+     keyMap['keys'] = <Map<String, String>>[];
+     keys.forEach((key, value) => keyMap['keys']
+         .add({'kty': 'oct', 'kid': _base64(key), 'k': _base64(value)}));
+     return jsonEncode(keyMap);
+   }
+
+   static String _base64(String source) {
+     return base64
+         .encode(_encodeBigInt(BigInt.parse(source, radix: 16)))
+         .replaceAll('=', '');
+   }
+
+    static final _byteMask = BigInt.from(0xff);
+
+    static Uint8List _encodeBigInt(BigInt number) {
+     var size = (number.bitLength + 7) >> 3;
+
+     final result = Uint8List(size);
+     var pos = size - 1;
+     for (var i = 0; i < size; i++) {
+       result[pos--] = (number & _byteMask).toInt();
+       number = number >> 8;
+     }
+     return result;
+   }
+
+}
+
 class Audio extends Playable {
   final String path;
   final String? package;
@@ -162,6 +212,7 @@ class Audio extends Playable {
   final Map<String, String>? _networkHeaders;
   final bool? cached; // download audio then play it
   final double? playSpeed;
+  final DrmConfiguration? drmConfiguration;
 
   Metas get metas => _metas;
 
@@ -175,6 +226,7 @@ class Audio extends Playable {
     this.playSpeed,
     Map<String, String>? headers,
     Metas? metas,
+    this.drmConfiguration
   })  : _metas = metas ?? Metas(),
         _networkHeaders = headers;
 
@@ -186,12 +238,14 @@ class Audio extends Playable {
   })  : audioType = AudioType.asset,
         _networkHeaders = null,
         cached = false,
-        _metas = metas ?? Metas();
+        _metas = metas ?? Metas(),
+        drmConfiguration = null;
 
   Audio.file(
     this.path, {
     Metas? metas,
     this.playSpeed,
+    this.drmConfiguration,
   })  : audioType = AudioType.file,
         package = null,
         _networkHeaders = null,
@@ -204,6 +258,7 @@ class Audio extends Playable {
     Map<String, String>? headers,
     this.cached = false,
     this.playSpeed,
+    this.drmConfiguration
   })  : audioType = AudioType.network,
         package = null,
         _networkHeaders = headers,
@@ -214,6 +269,7 @@ class Audio extends Playable {
     Metas? metas,
     this.playSpeed,
     Map<String, String>? headers,
+    this.drmConfiguration
   })  : audioType = AudioType.liveStream,
         package = null,
         _networkHeaders = headers,
@@ -273,6 +329,7 @@ class Audio extends Playable {
     double? playSpeed,
     Map<String, String>? headers,
     bool? cached,
+    DrmConfiguration? drmConfiguration
   }) {
     return Audio._(
       path: path ?? this.path,
@@ -282,6 +339,7 @@ class Audio extends Playable {
       headers: headers ?? _networkHeaders,
       playSpeed: playSpeed ?? this.playSpeed,
       cached: cached ?? this.cached,
+      drmConfiguration: drmConfiguration??this.drmConfiguration
     );
   }
 }
