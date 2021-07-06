@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
@@ -164,9 +167,39 @@ class DrmConfiguration{
    DrmConfiguration._(this.drmType,{this.clearKey});
 
    factory DrmConfiguration.clearKey({String? clearKey, Map<String,String>? keys}){
-     
-     var drmConfiguration = DrmConfiguration._(DrmType.clearKey,clearKey: clearKey!);
+     if(keys!=null) clearKey  = _generate(keys);
+     var drmConfiguration = DrmConfiguration._(DrmType.clearKey,clearKey: clearKey);
      return drmConfiguration;
+   }
+
+
+    static String _generate(Map<String, String> keys,
+       {String type = 'temporary'}) {
+     Map keyMap = <String, dynamic>{'type': type};
+     keyMap['keys'] = <Map<String, String>>[];
+     keys.forEach((key, value) => keyMap['keys']
+         .add({'kty': 'oct', 'kid': _base64(key), 'k': _base64(value)}));
+     return jsonEncode(keyMap);
+   }
+
+   static String _base64(String source) {
+     return base64
+         .encode(_encodeBigInt(BigInt.parse(source, radix: 16)))
+         .replaceAll('=', '');
+   }
+
+    static final _byteMask = BigInt.from(0xff);
+
+    static Uint8List _encodeBigInt(BigInt number) {
+     var size = (number.bitLength + 7) >> 3;
+
+     final result = Uint8List(size);
+     var pos = size - 1;
+     for (var i = 0; i < size; i++) {
+       result[pos--] = (number & _byteMask).toInt();
+       number = number >> 8;
+     }
+     return result;
    }
 
 }
