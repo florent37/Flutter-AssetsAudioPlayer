@@ -1,9 +1,9 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/Users/florentchampigny/flutter/flutter-sdk"
-export "FLUTTER_APPLICATION_PATH=/Users/florentchampigny/android/assets_audio_player/assets_audio_player_web"
+export "FLUTTER_ROOT=/Users/yasinilhan/flutter"
+export "FLUTTER_APPLICATION_PATH=/Users/yasinilhan/data/Projects/plugins/Flutter-AssetsAudioPlayer/assets_audio_player_web"
 export "FLUTTER_BUILD_DIR=build"
-export "FLUTTER_BUILD_NAME=2.0.13"
+export "FLUTTER_BUILD_NAME=3.0.3"
 export "FLUTTER_BUILD_NUMBER=3"
 export "EXCLUDED_ARCHS=arm64"
 export "DART_OBFUSCATION=false"

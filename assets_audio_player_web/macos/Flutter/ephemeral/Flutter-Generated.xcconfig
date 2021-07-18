@@ -1,8 +1,8 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=/Users/florentchampigny/flutter/flutter-sdk
-FLUTTER_APPLICATION_PATH=/Users/florentchampigny/android/assets_audio_player/assets_audio_player_web
+FLUTTER_ROOT=/Users/yasinilhan/flutter
+FLUTTER_APPLICATION_PATH=/Users/yasinilhan/data/Projects/plugins/Flutter-AssetsAudioPlayer/assets_audio_player_web
 FLUTTER_BUILD_DIR=build
-FLUTTER_BUILD_NAME=2.0.13
+FLUTTER_BUILD_NAME=3.0.3
 FLUTTER_BUILD_NUMBER=3
 EXCLUDED_ARCHS=arm64
 DART_OBFUSCATION=false

@@ -1,3 +1,7 @@
+## 3.0.3+4
+* Updated dependencies 
+* Fix duplicate class issue
+* Fix: assetsAudioPlayer.open playSpeed is not work
 ## 3.0.3+3
 * fix playlist auto next issue and error message issue
 ## 3.0.3+2
