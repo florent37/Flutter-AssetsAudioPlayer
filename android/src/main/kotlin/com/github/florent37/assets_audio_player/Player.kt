@@ -158,6 +158,7 @@ class Player(
              notificationSettings: NotificationSettings,
              audioMetas: AudioMetas,
              playSpeed: Double,
+             pitch: Double,
              headsetStrategy: HeadsetStrategy,
              audioFocusStrategy: AudioFocusStrategy,
              networkHeaders: Map<*, *>?,
@@ -213,6 +214,7 @@ class Player(
 
                 setVolume(volume)
                 setPlaySpeed(playSpeed)
+                setPitch(pitch)
 
                 seek?.let {
                     this@Player.seek(milliseconds = seek * 1L)
@@ -442,7 +444,7 @@ class Player(
             this.pitch = pitch
             mediaPlayer?.let {
                 it.setPitch(pitch.toFloat())
-                // onPlaySpeedChanged?.invoke(this.playSpeed)
+                onPitchChanged?.invoke(this.pitch)
             }
         }
     }

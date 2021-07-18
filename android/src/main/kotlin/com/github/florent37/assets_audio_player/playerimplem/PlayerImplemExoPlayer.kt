@@ -311,7 +311,10 @@ class PlayerImplemExoPlayer(
     }
 
     override fun setPlaySpeed(playSpeed: Float) {
-        mediaPlayer?.setPlaybackParameters(PlaybackParameters(playSpeed))
+        val params: PlaybackParameters? = mediaPlayer?.getPlaybackParameters()
+        if (params != null) {
+            mediaPlayer?.setPlaybackParameters(PlaybackParameters(playSpeed, params.pitch))
+        }
     }
 
     override fun setPitch(pitch: Float) {
