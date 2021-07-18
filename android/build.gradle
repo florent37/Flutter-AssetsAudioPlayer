@@ -58,7 +58,7 @@ dependencies {
     implementation "androidx.annotation:annotation:1.1.0"
 
 
-    def exoPlayerVersion = "2.13.2"
+    def exoPlayerVersion = "2.14.1"
 
     implementation "com.google.android.exoplayer:exoplayer:$exoPlayerVersion"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoPlayerVersion"
