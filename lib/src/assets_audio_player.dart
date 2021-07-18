@@ -131,6 +131,9 @@ class AssetsAudioPlayer {
   static final double maxPlaySpeed = 16.0;
   static final double defaultVolume = maxVolume;
   static final double defaultPlaySpeed = 1.0;
+  static final double minPitch = 0.0;
+  static final double maxPitch = 16.0;
+  static final double defaultPitch = 1.0;
   static final AudioFocusStrategy defaultFocusStrategy =
       AudioFocusStrategy.request(resumeAfterInterruption: true);
   static final NotificationSettings defaultNotificationSettings =
@@ -1393,6 +1396,22 @@ class AssetsAudioPlayer {
     await _sendChannel.invokeMethod('playSpeed', {
       'id': id,
       'playSpeed': playSpeed.clamp(minPlaySpeed, maxPlaySpeed),
+    });
+  }
+
+  /// Change the current pitch of the MediaPlayer
+  ///
+  ///     _assetsAudioPlayer.setPitch(0.4);
+  ///
+  /// MIN : 0.0
+  /// MAX : 16.0
+  ///
+  /// if null, set to defaultPitch (1.0)
+  ///
+  Future<void> setPitch(double pitch) async {
+    await _sendChannel.invokeMethod('pitch', {
+      'id': id,
+      'pitch': pitch.clamp(minPitch, maxPitch),
     });
   }
 

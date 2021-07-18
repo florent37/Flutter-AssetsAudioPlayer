@@ -331,6 +331,23 @@ class AssetsAudioPlayer(
                     return
                 }
             }
+            "pitch" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    val pitch = args["pitch"] as? Double ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument must be an Double.", null)
+                        return
+                    }
+                    getOrCreatePlayer(id).setPitch(pitch)
+                    result.success(null)
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
             "showNotification" -> {
                 (call.arguments as? Map<*, *>)?.let { args ->
                     val id = args["id"] as? String ?: run {
