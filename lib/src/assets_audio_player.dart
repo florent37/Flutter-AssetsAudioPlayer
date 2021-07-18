@@ -51,6 +51,7 @@ const String METHOD_NOTIFICATION_PREV = 'player.prev';
 const String METHOD_NOTIFICATION_STOP = 'player.stop';
 const String METHOD_NOTIFICATION_PLAY_OR_PAUSE = 'player.playOrPause';
 const String METHOD_PLAY_SPEED = 'player.playSpeed';
+const String METHOD_PITCH = 'player.pitch';
 const String METHOD_ERROR = 'player.error';
 const String METHOD_AUDIO_SESSION_ID = 'player.audioSessionId';
 
@@ -412,6 +413,10 @@ class AssetsAudioPlayer {
 
   ValueStream<double> get playSpeed => _playSpeed.stream;
 
+  final BehaviorSubject<double> _pitch = BehaviorSubject.seeded(1.0);
+
+  ValueStream<double> get pitch => _pitch.stream;
+
   final BehaviorSubject<double> _forwardRewindSpeed = BehaviorSubject.seeded(0);
 
   ValueStream<double> get forwardRewindSpeed => _forwardRewindSpeed.stream;
@@ -619,6 +624,9 @@ class AssetsAudioPlayer {
         case METHOD_PLAY_SPEED:
           _playSpeed.add(call.arguments);
           break;
+        case METHOD_PITCH:
+          _pitch.add(call.arguments);
+          break;
         case METHOD_FORWARD_REWIND_SPEED:
           final double newValue = call.arguments;
           if (_forwardRewindSpeed.value != newValue) {
@@ -803,6 +811,7 @@ class AssetsAudioPlayer {
         respectSilentMode: _playlist!.respectSilentMode,
         showNotification: _playlist!.showNotification,
         playSpeed: _playlist!.playSpeed,
+        pitch: _playlist!.pitch,
         notificationSettings: _playlist!.notificationSettings,
         autoStart: autoStart,
         loopMode: _playlist!.loopMode,
@@ -990,16 +999,17 @@ class AssetsAudioPlayer {
   // private method, used in open(playlist) and open(path)
   Future<void> _open(
     Audio? audioInput, {
-    bool? autoStart,
-    double? forcedVolume,
-    bool? respectSilentMode,
-    bool? showNotification,
-    Duration? seek,
-    double? playSpeed,
-    LoopMode? loopMode,
-    HeadPhoneStrategy? headPhoneStrategy,
-    AudioFocusStrategy? audioFocusStrategy,
-    NotificationSettings? notificationSettings,
+    required bool? autoStart,
+    required double? forcedVolume,
+    required bool? respectSilentMode,
+    required bool? showNotification,
+    required Duration? seek,
+    required double? playSpeed,
+    required double? pitch,
+    required LoopMode? loopMode,
+    required HeadPhoneStrategy? headPhoneStrategy,
+    required AudioFocusStrategy? audioFocusStrategy,
+    required NotificationSettings? notificationSettings,
   }) async {
     final _autoStart = autoStart ?? _DEFAULT_AUTO_START;
     final _loopMode = loopMode ?? _DEFAULT_LOOP_MODE;
@@ -1030,6 +1040,10 @@ class AssetsAudioPlayer {
               audio.playSpeed ??
               this.playSpeed.valueOrNull ??
               defaultPlaySpeed,
+          'pitch': pitch ??
+              audio.pitch ??
+              this.pitch.valueOrNull ??
+              defaultPitch,
         };
         if (seek != null) {
           params['seek'] = seek.inMilliseconds.round();
@@ -1111,6 +1125,7 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration? seek,
     double? playSpeed,
+    double? pitch,
     LoopMode? loopMode,
     NotificationSettings? notificationSettings,
     PlayInBackground? playInBackground,
@@ -1125,6 +1140,7 @@ class AssetsAudioPlayer {
       respectSilentMode: respectSilentMode,
       showNotification: showNotification,
       playSpeed: playSpeed,
+      pitch: pitch,
       loopMode: loopMode,
       audioFocusStrategy: audioFocusStrategy ?? defaultFocusStrategy,
       notificationSettings: notificationSettings,
@@ -1164,6 +1180,7 @@ class AssetsAudioPlayer {
     bool showNotification = _DEFAULT_SHOW_NOTIFICATION,
     Duration? seek,
     double? playSpeed,
+    double? pitch,
     NotificationSettings? notificationSettings,
     LoopMode loopMode = _DEFAULT_LOOP_MODE,
     PlayInBackground playInBackground = _DEFAULT_PLAY_IN_BACKGROUND,
@@ -1200,6 +1217,7 @@ class AssetsAudioPlayer {
           seek: seek,
           loopMode: loopMode,
           playSpeed: playSpeed,
+          pitch: pitch,
           headPhoneStrategy: headPhoneStrategy,
           audioFocusStrategy: focusStrategy,
           notificationSettings:
@@ -1467,6 +1485,7 @@ class _CurrentPlaylist {
   final bool? showNotification;
   LoopMode? loopMode;
   final double? playSpeed;
+  final double? pitch;
   final NotificationSettings? notificationSettings;
   final AudioFocusStrategy? audioFocusStrategy;
   final PlayInBackground? playInBackground;
@@ -1567,6 +1586,7 @@ class _CurrentPlaylist {
     this.respectSilentMode,
     this.showNotification,
     this.playSpeed,
+    this.pitch,
     this.notificationSettings,
     this.playInBackground,
     this.loopMode,

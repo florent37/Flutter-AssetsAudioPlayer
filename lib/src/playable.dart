@@ -162,6 +162,7 @@ class Audio extends Playable {
   final Map<String, String>? _networkHeaders;
   final bool? cached; // download audio then play it
   final double? playSpeed;
+  final double? pitch;
 
   Metas get metas => _metas;
 
@@ -173,6 +174,7 @@ class Audio extends Playable {
     this.package,
     this.cached,
     this.playSpeed,
+    this.pitch,
     Map<String, String>? headers,
     Metas? metas,
   })  : _metas = metas ?? Metas(),
@@ -183,6 +185,7 @@ class Audio extends Playable {
     Metas? metas,
     this.package,
     this.playSpeed,
+    this.pitch,
   })  : audioType = AudioType.asset,
         _networkHeaders = null,
         cached = false,
@@ -192,6 +195,7 @@ class Audio extends Playable {
     this.path, {
     Metas? metas,
     this.playSpeed,
+    this.pitch,
   })  : audioType = AudioType.file,
         package = null,
         _networkHeaders = null,
@@ -204,6 +208,7 @@ class Audio extends Playable {
     Map<String, String>? headers,
     this.cached = false,
     this.playSpeed,
+    this.pitch,
   })  : audioType = AudioType.network,
         package = null,
         _networkHeaders = headers,
@@ -213,6 +218,7 @@ class Audio extends Playable {
     this.path, {
     Metas? metas,
     this.playSpeed,
+    this.pitch,
     Map<String, String>? headers,
   })  : audioType = AudioType.liveStream,
         package = null,
