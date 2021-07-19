@@ -305,6 +305,13 @@ You like the package ? buy me a kofi :)
           <td>✅</td>
           <td>✅</td>
         </tr>
+	<tr>
+          <td>⏩ get/set Pitch</td>
+          <td>✅</td>
+          <td>🚫</td>
+          <td>🚫</td>
+          <td>🚫</td>
+        </tr>
     </tbody>
 </table>
 
@@ -360,6 +367,13 @@ You like the package ? buy me a kofi :)
           <td>✅</td>
           <td>✅</td>
           <td>✅</td>
+        </tr>
+	<tr>
+          <td>🦻Listener Pitch</td>
+          <td>✅</td>
+          <td>🚫</td>
+          <td>🚫</td>
+          <td>🚫</td>
         </tr>
     </tbody>
 </table>
@@ -905,6 +919,42 @@ assetsAudioPlayer.loopMode.listen((loopMode){
 })
 
 assetsAudioPlayer.toggleLoop(); //toggle the value of looping
+```
+
+### 🏃 Play Speed
+
+```Dart
+assetsAudioPlayer.setPlaySpeed(1.5);
+
+assetsAudioPlayer.playSpeed.listen((playSpeed){
+    //listen to playSpeed
+})
+
+//change play speed for a particular Audio
+
+Audio audio = Audio.network(
+    url,
+    playSpeed: 1.5
+);
+assetsAudioPlayer.open(audio);
+```
+
+### 🎙️ Pitch
+
+```Dart
+assetsAudioPlayer.setPitch(1.2);
+
+assetsAudioPlayer.pitch.listen((pitch){
+    //listen to pitch
+})
+
+//change pitch for a particular Audio
+
+Audio audio = Audio.network(
+    url,
+    pitch: 1.2
+);
+assetsAudioPlayer.open(audio);
 ```
 
 
