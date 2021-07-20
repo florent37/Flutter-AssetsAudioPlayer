@@ -1,3 +1,5 @@
+## 3.0.3+5
+* Added pitch controller
 ## 3.0.3+4
 * Updated dependencies 
 * Fix duplicate class issue
