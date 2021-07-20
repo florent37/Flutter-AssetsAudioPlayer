@@ -311,12 +311,22 @@ class PlayerImplemExoPlayer(
     }
 
     override fun setPlaySpeed(playSpeed: Float) {
-        mediaPlayer?.setPlaybackParameters(PlaybackParameters(playSpeed))
+        val params: PlaybackParameters? = mediaPlayer?.getPlaybackParameters()
+        if (params != null) {
+            mediaPlayer?.setPlaybackParameters(PlaybackParameters(playSpeed, params.pitch))
+        }
+    }
+
+    override fun setPitch(pitch: Float) {
+        val params: PlaybackParameters? = mediaPlayer?.getPlaybackParameters()
+        if (params != null) {
+            mediaPlayer?.setPlaybackParameters(PlaybackParameters(params.speed, pitch))
+        }
     }
 
     override fun getSessionId(listener: (Int) -> Unit) {
         val id = mediaPlayer?.audioComponent?.audioSessionId?.takeIf { it != AUDIO_SESSION_ID_UNSET }
-        if(id != null){
+        if (id != null) {
             listener(id)
         } else {
             val listener = object : AudioListener {

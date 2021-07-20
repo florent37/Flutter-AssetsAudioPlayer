@@ -27,6 +27,7 @@ internal val METHOD_POSITION = "player.position"
 internal val METHOD_VOLUME = "player.volume"
 internal val METHOD_FORWARD_REWIND_SPEED = "player.forwardRewind"
 internal val METHOD_PLAY_SPEED = "player.playSpeed"
+internal val METHOD_PITCH = "player.pitch"
 internal val METHOD_FINISHED = "player.finished"
 internal val METHOD_IS_PLAYING = "player.isPlaying"
 internal val METHOD_IS_BUFFERING = "player.isBuffering"
@@ -194,6 +195,9 @@ class AssetsAudioPlayer(
                 onPlaySpeedChanged = { speed ->
                     channel.invokeMethod(METHOD_PLAY_SPEED, speed)
                 }
+                onPitchChanged = { pitch ->
+                    channel.invokeMethod(METHOD_PITCH, pitch)
+                }
                 onPositionMSChanged = { positionMS ->
                     channel.invokeMethod(METHOD_POSITION, positionMS)
                 }
@@ -325,6 +329,23 @@ class AssetsAudioPlayer(
                         return
                     }
                     getOrCreatePlayer(id).setPlaySpeed(speed)
+                    result.success(null)
+                } ?: run {
+                    result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
+                    return
+                }
+            }
+            "pitch" -> {
+                (call.arguments as? Map<*, *>)?.let { args ->
+                    val id = args["id"] as? String ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument (id) must be an String.", null)
+                        return
+                    }
+                    val pitch = args["pitch"] as? Double ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument must be an Double.", null)
+                        return
+                    }
+                    getOrCreatePlayer(id).setPitch(pitch)
                     result.success(null)
                 } ?: run {
                     result.error("WRONG_FORMAT", "The specified argument must be an Map<*, Any>.", null)
@@ -479,6 +500,10 @@ class AssetsAudioPlayer(
                         result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `playSpeed`", null)
                         return
                     }
+                    val pitch = args["pitch"] as? Double ?: run {
+                        result.error("WRONG_FORMAT", "The specified argument must be an Map<String, Any> containing a `pitch`", null)
+                        return
+                    }
                     val autoStart = args["autoStart"] as? Boolean ?: true
                     val displayNotification = args["displayNotification"] as? Boolean ?: false
                     val respectSilentMode = args["respectSilentMode"] as? Boolean ?: false
@@ -511,6 +536,7 @@ class AssetsAudioPlayer(
                             notificationSettings = notificationSettings,
                             result = result,
                             playSpeed = playSpeed,
+                            pitch = pitch,
                             audioMetas = audioMetas,
                             headsetStrategy = headsetStrategy,
                             audioFocusStrategy = audioFocusStrategy,

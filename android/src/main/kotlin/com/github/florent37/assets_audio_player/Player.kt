@@ -51,6 +51,7 @@ class Player(
     //region outputs
     var onVolumeChanged: ((Double) -> Unit)? = null
     var onPlaySpeedChanged: ((Double) -> Unit)? = null
+    var onPitchChanged: ((Double) -> Unit)? = null
     var onForwardRewind: ((Double) -> Unit)? = null
     var onReadyToPlay: ((DurationMS) -> Unit)? = null
     var onSessionIdFound: ((Int) -> Unit)? = null
@@ -71,6 +72,7 @@ class Player(
     private var audioFocusStrategy: AudioFocusStrategy = AudioFocusStrategy.None
     private var volume: Double = 1.0
     private var playSpeed: Double = 1.0
+    private var pitch: Double = 1.0
 
     private var isEnabledToPlayPause: Boolean = true
     private var isEnabledToChangeVolume: Boolean = true
@@ -156,6 +158,7 @@ class Player(
              notificationSettings: NotificationSettings,
              audioMetas: AudioMetas,
              playSpeed: Double,
+             pitch: Double,
              headsetStrategy: HeadsetStrategy,
              audioFocusStrategy: AudioFocusStrategy,
              networkHeaders: Map<*, *>?,
@@ -211,6 +214,7 @@ class Player(
 
                 setVolume(volume)
                 setPlaySpeed(playSpeed)
+                setPitch(pitch)
 
                 seek?.let {
                     this@Player.seek(milliseconds = seek * 1L)
@@ -427,6 +431,20 @@ class Player(
             mediaPlayer?.let {
                 it.setPlaySpeed(playSpeed.toFloat())
                 onPlaySpeedChanged?.invoke(this.playSpeed)
+            }
+        }
+    }
+
+    fun setPitch(pitch: Double) {
+        if (pitch >= 0) { //android only take positive pitch
+            if (forwardHandler != null) {
+                forwardHandler!!.stop()
+                forwardHandler = null
+            }
+            this.pitch = pitch
+            mediaPlayer?.let {
+                it.setPitch(pitch.toFloat())
+                onPitchChanged?.invoke(this.pitch)
             }
         }
     }

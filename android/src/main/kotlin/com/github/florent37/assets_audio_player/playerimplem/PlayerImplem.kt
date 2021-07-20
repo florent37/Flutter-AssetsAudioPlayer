@@ -29,4 +29,5 @@ abstract class PlayerImplem(
     abstract fun seekTo(to: Long)
     abstract fun setVolume(volume: Float)
     abstract fun setPlaySpeed(playSpeed: Float)
+    abstract fun setPitch(pitch: Float)
 }
