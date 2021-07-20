@@ -1,6 +1,6 @@
 name: assets_audio_player_web
 description: Web plugin for assets_audio_player, play music/audio stored in assets files directly from Flutter.
-version: 3.0.3+3
+version: 3.0.3+4
 #author: Florent Champigny <champigny.florent@gmail.com>
 homepage: https://github.com/florent37/Flutter-AssetsAudioPlayer
 
@@ -18,7 +18,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pedantic: ^1.11.0
+  pedantic: ^1.11.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
