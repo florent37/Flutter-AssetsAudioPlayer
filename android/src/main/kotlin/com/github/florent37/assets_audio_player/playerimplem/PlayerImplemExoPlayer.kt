@@ -2,7 +2,9 @@ package com.github.florent37.assets_audio_player.playerimplem
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.github.florent37.assets_audio_player.AssetAudioPlayerThrowable
 import com.github.florent37.assets_audio_player.AssetsAudioPlayerPlugin
 import com.github.florent37.assets_audio_player.Player
@@ -11,6 +13,7 @@ import com.google.android.exoplayer2.C.AUDIO_SESSION_ID_UNSET
 import com.google.android.exoplayer2.Player.REPEAT_MODE_ALL
 import com.google.android.exoplayer2.Player.REPEAT_MODE_OFF
 import com.google.android.exoplayer2.audio.AudioListener
+import com.google.android.exoplayer2.drm.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.extractor.ts.AdtsExtractor
 import com.google.android.exoplayer2.source.MediaSource
@@ -70,7 +73,8 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
                     audioType = configuration.audioType,
                     assetAudioPackage = configuration.assetAudioPackage,
                     networkHeaders = configuration.networkHeaders,
-                    flutterAssets = configuration.flutterAssets
+                    flutterAssets = configuration.flutterAssets,
+                    drmConfiguration = configuration.drmConfiguration
             )
             return PlayerFinder.PlayerWithDuration(
                     player = mediaPlayer!!,
@@ -127,7 +131,8 @@ class PlayerImplemExoPlayer(
                       assetAudioPath: String?,
                       audioType: String,
                       networkHeaders: Map<*, *>?,
-                      assetAudioPackage: String?
+                      assetAudioPackage: String?,
+                      drmConfiguration: Map<*, *>?
     ): MediaSource {
         try {
             mediaPlayer?.stop()
@@ -155,8 +160,22 @@ class PlayerImplemExoPlayer(
                     else -> ProgressiveMediaSource.Factory(factory, DefaultExtractorsFactory().setAdtsExtractorFlags(AdtsExtractor.FLAG_ENABLE_CONSTANT_BITRATE_SEEKING))
                 }.createMediaSource(uri)
             } else if (audioType == Player.AUDIO_TYPE_FILE) {
-                return ProgressiveMediaSource
+
+                val factory = ProgressiveMediaSource
                         .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
+
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    val key = drmConfiguration?.get("clearKey")?.toString()
+
+                    if (key != null) {
+                        val sessionManager: DrmSessionManager = DefaultDrmSessionManager.Builder().setUuidAndExoMediaDrmProvider(C.CLEARKEY_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER).build(LocalMediaDrmCallback(key.toByteArray()))
+                        factory.setDrmSessionManager(sessionManager)
+                    }
+
+                }
+
+                return factory
                         .createMediaSource(Uri.fromFile(File(assetAudioPath)))
             } else { //asset$
                 val p = assetAudioPath!!.replace(" ", "%20")
@@ -222,7 +241,8 @@ class PlayerImplemExoPlayer(
             assetAudioPath: String?,
             audioType: String,
             networkHeaders: Map<*, *>?,
-            assetAudioPackage: String?
+            assetAudioPackage: String?,
+            drmConfiguration: Map<*, *>?
     ) = suspendCoroutine<DurationMS> { continuation ->
         var onThisMediaReady = false
 
@@ -237,7 +257,8 @@ class PlayerImplemExoPlayer(
                     assetAudioPath = assetAudioPath,
                     audioType = audioType,
                     networkHeaders = networkHeaders,
-                    assetAudioPackage = assetAudioPackage
+                    assetAudioPackage = assetAudioPackage,
+                    drmConfiguration = drmConfiguration
             )
 
             var lastState: Int? = null
