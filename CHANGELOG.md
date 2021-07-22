@@ -1,3 +1,6 @@
+## 3.0.3+6
+* Added DRM supports
+* Fix playSpeed for WEB.
 ## 3.0.3+5
 * Added pitch controller
 ## 3.0.3+4
