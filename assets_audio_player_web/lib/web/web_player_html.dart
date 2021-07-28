@@ -68,8 +68,7 @@ class WebPlayerHtml extends WebPlayer {
       final durationMs = (_audioElement?.duration ?? 0) * 1000;
       if (durationMs != _durationMs) {
         _durationMs = durationMs;
-        channel.invokeMethod(
-            WebPlayer.methodCurrent, {'totalDurationMs': durationMs});
+        channel.invokeMethod(WebPlayer.methodCurrent, {'totalDurationMs': durationMs});
       }
 
       if (_position != currentPosition) {
@@ -124,6 +123,7 @@ class WebPlayerHtml extends WebPlayer {
   Future<void> open({
     required String path,
     required String audioType,
+    String? package,
     bool autoStart = false,
     double volume = 1,
     double? seek,
@@ -133,7 +133,11 @@ class WebPlayerHtml extends WebPlayer {
     stop();
     _durationMs = null;
     _position = null;
-    _audioElement = html.AudioElement(findAssetPath(path, audioType));
+    _audioElement = html.AudioElement(findAssetPath(
+      path,
+      audioType,
+      package: package,
+    ));
 
     // it seems html audielement cannot take networkHeaders :'(
 
@@ -151,8 +155,7 @@ class WebPlayerHtml extends WebPlayer {
 
       if (durationMs != _durationMs) {
         _durationMs = durationMs;
-        channel.invokeMethod(
-            WebPlayer.methodCurrent, {'totalDurationMs': durationMs});
+        channel.invokeMethod(WebPlayer.methodCurrent, {'totalDurationMs': durationMs});
       }
 
       if (seek != null) {
