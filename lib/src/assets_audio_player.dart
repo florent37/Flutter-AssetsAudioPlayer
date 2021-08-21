@@ -1246,7 +1246,7 @@ class AssetsAudioPlayer {
   /// If the media player is playing, then pauses it
   /// If the media player has been paused, then play it
   ///
-  ///     _assetsAudioPlayer.playOfPause();
+  ///     _assetsAudioPlayer.playOrPause();
   ///
   Future<void> playOrPause() async {
     final playing = _isPlaying.valueOrNull ?? true;
