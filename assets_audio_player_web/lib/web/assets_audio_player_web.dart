@@ -99,6 +99,7 @@ class AssetsAudioPlayerWebPlugin {
         final double playSpeed = call.arguments['playSpeed'];
         final bool autoStart = call.arguments['autoStart'] ?? true;
         final Map networkHeaders = call.arguments['networkHeaders'];
+        final String package = call.arguments['package'];
         return _getOrCreate(id).open(
           path: path,
           audioType: audioType,
@@ -107,6 +108,7 @@ class AssetsAudioPlayerWebPlugin {
           playSpeed: playSpeed,
           autoStart: autoStart,
           networkHeaders: networkHeaders,
+          package: package,
         );
     }
   }
