@@ -5,7 +5,8 @@ import java.io.Serializable
 data class ImageMetas(
         val imageType: String?,
         val imagePackage: String?,
-        val imagePath: String?
+        val imagePath: String?,
+        val bytes: ByteArray?
 ) : Serializable
 
 data class AudioMetas(
@@ -21,7 +22,9 @@ fun fetchImageMetas(from: Map<*, *>, suffix: String= "") : ImageMetas {
     return ImageMetas(
             imagePath = from["song.image$suffix"] as? String,
             imageType = from["song.imageType$suffix"] as? String,
-            imagePackage = from["song.imagePackage$suffix"] as? String
+            imagePackage = from["song.imagePackage$suffix"] as? String,
+            bytes = from["song.bytes$suffix"] as? ByteArray
+
     )
 }
 
