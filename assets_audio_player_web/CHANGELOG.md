@@ -1,3 +1,8 @@
+## 3.0.3+8
+* Fix android 12 / api 31 issue.
+* Fix macOs build issue
+* Fix web assets issue for Web
+
 ## 3.0.3+7
 * Fix android 12 / api 31 issue.
 * Fix macOs build issue

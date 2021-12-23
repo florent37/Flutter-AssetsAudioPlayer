@@ -1,3 +1,5 @@
+## 3.0.3+8
+* Fix uploading issue
 ## 3.0.3+7
 * Fix android 12 / api 31 issue.
 * Fix macOs build issue
