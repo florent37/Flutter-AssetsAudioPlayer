@@ -1,5 +1,10 @@
+## 3.0.3+9
+* Fix mimType issue mp3 files from urls without extension #630
+* Fix web Null issue 
 ## 3.0.3+8
-* Fix uploading issue
+* Fix android 12 / api 31 issue.
+* Fix macOs build issue
+* Fix web assets issue for Web
 ## 3.0.3+7
 * Fix android 12 / api 31 issue.
 * Fix macOs build issue
