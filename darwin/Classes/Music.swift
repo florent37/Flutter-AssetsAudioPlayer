@@ -531,7 +531,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             if networkHeaders != nil && networkHeaders!.count > 0 {
                 let asset = AVURLAsset(url: url, options: [
                     "AVURLAssetHTTPHeaderFieldsKey": networkHeaders!,
-                    "AVURLAssetOutOfBandMIMETypeKey": "mp3"
+                    "AVURLAssetOutOfBandMIMETypeKey": "audio/mpeg"
                 ])
                 item = SlowMoPlayerItem(asset: asset)
             } else {
