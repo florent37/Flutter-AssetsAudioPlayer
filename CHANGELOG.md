@@ -1,3 +1,6 @@
+## 3.0.4
+* Fix web open player issue
+* update example app Android 12 compatable
 ## 3.0.3+9
 * Fix mimType issue mp3 files from urls without extension #630
 * Fix web Null issue 
