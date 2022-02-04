@@ -84,12 +84,12 @@ extension AssetAudioPlayerBuilder on AssetsAudioPlayer {
 
   PlayerBuilder builderCurrent({
     Key? key,
-    required CurrentWidgetBuilder builder,
+    required CurrentWidgetBuilder? builder,
   }) =>
       PlayerBuilder.current(
         key: key,
         player: this,
-        builder: builder,
+        builder: builder!,
       );
 
   PlayerBuilder builderPlayerState({

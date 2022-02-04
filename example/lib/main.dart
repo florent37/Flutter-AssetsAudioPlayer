@@ -10,7 +10,6 @@ import 'player/SongsSelector.dart';
 
 void main() {
   AssetsAudioPlayer.setupNotificationsOpenAction((notification) {
-    print(notification.audioId);
     return true;
   });
 
@@ -31,6 +30,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  //final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
+  late AssetsAudioPlayer _assetsAudioPlayer;
+  final List<StreamSubscription> _subscriptions = []; 
   final audios = <Audio>[
     //Audio.network(
     //  'https://d14nt81hc5bide.cloudfront.net/U7ZRzzHfk8pvmW28sziKKPzK',
@@ -123,13 +125,10 @@ class _MyAppState extends State<MyApp> {
     ),
   ];
 
-  //final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
-  AssetsAudioPlayer get _assetsAudioPlayer => AssetsAudioPlayer.withId('music');
-  final List<StreamSubscription> _subscriptions = [];
-
   @override
   void initState() {
     super.initState();
+    _assetsAudioPlayer = AssetsAudioPlayer.newPlayer();
     //_subscriptions.add(_assetsAudioPlayer.playlistFinished.listen((data) {
     //  print('finished : $data');
     //}));
@@ -151,7 +150,7 @@ class _MyAppState extends State<MyApp> {
     await _assetsAudioPlayer.open(
       Playlist(audios: audios, startIndex: 0),
       showNotification: true,
-      autoStart: false,
+      autoStart: true,
     );
   }
 
@@ -185,39 +184,45 @@ class _MyAppState extends State<MyApp> {
                   Stack(
                     fit: StackFit.passthrough,
                     children: <Widget>[
-                      _assetsAudioPlayer.builderCurrent(
-                        builder: (BuildContext context, Playing playing) {
-                          final myAudio =
-                              find(audios, playing.audio.assetAudioPath);
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Neumorphic(
-                              style: NeumorphicStyle(
-                                depth: 8,
-                                surfaceIntensity: 1,
-                                shape: NeumorphicShape.concave,
-                                boxShape: NeumorphicBoxShape.circle(),
-                              ),
-                              child: myAudio.metas.image?.path == null
-                                  ? const SizedBox()
-                                  : myAudio.metas.image?.type ==
-                                          ImageType.network
-                                      ? Image.network(
-                                          myAudio.metas.image!.path,
-                                          height: 150,
-                                          width: 150,
-                                          fit: BoxFit.contain,
-                                        )
-                                      : Image.asset(
-                                          myAudio.metas.image!.path,
-                                          height: 150,
-                                          width: 150,
-                                          fit: BoxFit.contain,
-                                        ),
-                            ),
-                          );
-                        },
-                      ),
+                      StreamBuilder<Playing?>(
+                          stream: _assetsAudioPlayer.current,
+                          builder: (context, playing) {
+                            if (playing.data != null) {
+                              final myAudio = find(
+                                  audios, playing.data!.audio.assetAudioPath);
+                              print(
+                                  'Yasin ${playing.data!.audio.audio.metas.id}');
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Neumorphic(
+                                  style: NeumorphicStyle(
+                                    depth: 8,
+                                    surfaceIntensity: 1,
+                                    shape: NeumorphicShape.concave,
+                                    boxShape: NeumorphicBoxShape.circle(),
+                                  ),
+                                  child: myAudio.metas.image?.path == null
+                                      ? const SizedBox()
+                                      : myAudio.metas.image?.type ==
+                                              ImageType.network
+                                          ? Image.network(
+                                              myAudio.metas.image!.path,
+                                              height: 150,
+                                              width: 150,
+                                              fit: BoxFit.contain,
+                                            )
+                                          : Image.asset(
+                                              myAudio.metas.image!.path,
+                                              height: 150,
+                                              width: 150,
+                                              fit: BoxFit.contain,
+                                            ),
+                                ),
+                              );
+                            }
+                            print('Yasin');
+                            return SizedBox.shrink();
+                          }),
                       Align(
                         alignment: Alignment.topRight,
                         child: NeumorphicButton(
@@ -268,8 +273,9 @@ class _MyAppState extends State<MyApp> {
                                     },
                                     onNext: () {
                                       //_assetsAudioPlayer.forward(Duration(seconds: 10));
-                                      _assetsAudioPlayer.next(keepLoopMode: true
-                                          /*keepLoopMode: false*/);
+                                      _assetsAudioPlayer.next(
+                                          keepLoopMode:
+                                              true /*keepLoopMode: false*/);
                                     },
                                     onPrevious: () {
                                       _assetsAudioPlayer.previous(
