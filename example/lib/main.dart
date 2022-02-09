@@ -139,10 +139,7 @@ class _MyAppState extends State<MyApp> {
     _subscriptions.add(_assetsAudioPlayer.audioSessionId.listen((sessionId) {
       print('audioSessionId : $sessionId');
     }));
-    _subscriptions
-        .add(AssetsAudioPlayer.addNotificationOpenAction((notification) {
-      return false;
-    }));
+
     openPlayer();
   }
 
@@ -190,8 +187,7 @@ class _MyAppState extends State<MyApp> {
                             if (playing.data != null) {
                               final myAudio = find(
                                   audios, playing.data!.audio.assetAudioPath);
-                              print(
-                                  'Yasin ${playing.data!.audio.audio.metas.id}');
+                                  print(playing.data!.audio.assetAudioPath); 
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Neumorphic(
@@ -220,7 +216,6 @@ class _MyAppState extends State<MyApp> {
                                 ),
                               );
                             }
-                            print('Yasin');
                             return SizedBox.shrink();
                           }),
                       Align(
