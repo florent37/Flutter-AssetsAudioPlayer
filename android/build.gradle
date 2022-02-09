@@ -2,7 +2,7 @@
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.5.30'
+    ext.kotlin_version = '1.6.10'
     repositories {
         google()
         mavenCentral()
@@ -48,7 +48,7 @@ android {
 
 dependencies {
 
-    def coroutinesVersion = "1.4.3"
+    def coroutinesVersion = "1.6.0"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:multidex:1.0.3'
@@ -57,7 +57,7 @@ dependencies {
     implementation "androidx.annotation:annotation:1.1.0"
 
 
-    def exoPlayerVersion = "2.14.1"
+    def exoPlayerVersion = "2.15.0"
 
     implementation "com.google.android.exoplayer:exoplayer:$exoPlayerVersion"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoPlayerVersion"

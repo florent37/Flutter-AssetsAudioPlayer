@@ -25,7 +25,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
                 //NotificationManager(context).showNotification(playerId= playerId, audioMetas = notificationAction.audioMetas, isPlaying = player.)
             }
             NotificationAction.ACTION_SELECT -> {
-                context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
+                //context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
                 context.startActivity(context.packageManager.getLaunchIntentForPackage(context.packageName)!!.apply {
                     action = NotificationAction.ACTION_SELECT
                     putExtra(NotificationService.TRACK_ID, trackID)

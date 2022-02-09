@@ -265,7 +265,7 @@ class PlayerImplemExoPlayer(
 
             this.mediaPlayer?.addListener(object : com.google.android.exoplayer2.Player.EventListener {
 
-                override fun onPlayerError(error: ExoPlaybackException) {
+                override fun onPlayerError(error: PlaybackException) {
                     val errorMapped = mapError(error)
                     if (!onThisMediaReady) {
                         continuation.resumeWithException(errorMapped)
