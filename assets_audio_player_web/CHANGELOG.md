@@ -1,3 +1,5 @@
+## 3.0.4+1
+* Fix andorid 12 issues and update exoplayer and gradles
 ## 3.0.4
 * Fix web open player issue
 * update example app Android 12 compatable
