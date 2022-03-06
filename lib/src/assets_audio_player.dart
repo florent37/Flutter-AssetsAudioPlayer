@@ -285,15 +285,15 @@ class AssetsAudioPlayer {
   ///         }),
   ValueStream<bool> get isPlaying => _isPlaying.stream;
   String get getCurrentAudioTitle =>
-      _current.value?.audio.audio.metas.title ?? '';
+      _current.valueOrNull?.audio.audio.metas.title ?? '';
   String get getCurrentAudioArtist =>
-      _current.value?.audio.audio.metas.artist ?? '';
+      _current.valueOrNull?.audio.audio.metas.artist ?? '';
   Map<String, dynamic> get getCurrentAudioextra =>
-      _current.value?.audio.audio.metas.extra ?? <String, dynamic>{};
+      _current.valueOrNull?.audio.audio.metas.extra ?? <String, dynamic>{};
   String get getCurrentAudioAlbum =>
-      _current.value?.audio.audio.metas.album ?? '';
+      _current.valueOrNull?.audio.audio.metas.album ?? '';
   MetasImage? get getCurrentAudioImage =>
-      _current.value?.audio.audio.metas.image;
+      _current.valueOrNull?.audio.audio.metas.image;
 
   /// represent the android session id
   /// does nothing on others platforms
