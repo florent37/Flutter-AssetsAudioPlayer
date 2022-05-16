@@ -77,10 +77,7 @@ class AssetsAudioPlayerPlugin : FlutterPlugin, PluginRegistry.NewIntentListener,
         return false
     }
 
-    override fun onNewIntent(intent: Intent?): Boolean {
-        if (intent == null)
-            return false
-
+    override fun onNewIntent(intent: Intent): Boolean {
         if (!intent.getBooleanExtra("isVisited", false)) {
             val res = sendNotificationPayloadMessage(intent) ?: false
             if (res && myActivity != null) {
