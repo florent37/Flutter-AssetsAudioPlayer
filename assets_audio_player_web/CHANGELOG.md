@@ -1,3 +1,5 @@
+## 3.0.4+2
+* Fix flutter 3.0 issues
 ## 3.0.4+1
 * Fix andorid 12 issues and update exoplayer and gradles
 ## 3.0.4
