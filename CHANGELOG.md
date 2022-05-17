@@ -1,3 +1,5 @@
+## 3.0.4+3
+* Fix warnings and abstract issue
 ## 3.0.4+2
 * Fix flutter 3.0 issues
 ## 3.0.4+1
