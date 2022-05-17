@@ -11,7 +11,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:rxdart/subjects.dart';
 import 'package:uuid/uuid.dart';
 
 import 'applifecycle.dart';
@@ -521,7 +520,7 @@ class AssetsAudioPlayer {
     _playerEditor = null;
 
     if (_lifecycleObserver != null) {
-      WidgetsBinding.instance?.removeObserver(_lifecycleObserver!);
+      WidgetsBinding.instance.removeObserver(_lifecycleObserver!);
       _lifecycleObserver = null;
     }
   }
@@ -691,7 +690,7 @@ class AssetsAudioPlayer {
       }
     });
     if (_lifecycleObserver != null) {
-      WidgetsBinding.instance?.addObserver(_lifecycleObserver!);
+      WidgetsBinding.instance.addObserver(_lifecycleObserver!);
     }
   }
 

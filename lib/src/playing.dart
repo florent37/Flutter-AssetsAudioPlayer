@@ -1,8 +1,6 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
 
-import 'playable.dart';
-
 /// Represents the current played audio asset
 /// When the player opened a song, it will ping AssetsAudioPlayer.current with a `AssetsAudio`
 ///
