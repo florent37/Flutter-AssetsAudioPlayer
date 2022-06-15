@@ -278,7 +278,7 @@ class PlayerImplemExoPlayer(
                     }
                 }
 
-                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                override fun onPlaybackStateChanged(playbackState: Int) {
                     if (lastState != playbackState) {
                         when (playbackState) {
                             ExoPlayer.STATE_ENDED -> {
