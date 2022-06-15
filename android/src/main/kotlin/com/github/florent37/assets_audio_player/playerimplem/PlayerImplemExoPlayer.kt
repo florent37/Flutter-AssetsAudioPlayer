@@ -332,7 +332,7 @@ class PlayerImplemExoPlayer(
     }
 
     override fun setVolume(volume: Float) {
-        mediaPlayer?.audioComponent?.volume = volume
+        mediaPlayer?.volume = volume
     }
 
     override fun setPlaySpeed(playSpeed: Float) {
