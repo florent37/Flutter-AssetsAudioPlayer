@@ -134,63 +134,67 @@ class PlayerImplemExoPlayer(
     ): MediaSource {
         try {
             mediaPlayer?.stop()
-            if (audioType == Player.AUDIO_TYPE_NETWORK || audioType == Player.AUDIO_TYPE_LIVESTREAM) {
-                val uri = Uri.parse(assetAudioPath)
-                val mediaItem: MediaItem = MediaItem.fromUri(uri)
-                val userAgent = "assets_audio_player"
+            when (audioType) {
+                Player.AUDIO_TYPE_NETWORK, Player.AUDIO_TYPE_LIVESTREAM -> {
+                    val uri = Uri.parse(assetAudioPath)
+                    val mediaItem: MediaItem = MediaItem.fromUri(uri)
+                    val userAgent = "assets_audio_player"
 
-                val factory = DataSource.Factory {
-                    val allowCrossProtocol = true
-                    val dataSource = DefaultHttpDataSource.Factory().setUserAgent(userAgent).setAllowCrossProtocolRedirects(allowCrossProtocol).createDataSource()
-                    networkHeaders?.forEach {
-                        it.key?.let { key ->
-                            it.value?.let { value ->
-                                dataSource.setRequestProperty(key.toString(), value.toString())
+                    val factory = DataSource.Factory {
+                        val allowCrossProtocol = true
+                        val dataSource = DefaultHttpDataSource.Factory().setUserAgent(userAgent).setAllowCrossProtocolRedirects(allowCrossProtocol).createDataSource()
+                        networkHeaders?.forEach {
+                            it.key?.let { key ->
+                                it.value?.let { value ->
+                                    dataSource.setRequestProperty(key.toString(), value.toString())
+                                }
                             }
                         }
-                    }
-                    dataSource
-                }
-
-                return when (type) {
-                    PlayerImplemTesterExoPlayer.Type.HLS -> HlsMediaSource.Factory(factory).setAllowChunklessPreparation(true)
-                    PlayerImplemTesterExoPlayer.Type.DASH -> DashMediaSource.Factory(factory)
-                    PlayerImplemTesterExoPlayer.Type.SmoothStreaming -> SsMediaSource.Factory(factory)
-                    else -> ProgressiveMediaSource.Factory(factory, DefaultExtractorsFactory().setAdtsExtractorFlags(AdtsExtractor.FLAG_ENABLE_CONSTANT_BITRATE_SEEKING))
-                }.createMediaSource(mediaItem)
-            } else if (audioType == Player.AUDIO_TYPE_FILE) {
-                val uri = Uri.parse(assetAudioPath)
-                var mediaItem: MediaItem = MediaItem.fromUri(uri)
-                val factory = ProgressiveMediaSource
-                        .Factory(DefaultDataSource.Factory(context), DefaultExtractorsFactory())
-
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    val key = drmConfiguration?.get("clearKey")?.toString()
-
-                    if (key != null) {
-                        val mediaItemDrmConfiguration: MediaItem.DrmConfiguration = MediaItem.DrmConfiguration.Builder(C.CLEARKEY_UUID).setKeySetId(key.toByteArray()).build()
-                        mediaItem = mediaItem.buildUpon().setDrmConfiguration(mediaItemDrmConfiguration).build()
-                        factory.setDrmSessionManagerProvider(DefaultDrmSessionManagerProvider())
+                        dataSource
                     }
 
+                    return when (type) {
+                        PlayerImplemTesterExoPlayer.Type.HLS -> HlsMediaSource.Factory(factory).setAllowChunklessPreparation(true)
+                        PlayerImplemTesterExoPlayer.Type.DASH -> DashMediaSource.Factory(factory)
+                        PlayerImplemTesterExoPlayer.Type.SmoothStreaming -> SsMediaSource.Factory(factory)
+                        else -> ProgressiveMediaSource.Factory(factory, DefaultExtractorsFactory().setAdtsExtractorFlags(AdtsExtractor.FLAG_ENABLE_CONSTANT_BITRATE_SEEKING))
+                    }.createMediaSource(mediaItem)
                 }
+                Player.AUDIO_TYPE_FILE -> {
+                    val uri = Uri.parse(assetAudioPath)
+                    var mediaItem: MediaItem = MediaItem.fromUri(uri)
+                    val factory = ProgressiveMediaSource
+                            .Factory(DefaultDataSource.Factory(context), DefaultExtractorsFactory())
 
-                return factory.createMediaSource(mediaItem)
-            } else { //asset$
-                val p = assetAudioPath!!.replace(" ", "%20")
-                val path = if (assetAudioPackage.isNullOrBlank()) {
-                    flutterAssets.getAssetFilePathByName(p)
-                } else {
-                    flutterAssets.getAssetFilePathByName(p, assetAudioPackage)
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                        val key = drmConfiguration?.get("clearKey")?.toString()
+
+                        if (key != null) {
+                            val mediaItemDrmConfiguration: MediaItem.DrmConfiguration = MediaItem.DrmConfiguration.Builder(C.CLEARKEY_UUID).setKeySetId(key.toByteArray()).build()
+                            mediaItem = mediaItem.buildUpon().setDrmConfiguration(mediaItemDrmConfiguration).build()
+                            factory.setDrmSessionManagerProvider(DefaultDrmSessionManagerProvider())
+                        }
+
+                    }
+
+                    return factory.createMediaSource(mediaItem)
                 }
-                val assetDataSource = AssetDataSource(context)
-                assetDataSource.open(DataSpec(Uri.fromFile(File(path))))
+                else -> { //asset$
+                    val p = assetAudioPath!!.replace(" ", "%20")
+                    val path = if (assetAudioPackage.isNullOrBlank()) {
+                        flutterAssets.getAssetFilePathByName(p)
+                    } else {
+                        flutterAssets.getAssetFilePathByName(p, assetAudioPackage)
+                    }
+                    val assetDataSource = AssetDataSource(context)
+                    assetDataSource.open(DataSpec(Uri.fromFile(File(path))))
 
-                val factory = DataSource.Factory { assetDataSource }
-                return ProgressiveMediaSource
-                        .Factory(factory, DefaultExtractorsFactory())
-                        .createMediaSource(MediaItem.fromUri(assetDataSource.uri!!))
+                    val factory = DataSource.Factory { assetDataSource }
+                    return ProgressiveMediaSource
+                            .Factory(factory, DefaultExtractorsFactory())
+                            .createMediaSource(MediaItem.fromUri(assetDataSource.uri!!))
+                }
             }
         } catch (e: Exception) {
             throw e
@@ -294,9 +298,8 @@ class PlayerImplemExoPlayer(
                                         continuation.resume(0) //no duration for livestream
                                     } else {
                                         val duration = mediaPlayer?.duration ?: 0
-                                        val totalDurationMs = (duration.toLong())
 
-                                        continuation.resume(totalDurationMs)
+                                        continuation.resume(duration)
                                     }
                                 }
                             }
