@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import com.github.florent37.assets_audio_player.AssetAudioPlayerThrowable
 import com.github.florent37.assets_audio_player.AssetsAudioPlayerPlugin
 import com.github.florent37.assets_audio_player.Player
@@ -12,7 +11,6 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.AUDIO_SESSION_ID_UNSET
 import com.google.android.exoplayer2.Player.REPEAT_MODE_ALL
 import com.google.android.exoplayer2.Player.REPEAT_MODE_OFF
-import com.google.android.exoplayer2.audio.AudioListener
 import com.google.android.exoplayer2.drm.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.extractor.ts.AdtsExtractor
@@ -41,13 +39,13 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
     }
 
 
-    override suspend fun open(configuration: PlayerFinderConfiguration) : PlayerFinder.PlayerWithDuration {
-        if(AssetsAudioPlayerPlugin.displayLogs) {
+    override suspend fun open(configuration: PlayerFinderConfiguration): PlayerFinder.PlayerWithDuration {
+        if (AssetsAudioPlayerPlugin.displayLogs) {
             Log.d("PlayerImplem", "trying to open with exoplayer($type)")
         }
         //some type are only for web
-        if(configuration.audioType != Player.AUDIO_TYPE_LIVESTREAM && configuration.audioType != Player.AUDIO_TYPE_LIVESTREAM){
-            if(type == Type.HLS || type == Type.DASH || type == Type.SmoothStreaming) {
+        if (configuration.audioType != Player.AUDIO_TYPE_LIVESTREAM && configuration.audioType != Player.AUDIO_TYPE_LIVESTREAM) {
+            if (type == Type.HLS || type == Type.DASH || type == Type.SmoothStreaming) {
                 throw IncompatibleException(configuration.audioType, type)
             }
         }
@@ -67,7 +65,7 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
         )
 
         try {
-            val durationMS = mediaPlayer?.open(
+            val durationMS = mediaPlayer.open(
                     context = configuration.context,
                     assetAudioPath = configuration.assetAudioPath,
                     audioType = configuration.audioType,
@@ -77,14 +75,14 @@ class PlayerImplemTesterExoPlayer(private val type: Type) : PlayerImplemTester {
                     drmConfiguration = configuration.drmConfiguration
             )
             return PlayerFinder.PlayerWithDuration(
-                    player = mediaPlayer!!,
-                    duration = durationMS!!
+                    player = mediaPlayer,
+                    duration = durationMS
             )
         } catch (t: Throwable) {
-            if(AssetsAudioPlayerPlugin.displayLogs) {
+            if (AssetsAudioPlayerPlugin.displayLogs) {
                 Log.d("PlayerImplem", "failed to open with exoplayer($type)")
             }
-            mediaPlayer?.release()
+            mediaPlayer.release()
             throw  t
         }
     }
@@ -127,77 +125,83 @@ class PlayerImplemExoPlayer(
     }
 
     private fun getDataSource(context: Context,
-                      flutterAssets: FlutterPlugin.FlutterAssets,
-                      assetAudioPath: String?,
-                      audioType: String,
-                      networkHeaders: Map<*, *>?,
-                      assetAudioPackage: String?,
-                      drmConfiguration: Map<*, *>?
+                              flutterAssets: FlutterPlugin.FlutterAssets,
+                              assetAudioPath: String?,
+                              audioType: String,
+                              networkHeaders: Map<*, *>?,
+                              assetAudioPackage: String?,
+                              drmConfiguration: Map<*, *>?
     ): MediaSource {
         try {
             mediaPlayer?.stop()
-            if (audioType == Player.AUDIO_TYPE_NETWORK || audioType == Player.AUDIO_TYPE_LIVESTREAM) {
-                val uri = Uri.parse(assetAudioPath)
-                val userAgent = "assets_audio_player"
+            when (audioType) {
+                Player.AUDIO_TYPE_NETWORK, Player.AUDIO_TYPE_LIVESTREAM -> {
+                    val uri = Uri.parse(assetAudioPath)
+                    val mediaItem: MediaItem = MediaItem.fromUri(uri)
+                    val userAgent = "assets_audio_player"
 
-                val factory = DataSource.Factory {
-                    val allowCrossProtocol = true
-                    val dataSource = DefaultHttpDataSource(userAgent, DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS, DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, allowCrossProtocol, null)
-                    networkHeaders?.forEach {
-                        it.key?.let { key ->
-                            it.value?.let { value ->
-                                dataSource.setRequestProperty(key.toString(), value.toString())
+                    val factory = DataSource.Factory {
+                        val allowCrossProtocol = true
+                        val dataSource = DefaultHttpDataSource.Factory().setUserAgent(userAgent).setAllowCrossProtocolRedirects(allowCrossProtocol).createDataSource()
+                        networkHeaders?.forEach {
+                            it.key?.let { key ->
+                                it.value?.let { value ->
+                                    dataSource.setRequestProperty(key.toString(), value.toString())
+                                }
                             }
                         }
-                    }
-                    dataSource;
-                }
-
-                return when(type){
-                    PlayerImplemTesterExoPlayer.Type.HLS -> HlsMediaSource.Factory(factory).setAllowChunklessPreparation(true)
-                    PlayerImplemTesterExoPlayer.Type.DASH -> DashMediaSource.Factory(factory)
-                    PlayerImplemTesterExoPlayer.Type.SmoothStreaming -> SsMediaSource.Factory(factory)
-                    else -> ProgressiveMediaSource.Factory(factory, DefaultExtractorsFactory().setAdtsExtractorFlags(AdtsExtractor.FLAG_ENABLE_CONSTANT_BITRATE_SEEKING))
-                }.createMediaSource(uri)
-            } else if (audioType == Player.AUDIO_TYPE_FILE) {
-
-                val factory = ProgressiveMediaSource
-                        .Factory(DefaultDataSourceFactory(context, "assets_audio_player"), DefaultExtractorsFactory())
-
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    val key = drmConfiguration?.get("clearKey")?.toString()
-
-                    if (key != null) {
-                        val sessionManager: DrmSessionManager = DefaultDrmSessionManager.Builder().setUuidAndExoMediaDrmProvider(C.CLEARKEY_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER).build(LocalMediaDrmCallback(key.toByteArray()))
-                        factory.setDrmSessionManager(sessionManager)
+                        dataSource
                     }
 
+                    return when (type) {
+                        PlayerImplemTesterExoPlayer.Type.HLS -> HlsMediaSource.Factory(factory).setAllowChunklessPreparation(true)
+                        PlayerImplemTesterExoPlayer.Type.DASH -> DashMediaSource.Factory(factory)
+                        PlayerImplemTesterExoPlayer.Type.SmoothStreaming -> SsMediaSource.Factory(factory)
+                        else -> ProgressiveMediaSource.Factory(factory, DefaultExtractorsFactory().setAdtsExtractorFlags(AdtsExtractor.FLAG_ENABLE_CONSTANT_BITRATE_SEEKING))
+                    }.createMediaSource(mediaItem)
                 }
+                Player.AUDIO_TYPE_FILE -> {
+                    val uri = Uri.parse(assetAudioPath)
+                    var mediaItem: MediaItem = MediaItem.fromUri(uri)
+                    val factory = ProgressiveMediaSource
+                            .Factory(DefaultDataSource.Factory(context), DefaultExtractorsFactory())
 
-                return factory
-                        .createMediaSource(Uri.fromFile(File(assetAudioPath)))
-            } else { //asset$
-                val p = assetAudioPath!!.replace(" ", "%20")
-                val path = if (assetAudioPackage.isNullOrBlank()) {
-                    flutterAssets.getAssetFilePathByName(p)
-                } else {
-                    flutterAssets.getAssetFilePathByName(p, assetAudioPackage)
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                        val key = drmConfiguration?.get("clearKey")?.toString()
+
+                        if (key != null) {
+                            val mediaItemDrmConfiguration: MediaItem.DrmConfiguration = MediaItem.DrmConfiguration.Builder(C.CLEARKEY_UUID).setKeySetId(key.toByteArray()).build()
+                            mediaItem = mediaItem.buildUpon().setDrmConfiguration(mediaItemDrmConfiguration).build()
+                            factory.setDrmSessionManagerProvider(DefaultDrmSessionManagerProvider())
+                        }
+
+                    }
+
+                    return factory.createMediaSource(mediaItem)
                 }
-                val assetDataSource = AssetDataSource(context)
-                assetDataSource.open(DataSpec(Uri.fromFile(File(path))))
+                else -> { //asset$
+                    val p = assetAudioPath!!.replace(" ", "%20")
+                    val path = if (assetAudioPackage.isNullOrBlank()) {
+                        flutterAssets.getAssetFilePathByName(p)
+                    } else {
+                        flutterAssets.getAssetFilePathByName(p, assetAudioPackage)
+                    }
+                    val assetDataSource = AssetDataSource(context)
+                    assetDataSource.open(DataSpec(Uri.fromFile(File(path))))
 
-                val factory = DataSource.Factory { assetDataSource }
-                return ProgressiveMediaSource
-                        .Factory(factory, DefaultExtractorsFactory())
-                        .createMediaSource(MediaItem.fromUri(assetDataSource.uri!!))
+                    val factory = DataSource.Factory { assetDataSource }
+                    return ProgressiveMediaSource
+                            .Factory(factory, DefaultExtractorsFactory())
+                            .createMediaSource(MediaItem.fromUri(assetDataSource.uri!!))
+                }
             }
         } catch (e: Exception) {
             throw e
         }
     }
 
-    private fun SimpleExoPlayer.Builder.incrementBufferSize(audioType: String): SimpleExoPlayer.Builder {
+    private fun ExoPlayer.Builder.incrementBufferSize(audioType: String): ExoPlayer.Builder {
         if (audioType == Player.AUDIO_TYPE_NETWORK || audioType == Player.AUDIO_TYPE_LIVESTREAM) {
             /* Instantiate a DefaultLoadControl.Builder. */
             val loadControlBuilder = DefaultLoadControl.Builder()
@@ -212,12 +216,12 @@ class PlayerImplemExoPlayer(
                     DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                     DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
 
-            return this.setLoadControl(loadControlBuilder.createDefaultLoadControl())
+            return this.setLoadControl(loadControlBuilder.build())
         }
         return this
     }
 
-    fun mapError(t: Throwable) : AssetAudioPlayerThrowable {
+    fun mapError(t: Throwable): AssetAudioPlayerThrowable {
         return when {
             t is ExoPlaybackException -> {
                 (t.cause as? HttpDataSource.InvalidResponseCodeException)?.takeIf { it.responseCode >= 400 }?.let {
@@ -226,7 +230,7 @@ class PlayerImplemExoPlayer(
                     AssetAudioPlayerThrowable.NetworkError(t)
                 }
             }
-            t.message?.contains("unable to connect",true) == true -> {
+            t.message?.contains("unable to connect", true) == true -> {
                 AssetAudioPlayerThrowable.NetworkError(t)
             }
             else -> {
@@ -247,7 +251,7 @@ class PlayerImplemExoPlayer(
         var onThisMediaReady = false
 
         try {
-            mediaPlayer = SimpleExoPlayer.Builder(context)
+            mediaPlayer = ExoPlayer.Builder(context)
                     .incrementBufferSize(audioType)
                     .build()
 
@@ -263,7 +267,7 @@ class PlayerImplemExoPlayer(
 
             var lastState: Int? = null
 
-            this.mediaPlayer?.addListener(object : com.google.android.exoplayer2.Player.EventListener {
+            this.mediaPlayer?.addListener(object : com.google.android.exoplayer2.Player.Listener {
 
                 override fun onPlayerError(error: PlaybackException) {
                     val errorMapped = mapError(error)
@@ -274,7 +278,7 @@ class PlayerImplemExoPlayer(
                     }
                 }
 
-                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                override fun onPlaybackStateChanged(playbackState: Int) {
                     if (lastState != playbackState) {
                         when (playbackState) {
                             ExoPlayer.STATE_ENDED -> {
@@ -294,9 +298,8 @@ class PlayerImplemExoPlayer(
                                         continuation.resume(0) //no duration for livestream
                                     } else {
                                         val duration = mediaPlayer?.duration ?: 0
-                                        val totalDurationMs = (duration.toLong())
 
-                                        continuation.resume(totalDurationMs)
+                                        continuation.resume(duration)
                                     }
                                 }
                             }
@@ -308,7 +311,8 @@ class PlayerImplemExoPlayer(
                 }
             })
 
-            mediaPlayer?.prepare(mediaSource)
+            mediaPlayer?.setMediaSource(mediaSource)
+            mediaPlayer?.prepare()
         } catch (error: Throwable) {
             if (!onThisMediaReady) {
                 continuation.resumeWithException(error)
@@ -328,35 +332,35 @@ class PlayerImplemExoPlayer(
     }
 
     override fun setVolume(volume: Float) {
-        mediaPlayer?.audioComponent?.volume = volume
+        mediaPlayer?.volume = volume
     }
 
     override fun setPlaySpeed(playSpeed: Float) {
-        val params: PlaybackParameters? = mediaPlayer?.getPlaybackParameters()
+        val params: PlaybackParameters? = mediaPlayer?.playbackParameters
         if (params != null) {
-            mediaPlayer?.setPlaybackParameters(PlaybackParameters(playSpeed, params.pitch))
+            mediaPlayer?.playbackParameters = PlaybackParameters(playSpeed, params.pitch)
         }
     }
 
     override fun setPitch(pitch: Float) {
-        val params: PlaybackParameters? = mediaPlayer?.getPlaybackParameters()
+        val params: PlaybackParameters? = mediaPlayer?.playbackParameters
         if (params != null) {
-            mediaPlayer?.setPlaybackParameters(PlaybackParameters(params.speed, pitch))
+            mediaPlayer?.playbackParameters = PlaybackParameters(params.speed, pitch)
         }
     }
 
     override fun getSessionId(listener: (Int) -> Unit) {
-        val id = mediaPlayer?.audioComponent?.audioSessionId?.takeIf { it != AUDIO_SESSION_ID_UNSET }
+        val id = mediaPlayer?.audioSessionId?.takeIf { it != AUDIO_SESSION_ID_UNSET }
         if (id != null) {
             listener(id)
         } else {
-            val listener = object : AudioListener {
+            val listener = object : com.google.android.exoplayer2.Player.Listener {
                 override fun onAudioSessionIdChanged(audioSessionId: Int) {
                     listener(audioSessionId)
-                    mediaPlayer?.audioComponent?.removeAudioListener(this)
+                    mediaPlayer?.removeListener(this)
                 }
             }
-            mediaPlayer?.audioComponent?.addAudioListener(listener)
+            mediaPlayer?.addListener(listener)
         }
         //return
     }
