@@ -520,7 +520,7 @@ class AssetsAudioPlayer {
     _playerEditor = null;
 
     if (_lifecycleObserver != null) {
-      WidgetsBinding.instance?.removeObserver(_lifecycleObserver!);
+      WidgetsBinding.instance.removeObserver(_lifecycleObserver!);
       _lifecycleObserver = null;
     }
   }
@@ -690,7 +690,7 @@ class AssetsAudioPlayer {
       }
     });
     if (_lifecycleObserver != null) {
-      WidgetsBinding.instance?.addObserver(_lifecycleObserver!);
+      WidgetsBinding.instance.addObserver(_lifecycleObserver!);
     }
   }
 
