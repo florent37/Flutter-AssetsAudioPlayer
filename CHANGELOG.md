@@ -1,3 +1,5 @@
+## 3.0.4+5
+* Fixed null aware
 ## 3.0.4+4
 * Fix issues and update exoplayer
 ## 3.0.4+3
