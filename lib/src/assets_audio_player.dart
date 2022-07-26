@@ -1082,6 +1082,7 @@ class AssetsAudioPlayer {
 
         _stopped = false;
         _playlistFinished.add(false);
+        _isBuffering.add(false);
       } catch (e) {
         _lastOpenedAssetsAudio = currentAudio; // revert to the previous audio
         _current.add(null);
