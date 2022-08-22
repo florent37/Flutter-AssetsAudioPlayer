@@ -499,7 +499,7 @@ Custom icon (android only)
 
 ### By ResourceName
 
-Make sur you added those icons inside your `android/res/drawable` **!!! not on flutter assets !!!!**
+Make sure you added those icons inside your `android/res/drawable` **!!! not on flutter assets !!!!**
 
 ```dart
 await _assetsAudioPlayer.open(
