@@ -1,3 +1,5 @@
+@file:Suppress("EmptyMethod", "EmptyMethod", "EmptyMethod", "EmptyMethod")
+
 package com.github.florent37.assets_audio_player_web
 
 import androidx.annotation.NonNull;
@@ -14,7 +16,7 @@ public class AssetsAudioPlayerWebPlugin: FlutterPlugin, MethodCallHandler {
 
   private lateinit var channel : MethodChannel
 
-  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+  override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     //no-op for compatibility
   }
 
@@ -25,11 +27,11 @@ public class AssetsAudioPlayerWebPlugin: FlutterPlugin, MethodCallHandler {
     }
   }
 
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+  override fun onMethodCall(call: MethodCall, result: Result) {
     //no-op for compatibility
   }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     //no-op for compatibility
   }
 }
