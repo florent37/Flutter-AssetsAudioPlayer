@@ -1,38 +1,43 @@
-# This is a basic workflow to help you get started with Actions
+# # This is a basic workflow to help you get started with Actions
 
-name: Publish
+# name: Publish
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
-on:
-  push:
-    branches: [ master ]
+# # Controls when the action will run. Triggers the workflow on push or pull request
+# # events but only for the master branch
+# on:
+#   push:
+#     branches: [ master ]
   
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+# # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# jobs:
+#   # This workflow contains a single job called "build"
+#   build:
+#     # The type of runner that the job will run on
+#     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Publish web
-      uses: sakebook/actions-flutter-pub-publisher@v1.3.0
-      with:
-        credential: ${{ secrets.CREDENTIAL_JSON }}
-        flutter_package: true
-        package_directory: "assets_audio_player_web"
-        skip_test: true
-        dry_run: false
-    - name: Publish
-      uses: sakebook/actions-flutter-pub-publisher@v1.3.0
-      with:
-        credential: ${{ secrets.CREDENTIAL_JSON }}
-        flutter_package: true
-        package_directory: "."
-        skip_test: true
-        dry_run: false
+#     # Steps represent a sequence of tasks that will be executed as part of the job
+#     steps:
+#     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#     - name: Checkout
+#       uses: actions/checkout@v2
+#     - name: Publish web
+#       uses: sakebook/actions-flutter-pub-publisher@v1.3.0
+#       with:
+#         credential: ${{ secrets.CREDENTIAL_JSON }}
+#         flutter_package: true
+#         package_directory: "assets_audio_player_web"
+#         skip_test: true
+#         dry_run: false
+
+#     - name: Publish
+#       uses: sakebook/actions-flutter-pub-publisher@v1.3.0
+#       with:
+#         credential: ${{ secrets.CREDENTIAL_JSON }}
+#         flutter_package: true
+#         package_directory: "."
+#         skip_test: true
+#         dry_run: false
+
+
+# - name: Flutter action
+#   uses: subosito/flutter-action@v2.8.0
