@@ -1,10 +1,10 @@
 name: Integrate
 on: [push]
     # branches: [ master, staging, test, dev, feature* ]
-  
+
 jobs:
   build-general:
-    name: General build 
+    name: General build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -16,7 +16,7 @@ jobs:
 
   android-build:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-java@v2
       with:
