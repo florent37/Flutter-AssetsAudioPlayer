@@ -31,7 +31,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   //final AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer();
   late AssetsAudioPlayer _assetsAudioPlayer;
-  final List<StreamSubscription> _subscriptions = []; 
+  final List<StreamSubscription> _subscriptions = [];
   final audios = <Audio>[
     //Audio.network(
     //  'https://d14nt81hc5bide.cloudfront.net/U7ZRzzHfk8pvmW28sziKKPzK',
@@ -101,7 +101,7 @@ class _MyAppState extends State<MyApp> {
       ),
     ),
     Audio(
-      'assets/audios/pop.mp3',
+      'assets/audios/pop%20test.mp3',
       metas: Metas(
         id: 'Pop',
         title: 'Pop',
@@ -186,7 +186,7 @@ class _MyAppState extends State<MyApp> {
                             if (playing.data != null) {
                               final myAudio = find(
                                   audios, playing.data!.audio.assetAudioPath);
-                                  print(playing.data!.audio.assetAudioPath); 
+                              print(playing.data!.audio.assetAudioPath);
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Neumorphic(

@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:flutter/material.dart';
+
 import './string_duration.dart';
 
 void main() {
@@ -69,8 +70,8 @@ class _MyPageWithAudioState extends State<MyPageWithAudio> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 shape: CircleBorder(),
+                backgroundColor: Theme.of(context).primaryColor,
                 padding: EdgeInsets.all(14),
-                primary: Theme.of(context).primaryColor,
               ),
               onPressed: () {
                 setState(() {
