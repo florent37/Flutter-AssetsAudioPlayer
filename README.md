@@ -1,17 +1,15 @@
-# 🎧 assets_audio_player  🔊
+# 🎧 assets_audio_player 🔊
 
-[![pub package](https://img.shields.io/pub/v/assets_audio_player.svg)](
-https://pub.dartlang.org/packages/assets_audio_player)
+[![pub package](https://img.shields.io/pub/v/assets_audio_player.svg)](https://pub.dartlang.org/packages/assets_audio_player)
 <a href="https://github.com/Solido/awesome-flutter">
-   <img alt="Awesome Flutter" src="https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat" />
+<img alt="Awesome Flutter" src="https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat" />
 </a>
 <img src="https://img.shields.io/badge/platform-android%20%7C%20ios%20%7C%20macos%20%7C%20web%20-%23989898" />
-
 
 [![Codemagic build status](https://api.codemagic.io/apps/5ed8002fe1907b001c67db52/5ed8002fe1907b001c67db51/status_badge.svg)](https://codemagic.io/apps/5ed8002fe1907b001c67db52/5ed8002fe1907b001c67db51/latest_build)
 [![CodeFactor](https://www.codefactor.io/repository/github/florent37/flutter-assetsaudioplayer/badge)](https://www.codefactor.io/repository/github/florent37/flutter-assetsaudioplayer)
 
-Play music/audio stored in assets files (simultaneously) directly from Flutter (android / ios / web / macos). 
+Play music/audio stored in assets files (simultaneously) directly from Flutter (android / ios / web / macos).
 
 You can also use play audio files from **network** using their url, **radios/livestream** and **local files**
 
@@ -38,8 +36,8 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^3.0.5
-  
+  assets_audio_player: ^3.0.6
+
 or
 
 assets_audio_player:
@@ -47,7 +45,7 @@ git:
 url: https://github.com/florent37/Flutter-AssetsAudioPlayer.git
 ref: master
 
-ref can be latest commit id. 
+ref can be latest commit id.
 ```
 
 **Works with `flutter: ">=1.12.13+hotfix.6 <2.0.0"`, be sure to upgrade your sdk**
@@ -380,7 +378,7 @@ You like the package ? buy me a kofi :)
 
 # 📁 Import assets files
 
-No needed to copy songs to a media cache, with assets_audio_player you can open them directly from the assets. 
+No needed to copy songs to a media cache, with assets_audio_player you can open them directly from the assets.
 
 1. Create an audio directory in your assets (not necessary named "audios")
 2. Declare it inside your pubspec.yaml
@@ -401,7 +399,7 @@ assetsAudioPlayer.open(
 );
 ```
 
-You can also play *network songs* from *url*
+You can also play _network songs_ from _url_
 
 ```Dart
 final assetsAudioPlayer = AssetsAudioPlayer();
@@ -415,7 +413,7 @@ try {
 }
 ```
 
-*LiveStream / Radio* from *url*
+_LiveStream / Radio_ from _url_
 
 **The main difference with network, if you pause/play, on livestream it will resume to present duration**
 
@@ -431,7 +429,7 @@ try {
 }
 ```
 
-And play *songs from file*
+And play _songs from file_
 
 ```Dart
 //create a new player
@@ -464,9 +462,7 @@ assetsAudioPlayer.forwardRewind(double speed);
 assetsAudioPlayer.stop();
 ```
 
-
-# Notifications 
-
+# Notifications
 
 [![notification](./medias/notification_android.png)](https://github.com/florent37/Flutter-AssetsAudioPlayer)
 
@@ -477,7 +473,7 @@ on iOS, it will use `MPNowPlayingInfoCenter`
 1. Add metas inside your audio
 
 ```dart
-final audio = Audio.network("/assets/audio/country.mp3", 
+final audio = Audio.network("/assets/audio/country.mp3",
     metas: Metas(
             title:  "Country",
             artist: "Florent Champigny",
@@ -512,7 +508,7 @@ await _assetsAudioPlayer.open(
             customPrevIcon: AndroidResDrawable(name:"ic_prev_custom"),
             customNextIcon: AndroidResDrawable(name:"ic_next_custom"),
         )
-      
+
 ```
 
 And don't forget tell proguard to keep those resources for release mode
@@ -540,7 +536,7 @@ tools:keep="@drawable/ic_next_custom, @drawable/ic_prev_custom, @drawable/ic_pau
      android:resource="@drawable/ic_music_custom"/>
 ```
 
-You can also change actions icons 
+You can also change actions icons
 
 ```
 <meta-data
@@ -562,7 +558,8 @@ You can also change actions icons
 
 ## Handle notification click (android)
 
-Add in main 
+Add in main
+
 ```dart
 AssetsAudioPlayer.setupNotificationsOpenAction((notification) {
     //custom action
@@ -590,7 +587,7 @@ open(AUDIO,
    showNotification: true,
    notificationSettings: NotificationSettings(
        prevEnabled: false, //disable the previous button
-  
+
        //and have a custom next action (will disable the default action)
        customNextAction: (player) {
          print("next");
@@ -602,7 +599,7 @@ open(AUDIO,
 
 ## Update audio's metas / notification content
 
-After your audio creation, just call 
+After your audio creation, just call
 
 ```dart
 audio.updateMetas(
@@ -617,20 +614,20 @@ audio.updateMetas(
 ```
 
 ## Bluetooth Actions
- 
+
 You have to enable notification to make them work
 
-Available remote commands : 
+Available remote commands :
 
 - Play / Pause
 - Next
 - Prev
-- Stop 
+- Stop
 
 ## HeadPhone Strategy
 
 (Only for Android for now)
- 
+
 while opening a song/playlist, add a strategy
 
 ```dart
@@ -644,13 +641,13 @@ assetsAudioPlayer.open(
 
 If you want to make it work on bluetooth too, you'll have to add the BLUETOOTH permission inside your AndroidManifest.xml
 
-```xml  
+```xml
 <uses-permission android:name="android.permission.BLUETOOTH" />
 ```
 
 # ⛓ Play in parallel / simultaneously
 
-You can create new AssetsAudioPlayer using AssetsAudioPlayer.newPlayer(), 
+You can create new AssetsAudioPlayer using AssetsAudioPlayer.newPlayer(),
 which will play songs in a different native Media Player
 
 This will enable to play two songs simultaneously
@@ -672,13 +669,14 @@ AssetsAudioPlayer.playAndForget(
 );
 ```
 
-Each player has an unique generated `id`, you can retrieve or create them manually using 
+Each player has an unique generated `id`, you can retrieve or create them manually using
 
 ```dart
 final player = AssetsAudioPlayer.withId(id: "MY_UNIQUE_ID");
 ```
 
 # 🗄️ Playlist
+
 ```Dart
 assetsAudioPlayer.open(
   Playlist(
@@ -738,10 +736,11 @@ Or simply keep `play: false`
 
 ## 🎧 Listeners
 
-All listeners exposes Streams 
+All listeners exposes Streams
 Using RxDart, AssetsAudioPlayer exposes some listeners as ValueObservable (Observable that provides synchronous access to the last emitted item);
 
 ### 🎵 Current song
+
 ```Dart
 //The current playing audio, filled with the total song duration
 assetsAudioPlayer.current //ValueObservable<PlayingAudio>
@@ -775,7 +774,7 @@ return StreamBuilder(
     stream: assetsAudioPlayer.currentPosition,
     builder: (context, asyncSnapshot) {
         final Duration duration = asyncSnapshot.data;
-        return Text(duration.toString());  
+        return Text(duration.toString());
     }),
 ```
 
@@ -785,7 +784,7 @@ or use a PlayerBuilder !
 PlayerBuilder.currentPosition(
      player: _assetsAudioPlayer,
      builder: (context, duration) {
-       return Text(duration.toString());  
+       return Text(duration.toString());
      }
 )
 ```
@@ -795,13 +794,15 @@ or Player Builder Extension
 ```dart
 _assetsAudioPlayer.builderCurrentPosition(
      builder: (context, duration) {
-       return Text(duration.toString());  
+       return Text(duration.toString());
      }
 )
 ```
 
 ### ▶ IsPlaying
+
 boolean observable representing the current mediaplayer playing state
+
 ```Dart
 assetsAudioPlayer.isPlaying // ValueObservable<bool>
 
@@ -813,7 +814,7 @@ return StreamBuilder(
     stream: assetsAudioPlayer.isPlaying,
     builder: (context, asyncSnapshot) {
         final bool isPlaying = asyncSnapshot.data;
-        return Text(isPlaying ? "Pause" : "Play");  
+        return Text(isPlaying ? "Pause" : "Play");
     }),
 ```
 
@@ -823,7 +824,7 @@ or use a PlayerBuilder !
 PlayerBuilder.isPlaying(
      player: _assetsAudioPlayer,
      builder: (context, isPlaying) {
-       return Text(isPlaying ? "Pause" : "Play");  
+       return Text(isPlaying ? "Pause" : "Play");
      }
 )
 ```
@@ -833,7 +834,7 @@ or Player Builder Extension
 ```dart
 _assetsAudioPlayer.builderIsPlaying(
      builder: (context, isPlaying) {
-       return Text(isPlaying ? "Pause" : "Play");  
+       return Text(isPlaying ? "Pause" : "Play");
      }
 )
 ```
@@ -841,6 +842,7 @@ _assetsAudioPlayer.builderIsPlaying(
 ### 🔊 Volume
 
 Change the volume (between 0.0 & 1.0)
+
 ```Dart
 assetsAudioPlayer.setVolume(0.5);
 ```
@@ -856,7 +858,6 @@ https://developer.android.com/reference/android/media/AudioManager.html?hl=fr#ge
 
 https://developer.apple.com/documentation/avfoundation/avaudiosessioncategorysoloambient
 
-
 Listen the volume
 
 ```dart
@@ -864,7 +865,7 @@ return StreamBuilder(
     stream: assetsAudioPlayer.volume,
     builder: (context, asyncSnapshot) {
         final double volume = asyncSnapshot.data;
-        return Text("volume : $volume");  
+        return Text("volume : $volume");
     }),
 ```
 
@@ -881,7 +882,7 @@ PlayerBuilder.volume(
 
 ### ✋ Finished
 
-Called when the current song has finished to play, 
+Called when the current song has finished to play,
 
 it gives the Playing audio that just finished
 
@@ -889,7 +890,7 @@ it gives the Playing audio that just finished
 assetsAudioPlayer.playlistAudioFinished //ValueObservable<Playing>
 
 assetsAudioPlayer.playlistAudioFinished.listen((Playing playing){
-    
+
 })
 ```
 
@@ -899,14 +900,14 @@ Called when the complete playlist has finished to play
 assetsAudioPlayer.playlistFinished //ValueObservable<bool>
 
 assetsAudioPlayer.playlistFinished.listen((finished){
-    
+
 })
 ```
 
 ### 🔁 Looping
 
 ```Dart
-final LoopMode loopMode = assetsAudioPlayer.loop; 
+final LoopMode loopMode = assetsAudioPlayer.loop;
 // possible values
 // LoopMode.none : not looping
 // LoopMode.single : looping a single audio
@@ -957,7 +958,6 @@ Audio audio = Audio.network(
 assetsAudioPlayer.open(audio);
 ```
 
-
 # Error Handling
 
 By default, on playing error, it stop the audio
@@ -978,7 +978,7 @@ _player.onErrorDo = (handler){
 };
 ```
 
-Try to open again on same position 
+Try to open again on same position
 
 ```dart
 _player.onErrorDo = (handler){
@@ -993,7 +993,7 @@ _player.onErrorDo = (handler){
 
 # Network Policies (android/iOS/macOS)
 
-Android only allow HTTPS calls, you will have an error if you're using HTTP, 
+Android only allow HTTPS calls, you will have an error if you're using HTTP,
 don't forget to add INTERNET permission and seet `usesCleartextTraffic="true"` in your **AndroidManifest.xml**
 
 ```
@@ -1009,7 +1009,7 @@ don't forget to add INTERNET permission and seet `usesCleartextTraffic="true"` i
 </manifest>
 ```
 
-iOS only allow HTTPS calls, you will have an error if you're using HTTP, 
+iOS only allow HTTPS calls, you will have an error if you're using HTTP,
 don't forget to edit your **info.plist** and set `NSAppTransportSecurity` to `NSAllowsArbitraryLoads`
 
 ```
@@ -1041,7 +1041,7 @@ and in your
 
 `Runner/DebugProfile.entitlements`
 
-add 
+add
 
 ```
 <key>com.apple.security.network.client</key>
