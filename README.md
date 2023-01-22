@@ -24,7 +24,7 @@ flutter:
 ```Dart
 AssetsAudioPlayer.newPlayer().open(
     Audio("assets/audios/song1.mp3"),
-    autoPlay: true,
+    autoStart: true,
     showNotification: true,
 );
 ```
