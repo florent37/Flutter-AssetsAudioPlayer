@@ -21,6 +21,12 @@ import kotlin.coroutines.suspendCoroutine
 object ImageDownloader {
 
     suspend fun loadBitmap(context: Context, imageMetas: ImageMetas?) : Bitmap? {
+        if(imageMetas?.bytes!=null){
+         
+           val image = BitmapFactory.decodeByteArray(imageMetas!!.bytes, 0, imageMetas!!.bytes!!.size)
+           return image
+                
+        }
         if (imageMetas?.imageType != null && imageMetas.imagePath != null) {
             try {
                 return getBitmap(context = context,

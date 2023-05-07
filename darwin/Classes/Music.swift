@@ -126,7 +126,9 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     
     func getUrlByType(path: String, audioType: String, assetPackage: String?) -> URL? {
         var url : URL
-        
+        if(path.starts(with:"ipod-library")){
+            return URL(string: path)
+        }
         if(audioType == "network" || audioType == "liveStream"){
             if let u = URL(string: path) {
                 return u
