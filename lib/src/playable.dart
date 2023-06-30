@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/foundation.dart';
@@ -224,8 +223,8 @@ class Audio extends Playable {
     required this.audioType,
     this.package,
     this.cached,
-    this.playSpeed,
     this.pitch,
+    this.playSpeed,
     Map<String, String>? headers,
     Metas? metas,
     this.drmConfiguration

@@ -93,7 +93,7 @@ class RecorderExampleState extends State<RecorderExample> {
                     }
                   },
                   style: TextButton.styleFrom(
-                    primary: Colors.lightBlue,
+                    foregroundColor: Colors.lightBlue,
                   ),
                   child: _buildText(_currentStatus),
                 ),
@@ -102,7 +102,7 @@ class RecorderExampleState extends State<RecorderExample> {
                 onPressed:
                     _currentStatus != RecordingStatus.Unset ? _stop : null,
                 style: TextButton.styleFrom(
-                  primary: Colors.blueAccent.withOpacity(0.5),
+                  foregroundColor: Colors.blueAccent.withOpacity(0.5),
                 ),
                 child: Text('Stop', style: TextStyle(color: Colors.white)),
               ),
@@ -112,7 +112,7 @@ class RecorderExampleState extends State<RecorderExample> {
               TextButton(
                 onPressed: onPlayAudio,
                 style: TextButton.styleFrom(
-                  primary: Colors.blueAccent.withOpacity(0.5),
+                  foregroundColor: Colors.blueAccent.withOpacity(0.5),
                 ),
                 child: Text('Play', style: TextStyle(color: Colors.white)),
               ),
