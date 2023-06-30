@@ -1,3 +1,5 @@
+## 3.0.6
+* Update kotling version and fix minor issues
 ## 3.0.5
 * Breaking change, with Flutter 3.0 removed null aware for WidgetsBinding 
 ## 3.0.4+5
