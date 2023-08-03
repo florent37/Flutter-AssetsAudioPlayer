@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.PendingIntent.FLAG_IMMUTABLE
-import android.util.Log
 import android.support.v4.media.session.MediaSessionCompat
 import com.github.florent37.assets_audio_player.AssetsAudioPlayerPlugin
 
@@ -237,6 +236,8 @@ class NotificationService : Service() {
         MediaButtonReceiver.handleIntent(mediaSession, toggleIntent)
 
         val context = this
+
+        val player = AssetsAudioPlayerPlugin.instance?.assetsAudioPlayer?.getPlayer(action.playerId) ?: return
 
         val callback = object: MediaSessionCompat.Callback() {
             override fun onPlay() {
