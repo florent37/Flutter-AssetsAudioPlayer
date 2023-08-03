@@ -25,6 +25,9 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.PendingIntent.FLAG_IMMUTABLE
+import android.util.Log
+import android.support.v4.media.session.MediaSessionCompat
+import com.github.florent37.assets_audio_player.AssetsAudioPlayerPlugin
 
 class NotificationService : Service() {
 
@@ -59,7 +62,7 @@ class NotificationService : Service() {
             MediaButtonsReceiver.getMediaSessionCompat(context).let { mediaSession ->
                 val state = if (isPlaying) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
                 val newState = PlaybackStateCompat.Builder()
-                        .setActions(ACTION_SEEK_TO)
+                        .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SEEK_TO)
                         .setState(state, currentPositionMs, if (isPlaying) speed else 0f)
                         .build()
 
@@ -235,11 +238,46 @@ class NotificationService : Service() {
 
         val context = this
 
+        val callback = object: MediaSessionCompat.Callback() {
+            override fun onPlay() {
+                player.askPlayOrPause()
+            }
+
+            override fun onPause() {
+                player.askPlayOrPause()
+            }
+
+            override fun onSkipToPrevious() {
+                player.prev()
+            }
+
+            override fun onSkipToNext() {
+                player.next()
+            }
+
+            override fun onSeekTo(pos: Long) {
+                player.seek(pos)
+            }
+
+            //override fun onCustomAction(action: String, extras: Bundle?) {
+                //when (action) {
+                //    CUSTOM_ACTION_1 -> doCustomAction1(extras)
+                //    CUSTOM_ACTION_2 -> doCustomAction2(extras)
+                //    else -> {
+                //        Log.w(TAG, "Unknown custom action $action")
+                //    }
+                //}
+            //}
+
+        }
+
+        mediaSession.setCallback(callback)
+
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
                 //prev
                 .apply {
                     if (notificationSettings.prevEnabled) {
-                        addAction(getPrevIcon(context, action.notificationSettings.previousIcon), "prev",
+                        addAction(getPrevIcon(context, action.notificationSettings.previousIcon), "Previous",
                                 PendingIntent.getBroadcast(context, 0, createReturnIntent(forAction = NotificationAction.ACTION_PREV, forPlayer = action.playerId, audioMetas = action.audioMetas), FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
                         )
                     }
@@ -249,7 +287,7 @@ class NotificationService : Service() {
                     if (notificationSettings.playPauseEnabled) {
                         addAction(
                                 if (action.isPlaying) getPauseIcon(context, action.notificationSettings.pauseIcon) else getPlayIcon(context, action.notificationSettings.playIcon),
-                                if (action.isPlaying) "pause" else "play",
+                                if (action.isPlaying) "Pause" else "Play",
                                 pendingToggleIntent
                         )
                     }
@@ -257,7 +295,7 @@ class NotificationService : Service() {
                 //next
                 .apply {
                     if (notificationSettings.nextEnabled) {
-                        addAction(getNextIcon(context, action.notificationSettings.nextIcon), "next", PendingIntent.getBroadcast(context, 0,
+                        addAction(getNextIcon(context, action.notificationSettings.nextIcon), "Next", PendingIntent.getBroadcast(context, 0,
                                 createReturnIntent(forAction = NotificationAction.ACTION_NEXT, forPlayer = action.playerId, audioMetas = action.audioMetas), FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
                         )
                     }
@@ -265,7 +303,7 @@ class NotificationService : Service() {
                 //stop
                 .apply {
                     if (notificationSettings.stopEnabled) {
-                        addAction(getStopIcon(context, action.notificationSettings.stopIcon), "stop", PendingIntent.getBroadcast(context, 0,
+                        addAction(getStopIcon(context, action.notificationSettings.stopIcon), "Stop", PendingIntent.getBroadcast(context, 0,
                                 createReturnIntent(forAction = NotificationAction.ACTION_STOP, forPlayer = action.playerId, audioMetas = action.audioMetas), FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
                         )
                     }
