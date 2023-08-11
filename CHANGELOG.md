@@ -1,3 +1,5 @@
+## 3.0.7
+* Update dependencies and fix notification issue
 ## 3.0.6
 * Update kotling version and fix minor issues
 ## 3.0.5
