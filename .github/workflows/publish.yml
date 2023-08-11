@@ -21,7 +21,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Publish web
-      uses: sakebook/actions-flutter-pub-publisher@v1.3.0
+      uses: sakebook/actions-flutter-pub-publisher@v1.4.1
       with:
         credential: ${{ secrets.CREDENTIAL_JSON }}
         flutter_package: true
@@ -29,7 +29,7 @@ jobs:
         skip_test: true
         dry_run: false
     - name: Publish
-      uses: sakebook/actions-flutter-pub-publisher@v1.3.0
+      uses: sakebook/actions-flutter-pub-publisher@v1.4.1
       with:
         credential: ${{ secrets.CREDENTIAL_JSON }}
         flutter_package: true
