@@ -29,6 +29,10 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 28
 
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.github.florent37.assets_audio_player_web'
+    }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
