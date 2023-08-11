@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Icons.file_download,
         color: Colors.white,
       ),
-      style: ElevatedButton.styleFrom(primary: Colors.green),
+      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
       label: Text(
         'Dowload',
         style: TextStyle(color: Colors.white),
