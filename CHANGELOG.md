@@ -1,3 +1,7 @@
+
+## 3.0.9
+
+- fix notification package naming and build issue
 ## 3.0.8
 * fix warnings
 ## 3.0.7
