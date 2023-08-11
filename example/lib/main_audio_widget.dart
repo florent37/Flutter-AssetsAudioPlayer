@@ -69,8 +69,7 @@ class _MyPageWithAudioState extends State<MyPageWithAudio> {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                shape: CircleBorder(),
-                backgroundColor: Theme.of(context).primaryColor,
+                shape: CircleBorder(), backgroundColor: Theme.of(context).primaryColor,
                 padding: EdgeInsets.all(14),
               ),
               onPressed: () {
