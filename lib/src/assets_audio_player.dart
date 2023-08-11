@@ -1094,14 +1094,14 @@ class AssetsAudioPlayer {
         _stopped = false;
         _playlistFinished.add(false);
         _isBuffering.add(false);
-      } on PlatformException catch (e) {
+      } on PlatformException {
         final errorHandler = ErrorHandler(
           player: this,
           currentPosition: currentPosition.value,
           playlist: _playlist?.playlist,
           playlistIndex: _playlist?.playlistIndex,
           error: AssetsAudioPlayerError(
-            errorType: AssetsAudioPlayerErrorType.Player, message: "",),
+            errorType: AssetsAudioPlayerErrorType.Player, message: '',),
         );
         if (onErrorDo != null) {
           onErrorDo!(errorHandler);
