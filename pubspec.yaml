@@ -6,7 +6,7 @@ version: 3.0.6
 homepage: https://github.com/florent37/Flutter-AssetsAudioPlayer
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.19.0 <3.0.0"
   flutter: ">=2.0.0"
 
 dependencies:
@@ -14,7 +14,7 @@ dependencies:
     sdk: flutter
   rxdart: ^0.27.3
   uuid: ^3.0.5
-  http: ^1.0.0 # to download / cache network files
+  http: ">=0.13.0 <2.0.0" # to download / cache network files
   path_provider: ^2.0.8 # removed this because it cancel flutter/android/ios on pub.dev path_provider: ^1.6.10
 
   # The design on https://flutter.dev/go/federated-plugins was to leave
