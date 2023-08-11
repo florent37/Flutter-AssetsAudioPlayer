@@ -22,10 +22,7 @@ rootProject.allprojects {
 }
 
 apply plugin: 'com.android.library'
-//apply plugin: 'com.android.application'
-//apply plugin: 'kotlin-android'
-//apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
+apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 28
 
