@@ -1,3 +1,7 @@
+## 3.0.8
+
+- fix warnings
+
 ## 3.0.7
 
 - Update dependencies and fix notification issue
