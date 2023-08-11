@@ -36,9 +36,11 @@ AssetsAudioPlayer.newPlayer().open(
 
 ```yaml
 dependencies:
-  assets_audio_player: ^3.0.6
+  assets_audio_player: ^3.0.8
 
 or
+
+recommend to use below. While we don't have access pub... 
 
 assets_audio_player:
 git:
