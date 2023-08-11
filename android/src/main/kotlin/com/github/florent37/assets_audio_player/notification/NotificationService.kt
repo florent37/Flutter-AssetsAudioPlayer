@@ -17,7 +17,6 @@ import android.support.v4.media.session.PlaybackStateCompat.ACTION_SEEK_TO
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.media.session.MediaButtonReceiver
-import com.github.florent37.assets_audio_player.R
 import com.google.android.exoplayer2.C
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -26,7 +25,9 @@ import kotlin.math.abs
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.support.v4.media.session.MediaSessionCompat
+import androidx.annotation.RequiresApi
 import com.github.florent37.assets_audio_player.AssetsAudioPlayerPlugin
+import com.github.florent37.assetsaudioplayer.R
 
 class NotificationService : Service() {
 
@@ -114,6 +115,7 @@ class NotificationService : Service() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.ECLAIR)
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         if (intent.action == Intent.ACTION_MEDIA_BUTTON) {
             MediaButtonsReceiver.getMediaSessionCompat(applicationContext).let {
@@ -138,6 +140,7 @@ class NotificationService : Service() {
                 .putExtra(TRACK_ID, audioMetas.trackID)
     }
 
+    @RequiresApi(Build.VERSION_CODES.ECLAIR)
     private fun displayNotification(action: NotificationAction.Show) {
         GlobalScope.launch(Dispatchers.Main) {
             val image = ImageDownloader.loadBitmap(context = applicationContext, imageMetas = action.audioMetas.image)
@@ -213,6 +216,7 @@ class NotificationService : Service() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.ECLAIR)
     private fun displayNotification(action: NotificationAction.Show, bitmap: Bitmap?) {
         createNotificationChannel()
         val mediaSession = MediaButtonsReceiver.getMediaSessionCompat(applicationContext)
@@ -346,7 +350,7 @@ class NotificationService : Service() {
 
         //fix for https://github.com/florent37/Flutter-AssetsAudioPlayer/issues/139
         if (!action.isPlaying && Build.VERSION.SDK_INT >= 24) {
-           stopForeground(2)
+           stopForeground(STOP_FOREGROUND_DETACH)
         }
 
     }
@@ -369,12 +373,14 @@ class NotificationService : Service() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.ECLAIR)
     private fun hideNotif() {
         NotificationManagerCompat.from(applicationContext).cancel(NOTIFICATION_ID)
         stopForeground(true)
         stopSelf()
     }
 
+    @RequiresApi(Build.VERSION_CODES.ECLAIR)
     override fun onTaskRemoved(rootIntent: Intent) {
         hideNotif()
     }

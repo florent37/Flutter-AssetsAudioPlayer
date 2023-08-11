@@ -10,14 +10,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_neumorphic: ^3.2.0
+  flutter_neumorphic: 
+    git:
+      url: https://github.com/den0206/Flutter-Neumorphic.git
+      ref: feature/remoce_accentcolor
   rxdart: ^0.27.0
   # for local file test
   dio: ^5.2.1+1
   path_provider: ^2.0.1
   http: ^1.1.0
   provider: ^6.0.0
-  file: ^6.1.0
+  file: ^7.0.0
   #flutter_html: ^2.2.1
 
   # flutter_audio_recorder: ^0.5.5
@@ -37,6 +40,9 @@ dev_dependencies:
     sdk: flutter
   build_web_compilers: ^4.0.4
   pedantic: ^1.11.0
+
+dependency_overrides:
+  file: ^7.0.0
 
   # uncomment to use remote repos
   # assets_audio_player: ^3.0.0
