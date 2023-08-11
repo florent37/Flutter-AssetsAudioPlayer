@@ -6,7 +6,7 @@ version: 3.0.6
 homepage: https://github.com/florent37/Flutter-AssetsAudioPlayer
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.19.0 <3.0.0"
   flutter: ">=2.0.0"
 
 dependencies:
