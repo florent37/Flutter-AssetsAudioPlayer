@@ -1,4 +1,4 @@
-    group 'com.github.florent37.assetsaudioplayer'
+group 'com.github.florent37.assetsaudioplayer'
 version '1.0-SNAPSHOT'
 
 buildscript {

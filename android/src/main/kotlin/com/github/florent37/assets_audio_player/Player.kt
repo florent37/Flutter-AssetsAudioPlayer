@@ -1,7 +1,6 @@
 package com.github.florent37.assets_audio_player
 
 import android.content.Context
-import android.content.Intent
 import android.media.AudioManager
 import android.os.Handler
 import android.os.Message
@@ -541,13 +540,13 @@ class ForwardHandler : Handler() {
         const val DELAY = 300L
     }
 
-    private var player: com.github.florent37.assets_audio_player.Player? = null
+    private var player: Player? = null
     private var speed: Double = 1.0
 
     val isActive: Boolean
         get() = hasMessages(MESSAGE_FORWARD)
 
-    fun start(player: com.github.florent37.assets_audio_player.Player, speed: Double) {
+    fun start(player: Player, speed: Double) {
         this.player = player
         this.speed = speed
         removeMessages(MESSAGE_FORWARD)

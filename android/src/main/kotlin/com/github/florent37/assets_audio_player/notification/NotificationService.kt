@@ -28,6 +28,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import androidx.annotation.RequiresApi
 import com.github.florent37.assets_audio_player.AssetsAudioPlayerPlugin
 import com.github.florent37.assetsaudioplayer.R
+import kotlinx.coroutines.DelicateCoroutinesApi
 
 class NotificationService : Service() {
 
@@ -140,6 +141,7 @@ class NotificationService : Service() {
                 .putExtra(TRACK_ID, audioMetas.trackID)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     @RequiresApi(Build.VERSION_CODES.ECLAIR)
     private fun displayNotification(action: NotificationAction.Show) {
         GlobalScope.launch(Dispatchers.Main) {
