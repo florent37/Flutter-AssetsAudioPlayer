@@ -1,3 +1,7 @@
+## 3.1.1
+
+- fix startup crash issue for some Android devices.
+
 ## 3.1.0
 
 - revert back changes
