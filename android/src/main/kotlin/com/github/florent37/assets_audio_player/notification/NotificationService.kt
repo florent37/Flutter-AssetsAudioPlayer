@@ -27,7 +27,7 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.annotation.RequiresApi
 import com.github.florent37.assets_audio_player.AssetsAudioPlayerPlugin
-import com.github.florent37.assetsaudioplayer.R
+import com.github.florent37.assets_audio_player.R
 
 class NotificationService : Service() {
 
