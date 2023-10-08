@@ -142,7 +142,7 @@ object ImageDownloader {
                                                 continuation.resume(placeHolder)
                                             }
                                         } catch (t : Throwable) {
-
+                                            continuation.resumeWithException(Exception("failed to download $filePath"))
                                         }
                                     }
 
