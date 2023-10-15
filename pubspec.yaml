@@ -6,14 +6,14 @@ version: 3.1.1
 homepage: https://github.com/florent37/Flutter-AssetsAudioPlayer
 
 environment:
-  sdk: ">=2.19.0 <3.0.0"
-  flutter: ">=2.0.0"
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.3.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  rxdart: ^0.27.3
-  uuid: ^3.0.5
+  rxdart: ^0.27.7
+  uuid: ">=3.0.7 <5.0.0"
   http: ">=0.13.0 <2.0.0" # to download / cache network files
   path_provider: ^2.0.8 # removed this because it cancel flutter/android/ios on pub.dev path_provider: ^1.6.10
 
@@ -28,7 +28,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pedantic: ^1.11.1
+  flutter_lints: ^2.0.2
 
 flutter:
   plugin:
