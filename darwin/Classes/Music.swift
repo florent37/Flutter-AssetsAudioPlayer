@@ -214,6 +214,10 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         self.channel.invokeMethod(Music.METHOD_PLAY_OR_PAUSE, arguments: [])
     }
     
+    func invokeListenerStop(){
+        self.channel.invokeMethod(Music.METHOD_CURRENT, arguments: nil)
+    }
+    
     func setupMediaPlayerNotificationView(notificationSettings: NotificationSettings, audioMetas: AudioMetas, isPlaying: Bool) {
         self.notificationSettings = notificationSettings
         self.audioMetas = audioMetas
@@ -810,11 +814,13 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     func stop(){
         self.player?.pause()
         self.player?.rate = 0.0
-        
+        self.playing = false
+
+        self.invokeListenerStop()
+
         self.updateNotifStatus(playing: self.playing, stopped: true, rate: self.player?.rate)
         
         self.player?.seek(to: CMTime.zero)
-        self.playing = false
         self.currentTimeTimer?.invalidate()
         #if os(iOS)
         self._deinit()
